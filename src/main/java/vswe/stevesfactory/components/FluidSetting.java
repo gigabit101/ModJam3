@@ -1,29 +1,29 @@
 package vswe.stevesfactory.components;
 
-
-import gigabit101.AdvancedSystemManager2.components.Setting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuFluid;
-import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
-import gigabit101.AdvancedSystemManager2.network.DataReader;
-import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.network.DataBitHelper;
+import vswe.stevesfactory.network.DataReader;
+import vswe.stevesfactory.network.DataWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FluidSetting extends gigabit101.AdvancedSystemManager2.components.Setting {
+public class FluidSetting extends Setting
+{
     private Fluid fluid;
     private int amount;
 
-    public FluidSetting(int id) {
+    public FluidSetting(int id)
+    {
         super(id);
     }
 
     @Override
-    public void clear() {
+    public void clear()
+    {
         super.clear();
 
         fluid = null;
@@ -31,18 +31,22 @@ public class FluidSetting extends gigabit101.AdvancedSystemManager2.components.S
     }
 
     @Override
-    public List<String> getMouseOver() {
+    public List<String> getMouseOver()
+    {
         List<String> ret = new ArrayList<String>();
 
-        if (fluid == null) {
+        if (fluid == null)
+        {
             ret.add(Localization.NO_FLUID_SELECTED.toString());
-        }else{
+        } else
+        {
             ret.add(ComponentMenuFluid.getDisplayName(fluid));
         }
 
         ret.add("");
         ret.add(Localization.CHANGE_FLUID.toString());
-        if (fluid != null) {
+        if (fluid != null)
+        {
             ret.add(Localization.EDIT_SETTING.toString());
         }
 
@@ -50,77 +54,92 @@ public class FluidSetting extends gigabit101.AdvancedSystemManager2.components.S
     }
 
     @Override
-    public int getAmount() {
+    public int getAmount()
+    {
         return amount;
     }
 
     @Override
-    public void setAmount(int val) {
+    public void setAmount(int val)
+    {
         amount = val;
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid()
+    {
         return fluid != null;
     }
 
 
     @Override
-    public void writeData(DataWriter dw) {
-       dw.writeString(fluid.getName(), DataBitHelper.MENU_FLUID_ID_LENGTH);
+    public void writeData(DataWriter dw)
+    {
+        dw.writeString(fluid.getName(), DataBitHelper.MENU_FLUID_ID_LENGTH);
     }
 
     @Override
-    public void readData(DataReader dr) {
+    public void readData(DataReader dr)
+    {
         fluid = FluidRegistry.getFluid(dr.readString(DataBitHelper.MENU_FLUID_ID_LENGTH));
     }
 
     @Override
-    public void copyFrom(Setting setting) {
-        fluid = ((gigabit101.AdvancedSystemManager2.components.FluidSetting)setting).fluid;
+    public void copyFrom(Setting setting)
+    {
+        fluid = ((FluidSetting) setting).fluid;
     }
 
     @Override
-    public int getDefaultAmount() {
+    public int getDefaultAmount()
+    {
         return 1000;
     }
 
     private static final String NBT_FLUID_NAME = "FluidName";
     private static final String NBT_FLUID_AMOUNT = "Amount";
+
     @Override
-    public void load(NBTTagCompound settingTag) {
+    public void load(NBTTagCompound settingTag)
+    {
         //TODO load properly
         fluid = FluidRegistry.getFluid(settingTag.getString(NBT_FLUID_NAME));
         amount = settingTag.getInteger(NBT_FLUID_AMOUNT);
     }
 
     @Override
-    public void save(NBTTagCompound settingTag) {
+    public void save(NBTTagCompound settingTag)
+    {
         //TODO save properly
         settingTag.setString(NBT_FLUID_NAME, fluid.getName());
         settingTag.setInteger(NBT_FLUID_AMOUNT, amount);
     }
 
     @Override
-    public boolean isContentEqual(Setting otherSetting) {
-        return fluid.getName().equals(((gigabit101.AdvancedSystemManager2.components.FluidSetting)otherSetting).fluid.getName());
+    public boolean isContentEqual(Setting otherSetting)
+    {
+        return fluid.getName().equals(((FluidSetting) otherSetting).fluid.getName());
     }
 
     @Override
-    public void setContent(Object obj) {
-        fluid = (Fluid)obj;
+    public void setContent(Object obj)
+    {
+        fluid = (Fluid) obj;
         setDefaultAmount();
     }
 
-    public String getFluidName() {
+    public String getFluidName()
+    {
         return fluid.getName();
     }
 
-    public void setFluidFromName(String name) {
+    public void setFluidFromName(String name)
+    {
         fluid = FluidRegistry.getFluid(name);
     }
 
-    public Fluid getFluid() {
+    public Fluid getFluid()
+    {
         return fluid;
     }
 }

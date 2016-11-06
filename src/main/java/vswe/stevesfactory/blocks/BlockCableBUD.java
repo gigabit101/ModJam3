@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -10,33 +9,38 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import gigabit101.AdvancedSystemManager2.AdvancedSystemManager2;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityBUD;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster;
+import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.init.ModBlocks;
 
-public class BlockCableBUD extends BlockContainer {
-    public BlockCableBUD() {
+public class BlockCableBUD extends BlockContainer
+{
+    public BlockCableBUD()
+    {
         super(Material.IRON);
-        setCreativeTab(gigabit101.AdvancedSystemManager2.blocks.ModBlocks.creativeTab);
+        setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
-        setUnlocalizedName(AdvancedSystemManager2.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
+        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
         setHardness(1.2F);
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(World world, int meta)
+    {
         return new TileEntityBUD();
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
         return EnumBlockRenderType.MODEL;
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+    {
         TileEntityBUD bud = TileEntityCluster.getTileEntity(TileEntityBUD.class, world, pos);
-        if (bud != null) {
+        if (bud != null)
+        {
             bud.onTrigger();
         }
     }

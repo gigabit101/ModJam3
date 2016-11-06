@@ -1,32 +1,38 @@
 package vswe.stevesfactory.components;
 
 
-import gigabit101.AdvancedSystemManager2.Localization;
+import vswe.stevesfactory.Localization;
 
-public class RadioButton {
+public class RadioButton
+{
     private int x;
     private int y;
     private Localization text;
 
-    public RadioButton(int x, int y, Localization text) {
+    public RadioButton(int x, int y, Localization text)
+    {
         this.x = x;
         this.y = y;
         this.text = text;
     }
 
-    public int getX() {
+    public int getX()
+    {
         return x;
     }
 
-    public int getY() {
+    public int getY()
+    {
         return y;
     }
 
-    public String getText() {
+    public String getText()
+    {
         return text.toString();
     }
 
-    public boolean isVisible() {
+    public boolean isVisible()
+    {
         return true;
     }
 }

@@ -5,74 +5,96 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry;
 
 import java.util.EnumSet;
 
-public abstract class TileEntityClusterElement extends TileEntity implements ITickable {
-
+public abstract class TileEntityClusterElement extends TileEntity implements ITickable
+{
     private ClusterRegistry registryElement;
     private boolean isPartOfCluster;
     private int meta;
-    protected TileEntityClusterElement() {
+
+    protected TileEntityClusterElement()
+    {
         registryElement = ClusterRegistry.get(this);
     }
 
-    public ItemStack getItemStackFromBlock() {
+    public ItemStack getItemStackFromBlock()
+    {
         return registryElement.getItemStack(getBlockMetadata());
     }
 
-    public boolean isPartOfCluster() {
+    public boolean isPartOfCluster()
+    {
         return isPartOfCluster;
     }
 
-    public void setPartOfCluster(boolean partOfCluster) {
+    public void setPartOfCluster(boolean partOfCluster)
+    {
         isPartOfCluster = partOfCluster;
     }
 
     @Override
-    public int getBlockMetadata() {
-        if (isPartOfCluster) {
+    public int getBlockMetadata()
+    {
+        if (isPartOfCluster)
+        {
             return meta;
-        }else{
+        } else
+        {
             return super.getBlockMetadata();
         }
     }
 
-    public void setState(IBlockState state) {
-        if (isPartOfCluster) {
+    public void setState(IBlockState state)
+    {
+        if (isPartOfCluster)
+        {
             this.meta = state.getBlock().getMetaFromState(state);
-        }else{
+        } else
+        {
             worldObj.setBlockState(pos, state, 2);
         }
     }
 
-    public void setMetaData(int meta) {
-        if (isPartOfCluster) {
+    public void setMetaData(int meta)
+    {
+        if (isPartOfCluster)
+        {
             this.meta = meta;
-        }else{
+        } else
+        {
             worldObj.setBlockState(pos, worldObj.getBlockState(pos).getBlock().getStateFromMeta(meta), 2);
         }
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
         writeContentToNBT(compound);
         return super.writeToNBT(compound);
     }
 
     @Override
-    public final void readFromNBT(NBTTagCompound tagCompound) {
+    public final void readFromNBT(NBTTagCompound tagCompound)
+    {
         super.readFromNBT(tagCompound);
         readContentFromNBT(tagCompound);
     }
 
     @Override
-    public void update() {
+    public void update()
+    {
 
     }
 
-    protected void readContentFromNBT(NBTTagCompound tagCompound) {}
-    protected void writeContentToNBT(NBTTagCompound tagCompound) {}
-    protected abstract EnumSet<gigabit101.AdvancedSystemManager2.blocks.ClusterMethodRegistration> getRegistrations();
+    protected void readContentFromNBT(NBTTagCompound tagCompound)
+    {
+    }
+
+    protected void writeContentToNBT(NBTTagCompound tagCompound)
+    {
+    }
+
+    protected abstract EnumSet<ClusterMethodRegistration> getRegistrations();
 }

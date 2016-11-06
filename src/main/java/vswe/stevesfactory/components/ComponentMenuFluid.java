@@ -1,68 +1,73 @@
 package vswe.stevesfactory.components;
 
-
-import gigabit101.AdvancedSystemManager2.components.Setting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff;
-import gigabit101.AdvancedSystemManager2.components.FlowComponent;
-import gigabit101.AdvancedSystemManager2.components.FluidSetting;
-import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
-import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
-import gigabit101.AdvancedSystemManager2.network.DataReader;
-import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.network.DataBitHelper;
+import vswe.stevesfactory.network.DataReader;
+import vswe.stevesfactory.network.DataWriter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ComponentMenuFluid extends ComponentMenuStuff {
-    public ComponentMenuFluid(FlowComponent parent) {
+public class ComponentMenuFluid extends ComponentMenuStuff
+{
+    public ComponentMenuFluid(FlowComponent parent)
+    {
         super(parent, FluidSetting.class);
 
-        numberTextBoxes.addTextBox(amountTextBoxBuckets = new TextBoxNumber(10 ,50, 3, true) {
+        numberTextBoxes.addTextBox(amountTextBoxBuckets = new TextBoxNumber(10, 50, 3, true)
+        {
             @Override
-            public boolean isVisible() {
+            public boolean isVisible()
+            {
                 return selectedSetting.isLimitedByAmount();
             }
 
             @Override
-            public void onNumberChanged() {
+            public void onNumberChanged()
+            {
                 sendAmountData();
             }
         });
 
-        numberTextBoxes.addTextBox(amountTextBoxMilli = new TextBoxNumber(60 ,50, 3, true) {
+        numberTextBoxes.addTextBox(amountTextBoxMilli = new TextBoxNumber(60, 50, 3, true)
+        {
             @Override
-            public boolean isVisible() {
+            public boolean isVisible()
+            {
                 return selectedSetting.isLimitedByAmount();
             }
 
             @Override
-            public void onNumberChanged() {
+            public void onNumberChanged()
+            {
                 sendAmountData();
             }
         });
     }
 
 
-
-    private void sendAmountData() {
+    private void sendAmountData()
+    {
         selectedSetting.setAmount(amountTextBoxBuckets.getNumber() * 1000 + amountTextBoxMilli.getNumber());
         writeServerData(DataTypeHeader.AMOUNT);
     }
+
     private TextBoxNumber amountTextBoxBuckets;
     private TextBoxNumber amountTextBoxMilli;
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void drawInfoMenuContent(GuiManager gui, int mX, int mY) {
-        if (selectedSetting.isLimitedByAmount()) {
+    protected void drawInfoMenuContent(GuiManager gui, int mX, int mY)
+    {
+        if (selectedSetting.isLimitedByAmount())
+        {
             gui.drawCenteredString(Localization.BUCKETS.toString(), amountTextBoxBuckets.getX(), amountTextBoxBuckets.getY() - 7, 0.7F, amountTextBoxBuckets.getWidth(), 0x404040);
             gui.drawCenteredString(Localization.MILLI_BUCKETS.toString(), amountTextBoxMilli.getX(), amountTextBoxMilli.getY() - 7, 0.55F, amountTextBoxMilli.getWidth(), 0x404040);
         }
@@ -70,49 +75,58 @@ public class ComponentMenuFluid extends ComponentMenuStuff {
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void drawResultObject(GuiManager gui, Object obj, int x, int y) {
-        gui.drawFluid((Fluid)obj, x, y);
+    protected void drawResultObject(GuiManager gui, Object obj, int x, int y)
+    {
+        gui.drawFluid((Fluid) obj, x, y);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void drawSettingObject(GuiManager gui, gigabit101.AdvancedSystemManager2.components.Setting setting, int x, int y) {
-        drawResultObject(gui,((FluidSetting)setting).getFluid(), x, y);
+    protected void drawSettingObject(GuiManager gui, Setting setting, int x, int y)
+    {
+        drawResultObject(gui, ((FluidSetting) setting).getFluid(), x, y);
     }
 
     @Override
-    protected List<String> getResultObjectMouseOver(Object obj) {
+    protected List<String> getResultObjectMouseOver(Object obj)
+    {
         List<String> ret = new ArrayList<String>();
         ret.add(getDisplayName((Fluid) obj));
         return ret;
     }
 
     @Override
-    protected List<String> getSettingObjectMouseOver(Setting setting) {
-        return getResultObjectMouseOver(((FluidSetting)setting).getFluid());
+    protected List<String> getSettingObjectMouseOver(Setting setting)
+    {
+        return getResultObjectMouseOver(((FluidSetting) setting).getFluid());
     }
 
     @Override
-    protected void updateTextBoxes() {
+    protected void updateTextBoxes()
+    {
         int amount = selectedSetting.getAmount();
         amountTextBoxBuckets.setNumber(amount / 1000);
         amountTextBoxMilli.setNumber(amount % 1000);
     }
 
     @Override
-    protected DataBitHelper getAmountBitLength() {
+    protected DataBitHelper getAmountBitLength()
+    {
         return DataBitHelper.MENU_FLUID_AMOUNT;
     }
 
     @Override
-    protected void readSpecificHeaderData(DataReader dr, DataTypeHeader header, Setting setting) {
-        FluidSetting fluidSetting = (FluidSetting)setting;
+    protected void readSpecificHeaderData(DataReader dr, DataTypeHeader header, Setting setting)
+    {
+        FluidSetting fluidSetting = (FluidSetting) setting;
 
-        switch (header) {
+        switch (header)
+        {
             case SET_ITEM:
                 fluidSetting.setFluidFromName(dr.readString(DataBitHelper.MENU_FLUID_ID_LENGTH));
 
-                if (isEditing()) {
+                if (isEditing())
+                {
                     updateTextBoxes();
                 }
 
@@ -121,38 +135,45 @@ public class ComponentMenuFluid extends ComponentMenuStuff {
     }
 
     @Override
-    protected void writeSpecificHeaderData(DataWriter dw, DataTypeHeader header, Setting setting) {
-        FluidSetting fluidSetting = (FluidSetting)setting;
-        switch (header) {
+    protected void writeSpecificHeaderData(DataWriter dw, DataTypeHeader header, Setting setting)
+    {
+        FluidSetting fluidSetting = (FluidSetting) setting;
+        switch (header)
+        {
             case SET_ITEM:
                 dw.writeString(fluidSetting.getFluidName(), DataBitHelper.MENU_FLUID_ID_LENGTH);
         }
     }
 
 
-
     @Override
-    public String getName() {
+    public String getName()
+    {
         return Localization.FLUIDS_MENU.toString();
     }
 
-    protected FluidSetting getSelectedSetting() {
-        return (FluidSetting)selectedSetting;
+    protected FluidSetting getSelectedSetting()
+    {
+        return (FluidSetting) selectedSetting;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected List updateSearch(String search, boolean showAll) {
+    protected List updateSearch(String search, boolean showAll)
+    {
         List ret = new ArrayList(FluidRegistry.getRegisteredFluids().values());
 
         Iterator<Fluid> itemIterator = ret.iterator();
 
-        if (!showAll) {
-            while (itemIterator.hasNext()) {
+        if (!showAll)
+        {
+            while (itemIterator.hasNext())
+            {
 
                 Fluid fluid = itemIterator.next();
 
-                if (!getDisplayName(fluid).toLowerCase().contains(search)) {
+                if (!getDisplayName(fluid).toLowerCase().contains(search))
+                {
                     itemIterator.remove();
                 }
             }
@@ -161,10 +182,12 @@ public class ComponentMenuFluid extends ComponentMenuStuff {
         return ret;
     }
 
-    public static String getDisplayName(Fluid fluid) {
+    public static String getDisplayName(Fluid fluid)
+    {
         //different mods store the name in different ways apparently
         String name = fluid.getLocalizedName(new FluidStack(fluid, 1));
-        if (name.indexOf(".") != -1) {
+        if (name.indexOf(".") != -1)
+        {
             name = FluidRegistry.getFluidName(fluid);
         }
 

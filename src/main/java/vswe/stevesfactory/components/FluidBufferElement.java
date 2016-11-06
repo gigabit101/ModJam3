@@ -1,18 +1,13 @@
 package vswe.stevesfactory.components;
 
-
-import gigabit101.AdvancedSystemManager2.components.Setting;
 import net.minecraftforge.fluids.FluidStack;
-import gigabit101.AdvancedSystemManager2.components.FlowComponent;
-import gigabit101.AdvancedSystemManager2.components.FluidSetting;
-import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
-import gigabit101.AdvancedSystemManager2.components.StackTankHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FluidBufferElement {
-    private gigabit101.AdvancedSystemManager2.components.Setting setting;
+public class FluidBufferElement
+{
+    private Setting setting;
     private FlowComponent component;
     private boolean useWhiteList;
     private int currentTransferSize;
@@ -25,13 +20,15 @@ public class FluidBufferElement {
     private boolean fairShare;
     private int shareId;
 
-    public FluidBufferElement(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, boolean useWhiteList, StackTankHolder target) {
+    public FluidBufferElement(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, boolean useWhiteList, StackTankHolder target)
+    {
         this(owner, setting, inventoryHolder, useWhiteList);
         addTarget(target);
         sharedBy = 1;
     }
 
-    public FluidBufferElement(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, boolean useWhiteList) {
+    public FluidBufferElement(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, boolean useWhiteList)
+    {
         this.component = owner;
         this.setting = setting;
         this.inventoryHolder = inventoryHolder;
@@ -39,52 +36,66 @@ public class FluidBufferElement {
         holders = new ArrayList<StackTankHolder>();
     }
 
-    public boolean addTarget(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, StackTankHolder target) {
+    public boolean addTarget(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, StackTankHolder target)
+    {
 
-        if (component.getId() == owner.getId() && (this.setting == null || (setting != null && this.setting.getId() == setting.getId())) && (this.inventoryHolder.isShared() || this.inventoryHolder.equals(inventoryHolder))) {
+        if (component.getId() == owner.getId() && (this.setting == null || (setting != null && this.setting.getId() == setting.getId())) && (this.inventoryHolder.isShared() || this.inventoryHolder.equals(inventoryHolder)))
+        {
             addTarget(target);
             return true;
-        }else{
+        } else
+        {
             return false;
         }
     }
 
-    private void addTarget(StackTankHolder target) {
+    private void addTarget(StackTankHolder target)
+    {
         holders.add(target);
 
         FluidStack temp = target.getFluidStack();
-        if (temp != null) {
+        if (temp != null)
+        {
             totalTransferSize += target.getSizeLeft();
             currentTransferSize = totalTransferSize;
         }
     }
 
-    public Setting getSetting() {
+    public Setting getSetting()
+    {
         return setting;
     }
 
-    public List<StackTankHolder> getHolders() {
+    public List<StackTankHolder> getHolders()
+    {
         return holders;
     }
 
-    public int retrieveItemCount(int desiredItemCount) {
-        if (setting == null || !setting.isLimitedByAmount()) {
+    public int retrieveItemCount(int desiredItemCount)
+    {
+        if (setting == null || !setting.isLimitedByAmount())
+        {
             return desiredItemCount;
-        }else{
+        } else
+        {
             int itemsAllowedToBeMoved;
-            if (useWhiteList) {
+            if (useWhiteList)
+            {
                 int movedItems = totalTransferSize - currentTransferSize;
                 itemsAllowedToBeMoved = setting.getAmount() - movedItems;
 
                 int amountLeft = itemsAllowedToBeMoved % sharedBy;
                 itemsAllowedToBeMoved /= sharedBy;
 
-                if (!fairShare) {
-                    if (shareId < amountLeft) {
+                if (!fairShare)
+                {
+                    if (shareId < amountLeft)
+                    {
                         itemsAllowedToBeMoved++;
                     }
                 }
-            }else{
+            } else
+            {
                 itemsAllowedToBeMoved = currentTransferSize - setting.getAmount();
             }
 
@@ -93,24 +104,31 @@ public class FluidBufferElement {
         }
     }
 
-    public void decreaseStackSize(int itemsToMove) {
+    public void decreaseStackSize(int itemsToMove)
+    {
         currentTransferSize -= itemsToMove * (useWhiteList ? sharedBy : 1);
     }
 
-    public int getBufferSize(Setting outputSetting) {
+    public int getBufferSize(Setting outputSetting)
+    {
         int bufferSize = 0;
 
-        for (StackTankHolder holder : getHolders()) {
+        for (StackTankHolder holder : getHolders())
+        {
             FluidStack fluidStack = holder.getFluidStack();
-            if (fluidStack != null && fluidStack.getFluid().getName().equals(((FluidSetting)outputSetting).getFluidName())) {
+            if (fluidStack != null && fluidStack.getFluid().getName().equals(((FluidSetting) outputSetting).getFluidName()))
+            {
                 bufferSize += fluidStack.amount;
             }
         }
-        if (setting != null && setting.isLimitedByAmount()){
+        if (setting != null && setting.isLimitedByAmount())
+        {
             int maxSize;
-            if (useWhiteList) {
+            if (useWhiteList)
+            {
                 maxSize = setting.getAmount();
-            }else{
+            } else
+            {
                 maxSize = totalTransferSize - setting.getAmount();
             }
             bufferSize = Math.min(bufferSize, maxSize);
@@ -118,22 +136,27 @@ public class FluidBufferElement {
         return bufferSize;
     }
 
-    public gigabit101.AdvancedSystemManager2.components.FluidBufferElement getSplitElement(int elementAmount, int id, boolean fair) {
+    public FluidBufferElement getSplitElement(int elementAmount, int id, boolean fair)
+    {
 
-        gigabit101.AdvancedSystemManager2.components.FluidBufferElement element = new gigabit101.AdvancedSystemManager2.components.FluidBufferElement(this.component, this.setting, this.inventoryHolder, this.useWhiteList);
+        FluidBufferElement element = new FluidBufferElement(this.component, this.setting, this.inventoryHolder, this.useWhiteList);
         element.holders = new ArrayList<StackTankHolder>();
-        for (StackTankHolder holder : holders) {
+        for (StackTankHolder holder : holders)
+        {
             element.addTarget(holder.getSplitElement(elementAmount, id, fair));
         }
-        if (useWhiteList) {
+        if (useWhiteList)
+        {
             element.sharedBy = sharedBy * elementAmount;
             element.fairShare = fair;
             element.shareId = elementAmount * shareId + id;
             element.currentTransferSize -= totalTransferSize - currentTransferSize;
-            if (element.currentTransferSize < 0) {
+            if (element.currentTransferSize < 0)
+            {
                 element.currentTransferSize = 0;
             }
-        }else{
+        } else
+        {
             element.currentTransferSize = Math.min(currentTransferSize, element.totalTransferSize);
         }
 

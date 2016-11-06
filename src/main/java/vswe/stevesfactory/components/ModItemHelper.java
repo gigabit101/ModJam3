@@ -7,17 +7,20 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ModItemHelper {
+public final class ModItemHelper
+{
 
 
     private static Map<ResourceLocation, String> items;
 
-    public static void init() {
+    public static void init()
+    {
         RegistryNamespaced<ResourceLocation, Item> itemRegistry = Item.REGISTRY;
 
         items = new HashMap<ResourceLocation, String>();
         Object[] keys = itemRegistry.getKeys().toArray();
-        for (Object key : keys) {
+        for (Object key : keys)
+        {
             Item item = itemRegistry.getObject((ResourceLocation) key);
             ResourceLocation resourceLocation = item.getRegistryName();
             String modId = resourceLocation == null ? null : resourceLocation.getResourceDomain();
@@ -26,10 +29,13 @@ public final class ModItemHelper {
         }
     }
 
-    public static boolean areItemsFromSameMod(Item item1, Item item2) {
-        if (item1 == null || item2 == null) {
+    public static boolean areItemsFromSameMod(Item item1, Item item2)
+    {
+        if (item1 == null || item2 == null)
+        {
             return false;
-        }else{
+        } else
+        {
             String mod1 = items.get(Item.REGISTRY.getNameForObject(item1));
             String mod2 = items.get(Item.REGISTRY.getNameForObject(item2));
 
@@ -38,6 +44,7 @@ public final class ModItemHelper {
     }
 
 
-
-    private ModItemHelper() {}
+    private ModItemHelper()
+    {
+    }
 }

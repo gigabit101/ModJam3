@@ -1,52 +1,59 @@
 package vswe.stevesfactory.components;
 
 
-import gigabit101.AdvancedSystemManager2.components.Setting;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
-import gigabit101.AdvancedSystemManager2.components.CommandExecutor;
-import gigabit101.AdvancedSystemManager2.components.FluidBufferElement;
-import gigabit101.AdvancedSystemManager2.components.FluidSetting;
-import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
-import gigabit101.AdvancedSystemManager2.components.SlotSideTarget;
 
 import java.util.List;
 
-public class OutputFluidCounter {
-    private gigabit101.AdvancedSystemManager2.components.Setting setting;
+public class OutputFluidCounter
+{
+    private Setting setting;
     private boolean useWhiteList;
     private int currentTankTransferSize;
     private int currentBufferTransferSize;
 
-    public OutputFluidCounter(List<FluidBufferElement> fluidBuffer, List<SlotInventoryHolder> tanks, SlotInventoryHolder tank, Setting setting, boolean useWhiteList) {
+    public OutputFluidCounter(List<FluidBufferElement> fluidBuffer, List<SlotInventoryHolder> tanks, SlotInventoryHolder tank, Setting setting, boolean useWhiteList)
+    {
         this.setting = setting;
         this.useWhiteList = useWhiteList;
 
-        if (setting != null && setting.isValid() && setting.isLimitedByAmount()) {
-            if (useWhiteList) {
-                if (tanks.get(0).isShared()) {
-                    for (SlotInventoryHolder slotInventoryHolder : tanks) {
+        if (setting != null && setting.isValid() && setting.isLimitedByAmount())
+        {
+            if (useWhiteList)
+            {
+                if (tanks.get(0).isShared())
+                {
+                    for (SlotInventoryHolder slotInventoryHolder : tanks)
+                    {
                         addTank(setting, slotInventoryHolder);
                     }
-                }else{
+                } else
+                {
                     addTank(setting, tank);
                 }
-            }else{
-                for (FluidBufferElement fluidBufferElement : fluidBuffer) {
+            } else
+            {
+                for (FluidBufferElement fluidBufferElement : fluidBuffer)
+                {
                     currentBufferTransferSize += fluidBufferElement.getBufferSize(setting);
                 }
             }
         }
     }
 
-    private void addTank(Setting setting, SlotInventoryHolder tankHolder) {
+    private void addTank(Setting setting, SlotInventoryHolder tankHolder)
+    {
         int max = 0;
 
-        for (SlotSideTarget slotSideTarget : tankHolder.getValidSlots().values()) {
-            for (int side : slotSideTarget.getSides()) {
+        for (SlotSideTarget slotSideTarget : tankHolder.getValidSlots().values())
+        {
+            for (int side : slotSideTarget.getSides())
+            {
                 FluidStack temp = tankHolder.getTank().drain(EnumFacing.getFront(side), CommandExecutor.MAX_FLUID_TRANSFER, false);
 
-                if (temp != null && temp.getFluid().getName().equals(((FluidSetting)setting).getFluidName())) {
+                if (temp != null && temp.getFluid().getName().equals(((FluidSetting) setting).getFluidName()))
+                {
                     max = Math.max(max, temp.amount);
                 }
             }
@@ -55,18 +62,24 @@ public class OutputFluidCounter {
         currentTankTransferSize += max;
     }
 
-    public boolean areSettingsSame(Setting setting) {
+    public boolean areSettingsSame(Setting setting)
+    {
         return (this.setting == null && setting == null) || (this.setting != null && setting != null && this.setting.getId() == setting.getId());
     }
 
-    public int retrieveItemCount(int desiredItemCount) {
-        if (setting == null || !setting.isLimitedByAmount()) {
+    public int retrieveItemCount(int desiredItemCount)
+    {
+        if (setting == null || !setting.isLimitedByAmount())
+        {
             return desiredItemCount;
-        }else {
+        } else
+        {
             int itemsAllowedToBeMoved;
-            if (useWhiteList) {
+            if (useWhiteList)
+            {
                 itemsAllowedToBeMoved = setting.getAmount() - currentTankTransferSize;
-            }else{
+            } else
+            {
                 itemsAllowedToBeMoved = currentBufferTransferSize - setting.getAmount();
             }
 
@@ -75,11 +88,14 @@ public class OutputFluidCounter {
         }
     }
 
-    public void modifyStackSize(int itemsToMove) {
-        if (useWhiteList) {
+    public void modifyStackSize(int itemsToMove)
+    {
+        if (useWhiteList)
+        {
             currentTankTransferSize += itemsToMove;
-        }else{
-            currentBufferTransferSize -=  itemsToMove;
+        } else
+        {
+            currentBufferTransferSize -= itemsToMove;
         }
     }
 }

@@ -1,6 +1,7 @@
 package vswe.stevesfactory.components;
 
 
-public interface IConditionStuffMenu {
+public interface IConditionStuffMenu
+{
     boolean requiresAll();
 }

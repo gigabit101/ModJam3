@@ -4,40 +4,42 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterMethodRegistration;
-import gigabit101.AdvancedSystemManager2.blocks.ITriggerNode;
-import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import net.minecraft.util.math.BlockPos;
+import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
 
-public class TileEntityBUD extends TileEntityClusterElement implements gigabit101.AdvancedSystemManager2.blocks.ISystemListener, ITriggerNode {
+public class TileEntityBUD extends TileEntityClusterElement implements ISystemListener, ITriggerNode
+{
     private List<TileEntityManager> managerList = new ArrayList<TileEntityManager>();
     private int[] oldData = new int[EnumFacing.values().length];
     private int[] data = new int[EnumFacing.values().length];
 
     @Override
-    public void added(TileEntityManager owner) {
-        if (!managerList.contains(owner)) {
+    public void added(TileEntityManager owner)
+    {
+        if (!managerList.contains(owner))
+        {
             managerList.add(owner);
         }
     }
 
     @Override
-    public void removed(TileEntityManager owner) {
+    public void removed(TileEntityManager owner)
+    {
         managerList.remove(owner);
     }
 
-    public void onTrigger() {
+    public void onTrigger()
+    {
         updateData();
 
-        for (int i = managerList.size() - 1; i >= 0; i--) {
+        for (int i = managerList.size() - 1; i >= 0; i--)
+        {
             managerList.get(i).triggerBUD(this);
         }
 
@@ -46,21 +48,25 @@ public class TileEntityBUD extends TileEntityClusterElement implements gigabit10
     }
 
 
-
     @Override
-    public int[] getData() {
+    public int[] getData()
+    {
         return data;
     }
 
     @Override
-    public int[] getOldData() {
+    public int[] getOldData()
+    {
         return oldData;
     }
 
-    public void updateData() {
-        if (worldObj != null) {
+    public void updateData()
+    {
+        if (worldObj != null)
+        {
             data = new int[data.length];
-            for (int i = 0; i < data.length; i++) {
+            for (int i = 0; i < data.length; i++)
+            {
                 EnumFacing direction = EnumFacing.getFront(i);
                 int x = direction.getFrontOffsetX() + this.getPos().getX();
                 int y = direction.getFrontOffsetY() + this.getPos().getY();
@@ -73,7 +79,8 @@ public class TileEntityBUD extends TileEntityClusterElement implements gigabit10
         }
     }
 
-    public void makeOld() {
+    public void makeOld()
+    {
         oldData = data;
     }
 
@@ -81,12 +88,14 @@ public class TileEntityBUD extends TileEntityClusterElement implements gigabit10
     private static final String NBT_DATA = "Data";
 
     @Override
-    public void readContentFromNBT(NBTTagCompound nbtTagCompound) {
+    public void readContentFromNBT(NBTTagCompound nbtTagCompound)
+    {
         int version = nbtTagCompound.getByte(ModBlocks.NBT_PROTOCOL_VERSION);
 
 
         NBTTagList sidesTag = nbtTagCompound.getTagList(NBT_SIDES, 10);
-        for (int i = 0; i < sidesTag.tagCount(); i++) {
+        for (int i = 0; i < sidesTag.tagCount(); i++)
+        {
 
             NBTTagCompound sideTag = sidesTag.getCompoundTagAt(i);
 
@@ -95,13 +104,14 @@ public class TileEntityBUD extends TileEntityClusterElement implements gigabit10
     }
 
 
-
     @Override
-    public void writeContentToNBT(NBTTagCompound nbtTagCompound) {
+    public void writeContentToNBT(NBTTagCompound nbtTagCompound)
+    {
         nbtTagCompound.setByte(ModBlocks.NBT_PROTOCOL_VERSION, ModBlocks.NBT_CURRENT_PROTOCOL_VERSION);
 
         NBTTagList sidesTag = new NBTTagList();
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < data.length; i++)
+        {
             NBTTagCompound sideTag = new NBTTagCompound();
 
             sideTag.setShort(NBT_DATA, (short) data[i]);
@@ -114,7 +124,8 @@ public class TileEntityBUD extends TileEntityClusterElement implements gigabit10
     }
 
     @Override
-    protected EnumSet<ClusterMethodRegistration> getRegistrations() {
+    protected EnumSet<ClusterMethodRegistration> getRegistrations()
+    {
         return EnumSet.of(ClusterMethodRegistration.ON_NEIGHBOR_BLOCK_CHANGED);
     }
 }

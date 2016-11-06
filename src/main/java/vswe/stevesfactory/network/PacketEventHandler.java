@@ -1,6 +1,5 @@
 package vswe.stevesfactory.network;
 
-import gigabit101.AdvancedSystemManager2.network.IPacketBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -12,51 +11,60 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.interfaces.ContainerBase;
-import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
-import gigabit101.AdvancedSystemManager2.network.DataReader;
+import vswe.stevesfactory.interfaces.ContainerBase;
 
-public class PacketEventHandler {
+public class PacketEventHandler
+{
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void onClientPacket(final FMLNetworkEvent.ClientCustomPacketEvent event) {
-        FMLClientHandler.instance().getClient().addScheduledTask(new Runnable() {
+    public void onClientPacket(final FMLNetworkEvent.ClientCustomPacketEvent event)
+    {
+        FMLClientHandler.instance().getClient().addScheduledTask(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 processClientPacket(event);
             }
         });
     }
 
     @SideOnly(Side.CLIENT)
-    private void processClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
+    private void processClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event)
+    {
         DataReader dr = new DataReader(event.getPacket().payload().array());
         EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 
         boolean useContainer = dr.readBoolean();
 
-        if (useContainer) {
+        if (useContainer)
+        {
             int containerId = dr.readByte();
             Container container = player.openContainer;
 
-            if (container != null && container.windowId == containerId && container instanceof ContainerBase) {
-                if (dr.readBoolean()) {
+            if (container != null && container.windowId == containerId && container instanceof ContainerBase)
+            {
+                if (dr.readBoolean())
+                {
                     ((ContainerBase) container).getTileEntity().readUpdatedData(dr, player);
-                }else{
-                    ((ContainerBase) container).getTileEntity().readAllData(dr , player);
+                } else
+                {
+                    ((ContainerBase) container).getTileEntity().readAllData(dr, player);
                 }
 
             }
-        }else{
+        } else
+        {
             int x = dr.readData(DataBitHelper.WORLD_COORDINATE);
             int y = dr.readData(DataBitHelper.WORLD_COORDINATE);
             int z = dr.readData(DataBitHelper.WORLD_COORDINATE);
 
             TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
-            if (te != null && te instanceof gigabit101.AdvancedSystemManager2.network.IPacketBlock) {
+            if (te != null && te instanceof IPacketBlock)
+            {
                 int id = dr.readData(((IPacketBlock) te).infoBitLength(false));
-                ((IPacketBlock)te).readData(dr, player, false, id);
+                ((IPacketBlock) te).readData(dr, player, false, id);
             }
         }
 
@@ -64,39 +72,47 @@ public class PacketEventHandler {
     }
 
     @SubscribeEvent
-    public void onServerPacket(final FMLNetworkEvent.ServerCustomPacketEvent event) {
-        EntityPlayerMP player = ((NetHandlerPlayServer)event.getHandler()).playerEntity;
-        player.getServerWorld().addScheduledTask(new Runnable() {
+    public void onServerPacket(final FMLNetworkEvent.ServerCustomPacketEvent event)
+    {
+        EntityPlayerMP player = ((NetHandlerPlayServer) event.getHandler()).playerEntity;
+        player.getServerWorld().addScheduledTask(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 processServerPacket(event);
             }
         });
     }
 
-    private void processServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event) {
+    private void processServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event)
+    {
         DataReader dr = new DataReader(event.getPacket().payload().array());
-        EntityPlayer player = ((NetHandlerPlayServer)event.getHandler()).playerEntity;
+        EntityPlayer player = ((NetHandlerPlayServer) event.getHandler()).playerEntity;
 
         boolean useContainer = dr.readBoolean();
 
-        if (useContainer) {
+        if (useContainer)
+        {
             int containerId = dr.readByte();
             Container container = player.openContainer;
 
-            if (container != null && container.windowId == containerId && container instanceof ContainerBase) {
+            if (container != null && container.windowId == containerId && container instanceof ContainerBase)
+            {
                 ((ContainerBase) container).getTileEntity().readUpdatedData(dr, player);
-                ((TileEntity)((ContainerBase) container).getTileEntity()).markDirty();
+                ((TileEntity) ((ContainerBase) container).getTileEntity()).markDirty();
             }
-        }else{
+        } else
+        {
             int x = dr.readData(DataBitHelper.WORLD_COORDINATE);
             int y = dr.readData(DataBitHelper.WORLD_COORDINATE);
             int z = dr.readData(DataBitHelper.WORLD_COORDINATE);
 
             TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
-            if (te != null && te instanceof IPacketBlock) {
+            if (te != null && te instanceof IPacketBlock)
+            {
                 int id = dr.readData(((IPacketBlock) te).infoBitLength(true));
-                ((IPacketBlock)te).readData(dr, player, true, id);
+                ((IPacketBlock) te).readData(dr, player, true, id);
             }
         }
 

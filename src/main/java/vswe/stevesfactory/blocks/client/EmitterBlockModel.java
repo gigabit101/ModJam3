@@ -12,9 +12,11 @@ import net.minecraftforge.common.model.IModelState;
 
 import java.util.Collection;
 
-public class EmitterBlockModel implements IModel{
+public class EmitterBlockModel implements IModel
+{
 
-    public EmitterBlockModel(IResourceManager resourceManager) {
+    public EmitterBlockModel(IResourceManager resourceManager)
+    {
 
     }
 
@@ -25,22 +27,26 @@ public class EmitterBlockModel implements IModel{
     public static final ResourceLocation IDLE = new ResourceLocation("stevesfactorymanager:blocks/cable_idle");
 
     @Override
-    public Collection<ResourceLocation> getDependencies() {
+    public Collection<ResourceLocation> getDependencies()
+    {
         return ImmutableList.copyOf(new ResourceLocation[]{EMITTER_MODEL});
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures() {
+    public Collection<ResourceLocation> getTextures()
+    {
         return ImmutableList.copyOf(new ResourceLocation[]{STRONG, WEAK, IDLE});
     }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        return new gigabit101.AdvancedSystemManager2.blocks.client.BakedEmitterBlockModel(bakedTextureGetter);
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    {
+        return new BakedEmitterBlockModel(bakedTextureGetter);
     }
 
     @Override
-    public IModelState getDefaultState() {
+    public IModelState getDefaultState()
+    {
         return null;
     }
 }

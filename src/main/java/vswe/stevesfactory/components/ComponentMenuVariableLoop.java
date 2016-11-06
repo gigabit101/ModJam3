@@ -1,56 +1,62 @@
 package vswe.stevesfactory.components;
 
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
-import gigabit101.AdvancedSystemManager2.components.Variable;
-import gigabit101.AdvancedSystemManager2.components.VariableDisplay;
-import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
-import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
-import gigabit101.AdvancedSystemManager2.network.DataReader;
-import gigabit101.AdvancedSystemManager2.network.DataWriter;
-import gigabit101.AdvancedSystemManager2.network.PacketHandler;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.network.DataBitHelper;
+import vswe.stevesfactory.network.DataReader;
+import vswe.stevesfactory.network.DataWriter;
+import vswe.stevesfactory.network.PacketHandler;
 
 import java.util.List;
 
-public class ComponentMenuVariableLoop extends ComponentMenu {
-    public ComponentMenuVariableLoop(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
+public class ComponentMenuVariableLoop extends ComponentMenu
+{
+    public ComponentMenuVariableLoop(FlowComponent parent)
+    {
         super(parent);
 
-        listDisplay = new VariableDisplay(Localization.VARIABLE_LIST, DISPLAY_X, DISPLAY_Y_TOP) {
+        listDisplay = new VariableDisplay(Localization.VARIABLE_LIST, DISPLAY_X, DISPLAY_Y_TOP)
+        {
             @Override
-            public int getValue() {
+            public int getValue()
+            {
                 return selectedList;
             }
 
             @Override
-            public void setValue(int val) {
+            public void setValue(int val)
+            {
                 selectedList = val;
             }
 
             @Override
-            public void onUpdate() {
+            public void onUpdate()
+            {
                 sendServerData(true);
             }
         };
 
-        elementDisplay = new VariableDisplay(Localization.VARIABLE_ELEMENT, DISPLAY_X, DISPLAY_Y_BOT) {
+        elementDisplay = new VariableDisplay(Localization.VARIABLE_ELEMENT, DISPLAY_X, DISPLAY_Y_BOT)
+        {
             @Override
-            public int getValue() {
+            public int getValue()
+            {
                 return selectedElement;
             }
 
             @Override
-            public void setValue(int val) {
+            public void setValue(int val)
+            {
                 selectedElement = val;
             }
 
             @Override
-            public void onUpdate() {
+            public void onUpdate()
+            {
                 sendServerData(false);
             }
         };
@@ -60,7 +66,8 @@ public class ComponentMenuVariableLoop extends ComponentMenu {
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return Localization.LOOP_VARIABLE_MENU.toString();
     }
 
@@ -76,25 +83,29 @@ public class ComponentMenuVariableLoop extends ComponentMenu {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void draw(GuiManager gui, int mX, int mY) {
+    public void draw(GuiManager gui, int mX, int mY)
+    {
         listDisplay.draw(gui, mX, mY);
         elementDisplay.draw(gui, mX, mY);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawMouseOver(GuiManager gui, int mX, int mY) {
+    public void drawMouseOver(GuiManager gui, int mX, int mY)
+    {
         listDisplay.drawMouseOver(gui, mX, mY);
         elementDisplay.drawMouseOver(gui, mX, mY);
     }
 
     @Override
-    public void onClick(int mX, int mY, int button) {
+    public void onClick(int mX, int mY, int button)
+    {
         listDisplay.onClick(mX, mY);
         elementDisplay.onClick(mX, mY);
     }
 
-    private void sendServerData(boolean useList) {
+    private void sendServerData(boolean useList)
+    {
         int val = useList ? selectedList : selectedElement;
         DataWriter dw = getWriterForServerComponentPacket();
         dw.writeBoolean(useList);
@@ -102,7 +113,8 @@ public class ComponentMenuVariableLoop extends ComponentMenu {
         PacketHandler.sendDataToServer(dw);
     }
 
-    private void sendClientData(ContainerManager container, boolean useList) {
+    private void sendClientData(ContainerManager container, boolean useList)
+    {
         int val = useList ? selectedList : selectedElement;
         DataWriter dw = getWriterForClientComponentPacket(container);
         dw.writeBoolean(useList);
@@ -111,43 +123,51 @@ public class ComponentMenuVariableLoop extends ComponentMenu {
     }
 
     @Override
-    public void onDrag(int mX, int mY, boolean isMenuOpen) {
+    public void onDrag(int mX, int mY, boolean isMenuOpen)
+    {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void onRelease(int mX, int mY, boolean isMenuOpen) {
+    public void onRelease(int mX, int mY, boolean isMenuOpen)
+    {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void writeData(DataWriter dw) {
+    public void writeData(DataWriter dw)
+    {
         dw.writeData(selectedList, DataBitHelper.VARIABLE_TYPE);
         dw.writeData(selectedElement, DataBitHelper.VARIABLE_TYPE);
     }
 
     @Override
-    public void readData(DataReader dr) {
+    public void readData(DataReader dr)
+    {
         selectedList = dr.readData(DataBitHelper.VARIABLE_TYPE);
         selectedElement = dr.readData(DataBitHelper.VARIABLE_TYPE);
     }
 
     @Override
-    public void copyFrom(ComponentMenu menu) {
-        selectedList = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop)menu).selectedList;
-        selectedElement = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop)menu).selectedElement;
+    public void copyFrom(ComponentMenu menu)
+    {
+        selectedList = ((ComponentMenuVariableLoop) menu).selectedList;
+        selectedElement = ((ComponentMenuVariableLoop) menu).selectedElement;
     }
 
     @Override
-    public void refreshData(ContainerManager container, ComponentMenu newData) {
-        gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop newDataLoop = (gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop)newData;
+    public void refreshData(ContainerManager container, ComponentMenu newData)
+    {
+        ComponentMenuVariableLoop newDataLoop = (ComponentMenuVariableLoop) newData;
 
-        if (selectedList != newDataLoop.selectedList) {
+        if (selectedList != newDataLoop.selectedList)
+        {
             selectedList = newDataLoop.selectedList;
             sendClientData(container, true);
         }
 
-        if (selectedElement != newDataLoop.selectedElement) {
+        if (selectedElement != newDataLoop.selectedElement)
+        {
             selectedElement = newDataLoop.selectedElement;
             sendClientData(container, false);
         }
@@ -157,43 +177,53 @@ public class ComponentMenuVariableLoop extends ComponentMenu {
     private static final String NBT_ELEMENT = "Element";
 
     @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup) {
+    public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup)
+    {
         selectedList = nbtTagCompound.getByte(NBT_LIST);
         selectedElement = nbtTagCompound.getByte(NBT_ELEMENT);
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound, boolean pickup) {
-        nbtTagCompound.setByte(NBT_LIST, (byte)selectedList);
-        nbtTagCompound.setByte(NBT_ELEMENT, (byte)selectedElement);
+    public void writeToNBT(NBTTagCompound nbtTagCompound, boolean pickup)
+    {
+        nbtTagCompound.setByte(NBT_LIST, (byte) selectedList);
+        nbtTagCompound.setByte(NBT_ELEMENT, (byte) selectedElement);
     }
 
     @Override
-    public void readNetworkComponent(DataReader dr) {
+    public void readNetworkComponent(DataReader dr)
+    {
         boolean useList = dr.readBoolean();
         int val = dr.readData(DataBitHelper.VARIABLE_TYPE);
-        if (useList) {
+        if (useList)
+        {
             selectedList = val;
-        }else{
+        } else
+        {
             selectedElement = val;
         }
     }
 
-    public Variable getListVariable() {
+    public Variable getListVariable()
+    {
         return getParent().getManager().getVariables()[selectedList];
     }
 
-    public Variable getElementVariable() {
+    public Variable getElementVariable()
+    {
         return getParent().getManager().getVariables()[selectedElement];
     }
 
     @Override
-    public void addErrors(List<String> errors) {
-        if (!getListVariable().isValid()) {
+    public void addErrors(List<String> errors)
+    {
+        if (!getListVariable().isValid())
+        {
             errors.add(Localization.LIST_NOT_DECLARED.toString());
         }
 
-        if (!getElementVariable().isValid()) {
+        if (!getElementVariable().isValid())
+        {
             errors.add(Localization.ELEMENT_NOT_DECLARED.toString());
         }
     }

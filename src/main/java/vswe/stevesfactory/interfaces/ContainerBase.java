@@ -3,25 +3,29 @@ package vswe.stevesfactory.interfaces;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
-import gigabit101.AdvancedSystemManager2.blocks.ITileEntityInterface;
+import vswe.stevesfactory.blocks.ITileEntityInterface;
 
 import java.util.List;
 
-public abstract class ContainerBase extends Container {
+public abstract class ContainerBase extends Container
+{
     private ITileEntityInterface te;
     private InventoryPlayer player;
 
 
-    protected ContainerBase(ITileEntityInterface te, InventoryPlayer player) {
+    protected ContainerBase(ITileEntityInterface te, InventoryPlayer player)
+    {
         this.te = te;
         this.player = player;
     }
 
-    public ITileEntityInterface getTileEntity() {
+    public ITileEntityInterface getTileEntity()
+    {
         return te;
     }
 
-    public List<IContainerListener> getCrafters() {
+    public List<IContainerListener> getCrafters()
+    {
         return listeners;
     }
 }

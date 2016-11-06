@@ -23,32 +23,55 @@ import java.io.IOException;
 import java.util.Set;
 
 @SideOnly(Side.CLIENT)
-public abstract class GuiAntiNEI extends GuiScreen {
-    /** The location of the inventory background texture */
+public abstract class GuiAntiNEI extends GuiScreen
+{
+    /**
+     * The location of the inventory background texture
+     */
     public static final ResourceLocation inventoryBackground = new ResourceLocation("textures/gui/container/inventory.png");
-    /** The X size of the inventory window in pixels. */
+    /**
+     * The X size of the inventory window in pixels.
+     */
     protected int xSize = 176;
-    /** The Y size of the inventory window in pixels. */
+    /**
+     * The Y size of the inventory window in pixels.
+     */
     protected int ySize = 166;
-    /** A list of the players inventory slots */
+    /**
+     * A list of the players inventory slots
+     */
     public Container inventorySlots;
-    /** Starting X position for the Gui. Inconsistent use for Gui backgrounds. */
+    /**
+     * Starting X position for the Gui. Inconsistent use for Gui backgrounds.
+     */
     protected int guiLeft;
-    /** Starting Y position for the Gui. Inconsistent use for Gui backgrounds. */
+    /**
+     * Starting Y position for the Gui. Inconsistent use for Gui backgrounds.
+     */
     protected int guiTop;
-    /** holds the slot currently hovered */
+    /**
+     * holds the slot currently hovered
+     */
     private Slot theSlot;
-    /** Used when touchscreen is enabled. */
+    /**
+     * Used when touchscreen is enabled.
+     */
     private Slot clickedSlot;
-    /** Used when touchscreen is enabled. */
+    /**
+     * Used when touchscreen is enabled.
+     */
     private boolean isRightMouseClick;
-    /** Used when touchscreen is enabled */
+    /**
+     * Used when touchscreen is enabled
+     */
     private ItemStack draggedStack;
     private int touchUpX;
     private int touchUpY;
     private Slot returningStackDestSlot;
     private long returningStackTime;
-    /** Used when touchscreen is enabled */
+    /**
+     * Used when touchscreen is enabled
+     */
     private ItemStack returningStack;
     private Slot currentDragTargetSlot;
     private long dragItemDropDelay;
@@ -85,8 +108,8 @@ public abstract class GuiAntiNEI extends GuiScreen {
     /**
      * Draws the screen and all the components in it.
      *
-     * @param mouseX Mouse x coordinate
-     * @param mouseY Mouse y coordinate
+     * @param mouseX       Mouse x coordinate
+     * @param mouseY       Mouse y coordinate
      * @param partialTicks How far into the current tick (1/20th of a second) the game is
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
@@ -102,18 +125,18 @@ public abstract class GuiAntiNEI extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)i, (float)j, 0.0F);
+        GlStateManager.translate((float) i, (float) j, 0.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.enableRescaleNormal();
         this.theSlot = null;
         int k = 240;
         int l = 240;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)k, (float)l);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) k, (float) l);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)
         {
-            Slot slot = (Slot)this.inventorySlots.inventorySlots.get(i1);
+            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i1);
             this.drawSlot(slot);
 
             if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.canBeHovered())
@@ -146,9 +169,8 @@ public abstract class GuiAntiNEI extends GuiScreen {
             if (this.draggedStack != null && this.isRightMouseClick)
             {
                 itemstack = itemstack.copy();
-                itemstack.stackSize = MathHelper.ceiling_float_int((float)itemstack.stackSize / 2.0F);
-            }
-            else if (this.dragSplitting && this.dragSplittingSlots.size() > 1)
+                itemstack.stackSize = MathHelper.ceiling_float_int((float) itemstack.stackSize / 2.0F);
+            } else if (this.dragSplitting && this.dragSplittingSlots.size() > 1)
             {
                 itemstack = itemstack.copy();
                 itemstack.stackSize = this.dragSplittingRemnant;
@@ -164,7 +186,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
 
         if (this.returningStack != null)
         {
-            float f = (float)(Minecraft.getSystemTime() - this.returningStackTime) / 100.0F;
+            float f = (float) (Minecraft.getSystemTime() - this.returningStackTime) / 100.0F;
 
             if (f >= 1.0F)
             {
@@ -174,9 +196,9 @@ public abstract class GuiAntiNEI extends GuiScreen {
 
             int l2 = this.returningStackDestSlot.xDisplayPosition - this.touchUpX;
             int i3 = this.returningStackDestSlot.yDisplayPosition - this.touchUpY;
-            int l1 = this.touchUpX + (int)((float)l2 * f);
-            int i2 = this.touchUpY + (int)((float)i3 * f);
-            this.drawItemStack(this.returningStack, l1, i2, (String)null);
+            int l1 = this.touchUpX + (int) ((float) l2 * f);
+            int i2 = this.touchUpY + (int) ((float) i3 * f);
+            this.drawItemStack(this.returningStack, l1, i2, (String) null);
         }
 
         GlStateManager.popMatrix();
@@ -194,14 +216,14 @@ public abstract class GuiAntiNEI extends GuiScreen {
 
     /**
      * Draws an ItemStack.
-     *
+     * <p>
      * The z index is increased by 32 (and not decreased afterwards), and the item is then rendered at z=200.
      *
-     * @param stack The ItemStack to draw
-     * @param x The x location to draw the item at
-     * @param y The y location to draw the item at
+     * @param stack   The ItemStack to draw
+     * @param x       The x location to draw the item at
+     * @param y       The y location to draw the item at
      * @param altText An alternative String to display instead of the number of items in the stack. May be null, in
-     * which case the number of items in the stack is rendered.
+     *                which case the number of items in the stack is rendered.
      */
     private void drawItemStack(ItemStack stack, int x, int y, String altText)
     {
@@ -231,9 +253,9 @@ public abstract class GuiAntiNEI extends GuiScreen {
      * Draws the background layer of this container (behind the items).
      *
      * @param partialTicks How far into the current tick the game is, with 0.0 being the start of the tick and 1.0 being
-     * the end.
-     * @param mouseX Mouse x coordinate
-     * @param mouseY Mouse y coordinate
+     *                     the end.
+     * @param mouseX       Mouse x coordinate
+     * @param mouseY       Mouse y coordinate
      */
     protected abstract void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY);
 
@@ -256,8 +278,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
         {
             itemstack = itemstack.copy();
             itemstack.stackSize /= 2;
-        }
-        else if (this.dragSplitting && this.dragSplittingSlots.contains(slotIn) && itemstack1 != null)
+        } else if (this.dragSplitting && this.dragSplittingSlots.contains(slotIn) && itemstack1 != null)
         {
             if (this.dragSplittingSlots.size() == 1)
             {
@@ -281,8 +302,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
                     s = TextFormatting.YELLOW + "" + slotIn.getItemStackLimit(itemstack);
                     itemstack.stackSize = slotIn.getItemStackLimit(itemstack);
                 }
-            }
-            else
+            } else
             {
                 this.dragSplittingSlots.remove(slotIn);
                 this.updateActivePotionEffects();
@@ -358,7 +378,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
     {
         for (int i = 0; i < this.inventorySlots.inventorySlots.size(); ++i)
         {
-            Slot slot = (Slot)this.inventorySlots.inventorySlots.get(i);
+            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i);
 
             if (this.isMouseOverSlot(slot, x, y))
             {
@@ -401,7 +421,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
 
             if (this.mc.gameSettings.touchscreen && flag1 && this.mc.thePlayer.inventory.getItemStack() == null)
             {
-                this.mc.displayGuiScreen((GuiScreen)null);
+                this.mc.displayGuiScreen((GuiScreen) null);
                 return;
             }
 
@@ -414,21 +434,18 @@ public abstract class GuiAntiNEI extends GuiScreen {
                         this.clickedSlot = slot;
                         this.draggedStack = null;
                         this.isRightMouseClick = mouseButton == 1;
-                    }
-                    else
+                    } else
                     {
                         this.clickedSlot = null;
                     }
-                }
-                else if (!this.dragSplitting)
+                } else if (!this.dragSplitting)
                 {
                     if (this.mc.thePlayer.inventory.getItemStack() == null)
                     {
                         if (this.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseButton - 100))
                         {
                             this.handleMouseClick(slot, l, mouseButton, ClickType.CLONE);
-                        }
-                        else
+                        } else
                         {
                             boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
                             ClickType clicktype = ClickType.PICKUP;
@@ -437,8 +454,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
                             {
                                 this.shiftClickedSlot = slot != null && slot.getHasStack() ? slot.getStack() : null;
                                 clicktype = ClickType.QUICK_MOVE;
-                            }
-                            else if (l == -999)
+                            } else if (l == -999)
                             {
                                 clicktype = ClickType.THROW;
                             }
@@ -447,8 +463,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
                         }
 
                         this.ignoreMouseUp = true;
-                    }
-                    else
+                    } else
                     {
                         this.dragSplitting = true;
                         this.dragSplittingButton = mouseButton;
@@ -457,12 +472,10 @@ public abstract class GuiAntiNEI extends GuiScreen {
                         if (mouseButton == 0)
                         {
                             this.dragSplittingLimit = 0;
-                        }
-                        else if (mouseButton == 1)
+                        } else if (mouseButton == 1)
                         {
                             this.dragSplittingLimit = 1;
-                        }
-                        else if (this.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseButton - 100))
+                        } else if (this.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseButton - 100))
                         {
                             this.dragSplittingLimit = 2;
                         }
@@ -495,8 +508,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
                     {
                         this.draggedStack = this.clickedSlot.getStack().copy();
                     }
-                }
-                else if (this.draggedStack.stackSize > 1 && slot != null && Container.canAddItemToSlot(slot, this.draggedStack, false))
+                } else if (this.draggedStack.stackSize > 1 && slot != null && Container.canAddItemToSlot(slot, this.draggedStack, false))
                 {
                     long i = Minecraft.getSystemTime();
 
@@ -510,16 +522,14 @@ public abstract class GuiAntiNEI extends GuiScreen {
                             this.dragItemDropDelay = i + 750L;
                             --this.draggedStack.stackSize;
                         }
-                    }
-                    else
+                    } else
                     {
                         this.currentDragTargetSlot = slot;
                         this.dragItemDropDelay = i;
                     }
                 }
             }
-        }
-        else if (this.dragSplitting && slot != null && itemstack != null && itemstack.stackSize > this.dragSplittingSlots.size() && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.inventorySlots.canDragIntoSlot(slot))
+        } else if (this.dragSplitting && slot != null && itemstack != null && itemstack.stackSize > this.dragSplittingSlots.size() && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && this.inventorySlots.canDragIntoSlot(slot))
         {
             this.dragSplittingSlots.add(slot);
             this.updateActivePotionEffects();
@@ -531,7 +541,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
      *
      * @param mouseX Current mouse x coordinate
      * @param mouseY Current mouse y coordinate
-     * @param state The mouse button that was released
+     * @param state  The mouse button that was released
      */
     protected void mouseReleased(int mouseX, int mouseY, int state)
     {
@@ -553,7 +563,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
             k = -999;
         }
 
-        if (this.doubleClick && slot != null && state == 0 && this.inventorySlots.canMergeSlot((ItemStack)null, slot))
+        if (this.doubleClick && slot != null && state == 0 && this.inventorySlots.canMergeSlot((ItemStack) null, slot))
         {
             if (isShiftKeyDown())
             {
@@ -567,16 +577,14 @@ public abstract class GuiAntiNEI extends GuiScreen {
                         }
                     }
                 }
-            }
-            else
+            } else
             {
                 this.handleMouseClick(slot, k, state, ClickType.PICKUP_ALL);
             }
 
             this.doubleClick = false;
             this.lastClickTime = 0L;
-        }
-        else
+        } else
         {
             if (this.dragSplitting && this.dragSplittingButton != state)
             {
@@ -616,13 +624,11 @@ public abstract class GuiAntiNEI extends GuiScreen {
                             this.returningStackDestSlot = this.clickedSlot;
                             this.returningStack = this.draggedStack;
                             this.returningStackTime = Minecraft.getSystemTime();
-                        }
-                        else
+                        } else
                         {
                             this.returningStack = null;
                         }
-                    }
-                    else if (this.draggedStack != null)
+                    } else if (this.draggedStack != null)
                     {
                         this.touchUpX = mouseX - i;
                         this.touchUpY = mouseY - j;
@@ -634,25 +640,22 @@ public abstract class GuiAntiNEI extends GuiScreen {
                     this.draggedStack = null;
                     this.clickedSlot = null;
                 }
-            }
-            else if (this.dragSplitting && !this.dragSplittingSlots.isEmpty())
+            } else if (this.dragSplitting && !this.dragSplittingSlots.isEmpty())
             {
-                this.handleMouseClick((Slot)null, -999, Container.getQuickcraftMask(0, this.dragSplittingLimit), ClickType.QUICK_CRAFT);
+                this.handleMouseClick((Slot) null, -999, Container.getQuickcraftMask(0, this.dragSplittingLimit), ClickType.QUICK_CRAFT);
 
                 for (Slot slot1 : this.dragSplittingSlots)
                 {
                     this.handleMouseClick(slot1, slot1.slotNumber, Container.getQuickcraftMask(1, this.dragSplittingLimit), ClickType.QUICK_CRAFT);
                 }
 
-                this.handleMouseClick((Slot)null, -999, Container.getQuickcraftMask(2, this.dragSplittingLimit), ClickType.QUICK_CRAFT);
-            }
-            else if (this.mc.thePlayer.inventory.getItemStack() != null)
+                this.handleMouseClick((Slot) null, -999, Container.getQuickcraftMask(2, this.dragSplittingLimit), ClickType.QUICK_CRAFT);
+            } else if (this.mc.thePlayer.inventory.getItemStack() != null)
             {
                 if (this.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(state - 100))
                 {
                     this.handleMouseClick(slot, k, state, ClickType.CLONE);
-                }
-                else
+                } else
                 {
                     boolean flag1 = k != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
 
@@ -690,14 +693,14 @@ public abstract class GuiAntiNEI extends GuiScreen {
      * Test if the 2D point is in a rectangle (relative to the GUI). Args : rectX, rectY, rectWidth, rectHeight, pointX,
      * pointY
      *
-     * @param rectX Left x coordinate of the rectangle
-     * @param rectY Top y coordinate of the rectangle
-     * @param rectWidth Width of the rectangle
+     * @param rectX      Left x coordinate of the rectangle
+     * @param rectY      Top y coordinate of the rectangle
+     * @param rectWidth  Width of the rectangle
      * @param rectHeight Height of the rectangle
-     * @param pointX X coordinate of the point, on screen. this.guiLeft is subtracted from it to get the test location
-     * within the rectangle
-     * @param pointY Y coordinate of the point, on screen. this.guiTop is subtracted from it to get the test location
-     * within the rectangle
+     * @param pointX     X coordinate of the point, on screen. this.guiLeft is subtracted from it to get the test location
+     *                   within the rectangle
+     * @param pointY     Y coordinate of the point, on screen. this.guiTop is subtracted from it to get the test location
+     *                   within the rectangle
      */
     protected boolean isPointInRegion(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY)
     {
@@ -711,11 +714,11 @@ public abstract class GuiAntiNEI extends GuiScreen {
     /**
      * Called when the mouse is clicked over a slot or outside the gui.
      *
-     * @param slotIn The slot that was clicked, or null if the click was outside of the GUI.
-     * @param slotId The ID of the slot that was clicked. There are a few other values that are used with special
-     * clicks.
+     * @param slotIn      The slot that was clicked, or null if the click was outside of the GUI.
+     * @param slotId      The ID of the slot that was clicked. There are a few other values that are used with special
+     *                    clicks.
      * @param mouseButton The mouse button that was clicked.
-     * @param type The type of the click.
+     * @param type        The type of the click.
      */
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type)
     {
@@ -745,8 +748,7 @@ public abstract class GuiAntiNEI extends GuiScreen {
             if (this.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(keyCode))
             {
                 this.handleMouseClick(this.theSlot, this.theSlot.slotNumber, 0, ClickType.CLONE);
-            }
-            else if (this.mc.gameSettings.keyBindDrop.isActiveAndMatches(keyCode))
+            } else if (this.mc.gameSettings.keyBindDrop.isActiveAndMatches(keyCode))
             {
                 this.handleMouseClick(this.theSlot, this.theSlot.slotNumber, isCtrlKeyDown() ? 1 : 0, ClickType.THROW);
             }

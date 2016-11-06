@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class Utils {
+public class Utils
+{
 
     private static final Pattern patternControlCode = Pattern.compile("(?i)\\u00A7[0-9A-FK-OR]");
 
@@ -27,8 +28,7 @@ public class Utils {
         try
         {
             nbttagcompound = CompressedStreamTools.read(datainputstream, sizeTracker);
-        }
-        finally
+        } finally
         {
             datainputstream.close();
         }
@@ -44,8 +44,7 @@ public class Utils {
         try
         {
             CompressedStreamTools.write(tagCompound, dataoutputstream);
-        }
-        finally
+        } finally
         {
             dataoutputstream.close();
         }

@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,9 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -25,27 +24,24 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableRelay;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterMethodRegistration;
-import gigabit101.AdvancedSystemManager2.blocks.ITileEntityInterface;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
-import gigabit101.AdvancedSystemManager2.blocks.UserPermission;
-import gigabit101.AdvancedSystemManager2.interfaces.ContainerRelay;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiRelay;
-import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
-import gigabit101.AdvancedSystemManager2.network.DataReader;
-import gigabit101.AdvancedSystemManager2.network.DataWriter;
-import gigabit101.AdvancedSystemManager2.network.PacketHandler;
-import gigabit101.AdvancedSystemManager2.wrappers.InventoryWrapper;
-import gigabit101.AdvancedSystemManager2.wrappers.InventoryWrapperHorse;
-import gigabit101.AdvancedSystemManager2.wrappers.InventoryWrapperPlayer;
+import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.interfaces.ContainerRelay;
+import vswe.stevesfactory.interfaces.GuiRelay;
+import vswe.stevesfactory.network.DataBitHelper;
+import vswe.stevesfactory.network.DataReader;
+import vswe.stevesfactory.network.DataWriter;
+import vswe.stevesfactory.network.PacketHandler;
+import vswe.stevesfactory.wrappers.InventoryWrapper;
+import vswe.stevesfactory.wrappers.InventoryWrapperHorse;
+import vswe.stevesfactory.wrappers.InventoryWrapperPlayer;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-public class TileEntityRelay extends TileEntityClusterElement implements IInventory, ISidedInventory, IFluidHandler, ITileEntityInterface {
+public class TileEntityRelay extends TileEntityClusterElement implements IInventory, ISidedInventory, IFluidHandler, ITileEntityInterface
+{
 
     private static final int MAX_CHAIN_LENGTH = 512;
     private int[] cachedAllSlots;
@@ -61,53 +57,69 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     private boolean creativeMode;
     public static int PERMISSION_MAX_LENGTH = 255;
 
-    public UUID getOwner() {
+    public UUID getOwner()
+    {
         return owner;
     }
 
-    public void setOwner(EntityLivingBase entity) {
-        if (entity != null && entity instanceof EntityPlayer) {
+    public void setOwner(EntityLivingBase entity)
+    {
+        if (entity != null && entity instanceof EntityPlayer)
+        {
             owner = entity.getUniqueID();
         }
     }
 
-    public void setListRequireOp(boolean val) {
+    public void setListRequireOp(boolean val)
+    {
         doesListRequireOp = val;
     }
 
-    public boolean doesListRequireOp() {
+    public boolean doesListRequireOp()
+    {
         return doesListRequireOp;
     }
 
-    public boolean isCreativeMode() {
+    public boolean isCreativeMode()
+    {
         return creativeMode;
     }
 
-    public void setCreativeMode(boolean creativeMode) {
+    public void setCreativeMode(boolean creativeMode)
+    {
         this.creativeMode = creativeMode;
     }
 
-    public List<UserPermission> getPermissions() {
+    public List<UserPermission> getPermissions()
+    {
         return permissions;
     }
 
-    private boolean isAdvanced() {
-        return gigabit101.AdvancedSystemManager2.blocks.ModBlocks.blockCableRelay.isAdvanced(getBlockMetadata());
+    private boolean isAdvanced()
+    {
+        return ModBlocks.blockCableRelay.isAdvanced(getBlockMetadata());
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
-        try {
+    public int[] getSlotsForFace(EnumFacing side)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
-                if (inventory instanceof ISidedInventory) {
-                    return ((ISidedInventory)inventory).getSlotsForFace(side);
-                }else{
+            if (inventory != null)
+            {
+                if (inventory instanceof ISidedInventory)
+                {
+                    return ((ISidedInventory) inventory).getSlotsForFace(side);
+                } else
+                {
                     int size = inventory.getSizeInventory();
-                    if (cachedAllSlots == null || cachedAllSlots.length != size) {
+                    if (cachedAllSlots == null || cachedAllSlots.length != size)
+                    {
                         cachedAllSlots = new int[size];
-                        for (int i = 0; i < size; i++) {
+                        for (int i = 0; i < size; i++)
+                        {
                             cachedAllSlots[i] = i;
                         }
                     }
@@ -116,443 +128,563 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
             }
 
             return new int[0];
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public boolean canInsertItem(int i, ItemStack itemstack, EnumFacing side) {
-        try {
+    public boolean canInsertItem(int i, ItemStack itemstack, EnumFacing side)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
-                if (inventory instanceof ISidedInventory) {
-                    return ((ISidedInventory)inventory).canInsertItem(i, itemstack, side);
-                }else{
+            if (inventory != null)
+            {
+                if (inventory instanceof ISidedInventory)
+                {
+                    return ((ISidedInventory) inventory).canInsertItem(i, itemstack, side);
+                } else
+                {
                     return inventory.isItemValidForSlot(i, itemstack);
                 }
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public boolean canExtractItem(int i, ItemStack itemstack, EnumFacing side) {
-        try {
+    public boolean canExtractItem(int i, ItemStack itemstack, EnumFacing side)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
-                if (inventory instanceof ISidedInventory) {
-                    return ((ISidedInventory)inventory).canExtractItem(i, itemstack, side);
-                }else{
+            if (inventory != null)
+            {
+                if (inventory instanceof ISidedInventory)
+                {
+                    return ((ISidedInventory) inventory).canExtractItem(i, itemstack, side);
+                } else
+                {
                     return inventory.isItemValidForSlot(i, itemstack);
                 }
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public int getSizeInventory() {
-        try {
+    public int getSizeInventory()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getSizeInventory();
             }
 
             return 0;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public ItemStack getStackInSlot(int i) {
-        try {
+    public ItemStack getStackInSlot(int i)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getStackInSlot(i);
             }
 
             return null;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public ItemStack decrStackSize(int i, int j) {
-        try {
+    public ItemStack decrStackSize(int i, int j)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
-                return  inventory.decrStackSize(i, j);
+            if (inventory != null)
+            {
+                return inventory.decrStackSize(i, j);
             }
 
             return null;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int i) {
+    public ItemStack removeStackFromSlot(int i)
+    {
         //don't drop the things twice
         return null;
     }
 
     @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack) {
-        try {
+    public void setInventorySlotContents(int i, ItemStack itemstack)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 inventory.setInventorySlotContents(i, itemstack);
             }
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public String getName() {
-        try {
+    public String getName()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getName();
             }
 
             return "Unknown";
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public boolean hasCustomName() {
-        try {
+    public boolean hasCustomName()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.hasCustomName();
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        try {
+    public ITextComponent getDisplayName()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getDisplayName();
             }
 
             return null;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public int getInventoryStackLimit() {
-        try {
+    public int getInventoryStackLimit()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getInventoryStackLimit();
             }
 
             return 0;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        try {
+    public boolean isUseableByPlayer(EntityPlayer entityplayer)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.isUseableByPlayer(entityplayer);
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
 
     @Override
-    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-        try {
+    public boolean isItemValidForSlot(int i, ItemStack itemstack)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.isItemValidForSlot(i, itemstack);
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public int getField(int id) {
-        try {
+    public int getField(int id)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getFieldCount();
             }
 
             return 0;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public void setField(int id, int value) {
-        try {
+    public void setField(int id, int value)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 inventory.setField(id, value);
             }
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public int getFieldCount() {
-        try {
+    public int getFieldCount()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 return inventory.getFieldCount();
             }
 
             return 0;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public void clear() {
-        try {
+    public void clear()
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 inventory.clear();
             }
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public void openInventory(EntityPlayer player) {
-        try {
+    public void openInventory(EntityPlayer player)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 inventory.openInventory(player);
             }
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public void closeInventory(EntityPlayer player) {
-        try {
+    public void closeInventory(EntityPlayer player)
+    {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 inventory.closeInventory(player);
             }
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-        try {
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
+    {
+        try
+        {
             IFluidHandler tank = getTank();
 
-            if (tank != null) {
+            if (tank != null)
+            {
                 return tank.fill(from, resource, doFill);
             }
 
             return 0;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-        try {
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
+    {
+        try
+        {
             IFluidHandler tank = getTank();
 
-            if (tank != null) {
+            if (tank != null)
+            {
                 return tank.drain(from, resource, doDrain);
             }
 
             return null;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-        try {
+    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
+    {
+        try
+        {
             IFluidHandler tank = getTank();
 
-            if (tank != null) {
+            if (tank != null)
+            {
                 return tank.drain(from, maxDrain, doDrain);
             }
 
             return null;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public boolean canFill(EnumFacing from, Fluid fluid) {
-        try {
+    public boolean canFill(EnumFacing from, Fluid fluid)
+    {
+        try
+        {
             IFluidHandler tank = getTank();
 
-            if (tank != null) {
+            if (tank != null)
+            {
                 return tank.canFill(from, fluid);
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid) {
-        try {
+    public boolean canDrain(EnumFacing from, Fluid fluid)
+    {
+        try
+        {
             IFluidHandler tank = getTank();
 
-            if (tank != null) {
+            if (tank != null)
+            {
                 return tank.canDrain(from, fluid);
             }
 
             return false;
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from) {
-        try {
+    public FluidTankInfo[] getTankInfo(EnumFacing from)
+    {
+        try
+        {
             IFluidHandler tank = getTank();
 
-            if (tank != null) {
+            if (tank != null)
+            {
                 return tank.getTankInfo(from);
             }
 
             return new FluidTankInfo[0];
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
 
     @Override
-    public void markDirty() {
+    public void markDirty()
+    {
         //super.onInventoryChanged();
-        try {
+        try
+        {
             IInventory inventory = getInventory();
 
-            if (inventory != null) {
+            if (inventory != null)
+            {
                 inventory.markDirty();
             }
-        }finally {
+        } finally
+        {
             unBlockUsage();
         }
     }
 
-    private void blockUsage() {
+    private void blockUsage()
+    {
         blockingUsage = true;
     }
 
-    private void unBlockUsage() {
+    private void unBlockUsage()
+    {
         blockingUsage = false;
         chainLength = 0;
     }
 
-    public boolean isBlockingUsage() {
+    public boolean isBlockingUsage()
+    {
         return blockingUsage || chainLength >= MAX_CHAIN_LENGTH;
     }
 
-    private IFluidHandler getTank() {
+    private IFluidHandler getTank()
+    {
         return getContainer(IFluidHandler.class, 1);
     }
 
-    private IInventory getInventory() {
+    private IInventory getInventory()
+    {
         return getContainer(IInventory.class, 0);
     }
 
-    private <T> T getContainer(Class<T> type, int id) {
-        if (isBlockingUsage()) {
+    private <T> T getContainer(Class<T> type, int id)
+    {
+        if (isBlockingUsage())
+        {
             return null;
         }
 
         blockUsage();
 
-        if (cachedEntities[id] != null) {
-            if (cachedEntities[id].isDead) {
+        if (cachedEntities[id] != null)
+        {
+            if (cachedEntities[id].isDead)
+            {
                 cachedEntities[id] = null;
-                if (id == 0) {
+                if (id == 0)
+                {
                     cachedInventoryWrapper = null;
                 }
-            }else{
+            } else
+            {
                 return getEntityContainer(id);
             }
         }
 
-        EnumFacing direction = ((EnumFacing)getWorld().getBlockState(getPos()).getValue(BlockCableRelay.FACING));
+        EnumFacing direction = ((EnumFacing) getWorld().getBlockState(getPos()).getValue(BlockCableRelay.FACING));
 
         int x = getPos().getX() + direction.getFrontOffsetX();
         int y = getPos().getY() + direction.getFrontOffsetY();
         int z = getPos().getZ() + direction.getFrontOffsetZ();
 
         World world = getWorld();
-        if (world != null) {
+        if (world != null)
+        {
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 
-            if (te != null && type.isInstance(te)) {
-                if (te instanceof gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay) {
-                    gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay relay = (gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay)te;
+            if (te != null && type.isInstance(te))
+            {
+                if (te instanceof TileEntityRelay)
+                {
+                    TileEntityRelay relay = (TileEntityRelay) te;
                     relay.chainLength = chainLength + 1;
                 }
                 return (T) te;
@@ -560,16 +692,20 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
 
 
             List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
-            if (entities != null) {
+            if (entities != null)
+            {
                 double closest = -1;
-                for (Entity entity : entities) {
+                for (Entity entity : entities)
+                {
                     double distance = entity.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
-                    if (isEntityValid(entity, type, id) && (closest == -1 || distance < closest)) {
+                    if (isEntityValid(entity, type, id) && (closest == -1 || distance < closest))
+                    {
                         closest = distance;
                         cachedEntities[id] = entity;
                     }
                 }
-                if (id == 0 && cachedEntities[id] != null) {
+                if (id == 0 && cachedEntities[id] != null)
+                {
                     cachedInventoryWrapper = getInventoryWrapper(cachedEntities[id]);
                 }
 
@@ -581,44 +717,57 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         return null;
     }
 
-    private InventoryWrapper getInventoryWrapper(Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return new InventoryWrapperPlayer((EntityPlayer)entity);
-        }else if(entity instanceof EntityHorse) {
-            return new InventoryWrapperHorse((EntityHorse)entity);
-        }else{
+    private InventoryWrapper getInventoryWrapper(Entity entity)
+    {
+        if (entity instanceof EntityPlayer)
+        {
+            return new InventoryWrapperPlayer((EntityPlayer) entity);
+        } else if (entity instanceof EntityHorse)
+        {
+            return new InventoryWrapperHorse((EntityHorse) entity);
+        } else
+        {
             return null;
         }
     }
 
 
-    private boolean isEntityValid(Entity entity, Class type, int id) {
+    private boolean isEntityValid(Entity entity, Class type, int id)
+    {
         return type.isInstance(entity) || (id == 0 && ((entity instanceof EntityPlayer && allowPlayerInteraction((EntityPlayer) entity)) || entity instanceof EntityHorse));
     }
 
-    private <T> T getEntityContainer(int id) {
-        if (id == 0 && cachedInventoryWrapper != null) {
-            return (T)cachedInventoryWrapper;
+    private <T> T getEntityContainer(int id)
+    {
+        if (id == 0 && cachedInventoryWrapper != null)
+        {
+            return (T) cachedInventoryWrapper;
         }
 
-        return (T)cachedEntities[id];
+        return (T) cachedEntities[id];
     }
 
     @Override
-    public void update() {
+    public void update()
+    {
         cachedEntities[0] = null;
         cachedEntities[1] = null;
         cachedInventoryWrapper = null;
     }
 
-    public boolean allowPlayerInteraction(EntityPlayer player) {
+    public boolean allowPlayerInteraction(EntityPlayer player)
+    {
         return isAdvanced() && (creativeMode != isPlayerActive(player));
     }
 
-    private boolean isPlayerActive(EntityPlayer player) {
-        if (player != null) {
-            for (UserPermission permission : permissions) {
-                if (permission.getUserId().equals(player.getUniqueID())) {
+    private boolean isPlayerActive(EntityPlayer player)
+    {
+        if (player != null)
+        {
+            for (UserPermission permission : permissions)
+            {
+                if (permission.getUserId().equals(player.getUniqueID()))
+                {
                     return permission.isActive();
                 }
             }
@@ -628,23 +777,27 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
     @Override
-    public Container getContainer(TileEntity te, InventoryPlayer inv) {
-        return new ContainerRelay((gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay)te, inv);
+    public Container getContainer(TileEntity te, InventoryPlayer inv)
+    {
+        return new ContainerRelay((TileEntityRelay) te, inv);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public GuiScreen getGui(TileEntity te, InventoryPlayer inv) {
-        return new GuiRelay((gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay)te, inv);
+    public GuiScreen getGui(TileEntity te, InventoryPlayer inv)
+    {
+        return new GuiRelay((TileEntityRelay) te, inv);
     }
 
     @Override
-    public void writeAllData(DataWriter dw) {
+    public void writeAllData(DataWriter dw)
+    {
         dw.writeString(owner.toString(), DataBitHelper.UUID_LENGTH);
         dw.writeBoolean(creativeMode);
         dw.writeBoolean(doesListRequireOp);
         dw.writeData(permissions.size(), DataBitHelper.PERMISSION_ID);
-        for (UserPermission permission : permissions) {
+        for (UserPermission permission : permissions)
+        {
             dw.writeString(permission.getUserId().toString(), DataBitHelper.UUID_LENGTH);
             dw.writeString(permission.getUserName(), DataBitHelper.NAME_LENGTH);
             dw.writeBoolean(permission.isActive());
@@ -654,7 +807,8 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
     @Override
-    public void readAllData(DataReader dr, EntityPlayer player) {
+    public void readAllData(DataReader dr, EntityPlayer player)
+    {
         owner = UUID.fromString(dr.readString(DataBitHelper.UUID_LENGTH));
 
         creativeMode = dr.readBoolean();
@@ -662,7 +816,8 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         int length = dr.readData(DataBitHelper.PERMISSION_ID);
         permissions.clear();
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++)
+        {
             UserPermission permission = new UserPermission(UUID.fromString(dr.readString(DataBitHelper.UUID_LENGTH)), dr.readString(DataBitHelper.NAME_LENGTH));
             permission.setActive(dr.readBoolean());
             permission.setOp(dr.readBoolean());
@@ -671,12 +826,14 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
 
-
     @Override
-    public void readUpdatedData(DataReader dr, EntityPlayer player) {
-        if (!worldObj.isRemote)  {
+    public void readUpdatedData(DataReader dr, EntityPlayer player)
+    {
+        if (!worldObj.isRemote)
+        {
             boolean action = dr.readBoolean();
-            if (action) {
+            if (action)
+            {
 
                 return;
             }
@@ -685,11 +842,15 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         UUID userId = player.getUniqueID();
 
         boolean isOp = false;
-        if (worldObj.isRemote || userId.equals(owner)) {
+        if (worldObj.isRemote || userId.equals(owner))
+        {
             isOp = true;
-        }else{
-            for (UserPermission permission : permissions) {
-                if (userId.equals(permission.getUserId())) {
+        } else
+        {
+            for (UserPermission permission : permissions)
+            {
+                if (userId.equals(permission.getUserId()))
+                {
                     isOp = permission.isOp();
                     break;
                 }
@@ -697,37 +858,48 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         }
 
         boolean userData = dr.readBoolean();
-        if (userData) {
+        if (userData)
+        {
             boolean added = dr.readBoolean();
-            if (added) {
+            if (added)
+            {
                 String UUIDS = dr.readString(DataBitHelper.UUID_LENGTH);
                 UserPermission permission = new UserPermission(UUID.fromString(UUIDS), dr.readString(DataBitHelper.NAME_LENGTH));
 
-                for (UserPermission userPermission : permissions) {
-                    if (userPermission.getUserId().equals(permission.getUserId())) {
+                for (UserPermission userPermission : permissions)
+                {
+                    if (userPermission.getUserId().equals(permission.getUserId()))
+                    {
                         return;
                     }
                 }
 
-                if (worldObj.isRemote) {
+                if (worldObj.isRemote)
+                {
                     permission.setActive(dr.readBoolean());
                     permission.setOp(dr.readBoolean());
                 }
 
-                if (permissions.size() < gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay.PERMISSION_MAX_LENGTH && (worldObj.isRemote || permission.getUserId().equals(userId))) {
+                if (permissions.size() < TileEntityRelay.PERMISSION_MAX_LENGTH && (worldObj.isRemote || permission.getUserId().equals(userId)))
+                {
                     permissions.add(permission);
                 }
-            }else{
+            } else
+            {
                 int id = dr.readData(DataBitHelper.PERMISSION_ID);
 
-                if (id >= 0 && id < permissions.size()) {
+                if (id >= 0 && id < permissions.size())
+                {
                     boolean deleted = dr.readBoolean();
-                    if (deleted) {
+                    if (deleted)
+                    {
                         UserPermission permission = permissions.get(id);
-                        if (isOp || permission.getUserId().equals(userId)) {
+                        if (isOp || permission.getUserId().equals(userId))
+                        {
                             permissions.remove(id);
                         }
-                    }else if(isOp){
+                    } else if (isOp)
+                    {
 
                         UserPermission permission = permissions.get(id);
                         permission.setActive(dr.readBoolean());
@@ -738,15 +910,18 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
             }
 
 
-        }else if(isOp){
+        } else if (isOp)
+        {
             creativeMode = dr.readBoolean();
             doesListRequireOp = dr.readBoolean();
         }
     }
 
 
-    public void updateData(ContainerRelay container) {
-        if (container.oldCreativeMode != isCreativeMode() || container.oldOpList != doesListRequireOp()) {
+    public void updateData(ContainerRelay container)
+    {
+        if (container.oldCreativeMode != isCreativeMode() || container.oldOpList != doesListRequireOp())
+        {
             container.oldOpList = doesListRequireOp();
             container.oldCreativeMode = isCreativeMode();
 
@@ -758,7 +933,8 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         }
 
         //added
-        if (permissions.size() > container.oldPermissions.size()) {
+        if (permissions.size() > container.oldPermissions.size())
+        {
             int id = container.oldPermissions.size();
             UserPermission permission = permissions.get(id);
 
@@ -772,10 +948,13 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
             PacketHandler.sendDataToListeningClients(container, dw);
 
             container.oldPermissions.add(permission.copy());
-        //removed
-        }else if (permissions.size() < container.oldPermissions.size()){
-            for (int i = 0; i < container.oldPermissions.size(); i++) {
-                if (i >= permissions.size() || !permissions.get(i).getUserId().equals(container.oldPermissions.get(i).getUserId())) {
+            //removed
+        } else if (permissions.size() < container.oldPermissions.size())
+        {
+            for (int i = 0; i < container.oldPermissions.size(); i++)
+            {
+                if (i >= permissions.size() || !permissions.get(i).getUserId().equals(container.oldPermissions.get(i).getUserId()))
+                {
                     DataWriter dw = PacketHandler.getWriterForUpdate(container);
                     dw.writeBoolean(true); //user data
                     dw.writeBoolean(false); //existing
@@ -786,13 +965,16 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
                     break;
                 }
             }
-        //updated
-        }else{
-            for (int i = 0; i < permissions.size(); i++) {
+            //updated
+        } else
+        {
+            for (int i = 0; i < permissions.size(); i++)
+            {
                 UserPermission permission = permissions.get(i);
                 UserPermission oldPermission = container.oldPermissions.get(i);
 
-                if (permission.isOp() != oldPermission.isOp() || permission.isActive() != oldPermission.isActive()) {
+                if (permission.isOp() != oldPermission.isOp() || permission.isActive() != oldPermission.isActive())
+                {
                     DataWriter dw = PacketHandler.getWriterForUpdate(container);
                     dw.writeBoolean(true); //user data
                     dw.writeBoolean(false); //existing
@@ -819,16 +1001,19 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     private static final String NBT_EDITOR = "Editor";
 
     @Override
-    public void writeContentToNBT(NBTTagCompound nbtTagCompound) {
+    public void writeContentToNBT(NBTTagCompound nbtTagCompound)
+    {
         nbtTagCompound.setByte(ModBlocks.NBT_PROTOCOL_VERSION, ModBlocks.NBT_CURRENT_PROTOCOL_VERSION);
 
-        if (isAdvanced()) {
-            nbtTagCompound.setString(NBT_OWNER, owner != null ? owner.toString(): UUID.randomUUID().toString());
+        if (isAdvanced())
+        {
+            nbtTagCompound.setString(NBT_OWNER, owner != null ? owner.toString() : UUID.randomUUID().toString());
             nbtTagCompound.setBoolean(NBT_CREATIVE, creativeMode);
             nbtTagCompound.setBoolean(NBT_LIST, doesListRequireOp);
 
             NBTTagList permissionTags = new NBTTagList();
-            for (UserPermission permission : permissions) {
+            for (UserPermission permission : permissions)
+            {
                 NBTTagCompound permissionTag = new NBTTagCompound();
                 permissionTag.setString(NBT_UUID, permission.getUserId().toString());
                 permissionTag.setString(NBT_NAME, permission.getUserName());
@@ -841,13 +1026,17 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
     @Override
-    public void readContentFromNBT(NBTTagCompound nbtTagCompound) {
+    public void readContentFromNBT(NBTTagCompound nbtTagCompound)
+    {
         int version = nbtTagCompound.getByte(ModBlocks.NBT_PROTOCOL_VERSION);
 
-        if (nbtTagCompound.hasKey(NBT_OWNER)) {
-            if (version > 12) {
+        if (nbtTagCompound.hasKey(NBT_OWNER))
+        {
+            if (version > 12)
+            {
                 owner = UUID.fromString(nbtTagCompound.getString(NBT_OWNER));
-            } else {
+            } else
+            {
                 owner = null;
             }
             creativeMode = nbtTagCompound.getBoolean(NBT_CREATIVE);
@@ -855,7 +1044,8 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
             permissions.clear();
 
             NBTTagList permissionTags = nbtTagCompound.getTagList(NBT_PERMISSIONS, 10);
-            for (int i = 0; i < permissionTags.tagCount(); i++) {
+            for (int i = 0; i < permissionTags.tagCount(); i++)
+            {
                 NBTTagCompound permissionTag = permissionTags.getCompoundTagAt(i);
                 UserPermission permission = new UserPermission(UUID.fromString(permissionTag.getString(NBT_UUID)), permissionTag.getString(NBT_NAME));
                 permission.setActive(permissionTag.getBoolean(NBT_ACTIVE));
@@ -866,7 +1056,8 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
     @Override
-    protected EnumSet<ClusterMethodRegistration> getRegistrations() {
+    protected EnumSet<ClusterMethodRegistration> getRegistrations()
+    {
         return EnumSet.of(ClusterMethodRegistration.ON_BLOCK_PLACED_BY, ClusterMethodRegistration.ON_BLOCK_ACTIVATED);
     }
 }

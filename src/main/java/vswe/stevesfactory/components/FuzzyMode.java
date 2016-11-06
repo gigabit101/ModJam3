@@ -1,9 +1,9 @@
 package vswe.stevesfactory.components;
 
+import vswe.stevesfactory.Localization;
 
-import gigabit101.AdvancedSystemManager2.Localization;
-
-public enum FuzzyMode {
+public enum FuzzyMode
+{
     PRECISE(Localization.DETECTION_PRECISE, true),
     NBT_FUZZY(Localization.DETECTION_NBT_FUZZY, true),
     FUZZY(Localization.DETECTION_FUZZY, false),
@@ -14,18 +14,21 @@ public enum FuzzyMode {
     private Localization text;
     private boolean useMeta;
 
-    private FuzzyMode(Localization text, boolean useMeta) {
+    private FuzzyMode(Localization text, boolean useMeta)
+    {
         this.text = text;
         this.useMeta = useMeta;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return text.toString();
     }
 
 
-    public boolean requiresMetaData() {
+    public boolean requiresMetaData()
+    {
         return useMeta;
     }
 }

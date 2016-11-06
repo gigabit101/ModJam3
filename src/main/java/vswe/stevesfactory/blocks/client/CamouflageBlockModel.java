@@ -12,7 +12,8 @@ import net.minecraftforge.common.model.IModelState;
 
 import java.util.Collection;
 
-public class CamouflageBlockModel implements IModel {
+public class CamouflageBlockModel implements IModel
+{
 
     public static final ResourceLocation MODEL = new ResourceLocation("stevesfactorymanager:block/cable_camouflage");
     public static final ResourceLocation MODEL_CLUSTER = new ResourceLocation("stevesfactorymanager:block/cable_cluster");
@@ -29,27 +30,32 @@ public class CamouflageBlockModel implements IModel {
 
     private boolean isCamouflage;
 
-    public CamouflageBlockModel(IResourceManager resourceManager, boolean isCamouflage) {
+    public CamouflageBlockModel(IResourceManager resourceManager, boolean isCamouflage)
+    {
         this.isCamouflage = isCamouflage;
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies() {
-        return isCamouflage ? ImmutableList.copyOf(new ResourceLocation[]{MODEL}): ImmutableList.copyOf(new ResourceLocation[]{MODEL, MODEL_CLUSTER, MODEL_CLUSTER_ADV});
+    public Collection<ResourceLocation> getDependencies()
+    {
+        return isCamouflage ? ImmutableList.copyOf(new ResourceLocation[]{MODEL}) : ImmutableList.copyOf(new ResourceLocation[]{MODEL, MODEL_CLUSTER, MODEL_CLUSTER_ADV});
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures() {
-        return isCamouflage ? ImmutableList.copyOf(new ResourceLocation[]{NORMAL, INSIDE, TRANSFORM}): ImmutableList.copyOf(new ResourceLocation[]{NORMAL, INSIDE, TRANSFORM, CL_SIDE, CL_FRONT, CL_ADV_SIDE, CL_ADV_FRONT});
+    public Collection<ResourceLocation> getTextures()
+    {
+        return isCamouflage ? ImmutableList.copyOf(new ResourceLocation[]{NORMAL, INSIDE, TRANSFORM}) : ImmutableList.copyOf(new ResourceLocation[]{NORMAL, INSIDE, TRANSFORM, CL_SIDE, CL_FRONT, CL_ADV_SIDE, CL_ADV_FRONT});
     }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        return new gigabit101.AdvancedSystemManager2.blocks.client.BakedCamouflageBlockModel(state, format, bakedTextureGetter, isCamouflage);
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    {
+        return new BakedCamouflageBlockModel(state, format, bakedTextureGetter, isCamouflage);
     }
 
     @Override
-    public IModelState getDefaultState() {
+    public IModelState getDefaultState()
+    {
         return null;
     }
 }

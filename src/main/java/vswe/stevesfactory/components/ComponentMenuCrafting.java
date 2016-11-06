@@ -1,33 +1,33 @@
 package vswe.stevesfactory.components;
 
-
-import gigabit101.AdvancedSystemManager2.components.CraftingSetting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.CollisionHelper;
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuItem;
-import gigabit101.AdvancedSystemManager2.components.CraftingDummy;
-import gigabit101.AdvancedSystemManager2.components.FlowComponent;
-import gigabit101.AdvancedSystemManager2.components.Setting;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import vswe.stevesfactory.CollisionHelper;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.GuiManager;
 
-public class ComponentMenuCrafting extends ComponentMenuItem {
-    private gigabit101.AdvancedSystemManager2.components.CraftingSetting resultItem;
+public class ComponentMenuCrafting extends ComponentMenuItem
+{
+    private CraftingSetting resultItem;
     private CraftingDummy dummy;
 
-    public ComponentMenuCrafting(FlowComponent parent) {
+    public ComponentMenuCrafting(FlowComponent parent)
+    {
         super(parent, CraftingSetting.class);
 
-        resultItem = new CraftingSetting(9) {
+        resultItem = new CraftingSetting(9)
+        {
             @Override
-            public boolean canChangeMetaData() {
+            public boolean canChangeMetaData()
+            {
                 return false;
             }
 
             @Override
-            public void delete() {
-                for (Setting setting : settings) {
+            public void delete()
+            {
+                for (Setting setting : settings)
+                {
                     setting.clear();
                     writeServerData(DataTypeHeader.CLEAR, setting);
                 }
@@ -44,16 +44,19 @@ public class ComponentMenuCrafting extends ComponentMenuItem {
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return Localization.CRAFTING_MENU.toString();
     }
 
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void draw(GuiManager gui, int mX, int mY) {
+    public void draw(GuiManager gui, int mX, int mY)
+    {
         super.draw(gui, mX, mY);
-        if (!isEditing() && !isSearching() && resultItem.getItem() != null) {
+        if (!isEditing() && !isSearching() && resultItem.getItem() != null)
+        {
             drawResultObject(gui, resultItem.getItem(), getResultX(), getResultY());
             gui.drawItemAmount(resultItem.getItem(), getResultX(), getResultY());
         }
@@ -61,10 +64,13 @@ public class ComponentMenuCrafting extends ComponentMenuItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawMouseOver(GuiManager gui, int mX, int mY) {
+    public void drawMouseOver(GuiManager gui, int mX, int mY)
+    {
         super.drawMouseOver(gui, mX, mY);
-        if (!isEditing() && !isSearching() && resultItem.getItem() != null) {
-            if (CollisionHelper.inBounds(getResultX(), getResultY(), ITEM_SIZE, ITEM_SIZE, mX, mY)) {
+        if (!isEditing() && !isSearching() && resultItem.getItem() != null)
+        {
+            if (CollisionHelper.inBounds(getResultX(), getResultY(), ITEM_SIZE, ITEM_SIZE, mX, mY))
+            {
                 gui.drawMouseOver(getResultObjectMouseOver(resultItem.getItem()), mX, mY);
             }
         }
@@ -72,47 +78,56 @@ public class ComponentMenuCrafting extends ComponentMenuItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void onClick(int mX, int mY, int button) {
+    public void onClick(int mX, int mY, int button)
+    {
         super.onClick(mX, mY, button);
-        if (!isEditing() && !isSearching() && resultItem.getItem() != null) {
-            if (button == 1 && CollisionHelper.inBounds(getResultX(), getResultY(), ITEM_SIZE, ITEM_SIZE, mX, mY)) {
+        if (!isEditing() && !isSearching() && resultItem.getItem() != null)
+        {
+            if (button == 1 && CollisionHelper.inBounds(getResultX(), getResultY(), ITEM_SIZE, ITEM_SIZE, mX, mY))
+            {
                 scrollControllerSelected.onClick(resultItem, mX, mY, 1);
             }
         }
     }
 
 
-
-    private int getResultX() {
+    private int getResultX()
+    {
         return ITEM_X + ITEM_SIZE_WITH_MARGIN * 3;
     }
 
-    private int getResultY() {
+    private int getResultY()
+    {
         return scrollControllerSelected.getScrollingStartY() + ITEM_SIZE_WITH_MARGIN;
     }
 
     @Override
-    protected int getSettingCount() {
+    protected int getSettingCount()
+    {
         return 9;
     }
 
 
     @Override
-    protected void initRadioButtons() {
+    protected void initRadioButtons()
+    {
         //no radio buttons
     }
 
     @Override
-    protected void onSettingContentChange() {
+    protected void onSettingContentChange()
+    {
         resultItem.setItem(dummy.getResult());
     }
 
 
-    public CraftingDummy getDummy() {
+    public CraftingDummy getDummy()
+    {
         return dummy;
     }
 
-    public CraftingSetting getResultItem() {
+    public CraftingSetting getResultItem()
+    {
         return resultItem;
     }
 }

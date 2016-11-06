@@ -1,22 +1,24 @@
 package vswe.stevesfactory.components;
 
 
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrder;
-import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import vswe.stevesfactory.Localization;
 
-public class ComponentMenuListOrderVariable extends ComponentMenuListOrder {
-    public ComponentMenuListOrderVariable(FlowComponent parent) {
+public class ComponentMenuListOrderVariable extends ComponentMenuListOrder
+{
+    public ComponentMenuListOrderVariable(FlowComponent parent)
+    {
         super(parent);
     }
 
     @Override
-    public boolean isVisible() {
-        return getParent().getConnectionSet() == gigabit101.AdvancedSystemManager2.components.ConnectionSet.STANDARD;
+    public boolean isVisible()
+    {
+        return getParent().getConnectionSet() == ConnectionSet.STANDARD;
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return Localization.VALUE_ORDER_MENU.toString();
     }
 }

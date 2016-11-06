@@ -1,11 +1,10 @@
 package vswe.stevesfactory;
 
-
-import gigabit101.AdvancedSystemManager2.AdvancedSystemManager2;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.translation.I18n;
 
-public enum Localization {
+public enum Localization
+{
     TRIGGER_SHORT,
     TRIGGER_LONG,
     INPUT_SHORT,
@@ -39,7 +38,7 @@ public enum Localization {
     CAMOUFLAGE_SHORT,
     CAMOUFLAGE_LONG,
     SIGN_SHORT,
-    SIGN_LONG ,
+    SIGN_LONG,
 
     CONNECTION_INPUT,
     CONNECTION_OUTPUT,
@@ -355,7 +354,7 @@ public enum Localization {
     EDITOR_DESCRIPTION_SHORT,
     USER_DESCRIPTION_SHORT,
     EDITOR_DESCRIPTION_LONG,
-    USER_DESCRIPTION_LONG ,
+    USER_DESCRIPTION_LONG,
     PERMISSION_OWNER,
     PERMISSION_EDITOR,
     PERMISSION_USER,
@@ -364,24 +363,27 @@ public enum Localization {
     PERMISSION_INVENTORY,
     PERMISSION_DENIED;
 
-
-
     private String name;
 
-    private Localization() {
+    private Localization()
+    {
         String[] split = super.toString().split("_");
         this.name = "";
-        for (String s : split) {
+        for (String s : split)
+        {
             this.name += s.charAt(0) + s.substring(1).toLowerCase();
         }
     }
 
-    public String toString() {
-        return I18n.translateToLocal("gui." + AdvancedSystemManager2.UNLOCALIZED_START + name);
+    public String toString()
+    {
+        return I18n.translateToLocal("gui." + StevesFactoryManager.UNLOCALIZED_START + name);
     }
 
-    public static gigabit101.AdvancedSystemManager2.Localization getDirectionLocalization(EnumFacing facing) {
-        switch (facing) {
+    public static Localization getDirectionLocalization(EnumFacing facing)
+    {
+        switch (facing)
+        {
             case DOWN:
                 return DOWN;
             case UP:

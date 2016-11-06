@@ -2,47 +2,49 @@ package vswe.stevesfactory.blocks;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterMethodRegistration;
-import gigabit101.AdvancedSystemManager2.blocks.IRedstoneNode;
-import gigabit101.AdvancedSystemManager2.blocks.ITriggerNode;
-import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import net.minecraft.util.math.BlockPos;
+import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
 
-public class TileEntityInput extends TileEntityClusterElement implements IRedstoneNode, gigabit101.AdvancedSystemManager2.blocks.ISystemListener, ITriggerNode {
+public class TileEntityInput extends TileEntityClusterElement implements IRedstoneNode, ISystemListener, ITriggerNode
+{
     private List<TileEntityManager> managerList = new ArrayList<TileEntityManager>();
     private int[] oldPowered = new int[EnumFacing.values().length];
     private int[] isPowered = new int[EnumFacing.values().length];
 
 
     @Override
-    public void added(TileEntityManager owner) {
-        if (!managerList.contains(owner)) {
+    public void added(TileEntityManager owner)
+    {
+        if (!managerList.contains(owner))
+        {
             managerList.add(owner);
         }
     }
 
     @Override
-    public void removed(TileEntityManager owner) {
+    public void removed(TileEntityManager owner)
+    {
         managerList.remove(owner);
     }
 
-    public void triggerRedstone() {
+    public void triggerRedstone()
+    {
         isPowered = new int[isPowered.length];
-        for (int i = 0; i < isPowered.length; i++) {
+        for (int i = 0; i < isPowered.length; i++)
+        {
             EnumFacing direction = EnumFacing.getFront(i);
             BlockPos pos = new BlockPos(direction.getFrontOffsetX() + this.getPos().getX(), direction.getFrontOffsetY() + this.getPos().getY(), direction.getFrontOffsetZ() + this.getPos().getZ());
             isPowered[i] = worldObj.getRedstonePower(pos, direction);
         }
 
-        for (int i = managerList.size() - 1; i >= 0; i--) {
+        for (int i = managerList.size() - 1; i >= 0; i--)
+        {
             managerList.get(i).triggerRedstone(this);
         }
 
@@ -51,7 +53,8 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
     }
 
     @Override
-    public int[] getPower() {
+    public int[] getPower()
+    {
         return isPowered;
     }
 
@@ -60,12 +63,14 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
 
 
     @Override
-    public void readContentFromNBT(NBTTagCompound nbtTagCompound) {
+    public void readContentFromNBT(NBTTagCompound nbtTagCompound)
+    {
         int version = nbtTagCompound.getByte(ModBlocks.NBT_PROTOCOL_VERSION);
 
 
         NBTTagList sidesTag = nbtTagCompound.getTagList(NBT_SIDES, 10);
-        for (int i = 0; i < sidesTag.tagCount(); i++) {
+        for (int i = 0; i < sidesTag.tagCount(); i++)
+        {
 
             NBTTagCompound sideTag = sidesTag.getCompoundTagAt(i);
 
@@ -74,13 +79,14 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
     }
 
 
-
     @Override
-    public void writeContentToNBT(NBTTagCompound nbtTagCompound) {
+    public void writeContentToNBT(NBTTagCompound nbtTagCompound)
+    {
         nbtTagCompound.setByte(ModBlocks.NBT_PROTOCOL_VERSION, ModBlocks.NBT_CURRENT_PROTOCOL_VERSION);
 
         NBTTagList sidesTag = new NBTTagList();
-        for (int power : isPowered) {
+        for (int power : isPowered)
+        {
             NBTTagCompound sideTag = new NBTTagCompound();
 
             sideTag.setByte(NBT_POWER, (byte) power);
@@ -93,17 +99,20 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
     }
 
     @Override
-    public int[] getData() {
+    public int[] getData()
+    {
         return isPowered;
     }
 
     @Override
-    public int[] getOldData() {
+    public int[] getOldData()
+    {
         return oldPowered;
     }
 
     @Override
-    protected EnumSet<ClusterMethodRegistration> getRegistrations() {
+    protected EnumSet<ClusterMethodRegistration> getRegistrations()
+    {
         return EnumSet.of(ClusterMethodRegistration.CAN_CONNECT_REDSTONE, ClusterMethodRegistration.ON_NEIGHBOR_BLOCK_CHANGED, ClusterMethodRegistration.ON_BLOCK_ADDED);
     }
 }

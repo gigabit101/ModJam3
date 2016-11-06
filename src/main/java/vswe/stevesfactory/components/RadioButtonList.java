@@ -1,16 +1,15 @@
 package vswe.stevesfactory.components;
 
-
-import gigabit101.AdvancedSystemManager2.components.RadioButton;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.CollisionHelper;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import vswe.stevesfactory.CollisionHelper;
+import vswe.stevesfactory.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RadioButtonList {
+public abstract class RadioButtonList
+{
 
     private static final int RADIO_SIZE = 8;
     private static final int RADIO_SRC_X = 30;
@@ -18,19 +17,24 @@ public abstract class RadioButtonList {
     private static final int RADIO_TEXT_X = 12;
     private static final int RADIO_TEXT_Y = 2;
 
-    private List<gigabit101.AdvancedSystemManager2.components.RadioButton> radioButtonList;
+    private List<RadioButton> radioButtonList;
     private int selectedOption;
 
-    public RadioButtonList() {
+    public RadioButtonList()
+    {
         radioButtonList = new ArrayList<RadioButton>();
 
     }
+
     @SideOnly(Side.CLIENT)
-    public void draw(GuiManager gui, int mX, int mY) {
-        for (int i = 0; i < radioButtonList.size(); i++) {
+    public void draw(GuiManager gui, int mX, int mY)
+    {
+        for (int i = 0; i < radioButtonList.size(); i++)
+        {
             RadioButton radioButton = radioButtonList.get(i);
 
-            if (radioButton.isVisible()) {
+            if (radioButton.isVisible())
+            {
                 int srcRadioX = getSelectedOption() == i ? 1 : 0;
                 int srcRadioY = CollisionHelper.inBounds(radioButton.getX(), radioButton.getY(), RADIO_SIZE, RADIO_SIZE, mX, mY) ? 1 : 0;
 
@@ -40,36 +44,44 @@ public abstract class RadioButtonList {
         }
     }
 
-    public void onClick(int mX, int mY, int button) {
-        for (int i = 0; i < radioButtonList.size(); i++) {
+    public void onClick(int mX, int mY, int button)
+    {
+        for (int i = 0; i < radioButtonList.size(); i++)
+        {
             RadioButton radioButton = radioButtonList.get(i);
 
-            if (radioButton.isVisible() && CollisionHelper.inBounds(radioButton.getX(), radioButton.getY(), RADIO_SIZE, RADIO_SIZE, mX, mY) && getSelectedOption() != i) {
+            if (radioButton.isVisible() && CollisionHelper.inBounds(radioButton.getX(), radioButton.getY(), RADIO_SIZE, RADIO_SIZE, mX, mY) && getSelectedOption() != i)
+            {
                 updateSelectedOption(i);
                 break;
             }
         }
     }
 
-    public int getSelectedOption() {
+    public int getSelectedOption()
+    {
         return selectedOption;
     }
 
-    public void setSelectedOption(int selectedOption) {
+    public void setSelectedOption(int selectedOption)
+    {
         this.selectedOption = selectedOption;
     }
 
     public abstract void updateSelectedOption(int selectedOption);
 
-    public void add(RadioButton radioButton) {
+    public void add(RadioButton radioButton)
+    {
         radioButtonList.add(radioButton);
     }
 
-    public final int getRawSelectedOption() {
+    public final int getRawSelectedOption()
+    {
         return selectedOption;
     }
 
-    public int size() {
+    public int size()
+    {
         return radioButtonList.size();
     }
 }

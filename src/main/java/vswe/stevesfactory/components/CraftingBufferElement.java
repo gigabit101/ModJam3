@@ -5,21 +5,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
-import gigabit101.AdvancedSystemManager2.components.CommandExecutor;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerScrap;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuCrafting;
-import gigabit101.AdvancedSystemManager2.components.CraftingSetting;
-import gigabit101.AdvancedSystemManager2.components.FuzzyMode;
-import gigabit101.AdvancedSystemManager2.components.IItemBufferElement;
-import gigabit101.AdvancedSystemManager2.components.IItemBufferSubElement;
-import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
-import gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
+import vswe.stevesfactory.blocks.TileEntityManager;
 
 import java.util.*;
 
-public class CraftingBufferElement implements IItemBufferElement, IItemBufferSubElement {
+public class CraftingBufferElement implements IItemBufferElement, IItemBufferSubElement
+{
 
     private static final ItemStack DUMMY_ITEM = new ItemStack(Item.getItemById(1), 0, 0);
 
@@ -33,7 +25,8 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     private int overflowBuffer;
     private List<ItemStack> containerItems;
 
-    public CraftingBufferElement(CommandExecutor executor, ComponentMenuCrafting craftingMenu, ComponentMenuContainerScrap scrapMenu) {
+    public CraftingBufferElement(CommandExecutor executor, ComponentMenuCrafting craftingMenu, ComponentMenuContainerScrap scrapMenu)
+    {
         this.executor = executor;
         this.craftingMenu = craftingMenu;
         this.scrapMenu = scrapMenu;
@@ -44,61 +37,78 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
 
 
     @Override
-    public void prepareSubElements() {
+    public void prepareSubElements()
+    {
         isCrafting = true;
         justRemoved = false;
     }
 
     @Override
-    public IItemBufferSubElement getSubElement() {
-        if (isCrafting && result != null) {
+    public IItemBufferSubElement getSubElement()
+    {
+        if (isCrafting && result != null)
+        {
             isCrafting = false;
             return this;
-        }else{
+        } else
+        {
             return null;
         }
     }
 
     @Override
-    public void removeSubElement() {
+    public void removeSubElement()
+    {
         //nothing to do
     }
 
     @Override
-    public void releaseSubElements() {
-        if (result != null) {
-            if (overflowBuffer > 0) {
+    public void releaseSubElements()
+    {
+        if (result != null)
+        {
+            if (overflowBuffer > 0)
+            {
                 ItemStack overflow = result.copy();
                 overflow.stackSize = overflowBuffer;
                 disposeOfExtraItem(overflow);
                 overflowBuffer = 0;
             }
-            for (ItemStack containerItem : containerItems) {
+            for (ItemStack containerItem : containerItems)
+            {
                 disposeOfExtraItem(containerItem);
             }
             containerItems.clear();
         }
     }
 
-    private static  final  double SPEED_MULTIPLIER = 0.05F;
+    private static final double SPEED_MULTIPLIER = 0.05F;
     private static final Random rand = new Random();
-    private void disposeOfExtraItem(ItemStack itemStack) {
+
+    private void disposeOfExtraItem(ItemStack itemStack)
+    {
         TileEntityManager manager = craftingMenu.getParent().getManager();
         List<SlotInventoryHolder> inventories = CommandExecutor.getContainers(manager, scrapMenu, ConnectionBlockType.INVENTORY);
 
-        for (SlotInventoryHolder inventoryHolder : inventories) {
+        for (SlotInventoryHolder inventoryHolder : inventories)
+        {
             IInventory inventory = inventoryHolder.getInventory();
 
-            for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                if (inventory.isItemValidForSlot(i, itemStack)) {
+            for (int i = 0; i < inventory.getSizeInventory(); i++)
+            {
+                if (inventory.isItemValidForSlot(i, itemStack))
+                {
                     ItemStack itemInSlot = inventory.getStackInSlot(i);
-                    if (itemInSlot == null || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable())){
+                    if (itemInSlot == null || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
+                    {
                         int itemCountInSlot = itemInSlot == null ? 0 : itemInSlot.stackSize;
 
                         int moveCount = Math.min(itemStack.stackSize, Math.min(inventory.getInventoryStackLimit(), itemStack.getMaxStackSize()) - itemCountInSlot);
 
-                        if (moveCount > 0) {
-                            if (itemInSlot == null) {
+                        if (moveCount > 0)
+                        {
+                            if (itemInSlot == null)
+                            {
                                 itemInSlot = itemStack.copy();
                                 itemInSlot.stackSize = 0;
                                 inventory.setInventorySlotContents(i, itemInSlot);
@@ -107,7 +117,8 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
                             itemInSlot.stackSize += moveCount;
                             itemStack.stackSize -= moveCount;
                             inventory.markDirty();
-                            if (itemStack.stackSize == 0) {
+                            if (itemStack.stackSize == 0)
+                            {
                                 return;
                             }
                         }
@@ -116,7 +127,6 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
             }
 
         }
-
 
 
         double spawnX = manager.getPos().getX() + rand.nextDouble() * 0.8 + 0.1;
@@ -133,23 +143,28 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     }
 
     @Override
-    public int retrieveItemCount(int moveCount) {
+    public int retrieveItemCount(int moveCount)
+    {
         return moveCount; //no limit
     }
 
     @Override
-    public void decreaseStackSize(int moveCount) {
+    public void decreaseStackSize(int moveCount)
+    {
         //no limit
     }
 
     @Override
-    public void remove() {
+    public void remove()
+    {
         //nothing to do
     }
 
     @Override
-    public void onUpdate() {
-        for (IInventory inventory : inventories) {
+    public void onUpdate()
+    {
+        for (IInventory inventory : inventories)
+        {
             inventory.markDirty();
         }
         inventories.clear();
@@ -157,21 +172,27 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
 
 
     @Override
-    public int getSizeLeft() {
-        if (!justRemoved) {
+    public int getSizeLeft()
+    {
+        if (!justRemoved)
+        {
             return overflowBuffer > 0 ? overflowBuffer : findItems(false) ? result.stackSize : 0;
-        }else{
+        } else
+        {
             justRemoved = false;
             return 0;
         }
     }
 
     @Override
-    public void reduceAmount(int amount) {
+    public void reduceAmount(int amount)
+    {
         justRemoved = true;
-        if (overflowBuffer > 0) {
+        if (overflowBuffer > 0)
+        {
             overflowBuffer = overflowBuffer - amount;
-        }else{
+        } else
+        {
             findItems(true);
             overflowBuffer = result.stackSize - amount;
         }
@@ -179,8 +200,10 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     }
 
     @Override
-    public ItemStack getItemStack() {
-        if (useAdvancedDetection()) {
+    public ItemStack getItemStack()
+    {
+        if (useAdvancedDetection())
+        {
             findItems(false);
         }
 
@@ -189,42 +212,55 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
 
     private List<IInventory> inventories = new ArrayList<IInventory>();
 
-    private boolean useAdvancedDetection() {
+    private boolean useAdvancedDetection()
+    {
         return craftingMenu.getResultItem().getFuzzyMode() != FuzzyMode.PRECISE;
     }
 
-    private boolean findItems(boolean remove) {
+    private boolean findItems(boolean remove)
+    {
         Map<Integer, ItemStack> foundItems = new HashMap<Integer, ItemStack>();
-        for (gigabit101.AdvancedSystemManager2.components.ItemBufferElement itemBufferElement : executor.itemBuffer) {
+        for (ItemBufferElement itemBufferElement : executor.itemBuffer)
+        {
             int count = itemBufferElement.retrieveItemCount(9);
-            for (Iterator<SlotStackInventoryHolder> iterator = itemBufferElement.getSubElements().iterator(); iterator.hasNext(); ) {
+            for (Iterator<SlotStackInventoryHolder> iterator = itemBufferElement.getSubElements().iterator(); iterator.hasNext(); )
+            {
                 IItemBufferSubElement itemBufferSubElement = iterator.next();
                 ItemStack itemstack = itemBufferSubElement.getItemStack();
                 int subCount = Math.min(count, itemBufferSubElement.getSizeLeft());
-                for (int i = 0; i < 9; i++) {
+                for (int i = 0; i < 9; i++)
+                {
                     CraftingSetting setting = (CraftingSetting) craftingMenu.getSettings().get(i);
-                    if (foundItems.get(i) == null) {
-                        if (!setting.isValid()) {
+                    if (foundItems.get(i) == null)
+                    {
+                        if (!setting.isValid())
+                        {
                             foundItems.put(i, DUMMY_ITEM);
-                        } else if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack)) {
+                        } else if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack))
+                        {
                             foundItems.put(i, itemstack.copy());
 
-                            if (craftingMenu.getDummy().isItemValidForRecipe(recipe, craftingMenu.getResultItem(), foundItems, useAdvancedDetection())) {
+                            if (craftingMenu.getDummy().isItemValidForRecipe(recipe, craftingMenu.getResultItem(), foundItems, useAdvancedDetection()))
+                            {
                                 subCount--;
                                 count--;
-                                if (remove) {
-                                    if (itemstack.getItem().hasContainerItem(itemstack)) {
+                                if (remove)
+                                {
+                                    if (itemstack.getItem().hasContainerItem(itemstack))
+                                    {
                                         containerItems.add(itemstack.getItem().getContainerItem(itemstack));
                                     }
                                     itemBufferElement.decreaseStackSize(1);
                                     itemBufferSubElement.reduceAmount(1);
-                                    if (itemBufferSubElement.getSizeLeft() == 0) {
+                                    if (itemBufferSubElement.getSizeLeft() == 0)
+                                    {
                                         itemBufferSubElement.remove();
                                         iterator.remove();
                                     }
-                                    inventories.add(((SlotStackInventoryHolder)itemBufferSubElement).getInventory());
+                                    inventories.add(((SlotStackInventoryHolder) itemBufferSubElement).getInventory());
                                 }
-                            }else{
+                            } else
+                            {
                                 foundItems.remove(i);
                             }
                         }
@@ -234,12 +270,13 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
         }
 
 
-
-        if (foundItems.size() == 9) {
+        if (foundItems.size() == 9)
+        {
             result = craftingMenu.getDummy().getResult(foundItems);
             result = result != null ? result.copy() : null;
             return true;
-        }else{
+        } else
+        {
             return false;
         }
     }

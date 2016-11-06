@@ -1,8 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityCamouflage;
-import gigabit101.AdvancedSystemManager2.network.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -15,68 +12,74 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterMethodRegistration;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry;
-import gigabit101.AdvancedSystemManager2.blocks.ITileEntityInterface;
-import gigabit101.AdvancedSystemManager2.blocks.ItemCluster;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
+import vswe.stevesfactory.network.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TileEntityCluster extends TileEntity implements ITileEntityInterface, IPacketBlock, ITickable {
+public class TileEntityCluster extends TileEntity implements ITileEntityInterface, IPacketBlock, ITickable
+{
 
     private boolean requestedInfo;
     private List<TileEntityClusterElement> elements;
     private List<ClusterRegistry> registryList;
     private Map<ClusterMethodRegistration, List<Pair>> methodRegistration;
     private ITileEntityInterface interfaceObject;  //only the relay is currently having a interface
-    private gigabit101.AdvancedSystemManager2.blocks.TileEntityCamouflage camouflageObject;
+    private TileEntityCamouflage camouflageObject;
 
-    public TileEntityCluster() {
+    public TileEntityCluster()
+    {
         elements = new ArrayList<TileEntityClusterElement>();
         registryList = new ArrayList<ClusterRegistry>();
         methodRegistration = new HashMap<ClusterMethodRegistration, List<Pair>>();
-        for (ClusterMethodRegistration clusterMethodRegistration : ClusterMethodRegistration.values()) {
+        for (ClusterMethodRegistration clusterMethodRegistration : ClusterMethodRegistration.values())
+        {
             methodRegistration.put(clusterMethodRegistration, new ArrayList<Pair>());
         }
     }
 
-    public void loadElements(ItemStack itemStack) {
+    public void loadElements(ItemStack itemStack)
+    {
         NBTTagCompound compound = itemStack.getTagCompound();
 
-        if (compound != null && compound.hasKey(ItemCluster.NBT_CABLE)) {
+        if (compound != null && compound.hasKey(ItemCluster.NBT_CABLE))
+        {
             NBTTagCompound cable = compound.getCompoundTag(ItemCluster.NBT_CABLE);
             byte[] types = cable.getByteArray(ItemCluster.NBT_TYPES);
             loadElements(types);
         }
     }
 
-    private void loadElements(byte[] types) {
+    private void loadElements(byte[] types)
+    {
         registryList.clear();
         elements.clear();
 
-        for (byte type : types) {
+        for (byte type : types)
+        {
             ClusterRegistry block = ClusterRegistry.getRegistryList().get(type);
             registryList.add(block);
-            TileEntityClusterElement element = (TileEntityClusterElement)block.getBlock().createNewTileEntity(getWorld(), 0);
+            TileEntityClusterElement element = (TileEntityClusterElement) block.getBlock().createNewTileEntity(getWorld(), 0);
             elements.add(element);
-            if (element instanceof ITileEntityInterface) {
-                interfaceObject = (ITileEntityInterface)element;
-            }else if(element instanceof TileEntityCamouflage) {
-                camouflageObject = (TileEntityCamouflage)element;
+            if (element instanceof ITileEntityInterface)
+            {
+                interfaceObject = (ITileEntityInterface) element;
+            } else if (element instanceof TileEntityCamouflage)
+            {
+                camouflageObject = (TileEntityCamouflage) element;
             }
-            for (ClusterMethodRegistration clusterMethodRegistration : element.getRegistrations()) {
+            for (ClusterMethodRegistration clusterMethodRegistration : element.getRegistrations())
+            {
                 methodRegistration.get(clusterMethodRegistration).add(new Pair(block, element));
             }
             element.setPos(new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -85,67 +88,84 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
         }
     }
 
-    private class Pair {
+    private class Pair
+    {
         private ClusterRegistry registry;
         private TileEntityClusterElement te;
 
-        private Pair(ClusterRegistry registry, TileEntityClusterElement te) {
+        private Pair(ClusterRegistry registry, TileEntityClusterElement te)
+        {
             this.registry = registry;
             this.te = te;
         }
     }
 
-    public List<TileEntityClusterElement> getElements() {
+    public List<TileEntityClusterElement> getElements()
+    {
         return elements;
     }
 
 
     @Override
-    public void update() {
-        for (TileEntityClusterElement element : elements) {
+    public void update()
+    {
+        for (TileEntityClusterElement element : elements)
+        {
             setWorldObject(element);
             element.update();
         }
 
-        if (!requestedInfo && worldObj.isRemote) {
+        if (!requestedInfo && worldObj.isRemote)
+        {
             requestedInfo = true;
             requestData();
         }
     }
 
-    public void setWorldObject(TileEntityClusterElement te) {
-        if (!te.hasWorldObj()) {
+    public void setWorldObject(TileEntityClusterElement te)
+    {
+        if (!te.hasWorldObj())
+        {
             te.setWorldObj(this.worldObj);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    private void requestData() {
+    private void requestData()
+    {
         PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().thePlayer, 1);
     }
 
-    private List<Pair> getRegistrations(ClusterMethodRegistration method) {
+    private List<Pair> getRegistrations(ClusterMethodRegistration method)
+    {
         return methodRegistration.get(method);
     }
 
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack itemStack) {
-        for (Pair blockContainer :  getRegistrations(ClusterMethodRegistration.ON_BLOCK_PLACED_BY)) {
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack itemStack)
+    {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_BLOCK_PLACED_BY))
+        {
             setWorldObject(blockContainer.te);
             blockContainer.registry.getBlock().onBlockPlacedBy(world, pos, state, entity, blockContainer.registry.getItemStack());
         }
     }
 
-    public void onNeighborBlockChange(IBlockAccess world, BlockPos pos, IBlockState state, Block block) {
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_NEIGHBOR_BLOCK_CHANGED)) {
+    public void onNeighborBlockChange(IBlockAccess world, BlockPos pos, IBlockState state, Block block)
+    {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_NEIGHBOR_BLOCK_CHANGED))
+        {
             setWorldObject(blockContainer.te);
 //            blockContainer.registry.getBlock().onNeighborBlockChange(world, pos, state, block);
         }
     }
 
-    public boolean canConnectRedstone(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.CAN_CONNECT_REDSTONE)) {
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.CAN_CONNECT_REDSTONE))
+        {
             setWorldObject(blockContainer.te);
-            if (blockContainer.registry.getBlock().canConnectRedstone(state, blockAccess, pos, side)) {
+            if (blockContainer.registry.getBlock().canConnectRedstone(state, blockAccess, pos, side))
+            {
                 return true;
             }
         }
@@ -153,17 +173,22 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
         return false;
     }
 
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_BLOCK_ADDED)) {
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state)
+    {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_BLOCK_ADDED))
+        {
             setWorldObject(blockContainer.te);
             blockContainer.registry.getBlock().onBlockAdded(world, pos, state);
         }
     }
 
-    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.SHOULD_CHECK_WEAK_POWER)) {
+    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.SHOULD_CHECK_WEAK_POWER))
+        {
             setWorldObject(blockContainer.te);
-            if (blockContainer.registry.getBlock().shouldCheckWeakPower(state, blockAccess, pos, side)) {
+            if (blockContainer.registry.getBlock().shouldCheckWeakPower(state, blockAccess, pos, side))
+            {
                 return true;
             }
         }
@@ -172,10 +197,12 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     }
 
 
-    public int isProvidingWeakPower(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public int isProvidingWeakPower(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    {
         int max = 0;
 
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.IS_PROVIDING_WEAK_POWER)) {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.IS_PROVIDING_WEAK_POWER))
+        {
             setWorldObject(blockContainer.te);
             max = Math.max(max, blockContainer.registry.getBlock().getStrongPower(state, blockAccess, pos, side));
         }
@@ -183,10 +210,12 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
         return max;
     }
 
-    public int isProvidingStrongPower(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public int isProvidingStrongPower(IBlockState state, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    {
         int max = 0;
 
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.IS_PROVIDING_STRONG_POWER)) {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.IS_PROVIDING_STRONG_POWER))
+        {
             setWorldObject(blockContainer.te);
             max = Math.max(max, blockContainer.registry.getBlock().getWeakPower(state, blockAccess, pos, side));
         }
@@ -194,10 +223,13 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
         return max;
     }
 
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_BLOCK_ACTIVATED)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_BLOCK_ACTIVATED))
+        {
             setWorldObject(blockContainer.te);
-            if (blockContainer.registry.getBlock().onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ)) {
+            if (blockContainer.registry.getBlock().onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ))
+            {
                 return true;
             }
         }
@@ -206,16 +238,22 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     }
 
 
-    public static <T> T getTileEntity(Class<? extends TileEntityClusterElement> clazz, IBlockAccess world, BlockPos pos) {
+    public static <T> T getTileEntity(Class<? extends TileEntityClusterElement> clazz, IBlockAccess world, BlockPos pos)
+    {
         TileEntity te = world.getTileEntity(pos);
 
-        if (te != null) {
-            if (clazz.isInstance(te)) {
-                return (T)te;
-            }else if(te instanceof gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster) {
-                for (TileEntityClusterElement element : ((gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster) te).getElements()) {
-                    if (clazz.isInstance(element)) {
-                        return (T)element;
+        if (te != null)
+        {
+            if (clazz.isInstance(te))
+            {
+                return (T) te;
+            } else if (te instanceof TileEntityCluster)
+            {
+                for (TileEntityClusterElement element : ((TileEntityCluster) te).getElements())
+                {
+                    if (clazz.isInstance(element))
+                    {
+                        return (T) element;
                     }
                 }
             }
@@ -226,32 +264,40 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
 
 
     @Override
-    public Container getContainer(TileEntity te, InventoryPlayer inv) {
-        return interfaceObject == null ? null : interfaceObject.getContainer((TileEntity)interfaceObject, inv);
+    public Container getContainer(TileEntity te, InventoryPlayer inv)
+    {
+        return interfaceObject == null ? null : interfaceObject.getContainer((TileEntity) interfaceObject, inv);
     }
 
     @Override
-    public GuiScreen getGui(TileEntity te, InventoryPlayer inv) {
+    public GuiScreen getGui(TileEntity te, InventoryPlayer inv)
+    {
         return interfaceObject == null ? null : interfaceObject.getGui((TileEntity) interfaceObject, inv);
     }
 
     @Override
-    public void readAllData(DataReader dr, EntityPlayer player) {
-        if (interfaceObject != null) {
+    public void readAllData(DataReader dr, EntityPlayer player)
+    {
+        if (interfaceObject != null)
+        {
             interfaceObject.readAllData(dr, player);
         }
     }
 
     @Override
-    public void readUpdatedData(DataReader dr, EntityPlayer player) {
-        if (interfaceObject != null) {
+    public void readUpdatedData(DataReader dr, EntityPlayer player)
+    {
+        if (interfaceObject != null)
+        {
             interfaceObject.readUpdatedData(dr, player);
         }
     }
 
     @Override
-    public void writeAllData(DataWriter dw) {
-        if (interfaceObject != null) {
+    public void writeAllData(DataWriter dw)
+    {
+        if (interfaceObject != null)
+        {
             interfaceObject.writeAllData(dw);
         }
     }
@@ -261,14 +307,16 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     private static final String NBT_SUB_BLOCK_META = "SubMeta";
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
         NBTTagList subList = new NBTTagList();
-        for (int i = 0; i < elements.size(); i++) {
+        for (int i = 0; i < elements.size(); i++)
+        {
             TileEntityClusterElement element = elements.get(i);
             ClusterRegistry registryElement = registryList.get(i);
             NBTTagCompound sub = new NBTTagCompound();
-            sub.setByte(NBT_SUB_BLOCK_ID, (byte)registryElement.getId());
-            sub.setByte(NBT_SUB_BLOCK_META, (byte)element.getBlockMetadata());
+            sub.setByte(NBT_SUB_BLOCK_ID, (byte) registryElement.getId());
+            sub.setByte(NBT_SUB_BLOCK_META, (byte) element.getBlockMetadata());
             element.writeContentToNBT(sub);
 
             subList.appendTag(sub);
@@ -278,21 +326,25 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(NBTTagCompound tagCompound)
+    {
         super.readFromNBT(tagCompound);
 
         NBTTagList subList = tagCompound.getTagList(NBT_SUB_BLOCKS, 10);
         List<Byte> bytes = new ArrayList<Byte>();
-        for (int i = 0; i < subList.tagCount(); i++) {
+        for (int i = 0; i < subList.tagCount(); i++)
+        {
             NBTTagCompound sub = subList.getCompoundTagAt(i);
             bytes.add(sub.getByte(NBT_SUB_BLOCK_ID));
         }
         byte[] byteArr = new byte[bytes.size()];
-        for (int i = 0; i < bytes.size(); i++) {
+        for (int i = 0; i < bytes.size(); i++)
+        {
             byteArr[i] = bytes.get(i);
         }
         loadElements(byteArr);
-        for (int i = 0; i < subList.tagCount(); i++) {
+        for (int i = 0; i < subList.tagCount(); i++)
+        {
             NBTTagCompound sub = subList.getCompoundTagAt(i);
             TileEntityClusterElement element = elements.get(i);
             element.setMetaData(sub.getByte(NBT_SUB_BLOCK_META));
@@ -301,46 +353,62 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     }
 
     @Override
-    public void writeData(DataWriter dw, EntityPlayer player, boolean onServer, int id) {
-        if (id == 0) {
-            if (camouflageObject != null) {
+    public void writeData(DataWriter dw, EntityPlayer player, boolean onServer, int id)
+    {
+        if (id == 0)
+        {
+            if (camouflageObject != null)
+            {
                 camouflageObject.writeData(dw, player, onServer, id);
             }
-        }else{
+        } else
+        {
 
-            if (onServer) {
+            if (onServer)
+            {
                 dw.writeData(elements.size(), DataBitHelper.CLUSTER_SUB_ID);
-                for (int i = 0; i < elements.size(); i++) {
-                    dw.writeData((byte)registryList.get(i).getId(), DataBitHelper.CLUSTER_SUB_ID);
+                for (int i = 0; i < elements.size(); i++)
+                {
+                    dw.writeData((byte) registryList.get(i).getId(), DataBitHelper.CLUSTER_SUB_ID);
                 }
-                for (int i = 0; i < elements.size(); i++) {
-                    dw.writeData((byte)elements.get(i).getBlockMetadata(), DataBitHelper.BLOCK_META);
+                for (int i = 0; i < elements.size(); i++)
+                {
+                    dw.writeData((byte) elements.get(i).getBlockMetadata(), DataBitHelper.BLOCK_META);
                 }
-            }else{
+            } else
+            {
                 //nothing to write, empty packet
             }
         }
     }
 
     @Override
-    public void readData(DataReader dr, EntityPlayer player, boolean onServer, int id) {
-        if (id == 0) {
-            if (camouflageObject != null) {
+    public void readData(DataReader dr, EntityPlayer player, boolean onServer, int id)
+    {
+        if (id == 0)
+        {
+            if (camouflageObject != null)
+            {
                 camouflageObject.readData(dr, player, onServer, id);
             }
-        }else{
+        } else
+        {
 
-            if (onServer) {
+            if (onServer)
+            {
                 //respond by sending the data to the client that required it
                 PacketHandler.sendBlockPacket(this, player, 1);
-            }else{
+            } else
+            {
                 int length = dr.readData(DataBitHelper.CLUSTER_SUB_ID);
                 byte[] types = new byte[length];
-                for (int i = 0; i < length; i++) {
-                    types[i] = (byte)dr.readData(DataBitHelper.CLUSTER_SUB_ID);
+                for (int i = 0; i < length; i++)
+                {
+                    types[i] = (byte) dr.readData(DataBitHelper.CLUSTER_SUB_ID);
                 }
                 loadElements(types);
-                for (int i = 0; i < length; i++) {
+                for (int i = 0; i < length; i++)
+                {
                     elements.get(i).setMetaData(dr.readData(DataBitHelper.BLOCK_META));
                 }
             }
@@ -348,14 +416,17 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     }
 
     @Override
-    public int infoBitLength(boolean onServer) {
+    public int infoBitLength(boolean onServer)
+    {
         return 1;
     }
 
-    public byte[] getTypes() {
+    public byte[] getTypes()
+    {
         byte[] bytes = new byte[registryList.size()];
-        for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte)registryList.get(i).getId();
+        for (int i = 0; i < bytes.length; i++)
+        {
+            bytes[i] = (byte) registryList.get(i).getId();
         }
 
         return bytes;

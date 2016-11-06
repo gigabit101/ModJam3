@@ -1,45 +1,15 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.init;
 
-
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityIntake;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCable;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableBUD;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableBreaker;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableCamouflages;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableCluster;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableCreative;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableInput;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableIntake;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableOutput;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableRelay;
-import gigabit101.AdvancedSystemManager2.blocks.BlockCableSign;
-import gigabit101.AdvancedSystemManager2.blocks.BlockManager;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterRecipe;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry;
-import gigabit101.AdvancedSystemManager2.blocks.ClusterUpgradeRecipe;
-import gigabit101.AdvancedSystemManager2.blocks.ItemCamouflage;
-import gigabit101.AdvancedSystemManager2.blocks.ItemCluster;
-import gigabit101.AdvancedSystemManager2.blocks.ItemIntake;
-import gigabit101.AdvancedSystemManager2.blocks.ItemRelay;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityBUD;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityBreaker;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityCamouflage;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityCreative;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityInput;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityOutput;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntityRelay;
-import gigabit101.AdvancedSystemManager2.blocks.TileEntitySignUpdater;
+import vswe.stevesfactory.blocks.*;
 
-public final class ModBlocks {
-
+public final class ModBlocks
+{
     public static final byte NBT_CURRENT_PROTOCOL_VERSION = 13;
     public static final String NBT_PROTOCOL_VERSION = "ProtocolVersion";
 
@@ -110,16 +80,19 @@ public final class ModBlocks {
     public static CreativeTabs creativeTab;
 
 
-
-    public static void init() {
-        creativeTab = new CreativeTabs("sfm") {
+    public static void init()
+    {
+        creativeTab = new CreativeTabs("sfm")
+        {
             @Override
-            public ItemStack getIconItemStack() {
+            public ItemStack getIconItemStack()
+            {
                 return new ItemStack(blockManager);
             }
 
             @Override
-            public Item getTabIconItem() {
+            public Item getTabIconItem()
+            {
                 return null;
             }
         };
@@ -154,7 +127,7 @@ public final class ModBlocks {
 
         blockCableIntake = new BlockCableIntake();
         GameRegistry.registerBlock(blockCableIntake, ItemIntake.class, CABLE_INTAKE_NAME_TAG);
-        GameRegistry.registerTileEntity(gigabit101.AdvancedSystemManager2.blocks.TileEntityIntake.class, CABLE_INTAKE_TILE_ENTITY_TAG);
+        GameRegistry.registerTileEntity(TileEntityIntake.class, CABLE_INTAKE_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 8)));
 
@@ -186,7 +159,8 @@ public final class ModBlocks {
         ClusterRegistry.register(TileEntitySignUpdater.class, blockCableSign);
     }
 
-    public static void addRecipes() {
+    public static void addRecipes()
+    {
         GameRegistry.addRecipe(new ItemStack(blockManager),
                 "III",
                 "IRI",
@@ -293,5 +267,7 @@ public final class ModBlocks {
         GameRegistry.addRecipe(new ClusterRecipe());
     }
 
-   private ModBlocks() {}
+    private ModBlocks()
+    {
+    }
 }

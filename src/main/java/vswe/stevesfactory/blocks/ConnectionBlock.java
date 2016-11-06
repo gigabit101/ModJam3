@@ -4,43 +4,49 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
-import gigabit101.AdvancedSystemManager2.components.IContainerSelection;
-import gigabit101.AdvancedSystemManager2.components.Variable;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.components.ComponentMenuContainer;
+import vswe.stevesfactory.components.IContainerSelection;
+import vswe.stevesfactory.components.Variable;
+import vswe.stevesfactory.interfaces.GuiManager;
 
 import java.util.EnumSet;
 
-public class ConnectionBlock implements IContainerSelection {
-
+public class ConnectionBlock implements IContainerSelection
+{
     private TileEntity tileEntity;
     private EnumSet<ConnectionBlockType> types;
     private int id;
     private int cableDistance;
 
-    public ConnectionBlock(TileEntity tileEntity, int cableDistance) {
+    public ConnectionBlock(TileEntity tileEntity, int cableDistance)
+    {
         this.tileEntity = tileEntity;
         types = EnumSet.noneOf(ConnectionBlockType.class);
         this.cableDistance = cableDistance;
     }
 
-    public void addType(ConnectionBlockType type) {
+    public void addType(ConnectionBlockType type)
+    {
         types.add(type);
     }
 
-    public static boolean isOfType(EnumSet<ConnectionBlockType> types, ConnectionBlockType type) {
+    public static boolean isOfType(EnumSet<ConnectionBlockType> types, ConnectionBlockType type)
+    {
         return type == null || types.contains(type) || (type == ConnectionBlockType.NODE && (types.contains(ConnectionBlockType.RECEIVER) || types.contains(ConnectionBlockType.EMITTER)));
     }
 
-    public boolean isOfType(ConnectionBlockType type) {
-       return isOfType(this.types, type);
+    public boolean isOfType(ConnectionBlockType type)
+    {
+        return isOfType(this.types, type);
     }
 
-    public boolean isOfAnyType(EnumSet<ConnectionBlockType> types) {
-        for (ConnectionBlockType type : types) {
-            if (isOfType(type)) {
+    public boolean isOfAnyType(EnumSet<ConnectionBlockType> types)
+    {
+        for (ConnectionBlockType type : types)
+        {
+            if (isOfType(type))
+            {
                 return true;
             }
         }
@@ -48,26 +54,31 @@ public class ConnectionBlock implements IContainerSelection {
         return false;
     }
 
-    public TileEntity getTileEntity() {
+    public TileEntity getTileEntity()
+    {
         return tileEntity;
     }
 
-    public void setId(int id) {
+    public void setId(int id)
+    {
         this.id = id;
     }
 
     @Override
-    public int getId() {
+    public int getId()
+    {
         return id;
     }
 
     @Override
-    public void draw(GuiManager gui, int x, int y) {
+    public void draw(GuiManager gui, int x, int y)
+    {
         gui.drawBlock(tileEntity, x, y);
     }
 
     @Override
-    public String getDescription(GuiManager gui) {
+    public String getDescription(GuiManager gui)
+    {
         String str = gui.getBlockName(tileEntity);
 
         str += getVariableTag(gui);
@@ -81,33 +92,41 @@ public class ConnectionBlock implements IContainerSelection {
     }
 
 
-    public int getDistance(gigabit101.AdvancedSystemManager2.blocks.TileEntityManager manager) {
-        return (int)Math.round(Math.sqrt(manager.getDistanceSq(tileEntity.getPos().getX() + 0.5, tileEntity.getPos().getY() + 0.5, tileEntity.getPos().getZ() + 0.5)));
+    public int getDistance(TileEntityManager manager)
+    {
+        return (int) Math.round(Math.sqrt(manager.getDistanceSq(tileEntity.getPos().getX() + 0.5, tileEntity.getPos().getY() + 0.5, tileEntity.getPos().getZ() + 0.5)));
     }
 
-    public int getCableDistance() {
+    public int getCableDistance()
+    {
         return cableDistance;
     }
 
     @Override
-    public String getName(GuiManager gui) {
+    public String getName(GuiManager gui)
+    {
         return gui.getBlockName(tileEntity);
     }
 
     @Override
-    public boolean isVariable() {
+    public boolean isVariable()
+    {
         return false;
     }
 
 
     @SideOnly(Side.CLIENT)
-    private String getVariableTag(GuiManager gui) {
+    private String getVariableTag(GuiManager gui)
+    {
         int count = 0;
         String result = "";
 
-        if (GuiScreen.isShiftKeyDown()) {
-            for (Variable variable : gui.getManager().getVariables()) {
-                if (isPartOfVariable(variable)) {
+        if (GuiScreen.isShiftKeyDown())
+        {
+            for (Variable variable : gui.getManager().getVariables())
+            {
+                if (isPartOfVariable(variable))
+                {
                     result += "\n" + variable.getDescription(gui);
                     count++;
                 }
@@ -118,7 +137,8 @@ public class ConnectionBlock implements IContainerSelection {
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean isPartOfVariable(Variable variable) {
-        return variable.isValid() && ((ComponentMenuContainer)variable.getDeclaration().getMenus().get(2)).getSelectedInventories().contains(id);
+    public boolean isPartOfVariable(Variable variable)
+    {
+        return variable.isValid() && ((ComponentMenuContainer) variable.getDeclaration().getMenus().get(2)).getSelectedInventories().contains(id);
     }
 }

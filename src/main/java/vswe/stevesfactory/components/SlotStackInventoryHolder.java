@@ -4,61 +4,74 @@ package vswe.stevesfactory.components;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class SlotStackInventoryHolder implements gigabit101.AdvancedSystemManager2.components.IItemBufferSubElement {
+public class SlotStackInventoryHolder implements IItemBufferSubElement
+{
     private ItemStack itemStack;
     private IInventory inventory;
     private int slot;
     private int sizeLeft;
 
-    public SlotStackInventoryHolder(ItemStack itemStack, IInventory inventory, int slot) {
+    public SlotStackInventoryHolder(ItemStack itemStack, IInventory inventory, int slot)
+    {
         this.itemStack = itemStack;
         this.inventory = inventory;
         this.slot = slot;
         this.sizeLeft = itemStack.stackSize;
     }
 
-    public ItemStack getItemStack() {
+    public ItemStack getItemStack()
+    {
         return itemStack;
     }
 
 
-    public IInventory getInventory() {
+    public IInventory getInventory()
+    {
         return inventory;
     }
 
 
-    public int getSlot() {
+    public int getSlot()
+    {
         return slot;
     }
 
     @Override
-    public void remove() {
-        if (itemStack.stackSize == 0) {
+    public void remove()
+    {
+        if (itemStack.stackSize == 0)
+        {
             getInventory().setInventorySlotContents(getSlot(), null);
         }
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate()
+    {
         getInventory().markDirty();
     }
 
-    public int getSizeLeft() {
+    public int getSizeLeft()
+    {
         return Math.min(itemStack.stackSize, sizeLeft);
     }
 
-    public void reduceAmount(int val) {
+    public void reduceAmount(int val)
+    {
         itemStack.stackSize -= val;
         sizeLeft -= val;
     }
 
-    public gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair) {
-        gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder element = new gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder(this.itemStack, this.inventory, this.slot);
+    public SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair)
+    {
+        SlotStackInventoryHolder element = new SlotStackInventoryHolder(this.itemStack, this.inventory, this.slot);
         int oldAmount = getSizeLeft();
         int amount = oldAmount / elementAmount;
-        if (!fair) {
+        if (!fair)
+        {
             int amountLeft = oldAmount % elementAmount;
-            if (id < amountLeft) {
+            if (id < amountLeft)
+            {
                 amount++;
             }
         }

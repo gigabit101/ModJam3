@@ -1,26 +1,26 @@
 package vswe.stevesfactory.components;
 
-import gigabit101.AdvancedSystemManager2.components.RadioButton;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
-import gigabit101.AdvancedSystemManager2.components.FlowComponent;
-import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
-import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
-import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
-import gigabit101.AdvancedSystemManager2.network.DataReader;
-import gigabit101.AdvancedSystemManager2.network.DataWriter;
-import gigabit101.AdvancedSystemManager2.network.PacketHandler;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.network.DataReader;
+import vswe.stevesfactory.network.DataWriter;
+import vswe.stevesfactory.network.PacketHandler;
 
-public class ComponentMenuCraftingPriority extends ComponentMenu {
-    public ComponentMenuCraftingPriority(FlowComponent parent) {
+public class ComponentMenuCraftingPriority extends ComponentMenu
+{
+    public ComponentMenuCraftingPriority(FlowComponent parent)
+    {
         super(parent);
 
-        radioButtons = new RadioButtonList() {
+        radioButtons = new RadioButtonList()
+        {
             @Override
-            public void updateSelectedOption(int selectedOption) {
+            public void updateSelectedOption(int selectedOption)
+            {
                 DataWriter dw = getWriterForServerComponentPacket();
                 dw.writeBoolean(selectedOption == 0);
                 PacketHandler.sendDataToServer(dw);
@@ -28,7 +28,7 @@ public class ComponentMenuCraftingPriority extends ComponentMenu {
         };
 
 
-        radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_X, RADIO_Y, Localization.PRIORITY_MOVE_FIRST));
+        radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.PRIORITY_MOVE_FIRST));
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y + RADIO_MARGIN, Localization.PRIORITY_CRAFT_FIRST));
     }
 
@@ -39,57 +39,68 @@ public class ComponentMenuCraftingPriority extends ComponentMenu {
     private RadioButtonList radioButtons;
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Priority";
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void draw(GuiManager gui, int mX, int mY) {
+    public void draw(GuiManager gui, int mX, int mY)
+    {
         radioButtons.draw(gui, mX, mY);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawMouseOver(GuiManager gui, int mX, int mY) {
+    public void drawMouseOver(GuiManager gui, int mX, int mY)
+    {
 
     }
 
     @Override
-    public void onClick(int mX, int mY, int button) {
+    public void onClick(int mX, int mY, int button)
+    {
         radioButtons.onClick(mX, mY, button);
     }
 
     @Override
-    public void onDrag(int mX, int mY, boolean isMenuOpen) {
+    public void onDrag(int mX, int mY, boolean isMenuOpen)
+    {
 
     }
 
     @Override
-    public void onRelease(int mX, int mY, boolean isMenuOpen) {
+    public void onRelease(int mX, int mY, boolean isMenuOpen)
+    {
 
     }
 
     @Override
-    public void writeData(DataWriter dw) {
+    public void writeData(DataWriter dw)
+    {
         dw.writeBoolean(radioButtons.getSelectedOption() == 0);
     }
 
     @Override
-    public void readData(DataReader dr) {
+    public void readData(DataReader dr)
+    {
         radioButtons.setSelectedOption(dr.readBoolean() ? 0 : 1);
     }
 
     @Override
-    public void copyFrom(ComponentMenu menu) {
-        radioButtons.setSelectedOption(((gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority)menu).radioButtons.getSelectedOption());
+    public void copyFrom(ComponentMenu menu)
+    {
+        radioButtons.setSelectedOption(((ComponentMenuCraftingPriority) menu).radioButtons.getSelectedOption());
     }
 
     @Override
-    public void refreshData(ContainerManager container, ComponentMenu newData) {
-        gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority newDataPriority =  ((gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority)newData);
+    public void refreshData(ContainerManager container, ComponentMenu newData)
+    {
+        ComponentMenuCraftingPriority newDataPriority = ((ComponentMenuCraftingPriority) newData);
 
-        if (radioButtons.getSelectedOption() != newDataPriority.radioButtons.getSelectedOption()) {
+        if (radioButtons.getSelectedOption() != newDataPriority.radioButtons.getSelectedOption())
+        {
             radioButtons.setSelectedOption(newDataPriority.radioButtons.getSelectedOption());
 
             DataWriter dw = getWriterForClientComponentPacket(container);
@@ -101,25 +112,30 @@ public class ComponentMenuCraftingPriority extends ComponentMenu {
     private static final String NBT_SELECTED = "SelectedOption";
 
     @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup) {
+    public void readFromNBT(NBTTagCompound nbtTagCompound, int version, boolean pickup)
+    {
         radioButtons.setSelectedOption(nbtTagCompound.getByte(NBT_SELECTED));
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound, boolean pickup) {
-        nbtTagCompound.setByte(NBT_SELECTED, (byte)radioButtons.getSelectedOption());
+    public void writeToNBT(NBTTagCompound nbtTagCompound, boolean pickup)
+    {
+        nbtTagCompound.setByte(NBT_SELECTED, (byte) radioButtons.getSelectedOption());
     }
 
     @Override
-    public void readNetworkComponent(DataReader dr) {
+    public void readNetworkComponent(DataReader dr)
+    {
         radioButtons.setSelectedOption(dr.readBoolean() ? 0 : 1);
     }
 
-    public boolean shouldPrioritizeCrafting() {
+    public boolean shouldPrioritizeCrafting()
+    {
         return radioButtons.getSelectedOption() == 1;
     }
 
-    public void setPrioritizeCrafting(boolean val) {
+    public void setPrioritizeCrafting(boolean val)
+    {
         radioButtons.setSelectedOption(val ? 1 : 0);
     }
 }

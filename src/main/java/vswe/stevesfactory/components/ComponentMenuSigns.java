@@ -1,31 +1,36 @@
 package vswe.stevesfactory.components;
 
 
-import gigabit101.AdvancedSystemManager2.Localization;
-import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
-import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
 
 import java.util.List;
 
-public class ComponentMenuSigns extends ComponentMenuContainer {
-    public ComponentMenuSigns(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
+public class ComponentMenuSigns extends ComponentMenuContainer
+{
+    public ComponentMenuSigns(FlowComponent parent)
+    {
         super(parent, ConnectionBlockType.SIGN);
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return Localization.SIGNS.toString();
     }
 
     @Override
-    public void addErrors(List<String> errors) {
-        if (selectedInventories.isEmpty() && isVisible()) {
+    public void addErrors(List<String> errors)
+    {
+        if (selectedInventories.isEmpty() && isVisible())
+        {
             errors.add(Localization.NO_SIGNS_ERROR.toString());
         }
     }
 
     @Override
-    protected void initRadioButtons() {
+    protected void initRadioButtons()
+    {
 
     }
 }
