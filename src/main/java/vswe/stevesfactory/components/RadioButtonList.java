@@ -1,10 +1,11 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public abstract class RadioButtonList {
     private static final int RADIO_TEXT_X = 12;
     private static final int RADIO_TEXT_Y = 2;
 
-    private List<RadioButton> radioButtonList;
+    private List<gigabit101.AdvancedSystemManager2.components.RadioButton> radioButtonList;
     private int selectedOption;
 
     public RadioButtonList() {

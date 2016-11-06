@@ -1,13 +1,14 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.interfaces.GuiManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 public abstract class ComponentMenuCamouflageAdvanced extends ComponentMenu {
-    public ComponentMenuCamouflageAdvanced(FlowComponent parent) {
+    public ComponentMenuCamouflageAdvanced(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent);
     }
 

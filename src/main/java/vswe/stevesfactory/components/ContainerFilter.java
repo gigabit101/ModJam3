@@ -1,10 +1,19 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlock;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.ScrollController;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlock;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
+import gigabit101.AdvancedSystemManager2.components.Variable;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +52,7 @@ public class ContainerFilter {
     public CheckBoxList checkBoxes;
     public TextBoxNumberList textBoxes;
     public RadioButtonList radioButtonsSelection;
-    public ScrollController<Variable> scrollControllerVariable;
+    public gigabit101.AdvancedSystemManager2.components.ScrollController<Variable> scrollControllerVariable;
     public List<Integer> filterVariableSelection;
     public RadioButtonList radioButtonVariable;
 
@@ -188,13 +197,13 @@ public class ContainerFilter {
                                 int value = 0;
                                 switch (j) {
                                     case 0:
-                                        value = block.getTileEntity().xCoord - manager.xCoord;
+                                        value = block.getTileEntity().getPos().getX() - manager.getPos().getX();
                                         break;
                                     case 1:
-                                        value = block.getTileEntity().yCoord - manager.yCoord;
+                                        value = block.getTileEntity().getPos().getY() - manager.getPos().getY();
                                         break;
                                     case 2:
-                                        value = block.getTileEntity().zCoord - manager.zCoord;
+                                        value = block.getTileEntity().getPos().getZ() - manager.getPos().getZ();
                                         break;
                                     case 3:
                                         value = block.getCableDistance();

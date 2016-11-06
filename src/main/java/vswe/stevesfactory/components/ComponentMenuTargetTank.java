@@ -1,16 +1,21 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuTarget;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 public class ComponentMenuTargetTank extends ComponentMenuTarget {
     public ComponentMenuTargetTank(FlowComponent parent) {
@@ -27,7 +32,7 @@ public class ComponentMenuTargetTank extends ComponentMenuTarget {
             }
         };
 
-        radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y, Localization.EMPTY_TANK));
+        radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y, Localization.EMPTY_TANK));
         radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + RADIO_BUTTON_SPACING, Localization.FILLED_TANK));
     }
 
@@ -83,7 +88,7 @@ public class ComponentMenuTargetTank extends ComponentMenuTarget {
 
     @Override
     protected void copyAdvancedSetting(ComponentMenu menu, int i) {
-        ComponentMenuTargetTank menuTarget = (ComponentMenuTargetTank)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetTank menuTarget = (gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetTank)menu;
         onlyFull[i] = menuTarget.onlyFull[i];
     }
 
@@ -111,7 +116,7 @@ public class ComponentMenuTargetTank extends ComponentMenuTarget {
 
     @Override
     protected void refreshAdvancedComponentData(ContainerManager container, ComponentMenu newData, int i) {
-        ComponentMenuTargetTank newDataTarget = (ComponentMenuTargetTank)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetTank newDataTarget = (gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetTank)newData;
 
         if (onlyFull[i] != newDataTarget.onlyFull[i]) {
             onlyFull[i] =  newDataTarget.onlyFull[i];

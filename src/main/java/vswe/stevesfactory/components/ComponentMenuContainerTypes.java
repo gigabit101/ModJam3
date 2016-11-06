@@ -1,17 +1,21 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -32,7 +36,7 @@ public class ComponentMenuContainerTypes extends ComponentMenu {
         for (int i = 0; i < checked.length; i++) {
             checked[i] = true;
         }
-        checkBoxes = new CheckBoxList();
+        checkBoxes = new gigabit101.AdvancedSystemManager2.components.CheckBoxList();
         for (int i = 0; i  < types.size(); i++) {
             final int id = i;
             int x = i % 2;
@@ -119,7 +123,7 @@ public class ComponentMenuContainerTypes extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuContainerTypes menuTypes = (ComponentMenuContainerTypes)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes menuTypes = (gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes)menu;
 
         for (int i = 0; i < checked.length; i++) {
             checked[i] = menuTypes.checked[i];
@@ -128,7 +132,7 @@ public class ComponentMenuContainerTypes extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuContainerTypes newDataTypes = (ComponentMenuContainerTypes)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes newDataTypes = (gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes)newData;
 
         for (int i = 0; i < checked.length; i++) {
             if (newDataTypes.checked[i] != checked[i]) {

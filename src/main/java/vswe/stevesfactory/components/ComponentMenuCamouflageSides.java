@@ -1,11 +1,12 @@
 package vswe.stevesfactory.components;
 
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
 
 import java.util.List;
 
 
-public class ComponentMenuCamouflageSides extends ComponentMenuRedstoneSides {
+public class ComponentMenuCamouflageSides extends gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSides {
     public ComponentMenuCamouflageSides(FlowComponent parent) {
         super(parent);
     }

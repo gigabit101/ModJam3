@@ -1,7 +1,8 @@
 package vswe.stevesfactory.blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.blocks.ISystemListener;
+import gigabit101.AdvancedSystemManager2.components.*;
+import gigabit101.AdvancedSystemManager2.network.*;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -9,18 +10,29 @@ import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.components.*;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.interfaces.IInterfaceRenderer;
-import vswe.stevesfactory.network.*;
-import vswe.stevesfactory.settings.Settings;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ITickable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlock;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.blocks.ITileEntityInterface;
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityBUD;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityInput;
+import gigabit101.AdvancedSystemManager2.blocks.WorldCoordinate;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.interfaces.IInterfaceRenderer;
+import gigabit101.AdvancedSystemManager2.settings.Settings;
 
 import java.util.*;
 
 
-public class TileEntityManager extends TileEntity implements ITileEntityInterface {
+public class TileEntityManager extends TileEntity implements ITileEntityInterface, ITickable {
     public static final TriggerHelperRedstone redstoneTrigger = new TriggerHelperRedstone(3, 4);
     public static final TriggerHelperRedstone redstoneCondition = new TriggerHelperRedstone(1, 2);
     public static final TriggerHelperBUD budTrigger = new TriggerHelperBUD();
@@ -215,14 +227,14 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
         WorldCoordinate[] oldCoordinates = new WorldCoordinate[inventories.size()];
         for (int i = 0; i < oldCoordinates.length; i++) {
             TileEntity inventory = inventories.get(i).getTileEntity();
-            oldCoordinates[i] = new WorldCoordinate(inventory.xCoord, inventory.yCoord, inventory.zCoord);
+            oldCoordinates[i] = new WorldCoordinate(inventory.getPos().getX(), inventory.getPos().getY(), inventory.getPos().getZ());
             oldCoordinates[i].setTileEntity(inventory);
         }
 
         List<WorldCoordinate> visited = new ArrayList<WorldCoordinate>();
         inventories.clear();
         Queue<WorldCoordinate> queue = new PriorityQueue<WorldCoordinate>();
-        WorldCoordinate start = new WorldCoordinate(xCoord, yCoord, zCoord, 0);
+        WorldCoordinate start = new WorldCoordinate(getPos().getX(), getPos().getY(), getPos().getZ(), 0);
         queue.add(start);
         visited.add(start);
 
@@ -237,7 +249,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
                             if (!visited.contains(target) && (Settings.isLimitless(this) || inventories.size() < MAX_CONNECTED_INVENTORIES)) {
                                 visited.add(target);
-                                TileEntity te = worldObj.getTileEntity(target.getX(), target.getY(), target.getZ());
+                                TileEntity te = worldObj.getTileEntity(new BlockPos(target.getX(), target.getY(), target.getZ()));
 
                                 if (te instanceof TileEntityCluster) {
 
@@ -249,8 +261,8 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
                                     addInventory(te, target);
                                 }
 
-
-                                if ((Settings.isLimitless(this) || element.getDepth() < MAX_CABLE_LENGTH) && ModBlocks.blockCable.isCable(worldObj.getBlock(target.getX(), target.getY(), target.getZ()), worldObj.getBlockMetadata(target.getX(), target.getY(), target.getZ()))){
+                                BlockPos pos = new BlockPos(target.getX(), target.getY(), target.getZ());
+                                if ((Settings.isLimitless(this) || element.getDepth() < MAX_CABLE_LENGTH) && ModBlocks.blockCable.isCable(worldObj.getBlockState(pos).getBlock(), worldObj.getBlockState(pos).getBlock().getMetaFromState(worldObj.getBlockState(pos)))){
                                     queue.add(target);
                                 }
                             }
@@ -264,10 +276,10 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
         if (!firstInventoryUpdate) {
             for (WorldCoordinate oldCoordinate : oldCoordinates) {
-                if (oldCoordinate.getTileEntity() instanceof ISystemListener) {
+                if (oldCoordinate.getTileEntity() instanceof gigabit101.AdvancedSystemManager2.blocks.ISystemListener) {
                     boolean found = false;
                     for (ConnectionBlock inventory : inventories) {
-                        if (oldCoordinate.getX() == inventory.getTileEntity().xCoord && oldCoordinate.getY() == inventory.getTileEntity().yCoord && oldCoordinate.getZ() == inventory.getTileEntity().zCoord) {
+                        if (oldCoordinate.getX() == inventory.getTileEntity().getPos().getX() && oldCoordinate.getY() == inventory.getTileEntity().getPos().getY() && oldCoordinate.getZ() == inventory.getTileEntity().getPos().getZ()) {
                             found = true;
                             break;
                         }
@@ -352,7 +364,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
                     for (int j = 0; j < inventories.size(); j++) {
                         TileEntity inventory = inventories.get(j).getTileEntity();
-                        if (coordinate.getX() == inventory.xCoord && coordinate.getY() == inventory.yCoord && coordinate.getZ() == inventory.zCoord && inventory.getClass().equals(coordinate.getTileEntity().getClass())) {
+                        if (coordinate.getX() == inventory.getPos().getX() && coordinate.getY() == inventory.getPos().getY() && coordinate.getZ() == inventory.getPos().getZ() && inventory.getClass().equals(coordinate.getTileEntity().getClass())) {
                             int id = j + (hasVariables ? variables.length : 0);
                             if (!newSelection.contains(id)) {
                                 newSelection.add(id);
@@ -379,8 +391,9 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
     }
 
     private int timer = 0;
+
     @Override
-    public void updateEntity() {
+    public void update() {
         justSentServerComponentRemovalPacket = false;
         if (!worldObj.isRemote) {
 
@@ -483,7 +496,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
 
 
-    private TileEntityManager self = this;
+    private gigabit101.AdvancedSystemManager2.blocks.TileEntityManager self = this;
 
     public List<Integer> getRemovedIds() {
         return removedIds;
@@ -491,13 +504,13 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
     @Override
     public Container getContainer(TileEntity te, InventoryPlayer inv) {
-        return new ContainerManager((TileEntityManager)te, inv);
+        return new ContainerManager((gigabit101.AdvancedSystemManager2.blocks.TileEntityManager)te, inv);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public GuiScreen getGui(TileEntity te, InventoryPlayer inv) {
-        return new GuiManager((TileEntityManager)te, inv);
+        return new GuiManager((gigabit101.AdvancedSystemManager2.blocks.TileEntityManager)te, inv);
     }
 
     @Override
@@ -625,7 +638,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
         }
     }
 
-    private IComponentNetworkReader getNetworkReaderForComponentPacket(DataReader dr, TileEntityManager jam) {
+    private IComponentNetworkReader getNetworkReaderForComponentPacket(DataReader dr, gigabit101.AdvancedSystemManager2.blocks.TileEntityManager jam) {
 
         int componentId = dr.readComponentId();
         if (componentId >= 0 && componentId < jam.getFlowItems().size()) {
@@ -738,8 +751,8 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
                 boolean autoSide = dr.readBoolean();
                 boolean autoBlackList = dr.readBoolean();
                 boolean moveFirst = dr.readBoolean();
-                boolean isInput = type == ComponentType.INPUT || type == ComponentType.LIQUID_INPUT;
-                boolean isOutput= type == ComponentType.OUTPUT || type == ComponentType.LIQUID_OUTPUT;
+                boolean isInput = type == ComponentType.INPUT || type == ComponentType.FLUID_INPUT;
+                boolean isOutput= type == ComponentType.OUTPUT || type == ComponentType.FLUID_OUTPUT;
                 if (autoSide) {
                     for (ComponentMenu componentMenu : component.getMenus()) {
                         if (componentMenu instanceof ComponentMenuTarget) {
@@ -807,11 +820,11 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
         readContentFromNBT(nbtTagCompound, false);
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound) {
-        super.writeToNBT(nbtTagCompound);
 
-        writeContentToNBT(nbtTagCompound, false);
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        writeContentToNBT(compound, false);
+        return super.writeToNBT(compound);
     }
 
     public void readContentFromNBT(NBTTagCompound nbtTagCompound, boolean pickup) {

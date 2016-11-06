@@ -1,13 +1,14 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
 
 import java.util.List;
 
 public class ComponentMenuNodes extends ComponentMenuContainer {
-    public ComponentMenuNodes(FlowComponent parent) {
+    public ComponentMenuNodes(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent, ConnectionBlockType.NODE);
 
         radioButtonsMulti.setSelectedOption(2);

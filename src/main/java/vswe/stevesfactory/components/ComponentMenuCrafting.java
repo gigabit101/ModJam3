@@ -1,15 +1,19 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.item.ItemStack;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.CraftingSetting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItem;
+import gigabit101.AdvancedSystemManager2.components.CraftingDummy;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.Setting;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 public class ComponentMenuCrafting extends ComponentMenuItem {
-    private CraftingSetting resultItem;
+    private gigabit101.AdvancedSystemManager2.components.CraftingSetting resultItem;
     private CraftingDummy dummy;
 
     public ComponentMenuCrafting(FlowComponent parent) {

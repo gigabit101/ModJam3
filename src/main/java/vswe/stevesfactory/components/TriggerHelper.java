@@ -1,10 +1,17 @@
 package vswe.stevesfactory.components;
 
 
-import net.minecraftforge.common.util.ForgeDirection;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.IRedstoneNode;
-import vswe.stevesfactory.blocks.ITriggerNode;
+import gigabit101.AdvancedSystemManager2.components.ConnectionOption;
+import net.minecraft.util.EnumFacing;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.blocks.IRedstoneNode;
+import gigabit101.AdvancedSystemManager2.blocks.ITriggerNode;
+import gigabit101.AdvancedSystemManager2.components.CommandExecutor;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSides;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSidesTrigger;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -26,7 +33,7 @@ public abstract class TriggerHelper {
     }
 
     protected abstract boolean isBlockPowered(FlowComponent component, int power);
-    public abstract void onTrigger(FlowComponent item, EnumSet<ConnectionOption> valid);
+    public abstract void onTrigger(FlowComponent item, EnumSet<gigabit101.AdvancedSystemManager2.components.ConnectionOption> valid);
 
 
     protected boolean isTriggerPowered(FlowComponent component, int[] currentPower, boolean high) {
@@ -66,7 +73,7 @@ public abstract class TriggerHelper {
         return hasRedStoneFlipped(component, newPower, oldPower, high) && isTriggerPowered(component, newPower, high);
     }
 
-    protected boolean isPulseReceived(FlowComponent component,List<SlotInventoryHolder> containers, ITriggerNode trigger, boolean high) {
+    protected boolean isPulseReceived(FlowComponent component, List<SlotInventoryHolder> containers, ITriggerNode trigger, boolean high) {
         boolean requiresAll = trigger != null;
         for (SlotInventoryHolder container : containers) {
             ITriggerNode input = container.getTrigger();
@@ -139,7 +146,7 @@ public abstract class TriggerHelper {
     public boolean isTriggerPowered(List<SlotInventoryHolder> receivers, FlowComponent component, boolean high) {
         ComponentMenuContainer menuContainer = (ComponentMenuContainer)component.getMenus().get(containerId);
         if (canUseMergedDetection && menuContainer.getOption() == 0) {
-            int[] currentPower =  new int[ForgeDirection.VALID_DIRECTIONS.length];
+            int[] currentPower =  new int[EnumFacing.values().length];
             for (SlotInventoryHolder receiver : receivers) {
                 IRedstoneNode node = receiver.getNode();
                 for (int i = 0; i < currentPower.length; i++) {

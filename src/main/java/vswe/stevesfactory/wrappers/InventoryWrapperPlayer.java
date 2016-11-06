@@ -2,10 +2,11 @@ package vswe.stevesfactory.wrappers;
 
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class InventoryWrapperPlayer extends InventoryWrapper {
+public class InventoryWrapperPlayer extends gigabit101.AdvancedSystemManager2.wrappers.InventoryWrapper {
     private EntityPlayer player;
 
     public InventoryWrapperPlayer(EntityPlayer player) {
@@ -16,7 +17,7 @@ public class InventoryWrapperPlayer extends InventoryWrapper {
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
         if (i >= 36 && i <= 39 && itemstack != null) {
-            int armorType = 39 - i;
+            EntityEquipmentSlot armorType = EntityEquipmentSlot.values()[39 - i];
             Item item = itemstack.getItem();
             return item != null && item.isValidArmor(itemstack, armorType, player);
         }else{

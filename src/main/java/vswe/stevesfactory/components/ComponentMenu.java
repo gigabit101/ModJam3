@@ -1,22 +1,23 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.IComponentNetworkReader;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.IComponentNetworkReader;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.List;
 
 public abstract class ComponentMenu implements IComponentNetworkReader {
 
 
-    private FlowComponent parent;
+    private gigabit101.AdvancedSystemManager2.components.FlowComponent parent;
     private int id;
 
     public ComponentMenu(FlowComponent parent) {
@@ -54,8 +55,8 @@ public abstract class ComponentMenu implements IComponentNetworkReader {
         return PacketHandler.getWriterForClientComponentPacket(container, getParent(), this);
     }
 
-    public abstract void copyFrom(ComponentMenu menu);
-    public abstract void refreshData(ContainerManager container, ComponentMenu newData);
+    public abstract void copyFrom(gigabit101.AdvancedSystemManager2.components.ComponentMenu menu);
+    public abstract void refreshData(ContainerManager container, gigabit101.AdvancedSystemManager2.components.ComponentMenu newData);
 
     public int getId() {
         return id;

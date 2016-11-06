@@ -2,10 +2,13 @@ package vswe.stevesfactory.components;
 
 
 
+import gigabit101.AdvancedSystemManager2.components.VariableColor;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import org.lwjgl.opengl.GL11;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.IContainerSelection;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +39,9 @@ public class Variable implements IContainerSelection {
 
     @Override
     public void draw(GuiManager gui, int x, int y) {
-        VariableColor.values()[id].applyColor();
+        gigabit101.AdvancedSystemManager2.components.VariableColor.values()[id].applyColor();
         gui.drawTexture(x + 1, y + 1, VARIABLE_SRC_X, VARIABLE_SRC_Y, VARIABLE_SIZE, VARIABLE_SIZE);
-        GL11.glColor4f(1F, 1F, 1F, 1F);
+        GlStateManager.color(1F, 1F, 1F, 1F);
     }
 
     @Override

@@ -1,15 +1,22 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.Comparator;
 
@@ -30,7 +37,7 @@ public class ComponentMenuListOrder extends ComponentMenu {
             int x = RADIO_BUTTON_X;
             int y = RADIO_BUTTON_Y + i * RADIO_SPACING_Y;
 
-            radioButtons.add(new RadioButton(x, y, LoopOrder.values()[i].getName()));
+            radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(x, y, LoopOrder.values()[i].getName()));
         }
 
         checkBoxes = new CheckBoxList();
@@ -199,7 +206,7 @@ public class ComponentMenuListOrder extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuListOrder menuOrder = ((ComponentMenuListOrder)menu);
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrder menuOrder = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrder)menu);
         all = menuOrder.all;
         textBox.setNumber(menuOrder.textBox.getNumber());
         reversed = menuOrder.reversed;
@@ -208,7 +215,7 @@ public class ComponentMenuListOrder extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuListOrder newDataOrder = (ComponentMenuListOrder)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrder newDataOrder = (gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrder)newData;
 
         if (all != newDataOrder.all) {
             all = newDataOrder.all;

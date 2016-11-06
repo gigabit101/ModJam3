@@ -1,16 +1,23 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 public class ComponentMenuPulse extends ComponentMenu {
 
@@ -49,7 +56,7 @@ public class ComponentMenuPulse extends ComponentMenu {
             int y = i / 2;
 
 
-            radioButtons.add(new RadioButton(RADIO_BUTTON_X + x * RADIO_BUTTON_SPACING_X, RADIO_BUTTON_Y + y * RADIO_BUTTON_SPACING_Y, PULSE_OPTIONS.values()[i].getName()));
+            radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_BUTTON_X + x * RADIO_BUTTON_SPACING_X, RADIO_BUTTON_Y + y * RADIO_BUTTON_SPACING_Y, PULSE_OPTIONS.values()[i].getName()));
         }
 
 
@@ -187,7 +194,7 @@ public class ComponentMenuPulse extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuPulse menuPulse = (ComponentMenuPulse)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuPulse menuPulse = (gigabit101.AdvancedSystemManager2.components.ComponentMenuPulse)menu;
         usePulse = menuPulse.usePulse;
         if (usePulse) {
             radioButtons.setSelectedOption(menuPulse.radioButtons.getSelectedOption());
@@ -200,7 +207,7 @@ public class ComponentMenuPulse extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuPulse newDataPulse = (ComponentMenuPulse)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuPulse newDataPulse = (gigabit101.AdvancedSystemManager2.components.ComponentMenuPulse)newData;
 
         if (usePulse != newDataPulse.usePulse) {
             usePulse = newDataPulse.usePulse;

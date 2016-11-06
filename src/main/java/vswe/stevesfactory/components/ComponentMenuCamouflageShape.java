@@ -1,15 +1,22 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageAdvanced;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 
 public class ComponentMenuCamouflageShape extends ComponentMenuCamouflageAdvanced {
@@ -80,7 +87,7 @@ public class ComponentMenuCamouflageShape extends ComponentMenuCamouflageAdvance
         });
 
 
-        textBoxes = new TextBoxNumberList();
+        textBoxes = new gigabit101.AdvancedSystemManager2.components.TextBoxNumberList();
         for (int i = 0; i < 6; i++) {
             int x = i % 2;
             int y = i / 2;
@@ -256,7 +263,7 @@ public class ComponentMenuCamouflageShape extends ComponentMenuCamouflageAdvance
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuCamouflageShape menuShape = (ComponentMenuCamouflageShape)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageShape menuShape = (gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageShape)menu;
         if (menuShape.inUse) {
             inUse = true;
             useCollision = menuShape.useCollision;
@@ -271,7 +278,7 @@ public class ComponentMenuCamouflageShape extends ComponentMenuCamouflageAdvance
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuCamouflageShape newDataShape = (ComponentMenuCamouflageShape)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageShape newDataShape = (gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageShape)newData;
         if (inUse != newDataShape.inUse || useCollision != newDataShape.useCollision || fullCollision != newDataShape.fullCollision) {
             inUse = newDataShape.inUse;
 

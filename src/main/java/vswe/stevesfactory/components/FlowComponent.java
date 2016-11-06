@@ -1,23 +1,30 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.ComponentType;
+import gigabit101.AdvancedSystemManager2.network.*;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import org.lwjgl.opengl.GL11;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.*;
-import vswe.stevesfactory.settings.Settings;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.Connection;
+import gigabit101.AdvancedSystemManager2.components.ConnectionOption;
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
+import gigabit101.AdvancedSystemManager2.components.Point;
+import gigabit101.AdvancedSystemManager2.components.TextBoxLogic;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.settings.Settings;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-public class FlowComponent implements IComponentNetworkReader, Comparable<FlowComponent> {
+public class FlowComponent implements IComponentNetworkReader, Comparable<gigabit101.AdvancedSystemManager2.components.FlowComponent> {
     private static final int COMPONENT_SRC_X = 0;
     private static final int COMPONENT_SRC_Y = 0;
     private static final int COMPONENT_SIZE_W = 64;
@@ -91,7 +98,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
     private static final int TEXT_SPACE_SHORT = 65;
     private static final int TEXT_MAX_LENGTH = 31;
 
-    public FlowComponent(TileEntityManager manager, int x, int y, ComponentType type) {
+    public FlowComponent(TileEntityManager manager, int x, int y, gigabit101.AdvancedSystemManager2.components.ComponentType type) {
         this.x = x;
         this.y = y;
         this.connectionSet = type.getSets()[0];
@@ -102,7 +109,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         menus = new ArrayList<ComponentMenu>();
         for (Class<? extends ComponentMenu> componentMenuClass : type.getClasses()) {
             try {
-                Constructor<? extends ComponentMenu> constructor = componentMenuClass.getConstructor(FlowComponent.class);
+                Constructor<? extends ComponentMenu> constructor = componentMenuClass.getConstructor(gigabit101.AdvancedSystemManager2.components.FlowComponent.class);
                 Object obj = constructor.newInstance(this);
 
 
@@ -116,8 +123,8 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         connections = new HashMap<Integer, Connection>();
         textBox = new TextBoxLogic(TEXT_MAX_LENGTH, TEXT_SPACE);
 
-        childrenInputNodes = new ArrayList<FlowComponent>();
-        childrenOutputNodes = new ArrayList<FlowComponent>();
+        childrenInputNodes = new ArrayList<gigabit101.AdvancedSystemManager2.components.FlowComponent>();
+        childrenOutputNodes = new ArrayList<gigabit101.AdvancedSystemManager2.components.FlowComponent>();
     }
 
     private int x;
@@ -140,9 +147,9 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
     private boolean isEditing;
     private TextBoxLogic textBox;
     private String name;
-    private FlowComponent parent;
-    private List<FlowComponent> childrenInputNodes;
-    private List<FlowComponent> childrenOutputNodes;
+    private gigabit101.AdvancedSystemManager2.components.FlowComponent parent;
+    private List<gigabit101.AdvancedSystemManager2.components.FlowComponent> childrenInputNodes;
+    private List<gigabit101.AdvancedSystemManager2.components.FlowComponent> childrenOutputNodes;
     private boolean isInventoryListDirty = true;
 
 
@@ -214,8 +221,8 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
 
     @SideOnly(Side.CLIENT)
     public void draw(GuiManager gui, int mX, int mY, int zLevel) {
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0, 0, zLevel);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, zLevel);
 
         gui.drawTexture(x, y, isLarge ? COMPONENT_SRC_LARGE_X : COMPONENT_SRC_X, COMPONENT_SRC_Y, getComponentWidth(), getComponentHeight());
 
@@ -252,10 +259,10 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                 gui.drawString(menu.getName(), x + MENU_X + MENU_ITEM_TEXT_X, y + getMenuItemY(i) + MENU_ITEM_TEXT_Y, 0x404040);
 
                 if (i == openMenuId) {
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef(itemX, getMenuAreaY(i), 0);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(itemX, getMenuAreaY(i), 0);
                     menu.draw(gui, mX - itemX, mY - getMenuAreaY(i));
-                    GL11.glPopMatrix();
+                    GlStateManager.popMatrix();
                 }
             }
         }
@@ -304,8 +311,8 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                     int endX = otherLocation[0] + connectionWidth / 2;
                     int endY = otherLocation[1] + connectionHeight / 2;
 
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef(0, 0, -zLevel);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0, 0, -zLevel);
                     List<Point> nodes = connectedConnection.getNodes();
                     for (int j = 0; j <= nodes.size(); j++) {
                         int x1, y1, x2, y2;
@@ -335,7 +342,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                         gui.drawTexture(x, y, NODE_SRC_X + srcXNode * NODE_SIZE, NODE_SRC_Y, NODE_SIZE, NODE_SIZE);
                     }
 
-                    GL11.glPopMatrix();
+                    GlStateManager.popMatrix();
                 }
             }
 
@@ -394,7 +401,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
             }
         }
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     private String cachedName;
@@ -453,10 +460,10 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                 ComponentMenu menu = menus.get(i);
 
                 if (menu.isVisible() && i == openMenuId) {
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef(getMenuAreaX(), getMenuAreaY(i), 0);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(getMenuAreaX(), getMenuAreaY(i), 0);
                     menu.drawMouseOver(gui, mX - getMenuAreaX(), mY - getMenuAreaY(i));
-                    GL11.glPopMatrix();
+                    GlStateManager.popMatrix();
                 }
             }
         }
@@ -583,7 +590,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                         if (selected != null) {
                             int connectionId = i;
                             boolean reversed = false;
-                            FlowComponent component = this;
+                            gigabit101.AdvancedSystemManager2.components.FlowComponent component = this;
                             if (selected.getComponentId() < id) {
                                 connectionId = selected.getConnectionId();
                                 component = manager.getFlowItems().get(selected.getComponentId());
@@ -605,7 +612,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                         }else if (current.getComponentId() == this.id && current.getConnectionId() == i) {
                             manager.setCurrentlyConnecting(null);
                         }else if (current.getComponentId() != id){
-                            FlowComponent connectTo = manager.getFlowItems().get(current.getComponentId());
+                            gigabit101.AdvancedSystemManager2.components.FlowComponent connectTo = manager.getFlowItems().get(current.getComponentId());
                             ConnectionOption connectToOption = connectTo.connectionSet.getConnections()[current.getConnectionId()];
 
 
@@ -661,7 +668,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
     private boolean checkForLoops(int connectionId, Connection connection) {
         return checkForLoops(new ArrayList<Integer>(), this, connectionId, connection);
     }
-    private boolean checkForLoops(List<Integer> usedComponents, FlowComponent currentComponent, int connectionId, Connection connection) {
+    private boolean checkForLoops(List<Integer> usedComponents, gigabit101.AdvancedSystemManager2.components.FlowComponent currentComponent, int connectionId, Connection connection) {
         if (usedComponents.contains(currentComponent.getId()))  {
             return true;
         }
@@ -701,7 +708,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
     }
 
     private void addConnection(int id, Connection connection) {
-        if (getManager().getWorldObj() != null && getManager().getWorldObj().isRemote) {
+        if (getManager().getWorld() != null && getManager().getWorld().isRemote) {
             DataWriter dw = PacketHandler.getWriterForServerComponentPacket(this, null);
             if (connection != null) {
                 writeConnectionData(dw, id, true, connection.getComponentId(), connection.getConnectionId());
@@ -1064,7 +1071,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
 
                 int id = dr.readData(DataBitHelper.NODE_ID);
                 int length = -1;
-                if (manager.getWorldObj().isRemote) {
+                if (manager.getWorld().isRemote) {
                     length = dr.readData(DataBitHelper.NODE_ID);
                 }
                 boolean deleted = dr.readBoolean();
@@ -1079,7 +1086,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
                         Point node;
                         if (created) {
                             node = new Point();
-                            if (connection.getNodes().size() < MAX_NODES && (!manager.getWorldObj().isRemote || length > connection.getNodes().size())) {
+                            if (connection.getNodes().size() < MAX_NODES && (!manager.getWorld().isRemote || length > connection.getNodes().size())) {
                                 connection.getNodes().add(id, node);
                             }
                         }else{
@@ -1123,8 +1130,8 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         }
     }
 
-    public FlowComponent copy() {
-        FlowComponent copy = new FlowComponent(manager, x, y, type);
+    public gigabit101.AdvancedSystemManager2.components.FlowComponent copy() {
+        gigabit101.AdvancedSystemManager2.components.FlowComponent copy = new gigabit101.AdvancedSystemManager2.components.FlowComponent(manager, x, y, type);
         copy.id = id;
         copy.name = name;
 
@@ -1185,7 +1192,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         PacketHandler.sendDataToListeningClients(container, dw);
     }
 
-    public void refreshData(ContainerManager container, FlowComponent newData) {
+    public void refreshData(ContainerManager container, gigabit101.AdvancedSystemManager2.components.FlowComponent newData) {
         if (x != newData.x || y != newData.y) {
             x = newData.x;
             y = newData.y;
@@ -1348,14 +1355,14 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
     private static final String NBT_NAME = "Name";
     private static final String NBT_PARENT = "Parent";
 
-    public static FlowComponent readFromNBT(TileEntityManager jam, NBTTagCompound nbtTagCompound, int version, boolean pickup) {
-        FlowComponent component = null;
+    public static gigabit101.AdvancedSystemManager2.components.FlowComponent readFromNBT(TileEntityManager jam, NBTTagCompound nbtTagCompound, int version, boolean pickup) {
+        gigabit101.AdvancedSystemManager2.components.FlowComponent component = null;
         try {
             int x = nbtTagCompound.getShort(NBT_POS_X);
             int y = nbtTagCompound.getShort(NBT_POS_Y);
             int typeId = nbtTagCompound.getByte(NBT_TYPE);
 
-            component = new FlowComponent(jam, x, y, ComponentType.getTypeFromId(typeId));
+            component = new gigabit101.AdvancedSystemManager2.components.FlowComponent(jam, x, y, ComponentType.getTypeFromId(typeId));
             component.isLoading = true;
 
             if (nbtTagCompound.hasKey(NBT_NAME)) {
@@ -1544,11 +1551,11 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         this.name = name;
     }
 
-    public FlowComponent getParent() {
+    public gigabit101.AdvancedSystemManager2.components.FlowComponent getParent() {
         return parent;
     }
 
-    public void setParent(FlowComponent parent) {
+    public void setParent(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         if (this.parent != null)  {
             if (getConnectionSet() == ConnectionSet.INPUT_NODE || getConnectionSet() == ConnectionSet.OUTPUT_NODE) {
                 this.parent.childrenInputNodes.remove(this);
@@ -1574,7 +1581,7 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FlowComponent component = (FlowComponent) o;
+        gigabit101.AdvancedSystemManager2.components.FlowComponent component = (gigabit101.AdvancedSystemManager2.components.FlowComponent) o;
 
         if (id != component.id) return false;
 
@@ -1590,20 +1597,20 @@ public class FlowComponent implements IComponentNetworkReader, Comparable<FlowCo
         return isVisible(getManager().getSelectedComponent());
     }
 
-    public boolean isVisible(FlowComponent selectedComponent) {
+    public boolean isVisible(gigabit101.AdvancedSystemManager2.components.FlowComponent selectedComponent) {
         return (selectedComponent == null && parent == null) || (parent != null && parent.equals(selectedComponent));
     }
 
-    public List<FlowComponent> getChildrenOutputNodes() {
+    public List<gigabit101.AdvancedSystemManager2.components.FlowComponent> getChildrenOutputNodes() {
         return childrenOutputNodes;
     }
 
-    public List<FlowComponent> getChildrenInputNodes() {
+    public List<gigabit101.AdvancedSystemManager2.components.FlowComponent> getChildrenInputNodes() {
         return childrenInputNodes;
     }
 
     @Override
-    public int compareTo(FlowComponent o) {
+    public int compareTo(gigabit101.AdvancedSystemManager2.components.FlowComponent o) {
         return ((Integer)id).compareTo((Integer)o.id);
     }
 

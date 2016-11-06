@@ -1,7 +1,10 @@
 package vswe.stevesfactory.components;
 
 
-public class ComponentMenuContainerTypesVariable extends ComponentMenuContainerTypes {
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+
+public class ComponentMenuContainerTypesVariable extends gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes {
     public ComponentMenuContainerTypesVariable(FlowComponent parent) {
         super(parent);
     }

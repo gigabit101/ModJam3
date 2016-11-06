@@ -1,15 +1,22 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.List;
 
@@ -37,7 +44,7 @@ public class ComponentMenuRedstoneStrength extends ComponentMenu {
             }
         });
 
-        textBoxes = new TextBoxNumberList();
+        textBoxes = new gigabit101.AdvancedSystemManager2.components.TextBoxNumberList();
         textBoxes.addTextBox(lowTextBox = new TextBoxNumber(TEXT_BOX_X_LEFT, TEXT_BOX_Y, 2, true) {
             @Override
             public void onNumberChanged() {
@@ -145,7 +152,7 @@ public class ComponentMenuRedstoneStrength extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuRedstoneStrength menuStrength = (ComponentMenuRedstoneStrength)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength menuStrength = (gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength)menu;
 
         lowTextBox.setNumber(menuStrength.lowTextBox.getNumber());
         highTextBox.setNumber(menuStrength.highTextBox.getNumber());
@@ -154,7 +161,7 @@ public class ComponentMenuRedstoneStrength extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuRedstoneStrength newDataStrength = (ComponentMenuRedstoneStrength)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength newDataStrength = (gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength)newData;
 
         if (lowTextBox.getNumber() != newDataStrength.lowTextBox.getNumber()) {
             lowTextBox.setNumber(newDataStrength.lowTextBox.getNumber());

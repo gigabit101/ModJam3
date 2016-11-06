@@ -1,11 +1,12 @@
 package vswe.stevesfactory.nbt;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.nbt.NBTNode;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.interfaces.IInterfaceRenderer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.interfaces.IInterfaceRenderer;
 
 
 @SideOnly(Side.CLIENT)
@@ -14,7 +15,7 @@ public class NBTRenderer implements IInterfaceRenderer {
 
 
 
-    private NBTNode root;
+    private gigabit101.AdvancedSystemManager2.nbt.NBTNode root;
     public NBTRenderer(NBTTagCompound compound) {
         root = NBTNode.generateNodes(compound);
     }

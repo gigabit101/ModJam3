@@ -21,7 +21,7 @@ public class NBTNode {
     private static final int INT_ARRAY_TAG = 11;
 
     private NBTBase tag;
-    private List<NBTNode> nodes;
+    private List<gigabit101.AdvancedSystemManager2.nbt.NBTNode> nodes;
     private boolean open;
     private int cachedLine;
     private int cachedDepth;
@@ -48,7 +48,7 @@ public class NBTNode {
         }
 
         if (open && nodes != null) {
-            for (NBTNode node : nodes) {
+            for (gigabit101.AdvancedSystemManager2.nbt.NBTNode node : nodes) {
                 line = node.updatePosition(line, depth + 1);
             }
         }
@@ -57,7 +57,7 @@ public class NBTNode {
     }
 
 
-    public List<NBTNode> getNodes() {
+    public List<gigabit101.AdvancedSystemManager2.nbt.NBTNode> getNodes() {
         return nodes;
     }
 
@@ -96,16 +96,16 @@ public class NBTNode {
     }
 
 
-    public static NBTNode generateNodes(NBTTagCompound compound) {
-        NBTNode node = generateNodesFromTag(compound);
+    public static gigabit101.AdvancedSystemManager2.nbt.NBTNode generateNodes(NBTTagCompound compound) {
+        gigabit101.AdvancedSystemManager2.nbt.NBTNode node = generateNodesFromTag(compound);
         node.updatePosition();
         return node;
     }
 
-    private static NBTNode generateNodesFromTag(NBTTagCompound compound) {
-        NBTNode node = new NBTNode(compound);
-        node.nodes = new ArrayList<NBTNode>();
-        for (Object obj : compound.func_150296_c()) {
+    private static gigabit101.AdvancedSystemManager2.nbt.NBTNode generateNodesFromTag(NBTTagCompound compound) {
+        gigabit101.AdvancedSystemManager2.nbt.NBTNode node = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(compound);
+        node.nodes = new ArrayList<gigabit101.AdvancedSystemManager2.nbt.NBTNode>();
+        for (Object obj : compound.getKeySet()) {
             NBTBase tag = (NBTBase)obj;
 
             if (tag.getId() == END_TAG) break;
@@ -115,31 +115,31 @@ public class NBTNode {
 
         return node;
     }
-    private static NBTNode generateNodesFromList(NBTTagList compound) {
-        NBTNode node = new NBTNode(compound);
-        node.nodes = new ArrayList<NBTNode>();
+    private static gigabit101.AdvancedSystemManager2.nbt.NBTNode generateNodesFromList(NBTTagList compound) {
+        gigabit101.AdvancedSystemManager2.nbt.NBTNode node = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(compound);
+        node.nodes = new ArrayList<gigabit101.AdvancedSystemManager2.nbt.NBTNode>();
         for (int i = 0; i < compound.tagCount(); i++) {
             node.nodes.add(createElementNode(compound.getCompoundTagAt(i)));
         }
 
         return node;
     }
-    private static NBTNode generateNodesFromArray(NBTTagByteArray compound) {
-        NBTNode node = new NBTNode(compound);
-        node.nodes = new ArrayList<NBTNode>();
-        for (byte b : compound.func_150292_c()) {
-            NBTNode child = new NBTNode(null);
+    private static gigabit101.AdvancedSystemManager2.nbt.NBTNode generateNodesFromArray(NBTTagByteArray compound) {
+        gigabit101.AdvancedSystemManager2.nbt.NBTNode node = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(compound);
+        node.nodes = new ArrayList<gigabit101.AdvancedSystemManager2.nbt.NBTNode>();
+        for (byte b : compound.getByteArray()) {
+            gigabit101.AdvancedSystemManager2.nbt.NBTNode child = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(null);
             child.value = String.valueOf(b);
             node.nodes.add(child);
         }
 
         return node;
     }
-    private static NBTNode generateNodesFromArray(NBTTagIntArray compound) {
-        NBTNode node = new NBTNode(compound);
-        node.nodes = new ArrayList<NBTNode>();
-        for (int n : compound.func_150302_c()) {
-            NBTNode child = new NBTNode(null);
+    private static gigabit101.AdvancedSystemManager2.nbt.NBTNode generateNodesFromArray(NBTTagIntArray compound) {
+        gigabit101.AdvancedSystemManager2.nbt.NBTNode node = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(compound);
+        node.nodes = new ArrayList<gigabit101.AdvancedSystemManager2.nbt.NBTNode>();
+        for (int n : compound.getIntArray()) {
+            gigabit101.AdvancedSystemManager2.nbt.NBTNode child = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(null);
             child.value = String.valueOf(n);
             node.nodes.add(child);
         }
@@ -147,7 +147,7 @@ public class NBTNode {
         return node;
     }
 
-    private static NBTNode createElementNode(NBTBase tag) {
+    private static gigabit101.AdvancedSystemManager2.nbt.NBTNode createElementNode(NBTBase tag) {
         switch (tag.getId()) {
             case COMPOUND_TAG:
                 return generateNodesFromTag((NBTTagCompound)tag);
@@ -158,7 +158,7 @@ public class NBTNode {
             case INT_ARRAY_TAG:
                 return generateNodesFromArray((NBTTagIntArray)tag);
             default:
-                NBTNode node = new NBTNode(tag);
+                gigabit101.AdvancedSystemManager2.nbt.NBTNode node = new gigabit101.AdvancedSystemManager2.nbt.NBTNode(tag);
                 node.value = tag.toString() + " [type = " + tag.getId() + "]";
                 return node;
         }

@@ -1,21 +1,24 @@
 package vswe.stevesfactory.components;
 
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.Connection;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ComponentMenuGroup extends ComponentMenu {
-    public ComponentMenuGroup(FlowComponent parent) {
+    public ComponentMenuGroup(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent);
     }
 
@@ -102,7 +105,7 @@ public class ComponentMenuGroup extends ComponentMenu {
 
     @Override
     public void readNetworkComponent(DataReader dr) {
-        if (!getParent().getManager().getWorldObj().isRemote) {
+        if (!getParent().getManager().getWorld().isRemote) {
             int id = dr.readComponentId();
             FlowComponent component = getParent().getManager().getFlowItems().get(id);
             boolean moveCluster = dr.readBoolean();

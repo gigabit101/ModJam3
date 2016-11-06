@@ -1,8 +1,10 @@
 package vswe.stevesfactory.components;
 
 
+import gigabit101.AdvancedSystemManager2.components.Setting;
+
 public class ConditionSettingChecker {
-    private Setting setting;
+    private gigabit101.AdvancedSystemManager2.components.Setting setting;
     private int amount;
 
     public ConditionSettingChecker(Setting setting) {

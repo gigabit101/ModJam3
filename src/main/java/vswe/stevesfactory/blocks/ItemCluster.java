@@ -1,14 +1,20 @@
 package vswe.stevesfactory.blocks;
 
 
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.StevesFactoryManager;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.AdvancedSystemManager2;
+import gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry;
 
 import java.util.List;
 
@@ -25,16 +31,16 @@ public class ItemCluster extends ItemBlock {
     public static final String NBT_TYPES = "Types";
 
     @Override
-    public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        NBTTagCompound compound = item.getTagCompound();
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(NBT_CABLE)) {
             NBTTagCompound cable = compound.getCompoundTag(NBT_CABLE);
             if (cable.hasKey(NBT_TYPES)) {
-                return super.onItemUse(item, player, world, x, y, z, side, hitX, hitY, hitZ);
+                return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ);
             }
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class ItemCluster extends ItemBlock {
         NBTTagCompound compound = item.getTagCompound();
         if (compound != null && compound.hasKey(NBT_CABLE)) {
             NBTTagCompound cable = compound.getCompoundTag(NBT_CABLE);
-            byte[] types = cable.getByteArray(ItemCluster.NBT_TYPES);
+            byte[] types = cable.getByteArray(gigabit101.AdvancedSystemManager2.blocks.ItemCluster.NBT_TYPES);
             for (byte type : types) {
                 list.add(ClusterRegistry.getRegistryList().get(type).getItemStack().getDisplayName());
             }
@@ -53,6 +59,6 @@ public class ItemCluster extends ItemBlock {
 
     @Override
     public String getUnlocalizedName(ItemStack item) {
-        return "tile." + StevesFactoryManager.UNLOCALIZED_START + (ModBlocks.blockCableCluster.isAdvanced(item.getItemDamage()) ? ModBlocks.CABLE_ADVANCED_CLUSTER_UNLOCALIZED_NAME : ModBlocks.CABLE_CLUSTER_UNLOCALIZED_NAME);
+        return "tile." + AdvancedSystemManager2.UNLOCALIZED_START + (gigabit101.AdvancedSystemManager2.blocks.ModBlocks.blockCableCluster.isAdvanced(item.getItemDamage()) ? ModBlocks.CABLE_ADVANCED_CLUSTER_UNLOCALIZED_NAME : ModBlocks.CABLE_CLUSTER_UNLOCALIZED_NAME);
     }
 }

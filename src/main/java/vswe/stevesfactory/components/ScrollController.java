@@ -1,11 +1,13 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.TextBoxLogic;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ public  abstract class ScrollController<T> {
     private int dir;
     private boolean clicked;
     private boolean selected;
-    private TextBoxLogic textBox;
+    private gigabit101.AdvancedSystemManager2.components.TextBoxLogic textBox;
     private List<T> result;
     private boolean hasSearchBox;
 

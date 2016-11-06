@@ -1,10 +1,11 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength;
 
 public class ComponentMenuRedstoneStrengthNodes extends ComponentMenuRedstoneStrength {
-    public ComponentMenuRedstoneStrengthNodes(FlowComponent parent) {
+    public ComponentMenuRedstoneStrengthNodes(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent);
     }
 

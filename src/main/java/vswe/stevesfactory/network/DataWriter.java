@@ -1,25 +1,26 @@
 package vswe.stevesfactory.network;
 
 
-import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-import io.netty.buffer.ByteBuf;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.interfaces.ContainerBase;
-import vswe.stevesfactory.settings.Settings;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerBase;
+import gigabit101.AdvancedSystemManager2.settings.Settings;
+import gigabit101.AdvancedSystemManager2.util.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static vswe.stevesfactory.StevesFactoryManager.CHANNEL;
-import static vswe.stevesfactory.StevesFactoryManager.packetHandler;
+import static gigabit101.AdvancedSystemManager2.AdvancedSystemManager2.CHANNEL;
+import static gigabit101.AdvancedSystemManager2.AdvancedSystemManager2.packetHandler;
 
 public class DataWriter {
     private int byteBuffer;
@@ -39,7 +40,7 @@ public class DataWriter {
     }
 
     public void writeBoolean(boolean data) {
-        writeData(data ? 1 : 0, DataBitHelper.BOOLEAN);
+        writeData(data ? 1 : 0, gigabit101.AdvancedSystemManager2.network.DataBitHelper.BOOLEAN);
     }
 
     public void writeData(int data, DataBitHelper bitCount) {
@@ -78,7 +79,7 @@ public class DataWriter {
 
     private FMLProxyPacket createPacket() {
        writeFinalBits();
-       ByteBuf buf = Unpooled.copiedBuffer(((ByteArrayOutputStream)stream).toByteArray());
+       PacketBuffer buf = new PacketBuffer(Unpooled.copiedBuffer(((ByteArrayOutputStream)stream).toByteArray()));
        return new FMLProxyPacket(buf, CHANNEL);
     }
 
@@ -95,7 +96,7 @@ public class DataWriter {
     }
     
     void sendPlayerPackets(ContainerBase container) {
-        for (ICrafting crafting : container.getCrafters()) {
+        for (IContainerListener crafting : container.getCrafters()) {
             if (crafting instanceof EntityPlayer) {
                 EntityPlayerMP player = (EntityPlayerMP) crafting;
                 packetHandler.sendTo(createPacket(), player);
@@ -122,7 +123,7 @@ public class DataWriter {
 
         if (nbtTagCompound != null) {
             try {
-                bytes = CompressedStreamTools.compress(nbtTagCompound);
+                bytes = Utils.compress(nbtTagCompound);
             }catch (IOException ex) {
                 bytes = null;
             }

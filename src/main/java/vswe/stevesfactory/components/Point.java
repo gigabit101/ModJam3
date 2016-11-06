@@ -28,8 +28,8 @@ public class Point {
         this.y = y;
     }
 
-    public Point copy() {
-        return new Point(x, y);
+    public gigabit101.AdvancedSystemManager2.components.Point copy() {
+        return new gigabit101.AdvancedSystemManager2.components.Point(x, y);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class Point {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Point point = (Point) o;
+        gigabit101.AdvancedSystemManager2.components.Point point = (gigabit101.AdvancedSystemManager2.components.Point) o;
 
         if (x != point.x) return false;
         if (y != point.y) return false;

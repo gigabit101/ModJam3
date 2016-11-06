@@ -1,13 +1,14 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
 
 import java.util.List;
 
 public class ComponentMenuInventory extends ComponentMenuContainer {
-    public ComponentMenuInventory(FlowComponent parent) {
+    public ComponentMenuInventory(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent, ConnectionBlockType.INVENTORY);
     }
 

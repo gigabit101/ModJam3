@@ -5,6 +5,8 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCrafting;
+import gigabit101.AdvancedSystemManager2.components.ItemSetting;
 
 import java.util.Map;
 
@@ -32,7 +34,7 @@ public class CraftingDummy extends InventoryCrafting
         if (overrideMap != null && overrideMap.get(id) != null && overrideMap.get(id).stackSize > 0) {
             return overrideMap.get(id);
         }else{
-            return id < 0 || id >= this.getSizeInventory() ? null : ((CraftingSetting)crafting.getSettings().get(id)).getItem();
+            return id < 0 || id >= this.getSizeInventory() ? null : ((gigabit101.AdvancedSystemManager2.components.CraftingSetting)crafting.getSettings().get(id)).getItem();
         }
     }
 
@@ -49,7 +51,7 @@ public class CraftingDummy extends InventoryCrafting
 
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int par1) {
+    public ItemStack removeStackFromSlot(int par1) {
         return null;
     }
 
@@ -83,7 +85,7 @@ public class CraftingDummy extends InventoryCrafting
         for (int i = 0; i < CraftingManager.getInstance().getRecipeList().size(); ++i) {
             IRecipe recipe = (IRecipe) CraftingManager.getInstance().getRecipeList().get(i);
 
-            if (recipe.matches(this, crafting.getParent().getManager().getWorldObj())) {
+            if (recipe.matches(this, crafting.getParent().getManager().getWorld())) {
                 return recipe;
             }
         }
@@ -94,7 +96,7 @@ public class CraftingDummy extends InventoryCrafting
     private Map<Integer, ItemStack> overrideMap;
     public boolean isItemValidForRecipe(IRecipe recipe, ItemSetting result, Map<Integer, ItemStack> overrideMap, boolean advanced) {
         this.overrideMap = overrideMap;
-        if ((advanced && getRecipe() == null) || (!advanced && !recipe.matches(this, crafting.getParent().getManager().getWorldObj()))) {
+        if ((advanced && getRecipe() == null) || (!advanced && !recipe.matches(this, crafting.getParent().getManager().getWorld()))) {
             return false;
         }
         ItemStack itemStack = recipe.getCraftingResult(this);

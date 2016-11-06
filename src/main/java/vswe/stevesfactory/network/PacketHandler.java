@@ -1,27 +1,30 @@
 package vswe.stevesfactory.network;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
-import vswe.stevesfactory.blocks.ITileEntityInterface;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.components.ComponentMenu;
-import vswe.stevesfactory.components.Connection;
-import vswe.stevesfactory.components.FlowComponent;
-import vswe.stevesfactory.components.Point;
-import vswe.stevesfactory.interfaces.ContainerBase;
-import vswe.stevesfactory.interfaces.ContainerManager;
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.blocks.ITileEntityInterface;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.Connection;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.Point;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerBase;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.IPacketBlock;
 
 public class PacketHandler {
     public static final double BLOCK_UPDATE_RANGE = 128;
 
-    public static void sendDataToPlayer(ICrafting crafting, DataWriter dw) {
+    public static void sendDataToPlayer(IContainerListener crafting, gigabit101.AdvancedSystemManager2.network.DataWriter dw) {
         if (crafting instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP)crafting;
 
@@ -40,7 +43,7 @@ public class PacketHandler {
     }
 
 
-    public static void sendAllData(Container container, ICrafting crafting, ITileEntityInterface te) {
+    public static void sendAllData(Container container, IContainerListener crafting, ITileEntityInterface te) {
         DataWriter dw = new DataWriter();
 
         dw.writeBoolean(true); //use container
@@ -137,20 +140,20 @@ public class PacketHandler {
     }
 
     public static void sendUpdateInventoryPacket(ContainerManager container) {
-        DataWriter dw = PacketHandler.getWriterForSpecificData(container);
+        DataWriter dw = gigabit101.AdvancedSystemManager2.network.PacketHandler.getWriterForSpecificData(container);
         createNonComponentPacket(dw);
         dw.writeBoolean(true);
         sendDataToListeningClients(container, dw);
     }
 
     public static DataWriter getWriterForServerComponentPacket(FlowComponent component, ComponentMenu menu) {
-        DataWriter dw = PacketHandler.getWriterForServerPacket();
+        DataWriter dw = gigabit101.AdvancedSystemManager2.network.PacketHandler.getWriterForServerPacket();
         createComponentPacket(dw, component, menu);
         return dw;
     }
 
     public static DataWriter getWriterForClientComponentPacket(ContainerManager container, FlowComponent component, ComponentMenu menu) {
-        DataWriter dw = PacketHandler.getWriterForSpecificData(container);
+        DataWriter dw = gigabit101.AdvancedSystemManager2.network.PacketHandler.getWriterForSpecificData(container);
         createComponentPacket(dw, component, menu);
         return dw;
     }
@@ -208,13 +211,13 @@ public class PacketHandler {
         dw.writeBoolean(true); //new data;
 
         writeAllComponentData(dw, component);
-        PacketHandler.sendDataToListeningClients(container, dw);
+        gigabit101.AdvancedSystemManager2.network.PacketHandler.sendDataToListeningClients(container, dw);
 
         dw.close();
     }
 
     public static void sendRemovalPacket(ContainerManager container, int idToRemove) {
-        DataWriter dw = PacketHandler.getWriterForSpecificData(container);
+        DataWriter dw = gigabit101.AdvancedSystemManager2.network.PacketHandler.getWriterForSpecificData(container);
         createNonComponentPacket(dw);
         dw.writeBoolean(false);
         dw.writeComponentId((TileEntityManager)container.getTileEntity(), idToRemove);
@@ -226,13 +229,14 @@ public class PacketHandler {
     public static void sendBlockPacket(IPacketBlock block, EntityPlayer player, int id) {
         if (block instanceof TileEntity) {
             TileEntity te = (TileEntity)block;
+            BlockPos pos = te.getPos();
             boolean onServer = player == null || !player.worldObj.isRemote;
 
             DataWriter dw = new DataWriter();
             dw.writeBoolean(false); //no container
-            dw.writeData(te.xCoord, DataBitHelper.WORLD_COORDINATE);
-            dw.writeData(te.yCoord, DataBitHelper.WORLD_COORDINATE);
-            dw.writeData(te.zCoord, DataBitHelper.WORLD_COORDINATE);
+            dw.writeData(pos.getX(), DataBitHelper.WORLD_COORDINATE);
+            dw.writeData(pos.getY(), DataBitHelper.WORLD_COORDINATE);
+            dw.writeData(pos.getZ(), DataBitHelper.WORLD_COORDINATE);
             int length = block.infoBitLength(onServer);
             if (length != 0) {
                 dw.writeData(id, length);
@@ -244,7 +248,7 @@ public class PacketHandler {
             }else if(player != null) {
                 dw.sendPlayerPacket((EntityPlayerMP)player);
             }else{
-                dw.sendPlayerPackets(te.xCoord + 0.5, te.yCoord, te.zCoord, BLOCK_UPDATE_RANGE, te.getWorldObj().provider.dimensionId);
+                dw.sendPlayerPackets(pos.getX() + 0.5, pos.getY(), pos.getZ(), BLOCK_UPDATE_RANGE, te.getWorld().provider.getDimension());
             }
 
             dw.close();

@@ -2,30 +2,34 @@ package vswe.stevesfactory.blocks;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
-import net.minecraftforge.common.util.ForgeDirection;
-import vswe.stevesfactory.components.ComponentMenuSignText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import gigabit101.AdvancedSystemManager2.blocks.ClusterMethodRegistration;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuSignText;
 
 import java.util.EnumSet;
 
 
-public class TileEntitySignUpdater extends TileEntityClusterElement {
+public class TileEntitySignUpdater extends gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement {
     @Override
     protected EnumSet<ClusterMethodRegistration> getRegistrations() {
         return EnumSet.of(ClusterMethodRegistration.ON_BLOCK_PLACED_BY);
     }
 
     public void updateSign(ComponentMenuSignText menu) {
-        ForgeDirection direction = ForgeDirection.VALID_DIRECTIONS[getBlockMetadata() % ForgeDirection.VALID_DIRECTIONS.length];
-        TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+        EnumFacing direction = EnumFacing.getFront(getBlockMetadata() % EnumFacing.values().length);
+        TileEntity te = worldObj.getTileEntity(new BlockPos(getPos().getX() + direction.getFrontOffsetX(), getPos().getY() + direction.getFrontOffsetY(), getPos().getZ() + direction.getFrontOffsetZ()));
         if (te != null && te instanceof  TileEntitySign) {
             TileEntitySign sign = (TileEntitySign)te;
             //if (sign.func_142009_b() == null) {
-                sign.func_145912_a(null);
+                sign.setPlayer(null);
                 boolean updated = false;
                 for (int i = 0; i < 4; i++) {
                     if (menu.shouldUpdate(i)) {
-                        String oldText = sign.signText[i];
-                        String newText = menu.getText(i);
+                        ITextComponent oldText = sign.signText[i];
+                        TextComponentString newText = new TextComponentString(menu.getText(i));
                         if (!newText.equals(oldText)) {
                             sign.signText[i] = newText;
                             updated = true;
@@ -34,7 +38,7 @@ public class TileEntitySignUpdater extends TileEntityClusterElement {
                 }
                 if (updated) {
                     sign.markDirty();
-                    worldObj.markBlockForUpdate(sign.xCoord, sign.yCoord, sign.zCoord);
+                    worldObj.notifyBlockUpdate(sign.getPos(), getWorld().getBlockState(sign.getPos()), getWorld().getBlockState(sign.getPos()), 3);
                 }
 
             //}

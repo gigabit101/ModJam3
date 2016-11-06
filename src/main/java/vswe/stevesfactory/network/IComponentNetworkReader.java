@@ -2,5 +2,5 @@ package vswe.stevesfactory.network;
 
 
 public interface IComponentNetworkReader {
-    void readNetworkComponent(DataReader dr);
+    void readNetworkComponent(gigabit101.AdvancedSystemManager2.network.DataReader dr);
 }

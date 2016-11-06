@@ -1,15 +1,22 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 
 public class ComponentMenuSplit extends ComponentMenu {
@@ -25,7 +32,7 @@ public class ComponentMenuSplit extends ComponentMenu {
             }
         };
 
-        radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.SEQUENTIAL));
+        radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_X, RADIO_Y, Localization.SEQUENTIAL));
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y + SPACING_Y, Localization.SPLIT));
 
         checkBoxes = new CheckBoxList();
@@ -135,7 +142,7 @@ public class ComponentMenuSplit extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-       ComponentMenuSplit menuSplit = (ComponentMenuSplit)menu;
+       gigabit101.AdvancedSystemManager2.components.ComponentMenuSplit menuSplit = (gigabit101.AdvancedSystemManager2.components.ComponentMenuSplit)menu;
        setSplit(menuSplit.useSplit());
        setFair(menuSplit.useFair());
        setEmpty(menuSplit.useEmpty());
@@ -143,7 +150,7 @@ public class ComponentMenuSplit extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuSplit newDataSplit = (ComponentMenuSplit)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuSplit newDataSplit = (gigabit101.AdvancedSystemManager2.components.ComponentMenuSplit)newData;
 
         if (useSplit() != newDataSplit.useSplit()) {
             setSplit(newDataSplit.useSplit());

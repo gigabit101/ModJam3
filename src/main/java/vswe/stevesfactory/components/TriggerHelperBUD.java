@@ -1,7 +1,14 @@
 package vswe.stevesfactory.components;
 
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.TileEntityBUD;
+import gigabit101.AdvancedSystemManager2.components.ConnectionOption;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityBUD;
+import gigabit101.AdvancedSystemManager2.components.CommandExecutor;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuUpdateBlock;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
+import gigabit101.AdvancedSystemManager2.components.TriggerHelper;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -52,7 +59,7 @@ public class TriggerHelperBUD extends TriggerHelper {
     }
 
     @Override
-    public void onTrigger(FlowComponent item, EnumSet<ConnectionOption> valid) {
+    public void onTrigger(FlowComponent item, EnumSet<gigabit101.AdvancedSystemManager2.components.ConnectionOption> valid) {
         List<SlotInventoryHolder> buds = CommandExecutor.getContainers(item.getManager(), item.getMenus().get(containerId), blockType);
 
         if (buds != null) {

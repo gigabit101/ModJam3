@@ -1,7 +1,8 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.Localization;
 
 public enum ConnectionOption {
     STANDARD_INPUT(Localization.CONNECTION_INPUT, ConnectionType.INPUT),
@@ -40,7 +41,7 @@ public enum ConnectionOption {
     }
 
 
-    public String getName(FlowComponent component, int id) {
+    public String getName(gigabit101.AdvancedSystemManager2.components.FlowComponent component, int id) {
 
         if (name != null) {
             return name.toString();

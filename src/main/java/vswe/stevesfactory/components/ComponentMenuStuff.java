@@ -1,18 +1,27 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.ScrollController;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.Setting;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -77,8 +86,8 @@ public abstract class ComponentMenuStuff extends ComponentMenu {
             });
         }
 
-        final ComponentMenuStuff self = this;
-        scrollControllerSearch = new ScrollController(true) {
+        final gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff self = this;
+        scrollControllerSearch = new gigabit101.AdvancedSystemManager2.components.ScrollController(true) {
             @Override
             protected List updateSearch(String search, boolean all) {
                 if (search.equals("")) {
@@ -418,7 +427,7 @@ public abstract class ComponentMenuStuff extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuStuff menuItem = (ComponentMenuStuff)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff menuItem = (gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff)menu;
 
         setFirstRadioButtonSelected(menuItem.isFirstRadioButtonSelected());
 
@@ -437,8 +446,8 @@ public abstract class ComponentMenuStuff extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        if (((ComponentMenuStuff)newData).isFirstRadioButtonSelected() != isFirstRadioButtonSelected()) {
-            setFirstRadioButtonSelected(((ComponentMenuStuff) newData).isFirstRadioButtonSelected());
+        if (((gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff)newData).isFirstRadioButtonSelected() != isFirstRadioButtonSelected()) {
+            setFirstRadioButtonSelected(((gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff) newData).isFirstRadioButtonSelected());
 
             DataWriter dw = getWriterForClientComponentPacket(container);
             dw.writeBoolean(false); //no specific setting
@@ -448,7 +457,7 @@ public abstract class ComponentMenuStuff extends ComponentMenu {
 
         for (int i = 0; i < settings.size(); i++) {
             Setting setting = settings.get(i);
-            Setting newSetting = ((ComponentMenuStuff)newData).settings.get(i);
+            Setting newSetting = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff)newData).settings.get(i);
 
             if (!newSetting.isValid() && setting.isValid()) {
                 setting.clear();
@@ -568,7 +577,7 @@ public abstract class ComponentMenuStuff extends ComponentMenu {
         }
 
         //if the client send data to the server, do the update right away on that client
-        if (getParent().getManager().getWorldObj().isRemote) {
+        if (getParent().getManager().getWorld().isRemote) {
             onSettingContentChange();
         }
     }

@@ -1,9 +1,16 @@
 package vswe.stevesfactory.components;
 
 
-import net.minecraftforge.common.util.ForgeDirection;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.TileEntityInput;
+import gigabit101.AdvancedSystemManager2.components.ConnectionOption;
+import net.minecraft.util.EnumFacing;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityInput;
+import gigabit101.AdvancedSystemManager2.components.CommandExecutor;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
+import gigabit101.AdvancedSystemManager2.components.TriggerHelper;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -26,7 +33,7 @@ public class TriggerHelperRedstone extends TriggerHelper {
     }
 
     @Override
-    public void onTrigger(FlowComponent item, EnumSet<ConnectionOption> valid) {
+    public void onTrigger(FlowComponent item, EnumSet<gigabit101.AdvancedSystemManager2.components.ConnectionOption> valid) {
         if (isTriggerPowered(item, true)) {
             valid.add(ConnectionOption.REDSTONE_HIGH);
         }
@@ -40,8 +47,8 @@ public class TriggerHelperRedstone extends TriggerHelper {
 
         if (receivers != null) {
             ComponentMenuContainer componentMenuContainer = (ComponentMenuContainer)item.getMenus().get(containerId);
-            int[] newPower = new int[ForgeDirection.VALID_DIRECTIONS.length];
-            int[] oldPower = new int[ForgeDirection.VALID_DIRECTIONS.length];
+            int[] newPower = new int[EnumFacing.values().length];
+            int[] oldPower = new int[EnumFacing.values().length];
             if (canUseMergedDetection && componentMenuContainer.getOption() == 0) {
                 for (SlotInventoryHolder receiver : receivers) {
                     TileEntityInput input = receiver.getReceiver();

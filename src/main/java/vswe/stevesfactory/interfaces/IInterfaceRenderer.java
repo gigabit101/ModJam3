@@ -1,12 +1,13 @@
 package vswe.stevesfactory.interfaces;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public interface IInterfaceRenderer {
-    void draw(GuiManager gui, int mX, int mY);
+    void draw(gigabit101.AdvancedSystemManager2.interfaces.GuiManager gui, int mX, int mY);
     void drawMouseOver(GuiManager gui, int mX, int mY);
     void onClick(GuiManager gui, int mX, int mY, int button);
     void onDrag(GuiManager gui, int mX, int mY);

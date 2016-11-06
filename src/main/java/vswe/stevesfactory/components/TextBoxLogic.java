@@ -1,9 +1,9 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.ChatAllowedCharacters;
-import vswe.stevesfactory.interfaces.GuiManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 
 public class TextBoxLogic {

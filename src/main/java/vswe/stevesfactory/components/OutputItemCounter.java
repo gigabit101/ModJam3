@@ -1,8 +1,12 @@
 package vswe.stevesfactory.components;
 
 
+import gigabit101.AdvancedSystemManager2.components.ItemBufferElement;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import gigabit101.AdvancedSystemManager2.components.ItemSetting;
+import gigabit101.AdvancedSystemManager2.components.Setting;
+import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
 
 import java.util.List;
 
@@ -12,7 +16,7 @@ public class OutputItemCounter {
     private int currentInventoryStackSize;
     private int currentBufferStackSize;
 
-    public OutputItemCounter(List<ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories, IInventory inventory, Setting setting, boolean useWhiteList) {
+    public OutputItemCounter(List<gigabit101.AdvancedSystemManager2.components.ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories, IInventory inventory, Setting setting, boolean useWhiteList) {
         this.setting = setting;
         this.useWhiteList = useWhiteList;
 

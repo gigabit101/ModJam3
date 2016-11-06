@@ -5,8 +5,17 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.components.CommandExecutor;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerScrap;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCrafting;
+import gigabit101.AdvancedSystemManager2.components.CraftingSetting;
+import gigabit101.AdvancedSystemManager2.components.FuzzyMode;
+import gigabit101.AdvancedSystemManager2.components.IItemBufferElement;
+import gigabit101.AdvancedSystemManager2.components.IItemBufferSubElement;
+import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
+import gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder;
 
 import java.util.*;
 
@@ -110,17 +119,17 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
 
 
 
-        double spawnX = manager.xCoord + rand.nextDouble() * 0.8 + 0.1;
-        double spawnY = manager.yCoord + rand.nextDouble() * 0.3 + 1.1;
-        double spawnZ = manager.zCoord + rand.nextDouble() * 0.8 + 0.1;
+        double spawnX = manager.getPos().getX() + rand.nextDouble() * 0.8 + 0.1;
+        double spawnY = manager.getPos().getY() + rand.nextDouble() * 0.3 + 1.1;
+        double spawnZ = manager.getPos().getZ() + rand.nextDouble() * 0.8 + 0.1;
 
-        EntityItem entityitem = new EntityItem(manager.getWorldObj(), spawnX, spawnY, spawnZ, itemStack);
+        EntityItem entityitem = new EntityItem(manager.getWorld(), spawnX, spawnY, spawnZ, itemStack);
 
         entityitem.motionX = rand.nextGaussian() * SPEED_MULTIPLIER;
         entityitem.motionY = rand.nextGaussian() * SPEED_MULTIPLIER + 0.2F;
         entityitem.motionZ = rand.nextGaussian() * SPEED_MULTIPLIER;
 
-        manager.getWorldObj().spawnEntityInWorld(entityitem);
+        manager.getWorld().spawnEntityInWorld(entityitem);
     }
 
     @Override
@@ -186,7 +195,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
 
     private boolean findItems(boolean remove) {
         Map<Integer, ItemStack> foundItems = new HashMap<Integer, ItemStack>();
-        for (ItemBufferElement itemBufferElement : executor.itemBuffer) {
+        for (gigabit101.AdvancedSystemManager2.components.ItemBufferElement itemBufferElement : executor.itemBuffer) {
             int count = itemBufferElement.retrieveItemCount(9);
             for (Iterator<SlotStackInventoryHolder> iterator = itemBufferElement.getSubElements().iterator(); iterator.hasNext(); ) {
                 IItemBufferSubElement itemBufferSubElement = iterator.next();

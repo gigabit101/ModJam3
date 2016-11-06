@@ -2,12 +2,18 @@ package vswe.stevesfactory.components;
 
 
 import net.minecraft.item.ItemStack;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.IItemBufferSubElement;
+import gigabit101.AdvancedSystemManager2.components.ItemSetting;
+import gigabit101.AdvancedSystemManager2.components.Setting;
+import gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder;
+import gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ItemBufferElement implements IItemBufferElement {
+public class ItemBufferElement implements gigabit101.AdvancedSystemManager2.components.IItemBufferElement {
     private ItemSetting setting;
     private FlowComponent component;
     private boolean useWhiteList;
@@ -37,7 +43,7 @@ public class ItemBufferElement implements IItemBufferElement {
 
     }
 
-    public boolean addTarget(FlowComponent owner, Setting setting,  SlotInventoryHolder inventoryHolder, SlotStackInventoryHolder target) {
+    public boolean addTarget(FlowComponent owner, Setting setting, SlotInventoryHolder inventoryHolder, SlotStackInventoryHolder target) {
         if (component.getId() == owner.getId() && (this.setting == null || (setting != null && this.setting.getId() == setting.getId())) && (this.inventoryHolder.isShared() || this.inventoryHolder.equals(inventoryHolder))) {
             addTarget(target);
             return true;
@@ -147,9 +153,9 @@ public class ItemBufferElement implements IItemBufferElement {
         return bufferSize;
     }
 
-    public ItemBufferElement getSplitElement(int elementAmount, int id, boolean fair) {
+    public gigabit101.AdvancedSystemManager2.components.ItemBufferElement getSplitElement(int elementAmount, int id, boolean fair) {
 
-        ItemBufferElement element = new ItemBufferElement(this.component, this.setting, this.inventoryHolder, this.useWhiteList);
+        gigabit101.AdvancedSystemManager2.components.ItemBufferElement element = new gigabit101.AdvancedSystemManager2.components.ItemBufferElement(this.component, this.setting, this.inventoryHolder, this.useWhiteList);
         element.holders = new ArrayList<SlotStackInventoryHolder>();
         for (SlotStackInventoryHolder holder : holders) {
             element.addTarget((holder).getSplitElement(elementAmount, id, fair));

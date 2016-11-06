@@ -1,17 +1,18 @@
 package vswe.stevesfactory.components;
 
 
+import gigabit101.AdvancedSystemManager2.blocks.*;
+import gigabit101.AdvancedSystemManager2.components.SlotSideTarget;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.IFluidHandler;
-import vswe.stevesfactory.blocks.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SlotInventoryHolder {
     private TileEntity inventory;
-    private Map<Integer, SlotSideTarget> validSlots;
+    private Map<Integer, gigabit101.AdvancedSystemManager2.components.SlotSideTarget> validSlots;
     private int sharedOption;
     private int id;
 
@@ -78,9 +79,9 @@ public class SlotInventoryHolder {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SlotInventoryHolder that = (SlotInventoryHolder) o;
+        gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder that = (gigabit101.AdvancedSystemManager2.components.SlotInventoryHolder) o;
 
-        return inventory.xCoord == that.inventory.xCoord && inventory.yCoord == that.inventory.yCoord && inventory.zCoord == that.inventory.yCoord;
+        return inventory.getPos().getX() == that.inventory.getPos().getX() && inventory.getPos().getY() == that.inventory.getPos().getY() && inventory.getPos().getZ() == that.inventory.getPos().getY();
     }
 
     @Override

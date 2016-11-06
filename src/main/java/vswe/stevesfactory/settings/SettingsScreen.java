@@ -1,16 +1,17 @@
 package vswe.stevesfactory.settings;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.settings.Settings;
 import net.minecraft.client.Minecraft;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.components.CheckBox;
-import vswe.stevesfactory.components.CheckBoxList;
-import vswe.stevesfactory.components.ComponentType;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.interfaces.IInterfaceRenderer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentType;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.interfaces.IInterfaceRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class SettingsScreen implements IInterfaceRenderer {
         checkBoxes.addCheckBox(new CheckBoxSetting(Localization.CLOSE_GROUP_LABEL) {
             @Override
             public void setValue(boolean val) {
-                Settings.setAutoCloseGroup(val);
+                gigabit101.AdvancedSystemManager2.settings.Settings.setAutoCloseGroup(val);
             }
 
             @Override

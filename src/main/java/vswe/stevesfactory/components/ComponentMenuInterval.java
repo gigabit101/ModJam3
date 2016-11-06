@@ -1,22 +1,26 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 public class ComponentMenuInterval extends ComponentMenu {
     public ComponentMenuInterval(FlowComponent parent) {
         super(parent);
 
-        textBoxes = new TextBoxNumberList();
+        textBoxes = new gigabit101.AdvancedSystemManager2.components.TextBoxNumberList();
         textBoxes.addTextBox(interval = new TextBoxNumber(TEXT_BOX_X, TEXT_BOX_Y, 3, true) {
             @Override
             public void onNumberChanged() {
@@ -99,12 +103,12 @@ public class ComponentMenuInterval extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-       setInterval(((ComponentMenuInterval)menu).getInterval());
+       setInterval(((gigabit101.AdvancedSystemManager2.components.ComponentMenuInterval)menu).getInterval());
     }
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuInterval newDataInterval = (ComponentMenuInterval)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuInterval newDataInterval = (gigabit101.AdvancedSystemManager2.components.ComponentMenuInterval)newData;
 
         if (newDataInterval.getInterval() != getInterval()) {
             setInterval(newDataInterval.getInterval());

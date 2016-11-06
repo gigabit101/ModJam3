@@ -1,7 +1,12 @@
 package vswe.stevesfactory.components;
 
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.Variable;
 
 import java.util.EnumSet;
 
@@ -28,7 +33,7 @@ public class ComponentMenuVariableContainers extends ComponentMenuContainer {
         if (componentMenuContainerTypes.isVisible()) {
             return componentMenuContainerTypes.getValidTypes();
         }else{
-            int variableId = ((ComponentMenuVariable)getParent().getMenus().get(0)).getSelectedVariable();
+            int variableId = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable)getParent().getMenus().get(0)).getSelectedVariable();
             Variable variable = getParent().getManager().getVariables()[variableId];
             if (variable.isValid()) {
                 return ((ComponentMenuContainerTypes)variable.getDeclaration().getMenus().get(1)).getValidTypes();

@@ -1,6 +1,7 @@
 package vswe.stevesfactory.blocks;
 
 
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
 
@@ -10,14 +11,14 @@ import java.util.List;
 
 public class ClusterRegistry {
 
-    private static HashMap<Class<? extends TileEntityClusterElement>, ClusterRegistry> registry = new HashMap<Class<? extends TileEntityClusterElement>, ClusterRegistry>();
-    private static List<ClusterRegistry> registryList = new ArrayList<ClusterRegistry>();
+    private static HashMap<Class<? extends gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement>, gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry> registry = new HashMap<Class<? extends TileEntityClusterElement>, gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry>();
+    private static List<gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry> registryList = new ArrayList<gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry>();
 
     protected final Class<? extends TileEntityClusterElement> clazz;
     protected final BlockContainer block;
     protected final ItemStack itemStack;
-    protected ClusterRegistry nextSubRegistry;
-    protected ClusterRegistry headSubRegistry;
+    protected gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry nextSubRegistry;
+    protected gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry headSubRegistry;
     protected final int id;
 
     private ClusterRegistry(Class<? extends TileEntityClusterElement> clazz, BlockContainer block, ItemStack itemStack) {
@@ -28,18 +29,18 @@ public class ClusterRegistry {
     }
 
     public static void register(Class<? extends TileEntityClusterElement> clazz, BlockContainer block) {
-        register(new ClusterRegistry(clazz, block, new ItemStack(block)));
+        register(new gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry(clazz, block, new ItemStack(block)));
     }
 
-    public static void register(ClusterRegistry registryElement) {
+    public static void register(gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry registryElement) {
         registryList.add(registryElement);
-        ClusterRegistry parent = registry.get(registryElement.clazz);
+        gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry parent = registry.get(registryElement.clazz);
         if (parent == null) {
             registry.put(registryElement.clazz, registryElement);
             registryElement.headSubRegistry = registryElement;
         }else{
             registryElement.headSubRegistry = parent;
-            ClusterRegistry elem = parent;
+            gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry elem = parent;
             while (elem.nextSubRegistry != null) {
                 elem = elem.nextSubRegistry;
             }
@@ -62,7 +63,7 @@ public class ClusterRegistry {
 
     public ItemStack getItemStack(int meta) {
 
-        ClusterRegistry element = this.headSubRegistry;
+        gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry element = this.headSubRegistry;
         while (element != null) {
             if (element.isValidMeta(meta)) {
                 return element.getItemStack();
@@ -76,16 +77,16 @@ public class ClusterRegistry {
         return true;
     }
 
-    public static ClusterRegistry get(TileEntityClusterElement tileEntityClusterElement) {
+    public static gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry get(TileEntityClusterElement tileEntityClusterElement) {
         return registry.get(tileEntityClusterElement.getClass());
     }
 
-    public static List<ClusterRegistry> getRegistryList() {
+    public static List<gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry> getRegistryList() {
         return registryList;
     }
 
     public boolean isChainPresentIn(List<Integer> types) {
-        ClusterRegistry element = this.headSubRegistry;
+        gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry element = this.headSubRegistry;
         while (element != null) {
             if (types.contains(element.id)) {
                 return true;
@@ -96,7 +97,7 @@ public class ClusterRegistry {
         return false;
     }
 
-    public static class ClusterRegistryAdvancedSensitive extends ClusterRegistry {
+    public static class ClusterRegistryAdvancedSensitive extends gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry {
 
         public ClusterRegistryAdvancedSensitive(Class<? extends TileEntityClusterElement> clazz, BlockContainer block, ItemStack itemStack) {
             super(clazz, block, itemStack);
@@ -108,7 +109,7 @@ public class ClusterRegistry {
         }
     }
 
-    public static class ClusterRegistryMetaSensitive extends ClusterRegistry {
+    public static class ClusterRegistryMetaSensitive extends gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry {
         public ClusterRegistryMetaSensitive(Class<? extends TileEntityClusterElement> clazz, BlockContainer block, ItemStack itemStack) {
             super(clazz, block, itemStack);
         }

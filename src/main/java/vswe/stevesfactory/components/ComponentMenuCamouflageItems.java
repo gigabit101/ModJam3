@@ -1,10 +1,13 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItem;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class ComponentMenuCamouflageItems extends ComponentMenuItem {
 
     @Override
     protected void initRadioButtons() {
-        radioButtons.add(new RadioButton(RADIO_BUTTON_X_LEFT, RADIO_BUTTON_Y, Localization.CLEAR_CAMOUFLAGE));
+        radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_BUTTON_X_LEFT, RADIO_BUTTON_Y, Localization.CLEAR_CAMOUFLAGE));
         radioButtons.add(new RadioButton(RADIO_BUTTON_X_RIGHT, RADIO_BUTTON_Y, Localization.SET_CAMOUFLAGE));
     }
 

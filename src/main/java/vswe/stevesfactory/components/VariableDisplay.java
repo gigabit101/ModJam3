@@ -1,11 +1,12 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.VariableColor;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 public abstract class VariableDisplay {
 
@@ -68,7 +69,7 @@ public abstract class VariableDisplay {
                 int val = getValue();
                 val += i;
                 if (val < 0) {
-                    val = VariableColor.values().length - 1;
+                    val = gigabit101.AdvancedSystemManager2.components.VariableColor.values().length - 1;
                 }else if(val == VariableColor.values().length) {
                     val = 0;
                 }

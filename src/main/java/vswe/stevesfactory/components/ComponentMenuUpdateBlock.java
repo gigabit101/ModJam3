@@ -1,19 +1,30 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItem;
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.ItemSetting;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
+
+import java.util.List;
 
 public class ComponentMenuUpdateBlock extends ComponentMenuItem {
     public ComponentMenuUpdateBlock(FlowComponent parent) {
@@ -21,7 +32,7 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem {
 
         settings = new MetaSetting[META_SETTINGS];
 
-        textBoxes = new TextBoxNumberList();
+        textBoxes = new gigabit101.AdvancedSystemManager2.components.TextBoxNumberList();
 
         checkBoxes = new CheckBoxList();
 
@@ -216,7 +227,7 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem {
 
     private static final int ID_START_X = 1;
     private static final int ID_START_Y = 1;
-    private static final int ID_TEXT_BOX = 42;
+    private static final int ID_TEXT_BOX = 48;
 
     private static final int META_START_X = 1;
     private static final int META_START_Y = 21;
@@ -353,7 +364,7 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem {
     public void copyFrom(ComponentMenu menu) {
         super.copyFrom(menu);
 
-        ComponentMenuUpdateBlock menuUpdate = (ComponentMenuUpdateBlock)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuUpdateBlock menuUpdate = (gigabit101.AdvancedSystemManager2.components.ComponentMenuUpdateBlock)menu;
         useId = menuUpdate.useId;
         idInverted = menuUpdate.idInverted;
 
@@ -371,7 +382,7 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem {
     public void refreshData(ContainerManager container, ComponentMenu newData) {
         super.refreshData(container, newData);
 
-        ComponentMenuUpdateBlock newDataUpdate = (ComponentMenuUpdateBlock)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuUpdateBlock newDataUpdate = (gigabit101.AdvancedSystemManager2.components.ComponentMenuUpdateBlock)newData;
 
         if (useId != newDataUpdate.useId) {
             useId = newDataUpdate.useId;
@@ -565,5 +576,12 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem {
     @Override
     protected void initRadioButtons() {
         //no radio buttons
+    }
+
+    @Override
+    public void addErrors(List<String> errors) {
+        if (useId) {
+            super.addErrors(errors);
+        }
     }
 }

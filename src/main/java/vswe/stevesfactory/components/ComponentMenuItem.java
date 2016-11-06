@@ -1,19 +1,25 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.FuzzyMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.RegistryNamespaced;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuStuff;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.ItemSetting;
+import gigabit101.AdvancedSystemManager2.components.Setting;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -195,7 +201,7 @@ public class ComponentMenuItem extends ComponentMenuStuff {
 
                 break;
             case USE_FUZZY:
-                itemSetting.setFuzzyMode(FuzzyMode.values()[dr.readData(DataBitHelper.FUZZY_MODE)]);
+                itemSetting.setFuzzyMode(gigabit101.AdvancedSystemManager2.components.FuzzyMode.values()[dr.readData(DataBitHelper.FUZZY_MODE)]);
                 break;
             case META:
                 if (setting.isValid()) {
@@ -253,7 +259,7 @@ public class ComponentMenuItem extends ComponentMenuStuff {
                 }
             }
         }else{
-            Iterator itemTypeIterator = Item.itemRegistry.iterator();
+            Iterator itemTypeIterator = Item.REGISTRY.iterator();
             while (itemTypeIterator.hasNext()){
                 Item item = (Item)itemTypeIterator.next();
 

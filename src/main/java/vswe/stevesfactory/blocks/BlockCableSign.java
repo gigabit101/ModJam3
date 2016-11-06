@@ -1,27 +1,33 @@
 package vswe.stevesfactory.blocks;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import vswe.stevesfactory.StevesFactoryManager;
+import gigabit101.AdvancedSystemManager2.AdvancedSystemManager2;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntitySignUpdater;
 
 //This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableSign extends BlockContainer {
     public BlockCableSign() {
-        super(Material.iron);
-        setCreativeTab(ModBlocks.creativeTab);
-        setStepSound(soundTypeMetal);
-        setBlockName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_SIGN_UNLOCALIZED_NAME);
+        super(Material.IRON);
+        setCreativeTab(gigabit101.AdvancedSystemManager2.blocks.ModBlocks.creativeTab);
+        setSoundType(SoundType.METAL);
+        setUnlocalizedName(AdvancedSystemManager2.UNLOCALIZED_START + ModBlocks.CABLE_SIGN_UNLOCALIZED_NAME);
         setHardness(1.2F);
     }
 
@@ -30,39 +36,34 @@ public class BlockCableSign extends BlockContainer {
         return new TileEntitySignUpdater();
     }
 
-    @SideOnly(Side.CLIENT)
-    private IIcon frontIcon;
-
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister register) {
-        blockIcon = register.registerIcon(StevesFactoryManager.RESOURCE_LOCATION + ":cable_idle");
-        frontIcon = register.registerIcon(StevesFactoryManager.RESOURCE_LOCATION + ":cable_sign");
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        return getIconFromSideAndMeta(side, 3);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        return getIconFromSideAndMeta(side, world.getBlockMetadata(x, y, z));
-    }
-    @SideOnly(Side.CLIENT)
-    private IIcon getIconFromSideAndMeta(int side, int meta) {
-        return side == meta ? frontIcon : blockIcon;
-    }
+    public static final IProperty FACING = PropertyDirection.create("facing");
 
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack item) {
-        int meta = BlockPistonBase.determineOrientation(world, x, y, z, entity);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
+    }
 
-        TileEntitySignUpdater sign = TileEntityCluster.getTileEntity(TileEntitySignUpdater.class, world, x, y, z);
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return ((EnumFacing) state.getValue(FACING)).getIndex();
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.MODEL;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack item) {
+        int meta = BlockPistonBase.getFacingFromEntity(pos, entity).getIndex();
+
+        TileEntitySignUpdater sign = TileEntityCluster.getTileEntity(TileEntitySignUpdater.class, world, pos);
         if (sign != null) {
             sign.setMetaData(meta);
         }

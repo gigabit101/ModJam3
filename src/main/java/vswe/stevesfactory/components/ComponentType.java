@@ -1,7 +1,53 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuBUDs;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflage;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageInside;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageItems;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageShape;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageSides;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerScrap;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypesVariable;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCrafting;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuEmitters;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuFluid;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuFluidCondition;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuFluidOutput;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuGroup;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuInterval;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuInventory;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuInventoryCondition;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItem;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItemCondition;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItemOutput;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrder;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuListOrderVariable;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuNodes;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuPulse;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuReceivers;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneOutput;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSidesEmitter;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSidesNodes;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSidesTrigger;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrength;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneStrengthNodes;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuResult;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuSignText;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuSigns;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuSplit;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuTank;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuTankCondition;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetInventory;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetTank;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuUpdateBlock;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableContainers;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop;
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
 
 public enum ComponentType {
     TRIGGER(0, Localization.TRIGGER_SHORT, Localization.TRIGGER_LONG,
@@ -19,15 +65,15 @@ public enum ComponentType {
     FLOW_CONTROL(4, Localization.FLOW_CONTROL_SHORT, Localization.FLOW_CONTROL_LONG,
             new ConnectionSet[]{ConnectionSet.MULTIPLE_INPUT_2, ConnectionSet.MULTIPLE_INPUT_5, ConnectionSet.MULTIPLE_OUTPUT_2, ConnectionSet.MULTIPLE_OUTPUT_5},
             ComponentMenuSplit.class, ComponentMenuResult.class),
-    LIQUID_INPUT(5, Localization.LIQUID_INPUT_SHORT, Localization.LIQUID_INPUT_LONG,
+    FLUID_INPUT(5, Localization.FLUID_INPUT_SHORT, Localization.FLUID_INPUT_LONG,
             new ConnectionSet[]{ConnectionSet.STANDARD},
-            ComponentMenuTank.class, ComponentMenuTargetTank.class, ComponentMenuLiquid.class, ComponentMenuResult.class),
-    LIQUID_OUTPUT(6, Localization.LIQUID_OUTPUT_SHORT, Localization.LIQUID_OUTPUT_LONG,
+            ComponentMenuTank.class, ComponentMenuTargetTank.class, ComponentMenuFluid.class, ComponentMenuResult.class),
+    FLUID_OUTPUT(6, Localization.FLUID_OUTPUT_SHORT, Localization.FLUID_OUTPUT_LONG,
             new ConnectionSet[]{ConnectionSet.STANDARD},
-            ComponentMenuTank.class, ComponentMenuTargetTank.class, ComponentMenuLiquidOutput.class, ComponentMenuResult.class),
-    LIQUID_CONDITION(7, Localization.LIQUID_CONDITION_SHORT, Localization.LIQUID_CONDITION_LONG,
+            ComponentMenuTank.class, ComponentMenuTargetTank.class, ComponentMenuFluidOutput.class, ComponentMenuResult.class),
+    FLUID_CONDITION(7, Localization.FLUID_CONDITION_SHORT, Localization.FLUID_CONDITION_LONG,
             new ConnectionSet[]{ConnectionSet.STANDARD_CONDITION},
-            ComponentMenuTankCondition.class, ComponentMenuTargetTank.class, ComponentMenuLiquidCondition.class, ComponentMenuResult.class),
+            ComponentMenuTankCondition.class, ComponentMenuTargetTank.class, ComponentMenuFluidCondition.class, ComponentMenuResult.class),
     REDSTONE_EMITTER(8, Localization.REDSTONE_EMITTER_SHORT, Localization.REDSTONE_EMITTER_LONG,
             new ConnectionSet[]{ConnectionSet.STANDARD},
             ComponentMenuEmitters.class, ComponentMenuRedstoneSidesEmitter.class, ComponentMenuRedstoneOutput.class, ComponentMenuPulse.class, ComponentMenuResult.class),
@@ -36,7 +82,7 @@ public enum ComponentType {
             ComponentMenuNodes.class, ComponentMenuRedstoneSidesNodes.class, ComponentMenuRedstoneStrengthNodes.class, ComponentMenuResult.class),
     VARIABLE(10, Localization.CONTAINER_VARIABLE_SHORT, Localization.CONTAINER_VARIABLE_LONG,
             new ConnectionSet[]{ConnectionSet.EMPTY, ConnectionSet.STANDARD},
-            ComponentMenuVariable.class, ComponentMenuContainerTypesVariable.class, ComponentMenuVariableContainers.class, ComponentMenuListOrderVariable.class, ComponentMenuResult.class),
+            gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable.class, ComponentMenuContainerTypesVariable.class, ComponentMenuVariableContainers.class, ComponentMenuListOrderVariable.class, ComponentMenuResult.class),
     FOR_EACH(11, Localization.FOR_EACH_LOOP_SHORT, Localization.FOR_EACH_LOOP_LONG,
             new ConnectionSet[]{ConnectionSet.FOR_EACH},
             ComponentMenuVariableLoop.class, ComponentMenuContainerTypes.class, ComponentMenuListOrder.class, ComponentMenuResult.class),
@@ -80,8 +126,8 @@ public enum ComponentType {
         return id;
     }
 
-    public static ComponentType getTypeFromId(int id) {
-        for (ComponentType componentType : values()) {
+    public static gigabit101.AdvancedSystemManager2.components.ComponentType getTypeFromId(int id) {
+        for (gigabit101.AdvancedSystemManager2.components.ComponentType componentType : values()) {
             if (id == componentType.id) {
                 return componentType;
             }

@@ -1,21 +1,24 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.Variable;
+import gigabit101.AdvancedSystemManager2.components.VariableDisplay;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.List;
 
 public class ComponentMenuVariableLoop extends ComponentMenu {
-    public ComponentMenuVariableLoop(FlowComponent parent) {
+    public ComponentMenuVariableLoop(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent);
 
         listDisplay = new VariableDisplay(Localization.VARIABLE_LIST, DISPLAY_X, DISPLAY_Y_TOP) {
@@ -131,13 +134,13 @@ public class ComponentMenuVariableLoop extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        selectedList = ((ComponentMenuVariableLoop)menu).selectedList;
-        selectedElement = ((ComponentMenuVariableLoop)menu).selectedElement;
+        selectedList = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop)menu).selectedList;
+        selectedElement = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop)menu).selectedElement;
     }
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuVariableLoop newDataLoop = (ComponentMenuVariableLoop)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop newDataLoop = (gigabit101.AdvancedSystemManager2.components.ComponentMenuVariableLoop)newData;
 
         if (selectedList != newDataLoop.selectedList) {
             selectedList = newDataLoop.selectedList;

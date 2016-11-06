@@ -1,12 +1,16 @@
 package vswe.stevesfactory.blocks;
 
 
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.RecipeSorter;
+import gigabit101.AdvancedSystemManager2.blocks.ClusterRegistry;
+import gigabit101.AdvancedSystemManager2.blocks.ItemCluster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +18,10 @@ import java.util.List;
 public class ClusterRecipe implements IRecipe {
 
     private ItemStack output;
+
+    public ClusterRecipe() {
+        RecipeSorter.register("sfm:clustercombining", gigabit101.AdvancedSystemManager2.blocks.ClusterRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+    }
 
     @Override
     public boolean matches(InventoryCrafting inventorycrafting, World world) {
@@ -24,7 +32,7 @@ public class ClusterRecipe implements IRecipe {
         for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
             ItemStack item = inventorycrafting.getStackInSlot(i);
 
-            if (item != null && Block.getBlockFromItem(item.getItem()) == ModBlocks.blockCableCluster) {
+            if (item != null && Block.getBlockFromItem(item.getItem()) == gigabit101.AdvancedSystemManager2.blocks.ModBlocks.blockCableCluster) {
                 if (cluster != null) {
                     return false; //multiple clusters
                 }else{
@@ -101,5 +109,18 @@ public class ClusterRecipe implements IRecipe {
     @Override
     public ItemStack getRecipeOutput() {
         return output;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting p_179532_1_) {
+        ItemStack[] aitemstack = new ItemStack[p_179532_1_.getSizeInventory()];
+
+        for (int i = 0; i < aitemstack.length; ++i)
+        {
+            ItemStack itemstack = p_179532_1_.getStackInSlot(i);
+            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+        }
+
+        return aitemstack;
     }
 }

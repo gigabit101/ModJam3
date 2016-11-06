@@ -1,16 +1,17 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.interfaces.GuiManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.List;
 
 
 public class ComponentMenuContainerScrap extends ComponentMenuContainer {
-    public ComponentMenuContainerScrap(FlowComponent parent) {
+    public ComponentMenuContainerScrap(gigabit101.AdvancedSystemManager2.components.FlowComponent parent) {
         super(parent, ConnectionBlockType.INVENTORY);
     }
 

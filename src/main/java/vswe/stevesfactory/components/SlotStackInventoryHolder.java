@@ -4,7 +4,7 @@ package vswe.stevesfactory.components;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class SlotStackInventoryHolder implements IItemBufferSubElement {
+public class SlotStackInventoryHolder implements gigabit101.AdvancedSystemManager2.components.IItemBufferSubElement {
     private ItemStack itemStack;
     private IInventory inventory;
     private int slot;
@@ -52,8 +52,8 @@ public class SlotStackInventoryHolder implements IItemBufferSubElement {
         sizeLeft -= val;
     }
 
-    public SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair) {
-        SlotStackInventoryHolder element = new SlotStackInventoryHolder(this.itemStack, this.inventory, this.slot);
+    public gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair) {
+        gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder element = new gigabit101.AdvancedSystemManager2.components.SlotStackInventoryHolder(this.itemStack, this.inventory, this.slot);
         int oldAmount = getSizeLeft();
         int amount = oldAmount / elementAmount;
         if (!fair) {

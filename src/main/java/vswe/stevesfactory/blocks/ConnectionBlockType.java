@@ -3,7 +3,12 @@ package vswe.stevesfactory.blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.IFluidHandler;
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.IRedstoneNode;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityBUD;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityInput;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityOutput;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntitySignUpdater;
 
 public enum ConnectionBlockType {
     INVENTORY(Localization.TYPE_INVENTORY, IInventory.class, false),
@@ -12,7 +17,7 @@ public enum ConnectionBlockType {
     RECEIVER(Localization.TYPE_RECEIVER, TileEntityInput.class, false),
     NODE(Localization.TYPE_NODE, IRedstoneNode.class, true),
     BUD(Localization.TYPE_BUD, TileEntityBUD.class, false),
-    CAMOUFLAGE(Localization.TYPE_CAMOUFLAGE, TileEntityCamouflage.class, false),
+    CAMOUFLAGE(Localization.TYPE_CAMOUFLAGE, gigabit101.AdvancedSystemManager2.blocks.TileEntityCamouflage.class, false),
     SIGN(Localization.TYPE_SIGN, TileEntitySignUpdater.class, false);
 
     private Localization name;

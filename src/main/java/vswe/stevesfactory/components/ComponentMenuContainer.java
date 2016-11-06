@@ -1,37 +1,39 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
+import gigabit101.AdvancedSystemManager2.components.ScrollController;
+import gigabit101.AdvancedSystemManager2.interfaces.*;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlock;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.interfaces.Color;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiBase;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.interfaces.IAdvancedTooltip;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlock;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainerTypes;
+import gigabit101.AdvancedSystemManager2.components.ContainerFilter;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.IContainerSelection;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.Variable;
+import gigabit101.AdvancedSystemManager2.components.VariableColor;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -73,7 +75,7 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
     protected List<Integer> selectedInventories;
     private List<IContainerSelection> inventories;
     protected RadioButtonList radioButtonsMulti;
-    protected ScrollController<IContainerSelection> scrollController;
+    protected gigabit101.AdvancedSystemManager2.components.ScrollController<IContainerSelection> scrollController;
     private ConnectionBlockType validType;
     @SideOnly(Side.CLIENT)
     private GuiManager cachedInterface;
@@ -190,18 +192,18 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
 
                 @SideOnly(Side.CLIENT)
                 public ToolTip(GuiManager gui, ConnectionBlock block) {
-                    items = new ItemStack[ForgeDirection.VALID_DIRECTIONS.length];
-                    itemTexts = new List[ForgeDirection.VALID_DIRECTIONS.length];
+                    items = new ItemStack[EnumFacing.values().length];
+                    itemTexts = new List[EnumFacing.values().length];
 
-                    World world = block.getTileEntity().getWorldObj();
-                    int x = block.getTileEntity().xCoord;
-                    int y = block.getTileEntity().yCoord;
-                    int z = block.getTileEntity().zCoord;
+                    World world = block.getTileEntity().getWorld();
+                    int x = block.getTileEntity().getPos().getX();
+                    int y = block.getTileEntity().getPos().getY();
+                    int z = block.getTileEntity().getPos().getZ();
 
-                    for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-                        int targetX = x + direction.offsetX;
-                        int targetY = y + direction.offsetY;
-                        int targetZ = z + direction.offsetZ;
+                    for (EnumFacing direction : EnumFacing.values()) {
+                        int targetX = x + direction.getFrontOffsetX();
+                        int targetY = y + direction.getFrontOffsetY();
+                        int targetZ = z + direction.getFrontOffsetZ();
 
                         ItemStack item = gui.getItemStackFromBlock(world, targetX, targetY, targetZ);
                         items[direction.ordinal()] = item;
@@ -210,15 +212,15 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
                         if (item != null && item.getItem() != null) {
                             text.add(gui.getItemName(item));
                         }
-                        String side = Localization.getForgeDirectionLocalization(direction.ordinal()).toString();
+                        String side = Localization.getDirectionLocalization(direction).toString();
                         text.add(Color.YELLOW + side);
 
-                        TileEntity te = world.getTileEntity(targetX, targetY, targetZ);
+                        TileEntity te = world.getTileEntity(new BlockPos(targetX, targetY, targetZ));
                         if (te instanceof TileEntitySign) {
                             TileEntitySign sign = (TileEntitySign)te;
-                            for (String txt : sign.signText) {
-                                if (!txt.isEmpty()) {
-                                    text.add(Color.GRAY + txt);
+                            for (ITextComponent txt : sign.signText) {
+                                if (!txt.getFormattedText().isEmpty()) {
+                                    text.add(Color.GRAY + txt.getFormattedText());
                                 }
                             }
                         }
@@ -256,8 +258,8 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
                 private static final int SRC_Y = 20;
 
                 @SideOnly(Side.CLIENT)
-                private void drawBlock(GuiBase gui, int x, int y, int mX, int mY, ForgeDirection direction) {
-                    GL11.glColor4f(1, 1, 1, 1);
+                private void drawBlock(GuiBase gui, int x, int y, int mX, int mY, EnumFacing direction) {
+                    GlStateManager.color(1, 1, 1, 1);
                     GuiBase.bindTexture(gui.getComponentResource());
                     gui.drawTexture(x, y, SRC_X, SRC_Y + (CollisionHelper.inBounds(x, y, 16, 16, mX, mY) ? 16 : 0), 16, 16);
 
@@ -269,7 +271,7 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
                 }
 
                 @SideOnly(Side.CLIENT)
-                private boolean drawBlockMouseOver(GuiBase gui, int x, int y, int mX, int mY, ForgeDirection direction) {
+                private boolean drawBlockMouseOver(GuiBase gui, int x, int y, int mX, int mY, EnumFacing direction) {
                     if (CollisionHelper.inBounds(x, y, 16, 16, mX, mY)) {
                         List<String> itemText = itemTexts[direction.ordinal()];
                         if (itemText != null) {
@@ -285,25 +287,25 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
                 @SideOnly(Side.CLIENT)
                 @Override
                 public void drawContent(GuiBase gui, int x, int y, int mX, int mY) {
-                    drawBlock(gui, x + 25, y + 5, mX, mY, ForgeDirection.NORTH);
-                    drawBlock(gui, x + 5, y + 25, mX, mY, ForgeDirection.WEST);
-                    drawBlock(gui, x + 25, y + 45, mX, mY, ForgeDirection.SOUTH);
-                    drawBlock(gui, x + 45, y + 25, mX, mY, ForgeDirection.EAST);
+                    drawBlock(gui, x + 25, y + 5, mX, mY, EnumFacing.NORTH);
+                    drawBlock(gui, x + 5, y + 25, mX, mY, EnumFacing.WEST);
+                    drawBlock(gui, x + 25, y + 45, mX, mY, EnumFacing.SOUTH);
+                    drawBlock(gui, x + 45, y + 25, mX, mY, EnumFacing.EAST);
 
-                    drawBlock(gui, x + 80, y + 15, mX, mY, ForgeDirection.UP);
-                    drawBlock(gui, x + 80, y + 35, mX, mY, ForgeDirection.DOWN);
+                    drawBlock(gui, x + 80, y + 15, mX, mY, EnumFacing.UP);
+                    drawBlock(gui, x + 80, y + 35, mX, mY, EnumFacing.DOWN);
                 }
 
                 @SideOnly(Side.CLIENT)
                 private void drawMouseOverMouseOver(GuiBase gui, int x, int y, int mX, int mY) {
                     boolean ignored =
-                    drawBlockMouseOver(gui, x + 25, y + 5, mX, mY, ForgeDirection.NORTH) ||
-                    drawBlockMouseOver(gui, x + 5, y + 25, mX, mY, ForgeDirection.WEST) ||
-                    drawBlockMouseOver(gui, x + 25, y + 45, mX, mY, ForgeDirection.SOUTH) ||
-                    drawBlockMouseOver(gui, x + 45, y + 25, mX, mY, ForgeDirection.EAST) ||
+                    drawBlockMouseOver(gui, x + 25, y + 5, mX, mY, EnumFacing.NORTH) ||
+                    drawBlockMouseOver(gui, x + 5, y + 25, mX, mY, EnumFacing.WEST) ||
+                    drawBlockMouseOver(gui, x + 25, y + 45, mX, mY, EnumFacing.SOUTH) ||
+                    drawBlockMouseOver(gui, x + 45, y + 25, mX, mY, EnumFacing.EAST) ||
 
-                    drawBlockMouseOver(gui, x + 80, y + 15, mX, mY, ForgeDirection.UP) ||
-                    drawBlockMouseOver(gui, x + 80, y + 35, mX, mY, ForgeDirection.DOWN);
+                    drawBlockMouseOver(gui, x + 80, y + 15, mX, mY, EnumFacing.UP) ||
+                    drawBlockMouseOver(gui, x + 80, y + 35, mX, mY, EnumFacing.DOWN);
                 }
 
                 @SideOnly(Side.CLIENT)
@@ -376,12 +378,12 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
         buttons.add(new PageButton(Localization.FILTER_SHORT, Page.MAIN, Localization.FILTER_LONG, Page.FILTER, false, 102, 21));
         buttons.add(new PageButton(Localization.MULTI_SHORT, Page.MAIN, Localization.MULTI_LONG, Page.MULTI, false, 111, 21));
 
-        ComponentMenuContainer.Page[] subFilterPages = {ComponentMenuContainer.Page.POSITION, ComponentMenuContainer.Page.DISTANCE, ComponentMenuContainer.Page.SELECTION, ComponentMenuContainer.Page.VARIABLE};
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page[] subFilterPages = {gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page.POSITION, gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page.DISTANCE, gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page.SELECTION, gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page.VARIABLE};
 
         for (int i = 0; i < subFilterPages.length; i++) {
-           buttons.add(new ComponentMenuContainer.PageButton(Localization.SUB_MENU_SHORT, ComponentMenuContainer.Page.FILTER, Localization.SUB_MENU_LONG, subFilterPages[i], true, FILTER_BUTTON_X, CHECK_BOX_FILTER_Y + CHECK_BOX_FILTER_SPACING * i + FILTER_BUTTON_Y));
+           buttons.add(new gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.PageButton(Localization.SUB_MENU_SHORT, gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page.FILTER, Localization.SUB_MENU_LONG, subFilterPages[i], true, FILTER_BUTTON_X, CHECK_BOX_FILTER_Y + CHECK_BOX_FILTER_SPACING * i + FILTER_BUTTON_Y));
         }
-        buttons.add(new ComponentMenuContainer.Button(Localization.CLEAR_SHORT, ComponentMenuContainer.Page.FILTER, Localization.CLEAR_LONG, true, FILTER_RESET_BUTTON_X, CHECK_BOX_FILTER_INVERT_Y) {
+        buttons.add(new gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Button(Localization.CLEAR_SHORT, gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer.Page.FILTER, Localization.CLEAR_LONG, true, FILTER_RESET_BUTTON_X, CHECK_BOX_FILTER_INVERT_Y) {
             @Override
             void onClick() {
                 filter.clear();
@@ -573,9 +575,9 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
             if (CollisionHelper.inBounds(5, 60, MENU_WIDTH - 20, 5, mX, mY)) {
                 String str = Localization.ABSOLUTE_RANGES.toString() + ":";
 
-                str += "\n" + Localization.X.toString() + " (" + (filter.lowerRange[0].getNumber() + getParent().getManager().xCoord) + ", " + (filter.higherRange[0].getNumber() + getParent().getManager().xCoord) + ")";
-                str += "\n" + Localization.Y.toString() + " (" + (filter.lowerRange[1].getNumber() + getParent().getManager().yCoord) + ", " + (filter.higherRange[1].getNumber() + getParent().getManager().yCoord) + ")";
-                str += "\n" + Localization.Z.toString() + " (" + (filter.lowerRange[2].getNumber() + getParent().getManager().zCoord) + ", " + (filter.higherRange[2].getNumber() + getParent().getManager().zCoord) + ")";
+                str += "\n" + Localization.X.toString() + " (" + (filter.lowerRange[0].getNumber() + getParent().getManager().getPos().getX()) + ", " + (filter.higherRange[0].getNumber() + getParent().getManager().getPos().getX()) + ")";
+                str += "\n" + Localization.Y.toString() + " (" + (filter.lowerRange[1].getNumber() + getParent().getManager().getPos().getY()) + ", " + (filter.higherRange[1].getNumber() + getParent().getManager().getPos().getY()) + ")";
+                str += "\n" + Localization.Z.toString() + " (" + (filter.lowerRange[2].getNumber() + getParent().getManager().getPos().getZ()) + ", " + (filter.higherRange[2].getNumber() + getParent().getManager().getPos().getZ()) + ")";
 
                 gui.drawMouseOver(str, mX, mY);
             }
@@ -663,16 +665,16 @@ public abstract class ComponentMenuContainer extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        setOption(((ComponentMenuContainer) menu).getOption());
+        setOption(((gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer) menu).getOption());
         selectedInventories.clear();
-        for (int selectedInventory : ((ComponentMenuContainer)menu).selectedInventories) {
+        for (int selectedInventory : ((gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer)menu).selectedInventories) {
             selectedInventories.add(selectedInventory);
         }
     }
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuContainer newDataInv = ((ComponentMenuContainer)newData);
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer newDataInv = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer)newData);
 
         if (newDataInv.getOption() != getOption()) {
             setOption(newDataInv.getOption());

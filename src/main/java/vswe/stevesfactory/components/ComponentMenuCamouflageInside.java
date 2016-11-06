@@ -1,15 +1,19 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageAdvanced;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 
 public class ComponentMenuCamouflageInside extends ComponentMenuCamouflageAdvanced {
@@ -28,7 +32,7 @@ public class ComponentMenuCamouflageInside extends ComponentMenuCamouflageAdvanc
         };
 
         for (int i = 0; i < InsideSetType.values().length; i++) {
-            radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + i * RADIO_BUTTON_SPACING, InsideSetType.values()[i].name));
+            radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + i * RADIO_BUTTON_SPACING, InsideSetType.values()[i].name));
         }
     }
 
@@ -85,12 +89,12 @@ public class ComponentMenuCamouflageInside extends ComponentMenuCamouflageAdvanc
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        radioButtons.setSelectedOption(((ComponentMenuCamouflageInside)menu).radioButtons.getSelectedOption());
+        radioButtons.setSelectedOption(((gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageInside)menu).radioButtons.getSelectedOption());
     }
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuCamouflageInside newDataInside = (ComponentMenuCamouflageInside)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageInside newDataInside = (gigabit101.AdvancedSystemManager2.components.ComponentMenuCamouflageInside)newData;
 
         if (radioButtons.getSelectedOption() != newDataInside.radioButtons.getSelectedOption()) {
             radioButtons.setSelectedOption(newDataInside.radioButtons.getSelectedOption());

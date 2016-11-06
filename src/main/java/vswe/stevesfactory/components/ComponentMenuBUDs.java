@@ -1,8 +1,10 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.blocks.ConnectionBlockType;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuContainer;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class ComponentMenuBUDs extends ComponentMenuContainer {
 
     @Override
     public boolean isVisible() {
-        return getParent().getConnectionSet() == ConnectionSet.BUD;
+        return getParent().getConnectionSet() == gigabit101.AdvancedSystemManager2.components.ConnectionSet.BUD;
     }
 
     @Override

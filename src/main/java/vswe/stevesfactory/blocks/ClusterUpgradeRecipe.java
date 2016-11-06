@@ -1,5 +1,6 @@
 package vswe.stevesfactory.blocks;
 
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ public class ClusterUpgradeRecipe extends ShapelessRecipes {
     private static final List RECIPE;
 
     static {
-        RESULT = new ItemStack(ModBlocks.blockCableCluster, 1, 8);
+        RESULT = new ItemStack(gigabit101.AdvancedSystemManager2.blocks.ModBlocks.blockCableCluster, 1, 8);
         RECIPE = new ArrayList();
         RECIPE.add(new ItemStack(ModBlocks.blockCableCluster, 1, 0));
         for (int i = 0; i < 8; i++) {
@@ -26,7 +27,7 @@ public class ClusterUpgradeRecipe extends ShapelessRecipes {
 
     public ClusterUpgradeRecipe() {
         super(RESULT, RECIPE);
-        RecipeSorter.register("sfm:clusterupgrade", ClusterUpgradeRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
+        RecipeSorter.register("sfm:clusterupgrade", gigabit101.AdvancedSystemManager2.blocks.ClusterUpgradeRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
     }
 
     @Override

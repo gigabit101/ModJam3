@@ -1,10 +1,11 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.components.ConnectionOption;
+import gigabit101.AdvancedSystemManager2.Localization;
 
 public enum ConnectionSet {
-    STANDARD(Localization.CONNECTION_SET_STANDARD, ConnectionOption.STANDARD_INPUT, ConnectionOption.STANDARD_OUTPUT),
+    STANDARD(Localization.CONNECTION_SET_STANDARD, gigabit101.AdvancedSystemManager2.components.ConnectionOption.STANDARD_INPUT, ConnectionOption.STANDARD_OUTPUT),
     CONTINUOUSLY(Localization.CONNECTION_SET_INTERVAL, ConnectionOption.INTERVAL),
     REDSTONE(Localization.CONNECTION_SET_REDSTONE, ConnectionOption.REDSTONE_PULSE_HIGH, ConnectionOption.REDSTONE_HIGH, ConnectionOption.REDSTONE_LOW, ConnectionOption.REDSTONE_PULSE_LOW),
     STANDARD_CONDITION(Localization.CONNECTION_SET_CONDITION, ConnectionOption.STANDARD_INPUT, ConnectionOption.CONDITION_TRUE, ConnectionOption.CONDITION_FALSE),

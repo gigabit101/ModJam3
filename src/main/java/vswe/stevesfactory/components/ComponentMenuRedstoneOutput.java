@@ -1,16 +1,21 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 public class ComponentMenuRedstoneOutput extends ComponentMenu {
     public ComponentMenuRedstoneOutput(FlowComponent parent) {
@@ -53,7 +58,7 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu {
             int y = RADIO_BUTTON_Y + iy * RADIO_SPACING_Y;
 
 
-            radioButtons.add(new RadioButton(x, y, Settings.values()[i].getName()));
+            radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(x, y, Settings.values()[i].getName()));
         }
     }
 
@@ -169,7 +174,7 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuRedstoneOutput menuOutput = (ComponentMenuRedstoneOutput)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneOutput menuOutput = (gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneOutput)menu;
 
         textBox.setNumber(menuOutput.textBox.getNumber());
         radioButtons.setSelectedOption(menuOutput.radioButtons.getSelectedOption());
@@ -177,7 +182,7 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuRedstoneOutput newDataOutput = (ComponentMenuRedstoneOutput)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneOutput newDataOutput = (gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneOutput)newData;
 
         if (textBox.getNumber() != newDataOutput.textBox.getNumber()) {
             textBox.setNumber(newDataOutput.textBox.getNumber());

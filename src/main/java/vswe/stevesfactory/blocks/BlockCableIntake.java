@@ -1,26 +1,18 @@
 package vswe.stevesfactory.blocks;
 
 
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityIntake;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import gigabit101.AdvancedSystemManager2.blocks.BlockCableDirectionAdvanced;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityClusterElement;
 
 //This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableIntake extends BlockCableDirectionAdvanced {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileEntityIntake();
-    }
-
-
-    @Override
-    protected String getFrontTextureName(boolean isAdvanced) {
-        return isAdvanced ? "cable_intake_out_instant" : "cable_intake_out";
-    }
-
-    @Override
-    protected String getSideTextureName(boolean isAdvanced) {
-        return isAdvanced ? "cable_intake_instant" : "cable_intake";
+        return new gigabit101.AdvancedSystemManager2.blocks.TileEntityIntake();
     }
 
     @Override

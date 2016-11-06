@@ -3,7 +3,8 @@ package vswe.stevesfactory.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import vswe.stevesfactory.StevesFactoryManager;
+import gigabit101.AdvancedSystemManager2.AdvancedSystemManager2;
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 
 
 public class ItemCamouflage  extends ItemBlock {
@@ -16,7 +17,7 @@ public class ItemCamouflage  extends ItemBlock {
 
     @Override
     public String getUnlocalizedName(ItemStack item) {
-        return "tile." + StevesFactoryManager.UNLOCALIZED_START + TileEntityCamouflage.CamouflageType.values()[ModBlocks.blockCableCamouflage.getId(item.getItemDamage())].getUnlocalized();
+        return "tile." + AdvancedSystemManager2.UNLOCALIZED_START + gigabit101.AdvancedSystemManager2.blocks.TileEntityCamouflage.CamouflageType.values()[ModBlocks.blockCableCamouflage.getId(item.getItemDamage())].getUnlocalized();
     }
 
 }

@@ -1,6 +1,9 @@
 package vswe.stevesfactory.network;
 
 
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,7 +14,7 @@ public final class FileHelper {
     private static File dir;
 
     public static void setConfigDir(File dir) {
-        FileHelper.dir = dir;
+        gigabit101.AdvancedSystemManager2.network.FileHelper.dir = dir;
     }
 
     /**
@@ -37,7 +40,7 @@ public final class FileHelper {
      * @param name
      * @return A writer that has to be closed after usage, might be null if writing failed
      */
-    public static DataWriter getWriter(String name) {
+    public static gigabit101.AdvancedSystemManager2.network.DataWriter getWriter(String name) {
         try {
             File file = new File(dir, name + ".dat");
             if (file.exists()) {

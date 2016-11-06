@@ -1,14 +1,18 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.RadioButton;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 public class ComponentMenuCraftingPriority extends ComponentMenu {
     public ComponentMenuCraftingPriority(FlowComponent parent) {
@@ -24,7 +28,7 @@ public class ComponentMenuCraftingPriority extends ComponentMenu {
         };
 
 
-        radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.PRIORITY_MOVE_FIRST));
+        radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_X, RADIO_Y, Localization.PRIORITY_MOVE_FIRST));
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y + RADIO_MARGIN, Localization.PRIORITY_CRAFT_FIRST));
     }
 
@@ -78,12 +82,12 @@ public class ComponentMenuCraftingPriority extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        radioButtons.setSelectedOption(((ComponentMenuCraftingPriority)menu).radioButtons.getSelectedOption());
+        radioButtons.setSelectedOption(((gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority)menu).radioButtons.getSelectedOption());
     }
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuCraftingPriority newDataPriority =  ((ComponentMenuCraftingPriority)newData);
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority newDataPriority =  ((gigabit101.AdvancedSystemManager2.components.ComponentMenuCraftingPriority)newData);
 
         if (radioButtons.getSelectedOption() != newDataPriority.radioButtons.getSelectedOption()) {
             radioButtons.setSelectedOption(newDataPriority.radioButtons.getSelectedOption());

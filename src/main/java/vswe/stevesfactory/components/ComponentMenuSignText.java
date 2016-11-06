@@ -1,17 +1,22 @@
 package vswe.stevesfactory.components;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.TextBoxLogic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 
 public class ComponentMenuSignText extends ComponentMenu {
@@ -31,7 +36,7 @@ public class ComponentMenuSignText extends ComponentMenu {
     private static final int CHECK_BOX_Y = 2;
     private static final float IDLE_TIME = 1F;
 
-    private TextBoxLogic[] textBoxes;
+    private gigabit101.AdvancedSystemManager2.components.TextBoxLogic[] textBoxes;
     private CheckBoxList checkBoxes;
     private boolean[] update;
     private float[] hasChanged;
@@ -202,7 +207,7 @@ public class ComponentMenuSignText extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuSignText textMenu = (ComponentMenuSignText)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuSignText textMenu = (gigabit101.AdvancedSystemManager2.components.ComponentMenuSignText)menu;
         for (int i = 0; i < textBoxes.length; i++) {
             textBoxes[i].setText(textMenu.textBoxes[i].getText());
             update[i] = textMenu.update[i];
@@ -211,7 +216,7 @@ public class ComponentMenuSignText extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuSignText newDataText = (ComponentMenuSignText)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuSignText newDataText = (gigabit101.AdvancedSystemManager2.components.ComponentMenuSignText)newData;
         for (int i = 0; i < textBoxes.length; i++) {
             if (!newDataText.textBoxes[i].getText().equals(textBoxes[i].getText())) {
                 textBoxes[i].setText(newDataText.textBoxes[i].getText());

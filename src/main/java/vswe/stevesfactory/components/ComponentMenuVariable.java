@@ -1,16 +1,24 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ConnectionSet;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.components.Variable;
+import gigabit101.AdvancedSystemManager2.components.VariableDisplay;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.List;
 
@@ -57,7 +65,7 @@ public class ComponentMenuVariable extends ComponentMenu {
             final VariableMode mode = VariableMode.values()[i];
             int id = mode.declaration ? declarationCount++ : modificationCount++;
 
-            radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + id * RADIO_BUTTON_SPACING, mode.getName()) {
+            radioButtons.add(new gigabit101.AdvancedSystemManager2.components.RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + id * RADIO_BUTTON_SPACING, mode.getName()) {
                 @Override
                 public boolean isVisible() {
                     return mode.declaration == isDeclaration();
@@ -197,15 +205,15 @@ public class ComponentMenuVariable extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-       setSelectedVariable(((ComponentMenuVariable) menu).selectedVariable);
-       radioButtons.setSelectedOption(((ComponentMenuVariable) menu).radioButtons.getSelectedOption());
-        executed = ((ComponentMenuVariable) menu).executed;
+       setSelectedVariable(((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable) menu).selectedVariable);
+       radioButtons.setSelectedOption(((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable) menu).radioButtons.getSelectedOption());
+        executed = ((gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable) menu).executed;
     }
 
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuVariable newDataMode = (ComponentMenuVariable)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable newDataMode = (gigabit101.AdvancedSystemManager2.components.ComponentMenuVariable)newData;
 
         if (selectedVariable != newDataMode.selectedVariable) {
             setSelectedVariable(newDataMode.selectedVariable);
@@ -266,7 +274,7 @@ public class ComponentMenuVariable extends ComponentMenu {
             }
         }else{
             executed = dr.readBoolean();
-            if (!getParent().getManager().getWorldObj().isRemote) {
+            if (!getParent().getManager().getWorld().isRemote) {
                 getVariable().setExecuted(executed);
             }
         }

@@ -2,17 +2,17 @@ package vswe.stevesfactory.components;
 
 
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
 public class StackTankHolder {
     private FluidStack fluidStack;
     private IFluidHandler tank;
-    private ForgeDirection side;
+    private EnumFacing side;
     private int sizeLeft;
 
-    public StackTankHolder(FluidStack fluidStack, IFluidHandler tank, ForgeDirection side) {
+    public StackTankHolder(FluidStack fluidStack, IFluidHandler tank, EnumFacing side) {
         this.fluidStack = fluidStack;
         this.tank = tank;
         this.side = side;
@@ -30,7 +30,7 @@ public class StackTankHolder {
         return tank;
     }
 
-    public ForgeDirection getSide() {
+    public EnumFacing getSide() {
         return side;
     }
 
@@ -43,8 +43,8 @@ public class StackTankHolder {
         return Math.min(fluidStack.amount, sizeLeft);
     }
 
-    public StackTankHolder getSplitElement(int elementAmount, int id, boolean fair) {
-        StackTankHolder element = new StackTankHolder(this.fluidStack, this.tank, this.side);
+    public gigabit101.AdvancedSystemManager2.components.StackTankHolder getSplitElement(int elementAmount, int id, boolean fair) {
+        gigabit101.AdvancedSystemManager2.components.StackTankHolder element = new gigabit101.AdvancedSystemManager2.components.StackTankHolder(this.fluidStack, this.tank, this.side);
         int oldAmount = getSizeLeft();
         int amount = oldAmount / elementAmount;
         if (!fair) {

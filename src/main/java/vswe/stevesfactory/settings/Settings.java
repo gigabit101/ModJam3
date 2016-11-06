@@ -1,13 +1,14 @@
 package vswe.stevesfactory.settings;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.blocks.TileEntityManager;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.FileHelper;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraft.block.state.IBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityManager;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.FileHelper;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 
 public final class Settings {
@@ -26,7 +27,7 @@ public final class Settings {
 
     @SideOnly(Side.CLIENT)
     public static void openMenu(TileEntityManager manager) {
-        manager.specialRenderer = new SettingsScreen(manager);
+        manager.specialRenderer = new gigabit101.AdvancedSystemManager2.settings.SettingsScreen(manager);
     }
 
     public static void load() {
@@ -93,7 +94,7 @@ public final class Settings {
     }
 
     public static void setAutoCloseGroup(boolean autoCloseGroup) {
-        Settings.autoCloseGroup = autoCloseGroup;
+        gigabit101.AdvancedSystemManager2.settings.Settings.autoCloseGroup = autoCloseGroup;
         save();
     }
 
@@ -102,7 +103,7 @@ public final class Settings {
     }
 
     public static void setLargeOpenHitBox(boolean largeOpenHitBox) {
-        Settings.largeOpenHitBox = largeOpenHitBox;
+        gigabit101.AdvancedSystemManager2.settings.Settings.largeOpenHitBox = largeOpenHitBox;
         save();
     }
 
@@ -111,7 +112,7 @@ public final class Settings {
     }
 
     public static void setLargeOpenHitBoxMenu(boolean largeOpenHitBoxMenu) {
-        Settings.largeOpenHitBoxMenu = largeOpenHitBoxMenu;
+        gigabit101.AdvancedSystemManager2.settings.Settings.largeOpenHitBoxMenu = largeOpenHitBoxMenu;
         save();
     }
 
@@ -120,7 +121,7 @@ public final class Settings {
     }
 
     public static void setQuickGroupOpen(boolean quickGroupOpen) {
-        Settings.quickGroupOpen = quickGroupOpen;
+        gigabit101.AdvancedSystemManager2.settings.Settings.quickGroupOpen = quickGroupOpen;
         save();
     }
 
@@ -129,7 +130,7 @@ public final class Settings {
     }
 
     public static void setCommandTypes(boolean commandTypes) {
-        Settings.commandTypes = commandTypes;
+        gigabit101.AdvancedSystemManager2.settings.Settings.commandTypes = commandTypes;
         save();
     }
 
@@ -138,7 +139,7 @@ public final class Settings {
     }
 
     public static void setAutoSide(boolean autoSide) {
-        Settings.autoSide = autoSide;
+        gigabit101.AdvancedSystemManager2.settings.Settings.autoSide = autoSide;
         save();
     }
 
@@ -147,27 +148,29 @@ public final class Settings {
     }
 
     public static void setAutoBlacklist(boolean autoBlacklist) {
-        Settings.autoBlacklist = autoBlacklist;
+        gigabit101.AdvancedSystemManager2.settings.Settings.autoBlacklist = autoBlacklist;
         save();
     }
 
     public static boolean isLimitless(TileEntityManager manager) {
-       return ( manager.getWorldObj().getBlockMetadata(manager.xCoord, manager.yCoord, manager.zCoord) & 1) != 0;
+        IBlockState state = manager.getWorld().getBlockState(manager.getPos());
+        return (state.getBlock().getMetaFromState(state) & 1) != 0;
     }
 
     public static void setLimitless(TileEntityManager manager, boolean limitless) {
-        if (manager.getWorldObj().isRemote) {
+        if (manager.getWorld().isRemote) {
             DataWriter dw = PacketHandler.getWriterForServerActionPacket();
             dw.writeBoolean(limitless);
             PacketHandler.sendDataToServer(dw);
         }else{
-            int meta = manager.getWorldObj().getBlockMetadata(manager.xCoord, manager.yCoord, manager.zCoord);
+            IBlockState state = manager.getWorld().getBlockState(manager.getPos());
+            int meta = state.getBlock().getMetaFromState(state);
             if (limitless) {
                 meta |= 1;
             }else{
                 meta &= ~1;
             }
-            manager.getWorldObj().setBlockMetadataWithNotify(manager.xCoord, manager.yCoord, manager.zCoord, meta, 3);
+            manager.getWorld().setBlockState(manager.getPos(), state.getBlock().getStateFromMeta(meta), 3);
         }
     }
 
@@ -176,7 +179,7 @@ public final class Settings {
     }
 
     public static void setEnlargeInterfaces(boolean enlargeInterfaces) {
-        Settings.enlargeInterfaces = enlargeInterfaces;
+        gigabit101.AdvancedSystemManager2.settings.Settings.enlargeInterfaces = enlargeInterfaces;
         save();
     }
 
@@ -185,7 +188,7 @@ public final class Settings {
     }
 
     public static void setPriorityMoveFirst(boolean priorityMoveFirst) {
-        Settings.priorityMoveFirst = priorityMoveFirst;
+        gigabit101.AdvancedSystemManager2.settings.Settings.priorityMoveFirst = priorityMoveFirst;
     }
 
     private Settings() {}

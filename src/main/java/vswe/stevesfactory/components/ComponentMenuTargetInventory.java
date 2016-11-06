@@ -1,15 +1,21 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumberList;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuTarget;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
 
 import java.util.List;
 
@@ -17,11 +23,11 @@ public class ComponentMenuTargetInventory extends ComponentMenuTarget {
     public ComponentMenuTargetInventory(FlowComponent parent) {
         super(parent);
 
-        textBoxes = new TextBoxNumberList();
+        textBoxes = new gigabit101.AdvancedSystemManager2.components.TextBoxNumberList();
         textBoxes.addTextBox(startTextBox = new TextBoxNumber(39 ,49, 2, false) {
             @Override
             public void onNumberChanged() {
-                if (selectedDirectionId != -1 && getParent().getManager().getWorldObj().isRemote) {
+                if (selectedDirectionId != -1 && getParent().getManager().getWorld().isRemote) {
                     writeData(DataTypeHeader.START_OR_TANK_DATA, getNumber());
                 }
             }
@@ -29,7 +35,7 @@ public class ComponentMenuTargetInventory extends ComponentMenuTarget {
         textBoxes.addTextBox(endTextBox = new TextBoxNumber(60 ,49, 2, false) {
             @Override
             public void onNumberChanged() {
-                if (selectedDirectionId != -1 && getParent().getManager().getWorldObj().isRemote) {
+                if (selectedDirectionId != -1 && getParent().getManager().getWorld().isRemote) {
                     writeData(DataTypeHeader.END, getNumber());
                 }
             }
@@ -91,7 +97,7 @@ public class ComponentMenuTargetInventory extends ComponentMenuTarget {
 
     @Override
     protected void copyAdvancedSetting(ComponentMenu menu, int i) {
-        ComponentMenuTargetInventory menuTarget = (ComponentMenuTargetInventory)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetInventory menuTarget = (gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetInventory)menu;
         startRange[i] = menuTarget.startRange[i];
         endRange[i] = menuTarget.endRange[i];
     }
@@ -123,7 +129,7 @@ public class ComponentMenuTargetInventory extends ComponentMenuTarget {
 
     @Override
     protected void refreshAdvancedComponentData(ContainerManager container, ComponentMenu newData, int i) {
-        ComponentMenuTargetInventory newDataTarget = (ComponentMenuTargetInventory)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetInventory newDataTarget = (gigabit101.AdvancedSystemManager2.components.ComponentMenuTargetInventory)newData;
 
         if (startRange[i] != newDataTarget.startRange[i]) {
             startRange[i] =  newDataTarget.startRange[i];
@@ -165,7 +171,7 @@ public class ComponentMenuTargetInventory extends ComponentMenuTarget {
     public void addErrors(List<String> errors) {
         for (int i = 0; i < directions.length; i++) {
             if (isActive(i) && getStart(i) > getEnd(i)) {
-                errors.add(Localization.getForgeDirectionLocalization(i).toString() + " " + Localization.INVALID_RANGE.toString());
+                errors.add(Localization.getDirectionLocalization(EnumFacing.getFront(i)).toString() + " " + Localization.INVALID_RANGE.toString());
             }
         }
 

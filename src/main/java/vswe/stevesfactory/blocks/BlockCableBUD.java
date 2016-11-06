@@ -1,22 +1,25 @@
 package vswe.stevesfactory.blocks;
 
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
+import gigabit101.AdvancedSystemManager2.blocks.ModBlocks;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import vswe.stevesfactory.StevesFactoryManager;
+import gigabit101.AdvancedSystemManager2.AdvancedSystemManager2;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityBUD;
+import gigabit101.AdvancedSystemManager2.blocks.TileEntityCluster;
 
 public class BlockCableBUD extends BlockContainer {
     public BlockCableBUD() {
-        super(Material.iron);
-        setCreativeTab(ModBlocks.creativeTab);
-        setStepSound(soundTypeMetal);
-        setBlockName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
+        super(Material.IRON);
+        setCreativeTab(gigabit101.AdvancedSystemManager2.blocks.ModBlocks.creativeTab);
+        setSoundType(SoundType.METAL);
+        setUnlocalizedName(AdvancedSystemManager2.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
         setHardness(1.2F);
     }
 
@@ -25,19 +28,16 @@ public class BlockCableBUD extends BlockContainer {
         return new TileEntityBUD();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void registerBlockIcons(IIconRegister register) {
-        blockIcon = register.registerIcon(StevesFactoryManager.RESOURCE_LOCATION + ":cable_bud");
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.MODEL;
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        TileEntityBUD bud = TileEntityCluster.getTileEntity(TileEntityBUD.class, world, x, y, z);
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        TileEntityBUD bud = TileEntityCluster.getTileEntity(TileEntityBUD.class, world, pos);
         if (bud != null) {
             bud.onTrigger();
         }
     }
-
-
 }

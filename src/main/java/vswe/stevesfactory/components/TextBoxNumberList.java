@@ -1,10 +1,11 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.TextBoxNumber;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class TextBoxNumberList {
     private static final int TEXT_BOX_SRC_X = 0;
     private static final int TEXT_BOX_SRC_Y = 221;
 
-    private List<TextBoxNumber> textBoxes;
+    private List<gigabit101.AdvancedSystemManager2.components.TextBoxNumber> textBoxes;
     private TextBoxNumber selectedTextBox;
 
     public TextBoxNumberList() {
@@ -66,6 +67,7 @@ public class TextBoxNumberList {
             }else if(c == '-' && selectedTextBox.allowNegative()) {
                 selectedTextBox.setNumber(selectedTextBox.getNumber() * -1);
                 selectedTextBox.onNumberChanged();
+                return true;
             }else if(k == 14){
                 selectedTextBox.setNumber(selectedTextBox.getNumber() / 10);
                 selectedTextBox.onNumberChanged();

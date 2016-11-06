@@ -1,17 +1,22 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.CheckBoxList;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
-import vswe.stevesfactory.network.PacketHandler;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenu;
+import gigabit101.AdvancedSystemManager2.components.FlowComponent;
+import gigabit101.AdvancedSystemManager2.components.RadioButtonList;
+import gigabit101.AdvancedSystemManager2.interfaces.ContainerManager;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.network.PacketHandler;
 
 import java.util.List;
 
@@ -22,9 +27,9 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu {
 
         selection = 0x3F; //All selected
 
-        checkBoxList = new CheckBoxList();
+        checkBoxList = new gigabit101.AdvancedSystemManager2.components.CheckBoxList();
 
-        for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.values().length; i++) {
             checkBoxList.addCheckBox(new CheckBoxSide(i));
         }
 
@@ -59,7 +64,7 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu {
     private class CheckBoxSide extends CheckBox {
         private int id;
         public CheckBoxSide(int id) {
-            super(Localization.getForgeDirectionLocalization(id), CHECKBOX_X + CHECKBOX_SPACING_X * (id % 2), CHECKBOX_Y + CHECKBOX_SPACING_Y * (id / 2));
+            super(Localization.getDirectionLocalization(EnumFacing.getFront(id)), CHECKBOX_X + CHECKBOX_SPACING_X * (id % 2), CHECKBOX_Y + CHECKBOX_SPACING_Y * (id / 2));
 
             this.id = id;
         }
@@ -137,7 +142,7 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu {
 
     @Override
     public void copyFrom(ComponentMenu menu) {
-        ComponentMenuRedstoneSides menuRedstone = (ComponentMenuRedstoneSides)menu;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSides menuRedstone = (gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSides)menu;
 
         selection = menuRedstone.selection;
         setFirstOption(menuRedstone.useFirstOption());
@@ -145,7 +150,7 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu {
 
     @Override
     public void refreshData(ContainerManager container, ComponentMenu newData) {
-        ComponentMenuRedstoneSides newDataRedstone = (ComponentMenuRedstoneSides)newData;
+        gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSides newDataRedstone = (gigabit101.AdvancedSystemManager2.components.ComponentMenuRedstoneSides)newData;
 
        if (useFirstOption() != newDataRedstone.useFirstOption()) {
            setFirstOption(newDataRedstone.useFirstOption());

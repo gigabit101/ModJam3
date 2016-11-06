@@ -3,7 +3,7 @@ package vswe.stevesfactory.blocks;
 
 import net.minecraft.tileentity.TileEntity;
 
-public class WorldCoordinate implements Comparable<WorldCoordinate> {
+public class WorldCoordinate implements Comparable<gigabit101.AdvancedSystemManager2.blocks.WorldCoordinate> {
     private int x, y, z, depth;
     private TileEntity tileEntity;
 
@@ -23,7 +23,7 @@ public class WorldCoordinate implements Comparable<WorldCoordinate> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        WorldCoordinate that = (WorldCoordinate) o;
+        gigabit101.AdvancedSystemManager2.blocks.WorldCoordinate that = (gigabit101.AdvancedSystemManager2.blocks.WorldCoordinate) o;
 
         if (x != that.x) return false;
         if (y != that.y) return false;
@@ -57,7 +57,7 @@ public class WorldCoordinate implements Comparable<WorldCoordinate> {
     }
 
     @Override
-    public int compareTo(WorldCoordinate o) {
+    public int compareTo(gigabit101.AdvancedSystemManager2.blocks.WorldCoordinate o) {
         return ((Integer)depth).compareTo(o.depth);
     }
 

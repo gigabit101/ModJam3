@@ -1,7 +1,7 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.Localization;
+import gigabit101.AdvancedSystemManager2.Localization;
 
 public abstract class CheckBox {
     private int x, y;

@@ -1,9 +1,10 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.components.Point;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public class Connection {
     private int componentId;
     private int connectionId;
-    private List<Point> nodes;
+    private List<gigabit101.AdvancedSystemManager2.components.Point> nodes;
     private Point selectedNode;
 
     public Connection(int componentId, int connectionId) {
@@ -36,8 +37,8 @@ public class Connection {
         this.connectionId = connectionId;
     }
 
-    public Connection copy() {
-        Connection copy = new Connection(this.componentId, this.connectionId);
+    public gigabit101.AdvancedSystemManager2.components.Connection copy() {
+        gigabit101.AdvancedSystemManager2.components.Connection copy = new gigabit101.AdvancedSystemManager2.components.Connection(this.componentId, this.connectionId);
         for (Point node : nodes) {
             copy.nodes.add(node.copy());
         }

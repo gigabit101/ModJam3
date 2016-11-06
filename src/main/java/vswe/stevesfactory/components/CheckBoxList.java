@@ -1,10 +1,11 @@
 package vswe.stevesfactory.components;
 
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.interfaces.GuiManager;
+import gigabit101.AdvancedSystemManager2.components.CheckBox;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import gigabit101.AdvancedSystemManager2.CollisionHelper;
+import gigabit101.AdvancedSystemManager2.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class CheckBoxList {
     private static final int CHECK_BOX_TEXT_X = 12;
     private static final int CHECK_BOX_TEXT_Y = 2;
 
-    private List<CheckBox> checkBoxes;
+    private List<gigabit101.AdvancedSystemManager2.components.CheckBox> checkBoxes;
 
     public CheckBoxList() {
         checkBoxes = new ArrayList<CheckBox>();

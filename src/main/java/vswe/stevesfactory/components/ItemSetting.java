@@ -1,21 +1,25 @@
 package vswe.stevesfactory.components;
 
 
+import gigabit101.AdvancedSystemManager2.components.FuzzyMode;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.network.DataBitHelper;
-import vswe.stevesfactory.network.DataReader;
-import vswe.stevesfactory.network.DataWriter;
+import gigabit101.AdvancedSystemManager2.Localization;
+import gigabit101.AdvancedSystemManager2.components.ComponentMenuItem;
+import gigabit101.AdvancedSystemManager2.components.ModItemHelper;
+import gigabit101.AdvancedSystemManager2.components.Setting;
+import gigabit101.AdvancedSystemManager2.network.DataBitHelper;
+import gigabit101.AdvancedSystemManager2.network.DataReader;
+import gigabit101.AdvancedSystemManager2.network.DataWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemSetting extends Setting {
-    private FuzzyMode fuzzyMode;
+    private gigabit101.AdvancedSystemManager2.components.FuzzyMode fuzzyMode;
     private ItemStack item;
 
     public ItemSetting(int id) {
@@ -102,8 +106,8 @@ public class ItemSetting extends Setting {
 
     @Override
     public void copyFrom(Setting setting) {
-        item = ((ItemSetting)setting).getItem().copy();
-        fuzzyMode = ((ItemSetting)setting).fuzzyMode;
+        item = ((gigabit101.AdvancedSystemManager2.components.ItemSetting)setting).getItem().copy();
+        fuzzyMode = ((gigabit101.AdvancedSystemManager2.components.ItemSetting)setting).fuzzyMode;
     }
 
     @Override
@@ -148,7 +152,7 @@ public class ItemSetting extends Setting {
 
     @Override
     public boolean isContentEqual(Setting otherSetting) {
-        return Item.getIdFromItem(item.getItem()) == Item.getIdFromItem(((ItemSetting)otherSetting).item.getItem()) && ItemStack.areItemStackTagsEqual(item, ((ItemSetting)otherSetting).item);
+        return Item.getIdFromItem(item.getItem()) == Item.getIdFromItem(((gigabit101.AdvancedSystemManager2.components.ItemSetting)otherSetting).item.getItem()) && ItemStack.areItemStackTagsEqual(item, ((gigabit101.AdvancedSystemManager2.components.ItemSetting)otherSetting).item);
     }
 
     @Override
@@ -166,9 +170,9 @@ public class ItemSetting extends Setting {
         }else {
             switch (fuzzyMode) {
                 case ORE_DICTIONARY:
-                    int id = OreDictionary.getOreID(this.getItem());
+                    int id = OreDictionary.getOreIDs(this.getItem())[0];
                     if (id != -1) {
-                        return  id == OreDictionary.getOreID(other);
+                        return  id == OreDictionary.getOreIDs(other)[0];
                     }
                     //note that this falls through into the precise one, this is on purpose
                 case PRECISE:
