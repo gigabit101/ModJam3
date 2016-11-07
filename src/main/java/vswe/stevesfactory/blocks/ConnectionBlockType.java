@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 
 public enum ConnectionBlockType
 {
-    INVENTORY(Localization.TYPE_INVENTORY, IInventory.class, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, false),
+    INVENTORY(Localization.TYPE_INVENTORY, IInventory.class, null, false),
     TANK(Localization.TYPE_TANK, null, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, false),
     EMITTER(Localization.TYPE_EMITTER, TileEntityOutput.class, null, false),
     RECEIVER(Localization.TYPE_RECEIVER, TileEntityInput.class, null, false),
