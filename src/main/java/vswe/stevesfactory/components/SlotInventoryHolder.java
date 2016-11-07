@@ -2,8 +2,11 @@ package vswe.stevesfactory.components;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fluids.IFluidHandler;
+//import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.wrappers.CapabilityHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +37,7 @@ public class SlotInventoryHolder
 
     public IFluidHandler getTank()
     {
-        return (IFluidHandler) inventory;
+        return CapabilityHelper.getFluidCapabilitySafe(inventory);
     }
 
     public TileEntityOutput getEmitter()
@@ -73,7 +76,6 @@ public class SlotInventoryHolder
         {
             validSlots = new HashMap<Integer, SlotSideTarget>();
         }
-
         return validSlots;
     }
 

@@ -50,7 +50,7 @@ public class OutputFluidCounter
         {
             for (int side : slotSideTarget.getSides())
             {
-                FluidStack temp = tankHolder.getTank().drain(EnumFacing.getFront(side), CommandExecutor.MAX_FLUID_TRANSFER, false);
+                FluidStack temp = tankHolder.getTank().drain(CommandExecutor.MAX_FLUID_TRANSFER, false);
 
                 if (temp != null && temp.getFluid().getName().equals(((FluidSetting) setting).getFluidName()))
                 {

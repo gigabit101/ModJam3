@@ -26,7 +26,6 @@ public class TileEntitySignUpdater extends TileEntityClusterElement
         if (te != null && te instanceof TileEntitySign)
         {
             TileEntitySign sign = (TileEntitySign) te;
-            //if (sign.func_142009_b() == null) {
             sign.setPlayer(null);
             boolean updated = false;
             for (int i = 0; i < 4; i++)
@@ -47,8 +46,6 @@ public class TileEntitySignUpdater extends TileEntityClusterElement
                 sign.markDirty();
                 worldObj.notifyBlockUpdate(sign.getPos(), getWorld().getBlockState(sign.getPos()), getWorld().getBlockState(sign.getPos()), 3);
             }
-
-            //}
         }
     }
 }

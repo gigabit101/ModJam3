@@ -8,7 +8,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+//import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.blocks.TileEntityCreative;
@@ -469,9 +472,9 @@ public class CommandExecutor
                     if (menuTarget.useAdvancedSetting(side))
                     {
                         boolean empty = true;
-                        for (FluidTankInfo fluidTankInfo : tank.getTankInfo(ComponentMenuTarget.directions[side]))
+                        for (IFluidTankProperties fluidTankInfo : tank.getTankProperties())
                         {
-                            if (fluidTankInfo.fluid != null && fluidTankInfo.fluid.amount > 0)
+                            if (fluidTankInfo.getContents() != null && fluidTankInfo.getContents().amount > 0)
                             {
                                 empty = false;
                                 break;
@@ -632,15 +635,15 @@ public class CommandExecutor
             {
                 for (SlotSideTarget slot : tank.getValidSlots().values())
                 {
-                    List<FluidTankInfo> tankInfos = new ArrayList<FluidTankInfo>();
+                    List<IFluidTankProperties> tankInfos = new ArrayList<IFluidTankProperties>();
                     for (int side : slot.getSides())
                     {
-                        FluidTankInfo[] currentTankInfos = tank.getTank().getTankInfo(EnumFacing.getFront(side));
+                        IFluidTankProperties[] currentTankInfos = tank.getTank().getTankProperties();
                         if (currentTankInfos == null)
                         {
                             continue;
                         }
-                        for (FluidTankInfo fluidTankInfo : currentTankInfos)
+                        for (IFluidTankProperties fluidTankInfo : currentTankInfos)
                         {
                             if (fluidTankInfo == null)
                             {
@@ -648,9 +651,9 @@ public class CommandExecutor
                             }
 
                             boolean alreadyUsed = false;
-                            for (FluidTankInfo tankInfo : tankInfos)
+                            for (IFluidTankProperties tankInfo : tankInfos)
                             {
-                                if (FluidStack.areFluidStackTagsEqual(tankInfo.fluid, fluidTankInfo.fluid) && tankInfo.capacity == fluidTankInfo.capacity)
+                                if (FluidStack.areFluidStackTagsEqual(tankInfo.getContents(), fluidTankInfo.getContents()) && tankInfo.getCapacity() == fluidTankInfo.getCapacity())
                                 {
                                     alreadyUsed = true;
                                 }
@@ -661,7 +664,7 @@ public class CommandExecutor
                                 continue;
                             }
 
-                            FluidStack fluidStack = fluidTankInfo.fluid;
+                            FluidStack fluidStack = fluidTankInfo.getContents();
 
                             if (fluidStack == null)
                             {
@@ -674,7 +677,7 @@ public class CommandExecutor
                             addFluidToBuffer(menuItem, tank, setting, fluidStack, side);
                         }
 
-                        for (FluidTankInfo fluidTankInfo : tank.getTank().getTankInfo(EnumFacing.getFront(side)))
+                        for (IFluidTankProperties fluidTankInfo : tank.getTank().getTankProperties())
                         {
                             if (fluidTankInfo != null)
                             {
@@ -924,7 +927,7 @@ public class CommandExecutor
                         {
                             FluidStack temp = fluidStack.copy();
                             temp.amount = holder.getSizeLeft();
-                            int amount = tank.fill(EnumFacing.getFront(side), temp, false);
+                            int amount = tank.fill(temp, false);
                             amount = fluidBufferElement.retrieveItemCount(amount);
                             amount = outputFluidCounter.retrieveItemCount(amount);
 
@@ -933,10 +936,10 @@ public class CommandExecutor
                                 FluidStack resource = fluidStack.copy();
                                 resource.amount = amount;
 
-                                resource = holder.getTank().drain(holder.getSide(), resource, true);
+                                resource = holder.getTank().drain(resource, true);
                                 if (resource != null && resource.amount > 0)
                                 {
-                                    tank.fill(EnumFacing.getFront(side), resource, true);
+                                    tank.fill(resource, true);
                                     fluidBufferElement.decreaseStackSize(resource.amount);
                                     outputFluidCounter.modifyStackSize(resource.amount);
                                     holder.reduceAmount(resource.amount);
@@ -1031,24 +1034,24 @@ public class CommandExecutor
     {
         for (SlotSideTarget slot : tank.getValidSlots().values())
         {
-            List<FluidTankInfo> tankInfos = new ArrayList<FluidTankInfo>();
+            List<IFluidTankProperties> tankInfos = new ArrayList<IFluidTankProperties>();
             for (int side : slot.getSides())
             {
-                FluidTankInfo[] currentTankInfos = tank.getTank().getTankInfo(EnumFacing.getFront(side));
+                IFluidTankProperties[] currentTankInfos = tank.getTank().getTankProperties();
                 if (currentTankInfos == null)
                 {
                     continue;
                 }
-                for (FluidTankInfo fluidTankInfo : currentTankInfos)
+                for (IFluidTankProperties fluidTankInfo : currentTankInfos)
                 {
                     if (fluidTankInfo == null)
                     {
                         continue;
                     }
                     boolean alreadyUsed = false;
-                    for (FluidTankInfo tankInfo : tankInfos)
+                    for (IFluidTankProperties tankInfo : tankInfos)
                     {
-                        if (FluidStack.areFluidStackTagsEqual(tankInfo.fluid, fluidTankInfo.fluid) && tankInfo.capacity == fluidTankInfo.capacity)
+                        if (FluidStack.areFluidStackTagsEqual(tankInfo.getContents(), fluidTankInfo.getContents()) && tankInfo.getCapacity() == fluidTankInfo.getCapacity())
                         {
                             alreadyUsed = true;
                         }
@@ -1059,7 +1062,7 @@ public class CommandExecutor
                         continue;
                     }
 
-                    FluidStack fluidStack = fluidTankInfo.fluid;
+                    FluidStack fluidStack = fluidTankInfo.getContents();
                     Setting setting = isFluidValid(componentMenu, fluidStack);
                     if (setting != null)
                     {
@@ -1071,7 +1074,7 @@ public class CommandExecutor
                         conditionSettingChecker.addCount(fluidStack.amount);
                     }
                 }
-                for (FluidTankInfo fluidTankInfo : tank.getTank().getTankInfo(EnumFacing.getFront(side)))
+                for (IFluidTankProperties fluidTankInfo : tank.getTank().getTankProperties())
                 {
                     if (fluidTankInfo != null)
                     {
