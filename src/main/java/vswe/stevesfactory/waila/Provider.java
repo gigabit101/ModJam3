@@ -22,7 +22,6 @@ import java.util.List;
 
 public class Provider implements IWailaDataProvider
 {
-
     @Override
     public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config)
     {

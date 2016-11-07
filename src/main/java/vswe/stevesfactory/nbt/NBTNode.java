@@ -1,6 +1,5 @@
 package vswe.stevesfactory.nbt;
 
-
 import net.minecraft.nbt.*;
 
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ public class NBTNode
         open = true;
     }
 
-
     public void updatePosition()
     {
         updatePosition(0, -1);
@@ -59,7 +57,6 @@ public class NBTNode
 
         return line;
     }
-
 
     public List<NBTNode> getNodes()
     {
@@ -110,7 +107,6 @@ public class NBTNode
         }
     }
 
-
     public static NBTNode generateNodes(NBTTagCompound compound)
     {
         NBTNode node = generateNodesFromTag(compound);
@@ -142,7 +138,6 @@ public class NBTNode
         {
             node.nodes.add(createElementNode(compound.getCompoundTagAt(i)));
         }
-
         return node;
     }
 
@@ -156,7 +151,6 @@ public class NBTNode
             child.value = String.valueOf(b);
             node.nodes.add(child);
         }
-
         return node;
     }
 
@@ -170,7 +164,6 @@ public class NBTNode
             child.value = String.valueOf(n);
             node.nodes.add(child);
         }
-
         return node;
     }
 
@@ -191,7 +184,6 @@ public class NBTNode
                 node.value = tag.toString() + " [type = " + tag.getId() + "]";
                 return node;
         }
-
     }
 
     public void setOpen(boolean open)

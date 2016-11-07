@@ -18,8 +18,6 @@ import java.util.List;
 
 public class ItemCluster extends ItemBlock
 {
-
-
     public ItemCluster(Block block)
     {
         super(block);

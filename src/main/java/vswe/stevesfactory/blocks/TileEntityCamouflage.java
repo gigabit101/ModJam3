@@ -25,7 +25,6 @@ import java.util.Random;
 
 public class TileEntityCamouflage extends TileEntityClusterElement implements IPacketBlock
 {
-
     public boolean isNormalBlock()
     {
         if (getCamouflageType().useSpecialShape())

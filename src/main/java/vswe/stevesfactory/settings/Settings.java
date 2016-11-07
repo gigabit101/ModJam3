@@ -1,6 +1,5 @@
 package vswe.stevesfactory.settings;
 
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

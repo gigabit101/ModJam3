@@ -20,7 +20,6 @@ import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.List;
 
-
 public class BlockCableCamouflages extends BlockCamouflageBase
 {
     public BlockCableCamouflages()

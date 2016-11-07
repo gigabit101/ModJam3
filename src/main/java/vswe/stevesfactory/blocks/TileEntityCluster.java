@@ -29,7 +29,6 @@ import java.util.Map;
 
 public class TileEntityCluster extends TileEntity implements ITileEntityInterface, IPacketBlock, ITickable
 {
-
     private boolean requestedInfo;
     private List<TileEntityClusterElement> elements;
     private List<ClusterRegistry> registryList;

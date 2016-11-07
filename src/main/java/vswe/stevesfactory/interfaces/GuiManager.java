@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @SideOnly(Side.CLIENT)
 public class GuiManager extends GuiBase
 {

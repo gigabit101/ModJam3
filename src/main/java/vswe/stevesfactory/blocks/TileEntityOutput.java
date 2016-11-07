@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

@@ -42,7 +42,6 @@ import java.util.UUID;
 
 public class TileEntityRelay extends TileEntityClusterElement implements IInventory, ISidedInventory, IFluidHandler, ITileEntityInterface
 {
-
     private static final int MAX_CHAIN_LENGTH = 512;
     private int[] cachedAllSlots;
     private boolean blockingUsage;

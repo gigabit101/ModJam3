@@ -5,7 +5,6 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class UnlistedBlockPosProperty implements IUnlistedProperty<BlockPos>
 {
-
     String name;
 
     public UnlistedBlockPosProperty(String name)

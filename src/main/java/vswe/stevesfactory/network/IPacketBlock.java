@@ -1,6 +1,5 @@
 package vswe.stevesfactory.network;
 
-
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface IPacketBlock

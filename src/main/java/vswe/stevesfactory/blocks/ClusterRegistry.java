@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
 
@@ -10,7 +9,6 @@ import java.util.List;
 
 public class ClusterRegistry
 {
-
     private static HashMap<Class<? extends TileEntityClusterElement>, ClusterRegistry> registry = new HashMap<Class<? extends TileEntityClusterElement>, ClusterRegistry>();
     private static List<ClusterRegistry> registryList = new ArrayList<ClusterRegistry>();
 

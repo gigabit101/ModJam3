@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

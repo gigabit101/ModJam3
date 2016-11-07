@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public final class FileHelper
 {
-
     private static File dir;
 
     public static void setConfigDir(File dir)

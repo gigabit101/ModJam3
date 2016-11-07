@@ -1,6 +1,5 @@
 package vswe.stevesfactory.wrappers;
 
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,7 +7,6 @@ import net.minecraft.util.text.ITextComponent;
 
 public abstract class InventoryWrapper implements IInventory
 {
-
     protected IInventory inventory;
 
     protected InventoryWrapper(IInventory inventory)

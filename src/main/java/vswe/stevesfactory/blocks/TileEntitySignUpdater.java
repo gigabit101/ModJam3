@@ -10,7 +10,6 @@ import vswe.stevesfactory.components.ComponentMenuSignText;
 
 import java.util.EnumSet;
 
-
 public class TileEntitySignUpdater extends TileEntityClusterElement
 {
     @Override

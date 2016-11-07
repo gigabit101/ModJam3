@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-
 public enum ClusterMethodRegistration
 {
     ON_BLOCK_PLACED_BY,

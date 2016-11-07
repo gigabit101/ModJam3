@@ -15,7 +15,6 @@ import java.util.List;
 
 public class ContainerManager extends ContainerBase
 {
-
     private TileEntityManager manager;
     private EntityPlayer player;
 

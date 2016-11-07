@@ -8,7 +8,6 @@ import vswe.stevesfactory.init.ModBlocks;
 
 public class ItemCamouflage extends ItemBlock
 {
-
     public ItemCamouflage(Block block)
     {
         super(block);
@@ -21,5 +20,4 @@ public class ItemCamouflage extends ItemBlock
     {
         return "tile." + StevesFactoryManager.UNLOCALIZED_START + TileEntityCamouflage.CamouflageType.values()[ModBlocks.blockCableCamouflage.getId(item.getItemDamage())].getUnlocalized();
     }
-
 }

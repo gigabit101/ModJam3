@@ -17,7 +17,6 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
     private int[] oldPowered = new int[EnumFacing.values().length];
     private int[] isPowered = new int[EnumFacing.values().length];
 
-
     @Override
     public void added(TileEntityManager owner)
     {

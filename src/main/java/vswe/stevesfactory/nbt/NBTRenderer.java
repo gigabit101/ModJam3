@@ -7,11 +7,9 @@ import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.interfaces.IInterfaceRenderer;
 
-
 @SideOnly(Side.CLIENT)
 public class NBTRenderer implements IInterfaceRenderer
 {
-
     private NBTNode root;
 
     public NBTRenderer(NBTTagCompound compound)

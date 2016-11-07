@@ -22,7 +22,6 @@ import vswe.stevesfactory.settings.Settings;
 
 import java.util.*;
 
-
 public class TileEntityManager extends TileEntity implements ITileEntityInterface, ITickable
 {
     public static final TriggerHelperRedstone redstoneTrigger = new TriggerHelperRedstone(3, 4);

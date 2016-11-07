@@ -19,14 +19,11 @@ public enum Color
     YELLOW(),
     WHITE();
 
-    Color()
-    {
-    }
+    Color() {}
 
     @Override
     public String toString()
     {
         return "\u00a7" + Integer.toHexString(ordinal());
     }
-
 }

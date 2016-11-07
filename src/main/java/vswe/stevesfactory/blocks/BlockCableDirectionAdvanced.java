@@ -21,7 +21,6 @@ import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.List;
 
-
 public abstract class BlockCableDirectionAdvanced extends BlockContainer
 {
     public BlockCableDirectionAdvanced()

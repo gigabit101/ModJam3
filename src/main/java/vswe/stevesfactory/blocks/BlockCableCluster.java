@@ -32,7 +32,6 @@ import java.util.List;
 
 public class BlockCableCluster extends BlockCamouflageBase
 {
-
     public BlockCableCluster()
     {
         super(Material.IRON);

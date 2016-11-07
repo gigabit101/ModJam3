@@ -1,6 +1,5 @@
 package vswe.stevesfactory.blocks;
 
-
 import net.minecraft.tileentity.TileEntity;
 
 public class WorldCoordinate implements Comparable<WorldCoordinate>

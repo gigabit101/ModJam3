@@ -9,7 +9,6 @@ import java.util.List;
 
 public class ContainerRelay extends ContainerBase
 {
-
     private TileEntityRelay relay;
 
     public ContainerRelay(TileEntityRelay relay, InventoryPlayer player)

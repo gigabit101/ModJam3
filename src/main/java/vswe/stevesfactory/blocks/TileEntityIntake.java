@@ -15,10 +15,8 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class TileEntityIntake extends TileEntityClusterElement implements IInventory
 {
-
     private List<EntityItem> items;
 
     @Override

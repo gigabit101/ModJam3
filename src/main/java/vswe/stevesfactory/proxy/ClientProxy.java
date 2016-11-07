@@ -1,6 +1,5 @@
 package vswe.stevesfactory.proxy;
 
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -14,7 +13,6 @@ import vswe.stevesfactory.settings.Settings;
 
 public class ClientProxy extends CommonProxy
 {
-
     @Override
     public void preInit()
     {

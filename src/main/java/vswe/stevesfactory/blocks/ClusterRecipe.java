@@ -14,7 +14,6 @@ import java.util.List;
 
 public class ClusterRecipe implements IRecipe
 {
-
     private ItemStack output;
 
     public ClusterRecipe()

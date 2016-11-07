@@ -10,7 +10,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 
-
 public interface ITileEntityInterface
 {
     public abstract Container getContainer(TileEntity te, InventoryPlayer inv);

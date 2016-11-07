@@ -13,11 +13,8 @@ import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.EnumSet;
 
-
 public class TileEntityCreative extends TileEntityClusterElement implements IInventory, IFluidHandler
 {
-
-
     @Override
     public int fill(EnumFacing from, FluidStack resource, boolean doFill)
     {

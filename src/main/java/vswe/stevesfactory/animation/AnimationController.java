@@ -7,7 +7,6 @@ import java.util.*;
 
 public class AnimationController
 {
-
     private final TileEntityManager manager;
     private List<FlowComponent> blueprints;
     private List<FlowComponent> items;

@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
 
-
 public class BlockCableInput extends BlockContainer
 {
     public BlockCableInput()

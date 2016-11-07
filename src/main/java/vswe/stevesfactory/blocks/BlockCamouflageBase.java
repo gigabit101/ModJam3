@@ -17,7 +17,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class BlockCamouflageBase extends BlockContainer
 {
-
     protected BlockCamouflageBase(Material material)
     {
         super(material);

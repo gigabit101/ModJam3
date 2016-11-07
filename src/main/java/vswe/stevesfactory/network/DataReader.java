@@ -1,6 +1,5 @@
 package vswe.stevesfactory.network;
 
-
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import vswe.stevesfactory.util.Utils;
@@ -11,7 +10,6 @@ import java.io.InputStream;
 
 public class DataReader
 {
-
     private InputStream stream;
     private int byteBuffer;
     private int bitCountBuffer;
@@ -144,7 +142,6 @@ public class DataReader
 
             idRead = true;
         }
-
         return readData(idBits);
     }
 
@@ -165,8 +162,6 @@ public class DataReader
 
             invRead = true;
         }
-
         return readData(invBits);
     }
-
 }

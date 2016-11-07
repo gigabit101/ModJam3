@@ -5,7 +5,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-
 public interface IAdvancedTooltip
 {
 

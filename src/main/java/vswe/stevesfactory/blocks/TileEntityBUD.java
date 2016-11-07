@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-
 public class TileEntityBUD extends TileEntityClusterElement implements ISystemListener, ITriggerNode
 {
     private List<TileEntityManager> managerList = new ArrayList<TileEntityManager>();
@@ -37,13 +36,10 @@ public class TileEntityBUD extends TileEntityClusterElement implements ISystemLi
     public void onTrigger()
     {
         updateData();
-
         for (int i = managerList.size() - 1; i >= 0; i--)
         {
             managerList.get(i).triggerBUD(this);
         }
-
-
         makeOld();
     }
 

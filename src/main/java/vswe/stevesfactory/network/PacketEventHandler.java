@@ -15,7 +15,6 @@ import vswe.stevesfactory.interfaces.ContainerBase;
 
 public class PacketEventHandler
 {
-
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onClientPacket(final FMLNetworkEvent.ClientCustomPacketEvent event)
@@ -118,5 +117,4 @@ public class PacketEventHandler
 
         dr.close();
     }
-
 }

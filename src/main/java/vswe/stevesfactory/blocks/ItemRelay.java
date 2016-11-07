@@ -6,11 +6,8 @@ import net.minecraft.item.ItemStack;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
 
-
 public class ItemRelay extends ItemBlock
 {
-
-
     public ItemRelay(Block block)
     {
         super(block);
