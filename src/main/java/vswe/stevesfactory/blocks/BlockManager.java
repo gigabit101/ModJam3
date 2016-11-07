@@ -10,7 +10,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -19,7 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import vswe.stevesfactory.GeneratedInfo;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
 
@@ -111,74 +109,16 @@ public class BlockManager extends BlockContainer
         }
     }
 
-
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
     {
-        if (GeneratedInfo.inDev)
-        {
-            System.out.println("Picked" + world.isRemote);
-            TileEntity te = world.getTileEntity(pos);
-            if (te != null && te instanceof TileEntityManager)
-            {
-                TileEntityManager manager = (TileEntityManager) te;
-
-                if (manager.getPos().getX() != pos.getX() || manager.getPos().getY() != pos.getY() || manager.getPos().getZ() != pos.getZ())
-                {
-                    return null;
-                }
-
-                ItemStack itemStack = super.getPickBlock(state, target, world, pos, player);
-                if (itemStack != null)
-                {
-                    NBTTagCompound tagCompound = itemStack.getTagCompound();
-                    if (tagCompound == null)
-                    {
-                        tagCompound = new NBTTagCompound();
-                        itemStack.setTagCompound(tagCompound);
-                    }
-
-                    NBTTagCompound info = new NBTTagCompound();
-                    tagCompound.setTag("Manager", info);
-                    manager.writeContentToNBT(info, true);
-
-                    System.out.println("write");
-                }
-                return itemStack;
-            }
-
-            System.out.println("failed to write");
-            return null;
-        } else
-        {
-            return super.getPickBlock(state, target, world, pos, player);
-        }
+        return super.getPickBlock(state, target, world, pos, player);
     }
 
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack itemStack)
     {
-        if (GeneratedInfo.inDev)
-        {
-            System.out.println("Placed" + world.isRemote);
-            TileEntity te = world.getTileEntity(pos);
-            if (te != null && te instanceof TileEntityManager)
-            {
-                TileEntityManager manager = (TileEntityManager) te;
-                if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("Manager"))
-                {
-                    manager.readContentFromNBT(itemStack.getTagCompound().getCompoundTag("Manager"), true);
-                    System.out.println("read");
-                } else
-                {
-                    System.out.println("no data");
-                }
-            }
-        } else
-        {
-            super.onBlockPlacedBy(world, pos, state, entity, itemStack);
-        }
+        super.onBlockPlacedBy(world, pos, state, entity, itemStack);
     }
-
 }
