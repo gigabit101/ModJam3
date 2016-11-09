@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-
 public class TileEntityInput extends TileEntityClusterElement implements IRedstoneNode, ISystemListener, ITriggerNode
 {
     private List<TileEntityManager> managerList = new ArrayList<TileEntityManager>();
@@ -46,7 +45,6 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
         {
             managerList.get(i).triggerRedstone(this);
         }
-
 
         oldPowered = isPowered;
     }

@@ -1,10 +1,10 @@
 package vswe.stevesfactory.components;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.items.IItemHandler;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.blocks.TileEntityManager;
 
@@ -92,18 +92,18 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
 
         for (SlotInventoryHolder inventoryHolder : inventories)
         {
-            IInventory inventory = inventoryHolder.getInventory();
+            IItemHandler inventory = inventoryHolder.getInventory();
 
-            for (int i = 0; i < inventory.getSizeInventory(); i++)
+            for (int i = 0; i < inventory.getSlots(); i++)
             {
-                if (inventory.isItemValidForSlot(i, itemStack))
+                if (inventory.insertItem(i, itemStack, true) != itemStack)
                 {
                     ItemStack itemInSlot = inventory.getStackInSlot(i);
                     if (itemInSlot == null || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
                     {
                         int itemCountInSlot = itemInSlot == null ? 0 : itemInSlot.stackSize;
 
-                        int moveCount = Math.min(itemStack.stackSize, Math.min(inventory.getInventoryStackLimit(), itemStack.getMaxStackSize()) - itemCountInSlot);
+                        int moveCount = Math.min(itemStack.stackSize, Math.min(64, itemStack.getMaxStackSize()) - itemCountInSlot);
 
                         if (moveCount > 0)
                         {
@@ -111,12 +111,12 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
                             {
                                 itemInSlot = itemStack.copy();
                                 itemInSlot.stackSize = 0;
-                                inventory.setInventorySlotContents(i, itemInSlot);
+                                inventory.insertItem(i, itemInSlot, false);
                             }
 
                             itemInSlot.stackSize += moveCount;
                             itemStack.stackSize -= moveCount;
-                            inventory.markDirty();
+//                            inventory.markDirty();
                             if (itemStack.stackSize == 0)
                             {
                                 return;
@@ -125,7 +125,6 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
                     }
                 }
             }
-
         }
 
 
@@ -163,9 +162,9 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     @Override
     public void onUpdate()
     {
-        for (IInventory inventory : inventories)
+        for (IItemHandler inventory : inventories)
         {
-            inventory.markDirty();
+//            inventory.markDirty();
         }
         inventories.clear();
     }
@@ -210,7 +209,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
         return result;
     }
 
-    private List<IInventory> inventories = new ArrayList<IInventory>();
+    private List<IItemHandler> inventories = new ArrayList<IItemHandler>();
 
     private boolean useAdvancedDetection()
     {
@@ -269,7 +268,6 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
             }
         }
 
-
         if (foundItems.size() == 9)
         {
             result = craftingMenu.getDummy().getResult(foundItems);
@@ -280,6 +278,4 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
             return false;
         }
     }
-
-
 }

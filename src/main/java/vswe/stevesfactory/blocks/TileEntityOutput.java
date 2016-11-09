@@ -21,7 +21,6 @@ import java.util.List;
 
 public class TileEntityOutput extends TileEntityClusterElement implements IPacketBlock, IRedstoneNode
 {
-
     private int[] strengths;
     private boolean[] strong;
 
@@ -30,7 +29,6 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
 
     public TileEntityOutput()
     {
-
         strengths = new int[EnumFacing.values().length];
         strong = new boolean[EnumFacing.values().length];
 
@@ -134,7 +132,6 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                         }
                     }
                 }
-
             }
         }
 
@@ -192,8 +189,6 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                 if (strength < 0) strength += 16;
                 break;
         }
-
-
         updatedStrength[side] = strength;
     }
 
@@ -216,7 +211,6 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
         }
     }
 
-
     private static final String NBT_SIDES = "Sides";
     private static final String NBT_STRENGTH = "Strength";
     private static final String NBT_STRONG = "Strong";
@@ -227,7 +221,6 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
     public void readContentFromNBT(NBTTagCompound nbtTagCompound)
     {
         int version = nbtTagCompound.getByte(ModBlocks.NBT_PROTOCOL_VERSION);
-
 
         NBTTagList sidesTag = nbtTagCompound.getTagList(NBT_SIDES, 10);
         for (int i = 0; i < sidesTag.tagCount(); i++)
@@ -436,7 +429,6 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
     {
         return EnumSet.of(ClusterMethodRegistration.CAN_CONNECT_REDSTONE, ClusterMethodRegistration.SHOULD_CHECK_WEAK_POWER, ClusterMethodRegistration.IS_PROVIDING_WEAK_POWER, ClusterMethodRegistration.IS_PROVIDING_STRONG_POWER);
     }
-
 
     private class PulseTimer
     {

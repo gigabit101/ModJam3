@@ -7,7 +7,6 @@ import java.util.List;
 
 public class ComponentMenuReceivers extends ComponentMenuContainer
 {
-
     public ComponentMenuReceivers(FlowComponent parent)
     {
         super(parent, ConnectionBlockType.RECEIVER);

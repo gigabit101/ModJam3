@@ -1,9 +1,7 @@
 package vswe.stevesfactory.blocks;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import vswe.stevesfactory.Localization;
@@ -12,7 +10,7 @@ import javax.annotation.Nullable;
 
 public enum ConnectionBlockType
 {
-    INVENTORY(Localization.TYPE_INVENTORY, IInventory.class, null, false),
+    INVENTORY(Localization.TYPE_INVENTORY, null, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, false),
     TANK(Localization.TYPE_TANK, null, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, false),
     EMITTER(Localization.TYPE_EMITTER, TileEntityOutput.class, null, false),
     RECEIVER(Localization.TYPE_RECEIVER, TileEntityInput.class, null, false),

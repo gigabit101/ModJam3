@@ -183,7 +183,6 @@ public class ItemBufferElement implements IItemBufferElement
 
     public ItemBufferElement getSplitElement(int elementAmount, int id, boolean fair)
     {
-
         ItemBufferElement element = new ItemBufferElement(this.component, this.setting, this.inventoryHolder, this.useWhiteList);
         element.holders = new ArrayList<SlotStackInventoryHolder>();
         for (SlotStackInventoryHolder holder : holders)
@@ -204,7 +203,6 @@ public class ItemBufferElement implements IItemBufferElement
         {
             element.currentStackSize = Math.min(currentStackSize, element.totalStackSize);
         }
-
         return element;
     }
 }

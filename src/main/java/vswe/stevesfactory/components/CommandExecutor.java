@@ -1,17 +1,14 @@
 package vswe.stevesfactory.components;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-//import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.IItemHandler;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.blocks.TileEntityCreative;
@@ -21,7 +18,6 @@ import java.util.*;
 
 public class CommandExecutor
 {
-
     private TileEntityManager manager;
     List<ItemBufferElement> itemBuffer;
     List<CraftingBufferElement> craftingBufferHigh;
@@ -65,7 +61,6 @@ public class CommandExecutor
                 }
             }
         }
-
         executeChildCommands(command, validTriggerOutputs);
     }
 
@@ -270,16 +265,13 @@ public class CommandExecutor
                         }
                     }
             }
-
-
             executeChildCommands(command, EnumSet.allOf(ConnectionOption.class));
-
-        } finally
+        }
+        finally
         {
             usedCommands.remove((Integer) command.getId());
         }
     }
-
 
     private List<SlotInventoryHolder> getEmitters(ComponentMenu componentMenu)
     {
@@ -333,7 +325,6 @@ public class CommandExecutor
             Variable variable = variables[i];
             if (variable.isValid())
             {
-
                 for (int val : menuContainer.getSelectedInventories())
                 {
                     if (val == i)
@@ -376,7 +367,6 @@ public class CommandExecutor
             {
                 ret.add(new SlotInventoryHolder(selected, connection.getTileEntity(), menuContainer.getOption()));
             }
-
         }
     }
 
@@ -398,7 +388,7 @@ public class CommandExecutor
 
         for (int i = 0; i < inventories.size(); i++)
         {
-            IInventory inventory = inventories.get(i).getInventory();
+            IItemHandler inventory = inventories.get(i).getInventory();
             Map<Integer, SlotSideTarget> validSlots = inventories.get(i).getValidSlots();
 
             for (int side = 0; side < ComponentMenuTarget.directions.length; side++)
@@ -411,7 +401,7 @@ public class CommandExecutor
                         inventoryValidSlots = ((ISidedInventory) inventory).getSlotsForFace(EnumFacing.getFront(side));
                     } else
                     {
-                        inventoryValidSlots = new int[inventory.getSizeInventory()];
+                        inventoryValidSlots = new int[inventory.getSlots()];
                         for (int j = 0; j < inventoryValidSlots.length; j++)
                         {
                             inventoryValidSlots[j] = j;
@@ -426,7 +416,7 @@ public class CommandExecutor
                     } else
                     {
                         start = 0;
-                        end = inventory.getSizeInventory();
+                        end = inventory.getSlots();
                     }
 
                     if (start > end)
@@ -451,9 +441,7 @@ public class CommandExecutor
                     }
                 }
             }
-
         }
-
     }
 
     private void getValidTanks(ComponentMenu componentMenu, List<SlotInventoryHolder> tanks)
@@ -487,7 +475,6 @@ public class CommandExecutor
                         }
                     }
 
-
                     SlotSideTarget target = validTanks.get(0);
                     if (target == null)
                     {
@@ -496,21 +483,18 @@ public class CommandExecutor
                     {
                         target.addSide(side);
                     }
-
-
                 }
             }
-
         }
-
     }
 
-    private boolean isSlotValid(IInventory inventory, ItemStack item, SlotSideTarget slot, boolean isInput)
+    private boolean isSlotValid(IItemHandler inventory, ItemStack item, SlotSideTarget slot, boolean isInput)
     {
         if (item == null)
         {
             return false;
-        } else if (inventory instanceof ISidedInventory)
+        }
+        else if (inventory instanceof ISidedInventory)
         {
             boolean hasValidSide = false;
             for (int side : slot.getSides())
@@ -531,15 +515,13 @@ public class CommandExecutor
                 return false;
             }
         }
-
-        return isInput || inventory.isItemValidForSlot(slot.getSlot(), item);
+        return isInput || inventory.insertItem(slot.getSlot(), item, true) != item;
     }
 
     private void getItems(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories)
     {
         for (SlotInventoryHolder inventory : inventories)
         {
-
             ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
             if (inventory.getInventory() instanceof TileEntityCreative)
             {
@@ -570,7 +552,6 @@ public class CommandExecutor
                         continue;
                     }
 
-
                     Setting setting = isItemValid(componentMenu, itemStack);
                     addItemToBuffer(menuItem, inventory, setting, itemStack, slot);
                 }
@@ -580,7 +561,6 @@ public class CommandExecutor
 
     private void addItemToBuffer(ComponentMenuStuff menuItem, SlotInventoryHolder inventory, Setting setting, ItemStack itemStack, SlotSideTarget slot)
     {
-
         if ((menuItem.useWhiteList() == (setting != null)) || (setting != null && setting.isLimitedByAmount()))
         {
             FlowComponent owner = menuItem.getParent();
@@ -601,7 +581,6 @@ public class CommandExecutor
                 ItemBufferElement itemBufferElement = new ItemBufferElement(owner, setting, inventory, menuItem.useWhiteList(), target);
                 itemBuffer.add(itemBufferElement);
             }
-
         }
     }
 
@@ -713,7 +692,6 @@ public class CommandExecutor
                 FluidBufferElement itemBufferElement = new FluidBufferElement(owner, setting, tank, menuItem.useWhiteList(), target);
                 fluidBuffer.add(itemBufferElement);
             }
-
         }
     }
 
@@ -781,7 +759,7 @@ public class CommandExecutor
 
     private void insertItemsFromInputBufferElement(ComponentMenuStuff menuItem, List<SlotInventoryHolder> inventories, List<OutputItemCounter> outputCounters, SlotInventoryHolder inventoryHolder, IItemBufferElement itemBufferElement)
     {
-        IInventory inventory = inventoryHolder.getInventory();
+        IItemHandler inventory = inventoryHolder.getInventory();
 
         IItemBufferSubElement subElement;
         itemBufferElement.prepareSubElements();
@@ -825,13 +803,13 @@ public class CommandExecutor
                 {
                     int itemCountInSlot = newItem ? 0 : itemInSlot.stackSize;
 
-                    int moveCount = Math.min(subElement.getSizeLeft(), Math.min(inventory.getInventoryStackLimit(), itemStack.getMaxStackSize()) - itemCountInSlot);
+                    //TODO 64 should be slots max size
+                    int moveCount = Math.min(subElement.getSizeLeft(), Math.min(64, itemStack.getMaxStackSize()) - itemCountInSlot);
 
                     moveCount = outputItemCounter.retrieveItemCount(moveCount);
                     moveCount = itemBufferElement.retrieveItemCount(moveCount);
                     if (moveCount > 0)
                     {
-
                         if (newItem)
                         {
                             itemInSlot = itemStack.copy();
@@ -845,7 +823,7 @@ public class CommandExecutor
 
                         if (newItem)
                         {
-                            inventory.setInventorySlotContents(slot.getSlot(), itemInSlot);
+                            inventory.insertItem(slot.getSlot(), itemInSlot, false);
                         }
 
                         boolean done = false;
@@ -856,7 +834,8 @@ public class CommandExecutor
                             done = true;
                         }
 
-                        inventory.markDirty();
+//                        inventory.markDirty();
+                        inventory.getSlots();
                         subElement.onUpdate();
 
                         if (done)
@@ -865,7 +844,6 @@ public class CommandExecutor
                         }
                     }
                 }
-
             }
         }
         itemBufferElement.releaseSubElements();
@@ -922,7 +900,6 @@ public class CommandExecutor
 
                     for (SlotSideTarget slot : tankHolder.getValidSlots().values())
                     {
-
                         for (int side : slot.getSides())
                         {
                             FluidStack temp = fluidStack.copy();
@@ -950,16 +927,11 @@ public class CommandExecutor
                                     }
                                 }
                             }
-
                         }
-
                     }
                 }
-
             }
-
         }
-
     }
 
     private boolean searchForStuff(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories, boolean useFluids)
@@ -1082,7 +1054,6 @@ public class CommandExecutor
                     }
                 }
             }
-
         }
     }
 
@@ -1109,7 +1080,6 @@ public class CommandExecutor
                 }
             }
         }
-
         return menuCondition.requiresAll();
     }
 
@@ -1165,10 +1135,8 @@ public class CommandExecutor
                     usedId++;
                 }
             }
-
             return true;
         }
-
         return false;
     }
 
@@ -1179,7 +1147,6 @@ public class CommandExecutor
 
     private void updateVariable(List<SlotInventoryHolder> tiles, ComponentMenuVariable menuVariable, ComponentMenuListOrder menuOrder)
     {
-
         ComponentMenuVariable.VariableMode mode = menuVariable.getVariableMode();
         Variable variable = manager.getVariables()[menuVariable.getSelectedVariable()];
 
@@ -1214,7 +1181,6 @@ public class CommandExecutor
                     variable.add(id);
                 }
             }
-
         }
     }
 
@@ -1274,7 +1240,6 @@ public class CommandExecutor
                 ret.remove(ret.size() - 1);
             }
         }
-
         return ret;
     }
 }

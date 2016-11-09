@@ -1,17 +1,16 @@
 package vswe.stevesfactory.components;
 
-
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 public class SlotStackInventoryHolder implements IItemBufferSubElement
 {
     private ItemStack itemStack;
-    private IInventory inventory;
+    private IItemHandler inventory;
     private int slot;
     private int sizeLeft;
 
-    public SlotStackInventoryHolder(ItemStack itemStack, IInventory inventory, int slot)
+    public SlotStackInventoryHolder(ItemStack itemStack, IItemHandler inventory, int slot)
     {
         this.itemStack = itemStack;
         this.inventory = inventory;
@@ -25,7 +24,7 @@ public class SlotStackInventoryHolder implements IItemBufferSubElement
     }
 
 
-    public IInventory getInventory()
+    public IItemHandler getInventory()
     {
         return inventory;
     }
@@ -41,15 +40,12 @@ public class SlotStackInventoryHolder implements IItemBufferSubElement
     {
         if (itemStack.stackSize == 0)
         {
-            getInventory().setInventorySlotContents(getSlot(), null);
+            getInventory().insertItem(getSlot(), null, false);
         }
     }
 
     @Override
-    public void onUpdate()
-    {
-        getInventory().markDirty();
-    }
+    public void onUpdate(){}
 
     public int getSizeLeft()
     {
@@ -58,8 +54,15 @@ public class SlotStackInventoryHolder implements IItemBufferSubElement
 
     public void reduceAmount(int val)
     {
-        itemStack.stackSize -= val;
-        sizeLeft -= val;
+        if(itemStack.stackSize == val)
+        {
+            inventory.extractItem(getSlot(), itemStack.stackSize, false);
+        }
+        else
+        {
+            itemStack.stackSize -= val;
+            sizeLeft -= val;
+        }
     }
 
     public SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair)

@@ -12,7 +12,6 @@ public abstract class TriggerHelper
 {
     public static final int TRIGGER_INTERVAL_ID = 2;
 
-
     protected boolean canUseMergedDetection;
     protected int containerId;
     protected int sidesId;
@@ -29,7 +28,6 @@ public abstract class TriggerHelper
     protected abstract boolean isBlockPowered(FlowComponent component, int power);
 
     public abstract void onTrigger(FlowComponent item, EnumSet<ConnectionOption> valid);
-
 
     protected boolean isTriggerPowered(FlowComponent component, int[] currentPower, boolean high)
     {
@@ -50,7 +48,6 @@ public abstract class TriggerHelper
                 }
             }
         }
-
         return menuSides.requireAll();
     }
 
@@ -69,7 +66,6 @@ public abstract class TriggerHelper
                 }
             }
         }
-
         return false;
     }
 
@@ -85,7 +81,6 @@ public abstract class TriggerHelper
         for (SlotInventoryHolder container : containers)
         {
             ITriggerNode input = container.getTrigger();
-
 
             boolean flag;
             if (input.equals(trigger) || !requiresAll)

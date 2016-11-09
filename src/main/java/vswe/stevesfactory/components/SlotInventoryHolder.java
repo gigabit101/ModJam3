@@ -1,15 +1,15 @@
 package vswe.stevesfactory.components;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-//import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.wrappers.CapabilityHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+
+//import net.minecraftforge.fluids.IFluidHandler;
 
 public class SlotInventoryHolder
 {
@@ -30,9 +30,9 @@ public class SlotInventoryHolder
         return id;
     }
 
-    public IInventory getInventory()
+    public IItemHandler getInventory()
     {
-        return (IInventory) inventory;
+        return CapabilityHelper.getItemCapabilitySafe(inventory);
     }
 
     public IFluidHandler getTank()

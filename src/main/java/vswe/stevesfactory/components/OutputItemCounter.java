@@ -1,7 +1,7 @@
 package vswe.stevesfactory.components;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class OutputItemCounter
     private int currentInventoryStackSize;
     private int currentBufferStackSize;
 
-    public OutputItemCounter(List<ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories, IInventory inventory, Setting setting, boolean useWhiteList)
+    public OutputItemCounter(List<ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories, IItemHandler inventory, Setting setting, boolean useWhiteList)
     {
         this.setting = setting;
         this.useWhiteList = useWhiteList;
@@ -41,9 +41,9 @@ public class OutputItemCounter
         }
     }
 
-    private void addInventory(IInventory inventory)
+    private void addInventory(IItemHandler inventory)
     {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSlots(); i++)
         {
             ItemStack item = inventory.getStackInSlot(i);
             if (((ItemSetting) setting).isEqualForCommandExecutor(item))
@@ -73,8 +73,6 @@ public class OutputItemCounter
             {
                 itemsAllowedToBeMoved = currentBufferStackSize - ((ItemSetting) setting).getItem().stackSize;
             }
-
-
             return Math.min(itemsAllowedToBeMoved, desiredItemCount);
         }
     }

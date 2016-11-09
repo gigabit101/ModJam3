@@ -5,7 +5,6 @@ import vswe.stevesfactory.Localization;
 
 public class ComponentMenuRedstoneSidesNodes extends ComponentMenuRedstoneSidesTrigger
 {
-
     public ComponentMenuRedstoneSidesNodes(FlowComponent parent)
     {
         super(parent);
