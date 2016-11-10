@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.lwjgl.Sys;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
         }
 
         oldPowered = isPowered;
+        System.out.print(worldObj.getRedstonePower(pos, null));
     }
 
     @Override

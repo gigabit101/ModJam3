@@ -495,8 +495,6 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
             tagCompound.setByte(NBT_MIN_Z, (byte) bounds[4]);
             tagCompound.setByte(NBT_MAX_Z, (byte) bounds[5]);
         }
-
-
     }
 
     @Override
@@ -525,5 +523,4 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
             bounds[5] = tagCompound.getByte(NBT_MAX_Z);
         }
     }
-
 }

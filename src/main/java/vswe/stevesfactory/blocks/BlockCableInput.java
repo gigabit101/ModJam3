@@ -42,24 +42,31 @@ public class BlockCableInput extends BlockContainer
         return true;
     }
 
+//    @Override
+//    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+//    {
+////        updateRedstone((World) blockAccess, pos);
+//        return super.getWeakPower(blockState, blockAccess, pos, side);
+//    }
+
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state)
     {
         super.onBlockAdded(world, pos, state);
-
         updateRedstone(world, pos);
     }
 
-//    @Override
-//    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
-//        super.onNeighborBlockChange(world, pos, state, block);
-//
-//        updateRedstone(world, pos);
-//    }
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+    {
+        super.onNeighborChange(world, pos, neighbor);
+        updateRedstone((World) world, pos);
+    }
+
 
     private void updateRedstone(World world, BlockPos pos)
     {
-        TileEntityInput input = TileEntityCluster.getTileEntity(TileEntityInput.class, world, pos);
+        TileEntityInput input = (TileEntityInput) world.getTileEntity(pos);
         if (input != null)
         {
             input.triggerRedstone();

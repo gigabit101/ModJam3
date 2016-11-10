@@ -14,11 +14,7 @@ import java.util.Collection;
 
 public class EmitterBlockModel implements IModel
 {
-
-    public EmitterBlockModel(IResourceManager resourceManager)
-    {
-
-    }
+    public EmitterBlockModel(IResourceManager resourceManager) {}
 
     public static final ResourceLocation EMITTER_MODEL = new ResourceLocation("stevesfactorymanager:block/cable_emitter");
 

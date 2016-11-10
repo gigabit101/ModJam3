@@ -76,9 +76,10 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                 updatedStrong[i] = sides.useStrongSignal();
 
 
-                /*if (((updatedStrength[i] > 0) != (oldStrength > 0)) || (oldStrong != updatedStrong[i])) {
-                    updateClient = true;
-                }*/
+//                if (((updatedStrength[i] > 0) != (oldStrength > 0)) || (oldStrong != updatedStrong[i])) {
+//                    updateClient = true;
+//                    System.out.print(getPower());
+
                 boolean updateBlocks = oldStrength != updatedStrength[i] || oldStrong != updatedStrong[i];
                 if (updateBlocks)
                 {

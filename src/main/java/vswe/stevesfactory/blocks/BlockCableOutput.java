@@ -44,7 +44,6 @@ public class BlockCableOutput extends BlockContainer
     @Override
     protected BlockStateContainer createBlockState()
     {
-
         IProperty[] listedProperties = new IProperty[0];
         IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]{STRONG_SIDES, WEAK_SIDES};
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
@@ -53,11 +52,9 @@ public class BlockCableOutput extends BlockContainer
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
-
         TileEntityOutput tileEntity = (TileEntityOutput) world.getTileEntity(pos);
         if (state instanceof IExtendedBlockState && tileEntity != null)
         {
-
             int strongVals = 0;
             int weakVals = 0;
             for (EnumFacing facing : EnumFacing.values())
@@ -73,10 +70,8 @@ public class BlockCableOutput extends BlockContainer
                     }
                 }
             }
-
             return ((IExtendedBlockState) state).withProperty(STRONG_SIDES, strongVals).withProperty(WEAK_SIDES, weakVals);
         }
-
         return state;
     }
 
@@ -105,7 +100,6 @@ public class BlockCableOutput extends BlockContainer
         {
             return te.getStrengthFromOppositeSide(side);
         }
-
         return 0;
     }
 

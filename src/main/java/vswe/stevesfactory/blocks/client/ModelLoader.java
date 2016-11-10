@@ -9,7 +9,6 @@ import vswe.stevesfactory.StevesFactoryManager;
 
 public class ModelLoader implements ICustomModelLoader
 {
-
     private IResourceManager resourceManager;
 
     @Override

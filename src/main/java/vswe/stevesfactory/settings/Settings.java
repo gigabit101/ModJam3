@@ -11,7 +11,6 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public final class Settings
 {
-
     private static final String NAME = "StevesFactoryManagerInside";
     private static final int VERSION = 1;
     private static boolean autoCloseGroup;

@@ -45,6 +45,4 @@ public class ComponentMenuCamouflageSides extends ComponentMenuRedstoneSides
             errors.add(Localization.NO_SIDES_ERROR.toString());
         }
     }
-
-
 }

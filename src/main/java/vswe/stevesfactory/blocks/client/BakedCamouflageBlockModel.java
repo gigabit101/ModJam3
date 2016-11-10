@@ -28,10 +28,8 @@ import vswe.stevesfactory.blocks.TileEntityCluster;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class BakedCamouflageBlockModel implements IBakedModel
 {
-
     private VertexFormat format;
     private TextureAtlasSprite normalSprite;
     private TextureAtlasSprite insideSprite;
@@ -65,7 +63,6 @@ public class BakedCamouflageBlockModel implements IBakedModel
 
         bakery = new FaceBakery();
     }
-
 
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
@@ -159,7 +156,6 @@ public class BakedCamouflageBlockModel implements IBakedModel
     //https://github.com/TheGreyGhost/MinecraftByExample/blob/master/src/main/java/minecraftbyexample/mbe05_block_smartblockmodel2/CompositeModel.java
     public class AssembledBakedModel implements IBakedModel
     {
-
         private List<BakedQuad> quads = new LinkedList<BakedQuad>();
         private VertexFormat format;
 
@@ -184,10 +180,7 @@ public class BakedCamouflageBlockModel implements IBakedModel
             }
         }
 
-        public AssembledBakedModel()
-        {
-
-        }
+        public AssembledBakedModel() {}
 
         public void generateQuads(Block block, BlockPos pos, IExtendedBlockState blockState, BlockModelShapes modelShapes, TileEntityCamouflage camouflage, EnumFacing facing, boolean inside, TileEntityCluster cluster)
         {
@@ -212,7 +205,6 @@ public class BakedCamouflageBlockModel implements IBakedModel
                 }
             } else
             {
-
                 IBlockState camoState = block.getStateFromMeta(camouflage.getMeta(facing.getIndex() + (inside ? EnumFacing.values().length : 0)));
                 IBakedModel model = modelShapes.getModelForState(camoState);
 
@@ -237,7 +229,6 @@ public class BakedCamouflageBlockModel implements IBakedModel
 
         private BakedQuad getTransformedQuad(IExtendedBlockState blockState, BlockPos pos, Block block, EnumFacing facing, String resource, TextureAtlasSprite sprite, boolean inside, int rotation)
         {
-
             AxisAlignedBB alignedBB = block.getBoundingBox(blockState, FMLClientHandler.instance().getWorldClient(), pos);
             float maxX = (((float) alignedBB.maxX) * 16f);
             float maxY = (((float) alignedBB.maxY) * 16f);
@@ -262,7 +253,6 @@ public class BakedCamouflageBlockModel implements IBakedModel
 
             switch (facing)
             {
-
                 case DOWN:
                     if (!inside)
                     {

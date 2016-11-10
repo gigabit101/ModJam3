@@ -20,8 +20,6 @@ enum SideQuad
     WEAK,
     IDLE
 }
-
-
 //Needed to render all the sides individually, if they where made with JSON it would be a huge amount of files, the new format is not good for dynamic and advanced blocks
 public class BakedEmitterBlockModel implements IBakedModel
 {
@@ -238,6 +236,5 @@ public class BakedEmitterBlockModel implements IBakedModel
         {
             return ItemOverrideList.NONE;
         }
-
     }
 }

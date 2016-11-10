@@ -90,7 +90,6 @@ public class BlockCable extends Block
                                 {
                                     queue.add(target);
                                 }
-                                //}
                             }
                         }
                     }
