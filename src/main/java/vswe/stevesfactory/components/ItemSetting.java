@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
+import vswe.stevesfactory.ItemUtils;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
@@ -199,12 +200,7 @@ public class ItemSetting extends Setting
             switch (fuzzyMode)
             {
                 case ORE_DICTIONARY:
-                    int id = OreDictionary.getOreIDs(this.getItem())[0];
-                    if (id != -1)
-                    {
-                        return id == OreDictionary.getOreIDs(other)[0];
-                    }
-                    //note that this falls through into the precise one, this is on purpose
+                    return ItemUtils.isItemEqual(other, this.getItem(), true, true);
                 case PRECISE:
                     return Item.getIdFromItem(this.getItem().getItem()) == Item.getIdFromItem(other.getItem()) && this.getItem().getItemDamage() == other.getItemDamage() && ItemStack.areItemStackTagsEqual(getItem(), other);
                 case NBT_FUZZY:

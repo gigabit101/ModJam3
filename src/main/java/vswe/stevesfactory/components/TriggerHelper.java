@@ -121,7 +121,6 @@ public abstract class TriggerHelper
             {
                 ITriggerNode input = container.getTrigger();
 
-
                 boolean flag;
 
                 flag = isPulseReceived(component, input.getData(), input.getOldData(), high);
@@ -132,7 +131,6 @@ public abstract class TriggerHelper
                 {
                     flag = isTriggerPowered(component, input.getData(), high);
                 }
-
 
                 if (foundPulse)
                 {
