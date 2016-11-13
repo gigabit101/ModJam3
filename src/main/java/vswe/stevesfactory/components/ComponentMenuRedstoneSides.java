@@ -16,7 +16,6 @@ import java.util.List;
 
 public abstract class ComponentMenuRedstoneSides extends ComponentMenu
 {
-
     public ComponentMenuRedstoneSides(FlowComponent parent)
     {
         super(parent);

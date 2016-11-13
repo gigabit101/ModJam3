@@ -1,5 +1,6 @@
 package vswe.stevesfactory.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -12,6 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+
+import java.util.Random;
 
 public class BlockCableInput extends BlockContainer
 {
@@ -42,31 +45,65 @@ public class BlockCableInput extends BlockContainer
         return true;
     }
 
-//    @Override
-//    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
-//    {
-////        updateRedstone((World) blockAccess, pos);
-//        return super.getWeakPower(blockState, blockAccess, pos, side);
-//    }
-
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state)
     {
-        super.onBlockAdded(world, pos, state);
+//        System.out.print("onBlockAdded");
         updateRedstone(world, pos);
+        super.onBlockAdded(world, pos, state);
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn)
     {
-        super.onNeighborChange(world, pos, neighbor);
-        updateRedstone((World) world, pos);
+//        System.out.print("onNeighborChange");
+        updateRedstone(world, pos);
+        super.neighborChanged(state, world, pos, blockIn);
     }
 
+    @Override
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        super.updateTick(worldIn, pos, state, rand);
+    }
+
+    @Override
+    public boolean requiresUpdates()
+    {
+        return super.requiresUpdates();
+    }
+
+
+    @Override
+    public boolean getWeakChanges(IBlockAccess world, BlockPos pos)
+    {
+//        System.out.print("getWeakChanges");
+        updateRedstone(world, pos);
+        return super.getWeakChanges(world, pos);
+    }
+
+    @Override
+    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
+    {
+//        System.out.print("getWeakChanges");
+//        updateRedstone(world, pos);
+        return super.shouldCheckWeakPower(state, world, pos, side);
+    }
 
     private void updateRedstone(World world, BlockPos pos)
     {
         TileEntityInput input = (TileEntityInput) world.getTileEntity(pos);
+//        System.out.print(" updateRedstone");
+        if (input != null)
+        {
+            input.triggerRedstone();
+        }
+    }
+
+    private void updateRedstone(IBlockAccess world, BlockPos pos)
+    {
+        TileEntityInput input = (TileEntityInput) world.getTileEntity(pos);
+//        System.out.print(" updateRedstone");
         if (input != null)
         {
             input.triggerRedstone();

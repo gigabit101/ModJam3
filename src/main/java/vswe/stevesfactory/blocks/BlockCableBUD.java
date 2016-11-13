@@ -1,5 +1,6 @@
 package vswe.stevesfactory.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -36,12 +37,23 @@ public class BlockCableBUD extends BlockContainer
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn)
     {
         TileEntityBUD bud = TileEntityCluster.getTileEntity(TileEntityBUD.class, world, pos);
         if (bud != null)
         {
             bud.onTrigger();
         }
+        super.neighborChanged(state, world, pos, blockIn);
     }
+
+//    @Override
+//    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+//    {
+//        TileEntityBUD bud = TileEntityCluster.getTileEntity(TileEntityBUD.class, world, pos);
+//        if (bud != null)
+//        {
+//            bud.onTrigger();
+//        }
+//    }
 }

@@ -168,6 +168,23 @@ public class BlockCableCluster extends BlockCamouflageBase
         }
     }
 
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn)
+    {
+        TileEntityCluster cluster = getTe(world, pos);
+        Block block = world.getBlockState(pos).getBlock();
+
+        if (cluster != null)
+        {
+            cluster.onNeighborBlockChange(world, pos, state, block);
+        }
+
+        if (isAdvanced(state.getBlock().getMetaFromState(state)))
+        {
+            ModBlocks.blockCable.updateInventories(world, pos);
+        }
+        super.neighborChanged(state, world, pos, blockIn);
+    }
 
     @Override
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
