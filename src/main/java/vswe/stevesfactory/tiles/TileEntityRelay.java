@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.tiles;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
@@ -24,6 +24,10 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import vswe.stevesfactory.blocks.BlockCableRelay;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ITileEntityInterface;
+import vswe.stevesfactory.blocks.UserPermission;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.interfaces.ContainerRelay;
 import vswe.stevesfactory.interfaces.GuiRelay;

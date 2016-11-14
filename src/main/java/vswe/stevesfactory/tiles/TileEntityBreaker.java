@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.tiles;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
@@ -23,6 +23,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import vswe.stevesfactory.blocks.BlockCableBreaker;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.network.*;
 

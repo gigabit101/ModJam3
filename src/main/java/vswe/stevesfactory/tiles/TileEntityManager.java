@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.tiles;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.interfaces.ContainerManager;

@@ -1,10 +1,13 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.tiles;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.Sys;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.IRedstoneNode;
+import vswe.stevesfactory.blocks.ISystemListener;
+import vswe.stevesfactory.blocks.ITriggerNode;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;

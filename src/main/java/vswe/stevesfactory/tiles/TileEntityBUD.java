@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.tiles;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -6,6 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ISystemListener;
+import vswe.stevesfactory.blocks.ITriggerNode;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
