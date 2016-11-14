@@ -2,7 +2,7 @@ package vswe.stevesfactory.interfaces;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import vswe.stevesfactory.blocks.TileEntityRelay;
+import vswe.stevesfactory.tiles.TileEntityRelay;
 import vswe.stevesfactory.blocks.UserPermission;
 
 import java.util.List;

@@ -17,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityCluster;
+import vswe.stevesfactory.tiles.TileEntitySignUpdater;
 
 //This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableSign extends BlockContainer

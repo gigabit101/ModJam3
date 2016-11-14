@@ -1,7 +1,7 @@
 package vswe.stevesfactory.components;
 
 import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.TileEntityBUD;
+import vswe.stevesfactory.tiles.TileEntityBUD;
 
 import java.util.EnumSet;
 import java.util.List;

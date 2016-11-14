@@ -14,6 +14,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import vswe.stevesfactory.tiles.TileEntityCamouflage;
+import vswe.stevesfactory.tiles.TileEntityCluster;
 
 public abstract class BlockCamouflageBase extends BlockContainer
 {
@@ -38,7 +40,6 @@ public abstract class BlockCamouflageBase extends BlockContainer
         {
             return NO_BLOCK_AABB;
         }
-
         return super.getSelectedBoundingBox(state, world, pos);
     }
 
@@ -49,7 +50,6 @@ public abstract class BlockCamouflageBase extends BlockContainer
         {
             return NO_BLOCK_AABB;
         }
-
         return super.getCollisionBoundingBox(state, world, pos);
     }
 
@@ -63,7 +63,6 @@ public abstract class BlockCamouflageBase extends BlockContainer
                 return false;
             }
         }
-
         return true;
     }
 
@@ -87,19 +86,6 @@ public abstract class BlockCamouflageBase extends BlockContainer
         return super.collisionRayTrace(state, world, pos, start, end);
     }
 
-//    @SideOnly(Side.CLIENT)
-//    @Override
-//    public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, EffectRenderer effectRenderer){
-//        TileEntityCamouflage camouflage = TileEntityCluster.getTileEntity(TileEntityCamouflage.class, world, target.getBlockPos());
-//        if (camouflage != null) {
-//            if (camouflage.addBlockEffect(this, state, world, target.sideHit, effectRenderer)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-
     @Override
     public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager)
     {
@@ -120,7 +106,8 @@ public abstract class BlockCamouflageBase extends BlockContainer
         if (camouflage != null && camouflage.getCamouflageType().useSpecialShape())
         {
             return camouflage.getBlockBounds();
-        } else
+        }
+        else
         {
             return getBlockBoundsForItemRender();
         }

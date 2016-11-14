@@ -10,10 +10,7 @@ import vswe.stevesfactory.blocks.ITileEntityInterface;
 
 public class GuiHandler implements IGuiHandler
 {
-    public GuiHandler()
-    {
-
-    }
+    public GuiHandler() {}
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
@@ -23,7 +20,8 @@ public class GuiHandler implements IGuiHandler
         if (te != null && te instanceof ITileEntityInterface)
         {
             return ((ITileEntityInterface) te).getContainer(te, player.inventory);
-        } else
+        }
+        else
         {
             return null;
         }
@@ -37,10 +35,10 @@ public class GuiHandler implements IGuiHandler
         if (te != null && te instanceof ITileEntityInterface)
         {
             return ((ITileEntityInterface) te).getGui(te, player.inventory);
-        } else
+        }
+        else
         {
             return null;
         }
     }
-
 }

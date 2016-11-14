@@ -17,6 +17,8 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityCamouflage;
+import vswe.stevesfactory.tiles.TileEntityCluster;
 
 import java.util.List;
 
@@ -42,7 +44,6 @@ public class BlockCableCamouflages extends BlockCamouflageBase
     @Override
     protected BlockStateContainer createBlockState()
     {
-
         IProperty[] listedProperties = new IProperty[]{CAMO_TYPE};
         IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]{BLOCK_POS};
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
@@ -57,26 +58,21 @@ public class BlockCableCamouflages extends BlockCamouflageBase
     @Override
     public int getMetaFromState(IBlockState state)
     {
-
         if (state.getValue(CAMO_TYPE) != null)
         {
             return ((TileEntityCamouflage.CamouflageType) state.getValue(CAMO_TYPE)).ordinal();
         }
-
         return 0;
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
-
         TileEntityCamouflage tileEntity = (TileEntityCamouflage) world.getTileEntity(pos);
         if (state instanceof IExtendedBlockState && tileEntity != null)
         {
-
             return ((IExtendedBlockState) state).withProperty(BLOCK_POS, pos);
         }
-
         return state;
     }
 

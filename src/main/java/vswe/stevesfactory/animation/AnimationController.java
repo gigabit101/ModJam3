@@ -1,6 +1,6 @@
 package vswe.stevesfactory.animation;
 
-import vswe.stevesfactory.blocks.TileEntityManager;
+import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.*;
 
 import java.util.*;

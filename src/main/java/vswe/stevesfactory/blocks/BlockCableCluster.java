@@ -26,6 +26,7 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityCluster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,6 @@ public class BlockCableCluster extends BlockCamouflageBase
     @Override
     protected BlockStateContainer createBlockState()
     {
-
         IProperty[] listedProperties = new IProperty[]{ADVANCED, FACING};
         IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[]{BlockCableCamouflages.BLOCK_POS};
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
@@ -67,28 +67,18 @@ public class BlockCableCluster extends BlockCamouflageBase
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
-
         TileEntityCluster tileEntity = (TileEntityCluster) world.getTileEntity(pos);
         if (state instanceof IExtendedBlockState && tileEntity != null)
         {
-
             return ((IExtendedBlockState) state).withProperty(BlockCableCamouflages.BLOCK_POS, pos);
         }
-
         return state;
     }
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
-        /*ItemStack itemStack = getItemStack(world, pos, state);
-
-        if (itemStack != null) {
-            dropBlockAsItem(world, pos, itemStack, 0);
-        }*/
-
         super.breakBlock(world, pos, state);
-
         if (isAdvanced(state.getBlock().getMetaFromState(state)))
         {
             ModBlocks.blockCable.updateInventories(world, pos);
@@ -103,7 +93,6 @@ public class BlockCableCluster extends BlockCamouflageBase
         {
             return itemStack;
         }
-
         return super.getPickBlock(state, target, world, pos, player);
     }
 
@@ -122,7 +111,6 @@ public class BlockCableCluster extends BlockCamouflageBase
             cable.setByteArray(ItemCluster.NBT_TYPES, cluster.getTypes());
             return itemStack;
         }
-
         return null;
     }
 
@@ -133,7 +121,6 @@ public class BlockCableCluster extends BlockCamouflageBase
         ArrayList<ItemStack> drop = new ArrayList<ItemStack>();
         drop.add(getItemStack(world, pos, state));
         return drop;
-        //return new ArrayList<ItemStack>(); //TODO Drop items here, not sure how to though since the TE is gone. please help
     }
 
     @Override
@@ -163,7 +150,6 @@ public class BlockCableCluster extends BlockCamouflageBase
         if (cluster != null)
         {
             cluster.loadElements(itemStack);
-
             cluster.onBlockPlacedBy(world, pos, state, entity, itemStack);
         }
     }
@@ -213,7 +199,6 @@ public class BlockCableCluster extends BlockCamouflageBase
         {
             return cluster.canConnectRedstone(state, world, pos, side);
         }
-
         return false;
     }
 
@@ -281,7 +266,6 @@ public class BlockCableCluster extends BlockCamouflageBase
         {
             return cluster.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
-
         return false;
     }
 
@@ -324,4 +308,15 @@ public class BlockCableCluster extends BlockCamouflageBase
         return getAdvancedMeta(state.getBlock().getMetaFromState(state));
     }
 
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state)
+    {
+        return true;
+    }
 }

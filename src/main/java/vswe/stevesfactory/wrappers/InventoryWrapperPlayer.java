@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
+//TODO
 public class InventoryWrapperPlayer extends InventoryWrapper
 {
     private EntityPlayer player;

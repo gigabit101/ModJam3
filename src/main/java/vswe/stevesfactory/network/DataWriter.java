@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import vswe.stevesfactory.blocks.TileEntityManager;
+import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.interfaces.ContainerBase;
 import vswe.stevesfactory.settings.Settings;
 import vswe.stevesfactory.util.Utils;

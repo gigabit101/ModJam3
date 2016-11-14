@@ -11,7 +11,7 @@ import org.lwjgl.input.Mouse;
 import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.animation.AnimationController;
-import vswe.stevesfactory.blocks.TileEntityManager;
+import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataWriter;

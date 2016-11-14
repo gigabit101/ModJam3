@@ -2,6 +2,7 @@ package vswe.stevesfactory.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
+import vswe.stevesfactory.tiles.TileEntityClusterElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;

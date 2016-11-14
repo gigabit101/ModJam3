@@ -17,6 +17,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.tiles.TileEntityCamouflage;
+import vswe.stevesfactory.tiles.TileEntityCluster;
+import vswe.stevesfactory.tiles.TileEntityOutput;
 
 import java.util.List;
 

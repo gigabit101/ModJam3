@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.blocks.TileEntityRelay;
+import vswe.stevesfactory.tiles.TileEntityRelay;
 import vswe.stevesfactory.blocks.UserPermission;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataWriter;

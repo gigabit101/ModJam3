@@ -2,7 +2,7 @@ package vswe.stevesfactory.components;
 
 import net.minecraft.util.EnumFacing;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.blocks.TileEntityInput;
+import vswe.stevesfactory.tiles.TileEntityInput;
 
 import java.util.EnumSet;
 import java.util.List;

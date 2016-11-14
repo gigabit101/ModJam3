@@ -4,6 +4,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.tiles.*;
 import vswe.stevesfactory.wrappers.CapabilityHelper;
 
 import java.util.HashMap;

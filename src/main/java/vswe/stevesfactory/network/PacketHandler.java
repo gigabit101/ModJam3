@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.blocks.ITileEntityInterface;
-import vswe.stevesfactory.blocks.TileEntityManager;
+import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.Connection;
 import vswe.stevesfactory.components.FlowComponent;

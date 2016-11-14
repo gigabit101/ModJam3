@@ -20,5 +20,4 @@ public class ItemRelay extends ItemBlock
     {
         return "tile." + StevesFactoryManager.UNLOCALIZED_START + (ModBlocks.blockCableRelay.isAdvanced(item.getItemDamage()) ? ModBlocks.CABLE_ADVANCED_RELAY_UNLOCALIZED_NAME : ModBlocks.CABLE_RELAY_UNLOCALIZED_NAME);
     }
-
 }

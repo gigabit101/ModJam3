@@ -3,7 +3,7 @@ package vswe.stevesfactory.settings;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.blocks.TileEntityManager;
+import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.FileHelper;
@@ -224,7 +224,5 @@ public final class Settings
         Settings.priorityMoveFirst = priorityMoveFirst;
     }
 
-    private Settings()
-    {
-    }
+    private Settings() {}
 }

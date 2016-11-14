@@ -2,8 +2,9 @@ package vswe.stevesfactory.blocks;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import vswe.stevesfactory.tiles.TileEntityClusterElement;
+import vswe.stevesfactory.tiles.TileEntityIntake;
 
-//This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableIntake extends BlockCableDirectionAdvanced
 {
     @Override

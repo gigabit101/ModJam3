@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.tiles.*;
 
 public final class ModBlocks
 {

@@ -11,11 +11,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.tiles.TileEntityCluster;
+import vswe.stevesfactory.tiles.TileEntityClusterElement;
+import vswe.stevesfactory.tiles.TileEntityRelay;
 
-//This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableRelay extends BlockCableDirectionAdvanced
 {
-
     @Override
     public TileEntity createNewTileEntity(World world, int var2)
     {
@@ -50,13 +51,11 @@ public class BlockCableRelay extends BlockCableDirectionAdvanced
             {
                 FMLNetworkHandler.openGui(player, StevesFactoryManager.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
             }
-
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
     }
-
-
 }

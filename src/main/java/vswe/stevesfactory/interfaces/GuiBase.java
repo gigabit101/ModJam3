@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import vswe.stevesfactory.StevesFactoryManager;
-import vswe.stevesfactory.blocks.TileEntityClusterElement;
+import vswe.stevesfactory.tiles.TileEntityClusterElement;
 import vswe.stevesfactory.settings.Settings;
 
 import java.util.ArrayList;

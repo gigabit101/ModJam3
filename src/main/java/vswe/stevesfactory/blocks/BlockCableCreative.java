@@ -9,6 +9,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityCreative;
 
 public class BlockCableCreative extends BlockContainer
 {

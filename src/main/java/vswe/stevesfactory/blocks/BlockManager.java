@@ -1,5 +1,6 @@
 package vswe.stevesfactory.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityManager;
 
 public class BlockManager extends BlockContainer
 {
@@ -74,10 +76,16 @@ public class BlockManager extends BlockContainer
     }
 
     @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn)
+    {
+        super.neighborChanged(state, worldIn, pos, blockIn);
+        updateInventories(worldIn, pos);
+    }
+
+    @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state)
     {
         super.onBlockAdded(world, pos, state);
-
         updateInventories(world, pos);
     }
 
@@ -85,7 +93,6 @@ public class BlockManager extends BlockContainer
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
     {
         super.onNeighborChange(world, pos, neighbor);
-
         updateInventories((World) world, pos);
     }
 

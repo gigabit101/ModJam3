@@ -19,6 +19,8 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityCluster;
+import vswe.stevesfactory.tiles.TileEntityOutput;
 
 //This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableOutput extends BlockContainer

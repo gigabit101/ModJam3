@@ -22,8 +22,8 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.util.vector.Vector3f;
 import vswe.stevesfactory.blocks.BlockCableCamouflages;
 import vswe.stevesfactory.blocks.BlockCableCluster;
-import vswe.stevesfactory.blocks.TileEntityCamouflage;
-import vswe.stevesfactory.blocks.TileEntityCluster;
+import vswe.stevesfactory.tiles.TileEntityCamouflage;
+import vswe.stevesfactory.tiles.TileEntityCluster;
 
 import java.util.LinkedList;
 import java.util.List;

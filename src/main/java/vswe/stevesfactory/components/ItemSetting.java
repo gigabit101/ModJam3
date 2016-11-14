@@ -200,7 +200,7 @@ public class ItemSetting extends Setting
             switch (fuzzyMode)
             {
                 case ORE_DICTIONARY:
-                    return ItemUtils.isItemEqual(other, this.getItem(), true, true);
+                    return ItemUtils.isItemEqual(other, this.getItem(), true, true, true);
                 case PRECISE:
                     return Item.getIdFromItem(this.getItem().getItem()) == Item.getIdFromItem(other.getItem()) && this.getItem().getItemDamage() == other.getItemDamage() && ItemStack.areItemStackTagsEqual(getItem(), other);
                 case NBT_FUZZY:

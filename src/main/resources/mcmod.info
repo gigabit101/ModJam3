@@ -3,7 +3,7 @@
   "modid": "StevesFactoryManager",
   "name": "Steve's Factory Manager",
   "description": "Steve's Factory Manager is a mod which allows you to set up systems that moves and manages items between inventories and machines",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "mcversion": "1.10.2",
   "url": "",
   "updateUrl": "",

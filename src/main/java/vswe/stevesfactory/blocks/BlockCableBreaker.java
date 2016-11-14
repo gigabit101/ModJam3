@@ -20,6 +20,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.tiles.TileEntityBreaker;
+import vswe.stevesfactory.tiles.TileEntityCluster;
 
 //This is indeed not a subclass to the cable, you can't relay signals through this block
 public class BlockCableBreaker extends BlockContainer

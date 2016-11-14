@@ -9,6 +9,7 @@ import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.IContainerSelection;
 import vswe.stevesfactory.components.Variable;
 import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.tiles.TileEntityManager;
 
 import java.util.EnumSet;
 
