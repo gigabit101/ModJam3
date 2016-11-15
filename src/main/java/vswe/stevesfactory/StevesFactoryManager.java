@@ -1,5 +1,8 @@
 package vswe.stevesfactory;
 
+import net.minecraft.block.SoundType;
+import net.minecraftforge.client.event.sound.SoundEvent;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -14,7 +17,7 @@ import vswe.stevesfactory.network.FileHelper;
 import vswe.stevesfactory.network.PacketEventHandler;
 import vswe.stevesfactory.proxy.CommonProxy;
 
-@Mod(modid = StevesFactoryManager.MODID, name = "Steve's Factory Manager", version = "1.0.7")
+@Mod(modid = StevesFactoryManager.MODID, name = "Steve's Factory Manager", version = "1.0.8")
 public class StevesFactoryManager
 {
     public static final String MODID = "StevesFactoryManager";
