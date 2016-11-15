@@ -1,6 +1,7 @@
 package vswe.stevesfactory.blocks;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -36,9 +37,14 @@ public enum ConnectionBlockType
     public boolean isInstance(TileEntity tileEntity)
     {
         if(clazz != null && clazz.isInstance(tileEntity))
-         return true;
-        if(capability != null && tileEntity != null && tileEntity.hasCapability(capability, null))
+        {
             return true;
+        }
+        for(EnumFacing facing: EnumFacing.VALUES)
+        {
+            if (capability != null && tileEntity != null && tileEntity.hasCapability(capability, facing))
+                return true;
+        }
         return false;
     }
 
