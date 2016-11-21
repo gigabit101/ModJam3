@@ -824,6 +824,7 @@ public class CommandExecutor
                         if (newItem)
                         {
                             inventory.insertItem(slot.getSlot(), itemInSlot, false);
+                            break;
                         }
 
                         boolean done = false;
