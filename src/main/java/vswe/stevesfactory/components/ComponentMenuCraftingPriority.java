@@ -16,16 +16,16 @@ public class ComponentMenuCraftingPriority extends ComponentMenu
     {
         super(parent);
 
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeBoolean(selectedOption == 0);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
+//        radioButtons = new RadioButtonList()
+//        {
+//            @Override
+//            public void updateSelectedOption(int selectedOption)
+//            {
+//                DataWriter dw = getWriterForServerComponentPacket();
+//                dw.writeBoolean(selectedOption == 0);
+//                PacketHandler.sendDataToServer(dw);
+//            }
+//        };
 
 
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.PRIORITY_MOVE_FIRST));

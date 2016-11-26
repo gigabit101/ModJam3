@@ -34,26 +34,26 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem
         scrollControllerSelected.setX(ID_START_X + ID_TEXT_BOX + 10);
 
 
-        checkBoxes.addCheckBox(new CheckBox(Localization.USE_ID, ID_START_X, ID_START_Y + CHECKBOX_OFFSET)
-        {
-            @Override
-            public void setValue(boolean val)
-            {
-                useId = val;
-            }
-
-            @Override
-            public boolean getValue()
-            {
-                return useId;
-            }
-
-            @Override
-            public void onUpdate()
-            {
-                sendServerData(0, 0);
-            }
-        });
+//        checkBoxes.addCheckBox(new CheckBox(Localization.USE_ID, ID_START_X, ID_START_Y + CHECKBOX_OFFSET)
+//        {
+//            @Override
+//            public void setValue(boolean val)
+//            {
+//                useId = val;
+//            }
+//
+//            @Override
+//            public boolean getValue()
+//            {
+//                return useId;
+//            }
+//
+//            @Override
+//            public void onUpdate()
+//            {
+//                sendServerData(0, 0);
+//            }
+//        });
 
         /*textBoxes.addTextBox(textBoxId = new TextBoxNumber(ID_START_X + ID_TEXT_BOX, ID_START_Y, 4, true) {
             @Override
@@ -72,140 +72,140 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem
             }
         });*/
 
-        checkBoxes.addCheckBox(new CheckBox(Localization.INVERT, ID_START_X + META_INVERTED_OFFSET, ID_START_Y + CHECKBOX_OFFSET)
-        {
-            @Override
-            public void setValue(boolean val)
-            {
-                idInverted = val;
-            }
-
-            @Override
-            public boolean getValue()
-            {
-                return idInverted;
-            }
-
-            @Override
-            public void onUpdate()
-            {
-                sendServerData(0, 2);
-            }
-
-            @Override
-            public boolean isVisible()
-            {
-                return useId;
-            }
-        });
-
-        for (int i = 0; i < META_SETTINGS; i++)
-        {
-            final int setting = i;
-            settings[setting] = new MetaSetting();
-            for (int j = 0; j < settings[setting].bits.length; j++)
-            {
-                final int bit = j;
-                checkBoxes.addCheckBox(new CheckBox(null, META_START_X + (settings[setting].bits.length - (bit + 1)) * CheckBoxList.CHECK_BOX_SIZE, META_START_Y + CHECKBOX_OFFSET + setting * META_SPACING)
-                {
-                    @Override
-                    public void setValue(boolean val)
-                    {
-                        settings[setting].bits[bit] = val;
-                        if (!val)
-                        {
-                            settings[setting].lowerTextBox.setNumber(settings[setting].lowerTextBox.getNumber());
-                            settings[setting].higherTextBox.setNumber(settings[setting].higherTextBox.getNumber());
-                        }
-                    }
-
-                    @Override
-                    public boolean getValue()
-                    {
-                        return settings[setting].bits[bit];
-                    }
-
-                    @Override
-                    public void onUpdate()
-                    {
-                        sendServerData(setting + 1, bit);
-                    }
-                });
-
-                settings[setting].bits[bit] = setting == 0;
-            }
-
-            textBoxes.addTextBox(settings[setting].lowerTextBox = new TextBoxNumber(META_START_X + META_TEXT_BOX_OFFSET_1, META_START_Y + setting * META_SPACING, 2, false)
-            {
-                @Override
-                public int getMaxNumber()
-                {
-                    return settings[setting].getMaxNumber();
-                }
-
-                @Override
-                public void onNumberChanged()
-                {
-                    sendServerData(setting + 1, 4);
-                }
-
-                @Override
-                public boolean isVisible()
-                {
-                    return settings[setting].inUse();
-                }
-            });
-
-            textBoxes.addTextBox(settings[setting].higherTextBox = new TextBoxNumber(META_START_X + META_TEXT_BOX_OFFSET_2, META_START_Y + setting * META_SPACING, 2, false)
-            {
-                @Override
-                public int getMaxNumber()
-                {
-                    return settings[setting].getMaxNumber();
-                }
-
-                @Override
-                public void onNumberChanged()
-                {
-                    sendServerData(setting + 1, 5);
-                }
-
-                @Override
-                public boolean isVisible()
-                {
-                    return settings[setting].inUse();
-                }
-            });
-
-            checkBoxes.addCheckBox(new CheckBox(Localization.INVERT, META_START_X + META_INVERTED_OFFSET, META_START_Y + CHECKBOX_OFFSET + setting * META_SPACING)
-            {
-                @Override
-                public void setValue(boolean val)
-                {
-                    settings[setting].inverted = val;
-                }
-
-                @Override
-                public boolean getValue()
-                {
-                    return settings[setting].inverted;
-                }
-
-                @Override
-                public void onUpdate()
-                {
-                    sendServerData(setting + 1, 6);
-                }
-
-                @Override
-                public boolean isVisible()
-                {
-                    return settings[setting].inUse();
-                }
-            });
-
-            settings[setting].higherTextBox.setNumber(15);
-        }
+//        checkBoxes.addCheckBox(new CheckBox(Localization.INVERT, ID_START_X + META_INVERTED_OFFSET, ID_START_Y + CHECKBOX_OFFSET)
+//        {
+//            @Override
+//            public void setValue(boolean val)
+//            {
+//                idInverted = val;
+//            }
+//
+//            @Override
+//            public boolean getValue()
+//            {
+//                return idInverted;
+//            }
+//
+//            @Override
+//            public void onUpdate()
+//            {
+//                sendServerData(0, 2);
+//            }
+//
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return useId;
+//            }
+//        });
+//
+//        for (int i = 0; i < META_SETTINGS; i++)
+//        {
+//            final int setting = i;
+//            settings[setting] = new MetaSetting();
+//            for (int j = 0; j < settings[setting].bits.length; j++)
+//            {
+//                final int bit = j;
+//                checkBoxes.addCheckBox(new CheckBox(null, META_START_X + (settings[setting].bits.length - (bit + 1)) * CheckBoxList.CHECK_BOX_SIZE, META_START_Y + CHECKBOX_OFFSET + setting * META_SPACING)
+//                {
+//                    @Override
+//                    public void setValue(boolean val)
+//                    {
+//                        settings[setting].bits[bit] = val;
+//                        if (!val)
+//                        {
+//                            settings[setting].lowerTextBox.setNumber(settings[setting].lowerTextBox.getNumber());
+//                            settings[setting].higherTextBox.setNumber(settings[setting].higherTextBox.getNumber());
+//                        }
+//                    }
+//
+//                    @Override
+//                    public boolean getValue()
+//                    {
+//                        return settings[setting].bits[bit];
+//                    }
+//
+//                    @Override
+//                    public void onUpdate()
+//                    {
+//                        sendServerData(setting + 1, bit);
+//                    }
+//                });
+//
+//                settings[setting].bits[bit] = setting == 0;
+//            }
+//
+//            textBoxes.addTextBox(settings[setting].lowerTextBox = new TextBoxNumber(META_START_X + META_TEXT_BOX_OFFSET_1, META_START_Y + setting * META_SPACING, 2, false)
+//            {
+//                @Override
+//                public int getMaxNumber()
+//                {
+//                    return settings[setting].getMaxNumber();
+//                }
+//
+//                @Override
+//                public void onNumberChanged()
+//                {
+//                    sendServerData(setting + 1, 4);
+//                }
+//
+//                @Override
+//                public boolean isVisible()
+//                {
+//                    return settings[setting].inUse();
+//                }
+//            });
+//
+//            textBoxes.addTextBox(settings[setting].higherTextBox = new TextBoxNumber(META_START_X + META_TEXT_BOX_OFFSET_2, META_START_Y + setting * META_SPACING, 2, false)
+//            {
+//                @Override
+//                public int getMaxNumber()
+//                {
+//                    return settings[setting].getMaxNumber();
+//                }
+//
+//                @Override
+//                public void onNumberChanged()
+//                {
+//                    sendServerData(setting + 1, 5);
+//                }
+//
+//                @Override
+//                public boolean isVisible()
+//                {
+//                    return settings[setting].inUse();
+//                }
+//            });
+//
+//            checkBoxes.addCheckBox(new CheckBox(Localization.INVERT, META_START_X + META_INVERTED_OFFSET, META_START_Y + CHECKBOX_OFFSET + setting * META_SPACING)
+//            {
+//                @Override
+//                public void setValue(boolean val)
+//                {
+//                    settings[setting].inverted = val;
+//                }
+//
+//                @Override
+//                public boolean getValue()
+//                {
+//                    return settings[setting].inverted;
+//                }
+//
+//                @Override
+//                public void onUpdate()
+//                {
+//                    sendServerData(setting + 1, 6);
+//                }
+//
+//                @Override
+//                public boolean isVisible()
+//                {
+//                    return settings[setting].inUse();
+//                }
+//            });
+//
+//            settings[setting].higherTextBox.setNumber(15);
+//        }
 
 
     }

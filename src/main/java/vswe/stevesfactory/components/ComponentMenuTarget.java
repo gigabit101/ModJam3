@@ -46,29 +46,29 @@ public abstract class ComponentMenuTarget extends ComponentMenu
     private static final int BUTTON_SRC_Y = 106;
     private static final int BUTTON_X = 39;
     private static final int BUTTON_TEXT_Y = 5;
+	private Button[] buttons = {};
 
-
-    private Button[] buttons = {new Button(5)
-    {
-        @Override
-        protected String getLabel()
-        {
-            return isActive(selectedDirectionId) ? Localization.DEACTIVATE.toString() : Localization.ACTIVATE.toString();
-        }
-
-        @Override
-        protected String getMouseOverText()
-        {
-            return isActive(selectedDirectionId) ? Localization.DEACTIVATE_LONG.toString() : Localization.ACTIVATE_LONG.toString();
-        }
-
-        @Override
-        protected void onClicked()
-        {
-            writeData(DataTypeHeader.ACTIVATE, isActive(selectedDirectionId) ? 0 : 1);
-        }
-    },
-            getSecondButton()};
+//    private Button[] buttons = {new Button(5)
+//    {
+//        @Override
+//        protected String getLabel()
+//        {
+//            return isActive(selectedDirectionId) ? Localization.DEACTIVATE.toString() : Localization.ACTIVATE.toString();
+//        }
+//
+//        @Override
+//        protected String getMouseOverText()
+//        {
+//            return isActive(selectedDirectionId) ? Localization.DEACTIVATE_LONG.toString() : Localization.ACTIVATE_LONG.toString();
+//        }
+//
+//        @Override
+//        protected void onClicked()
+//        {
+//            writeData(DataTypeHeader.ACTIVATE, isActive(selectedDirectionId) ? 0 : 1);
+//        }
+//    },
+//            getSecondButton()};
 
     protected abstract Button getSecondButton();
 

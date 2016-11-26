@@ -26,40 +26,40 @@ public class ComponentMenuItem extends ComponentMenuStuff
     {
         super(parent, settingClass);
 
-        if (settings.get(0).isAmountSpecific())
-        {
-            numberTextBoxes.addTextBox(amountTextBox = new TextBoxNumber(80, 24, 3, true)
-            {
-                @Override
-                public boolean isVisible()
-                {
-                    return selectedSetting.isLimitedByAmount();
-                }
-
-                @Override
-                public void onNumberChanged()
-                {
-                    selectedSetting.setAmount(getNumber());
-                    writeServerData(DataTypeHeader.AMOUNT);
-                }
-            });
-        }
-
-        numberTextBoxes.addTextBox(damageValueTextBox = new TextBoxNumber(70, 52, 5, true)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedSetting().canChangeMetaData() && getSelectedSetting().getFuzzyMode().requiresMetaData();
-            }
-
-            @Override
-            public void onNumberChanged()
-            {
-                getSelectedSetting().getItem().setItemDamage(getNumber());
-                writeServerData(DataTypeHeader.META);
-            }
-        });
+//        if (settings.get(0).isAmountSpecific())
+//        {
+//            numberTextBoxes.addTextBox(amountTextBox = new TextBoxNumber(80, 24, 3, true)
+//            {
+//                @Override
+//                public boolean isVisible()
+//                {
+//                    return selectedSetting.isLimitedByAmount();
+//                }
+//
+//                @Override
+//                public void onNumberChanged()
+//                {
+//                    selectedSetting.setAmount(getNumber());
+//                    writeServerData(DataTypeHeader.AMOUNT);
+//                }
+//            });
+//        }
+//
+//        numberTextBoxes.addTextBox(damageValueTextBox = new TextBoxNumber(70, 52, 5, true)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedSetting().canChangeMetaData() && getSelectedSetting().getFuzzyMode().requiresMetaData();
+//            }
+//
+//            @Override
+//            public void onNumberChanged()
+//            {
+//                getSelectedSetting().getItem().setItemDamage(getNumber());
+//                writeServerData(DataTypeHeader.META);
+//            }
+//        });
 
         /*checkBoxes.addCheckBox(new CheckBox("Is detection fuzzy?", 5, 40) {
             @Override

@@ -64,120 +64,120 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
             buttons.add(new ButtonCreate(ComponentType.values()[i]));
         }
 
-        buttons.add(new Button(Localization.DELETE_COMMAND)
-        {
-            @Override
-            protected void onClick(DataReader dr)
-            {
-                int idToRemove = dr.readComponentId();
-                removeFlowComponent(idToRemove);
-            }
-
-            @Override
-            public boolean onClick(DataWriter dw)
-            {
-                justSentServerComponentRemovalPacket = true;
-                for (FlowComponent item : items)
-                {
-                    if (item.isBeingMoved())
-                    {
-                        dw.writeComponentId(self, item.getId());
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean activateOnRelease()
-            {
-                return true;
-            }
-        });
-
-        buttons.add(new Button(Localization.PREFERENCES)
-        {
-            @Override
-            protected void onClick(DataReader dr)
-            {
-
-            }
-
-            @Override
-            public boolean onClick(DataWriter dw)
-            {
-                Settings.openMenu(self);
-                return false;
-            }
-        });
-
-        buttons.add(new Button(Localization.EXIT_GROUP)
-        {
-            @Override
-            protected void onClick(DataReader dr)
-            {
-                int id = dr.readComponentId();
-                FlowComponent component = items.get(id);
-                boolean moveCluster = dr.readBoolean();
-                if (component.getParent() != null)
-                {
-                    ComponentMenuGroup.moveComponents(component, component.getParent().getParent(), moveCluster);
-                }
-            }
-
-            @Override
-            public boolean onClick(DataWriter dw)
-            {
-                for (FlowComponent item : items)
-                {
-                    if (item.isBeingMoved())
-                    {
-                        //For the server only
-                        justSentServerComponentRemovalPacket = true;
-                        dw.writeComponentId(self, item.getId());
-                        dw.writeBoolean(GuiScreen.isShiftKeyDown());
-                        item.resetPosition();
-                        return true;
-                    }
-                }
-
-                //Client only
-                selectedComponent = selectedComponent.getParent();
-                return false;
-            }
-
-            @Override
-            public boolean isVisible()
-            {
-                return !worldObj.isRemote || selectedComponent != null;
-            }
-
-            @Override
-            public boolean activateOnRelease()
-            {
-                for (FlowComponent item : items)
-                {
-                    if (item.isBeingMoved())
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public String getMouseOver()
-            {
-                for (FlowComponent item : items)
-                {
-                    if (item.isBeingMoved())
-                    {
-                        return Localization.EXIT_GROUP_DROP.toString();
-                    }
-                }
-                return super.getMouseOver();
-            }
-        });
+//        buttons.add(new Button(Localization.DELETE_COMMAND)
+//        {
+//            @Override
+//            protected void onClick(DataReader dr)
+//            {
+//                int idToRemove = dr.readComponentId();
+//                removeFlowComponent(idToRemove);
+//            }
+//
+//            @Override
+//            public boolean onClick(DataWriter dw)
+//            {
+//                justSentServerComponentRemovalPacket = true;
+//                for (FlowComponent item : items)
+//                {
+//                    if (item.isBeingMoved())
+//                    {
+//                        dw.writeComponentId(self, item.getId());
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean activateOnRelease()
+//            {
+//                return true;
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.PREFERENCES)
+//        {
+//            @Override
+//            protected void onClick(DataReader dr)
+//            {
+//
+//            }
+//
+//            @Override
+//            public boolean onClick(DataWriter dw)
+//            {
+//                Settings.openMenu(self);
+//                return false;
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.EXIT_GROUP)
+//        {
+//            @Override
+//            protected void onClick(DataReader dr)
+//            {
+//                int id = dr.readComponentId();
+//                FlowComponent component = items.get(id);
+//                boolean moveCluster = dr.readBoolean();
+//                if (component.getParent() != null)
+//                {
+//                    ComponentMenuGroup.moveComponents(component, component.getParent().getParent(), moveCluster);
+//                }
+//            }
+//
+//            @Override
+//            public boolean onClick(DataWriter dw)
+//            {
+//                for (FlowComponent item : items)
+//                {
+//                    if (item.isBeingMoved())
+//                    {
+//                        //For the server only
+//                        justSentServerComponentRemovalPacket = true;
+//                        dw.writeComponentId(self, item.getId());
+//                        dw.writeBoolean(GuiScreen.isShiftKeyDown());
+//                        item.resetPosition();
+//                        return true;
+//                    }
+//                }
+//
+//                //Client only
+//                selectedComponent = selectedComponent.getParent();
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return !worldObj.isRemote || selectedComponent != null;
+//            }
+//
+//            @Override
+//            public boolean activateOnRelease()
+//            {
+//                for (FlowComponent item : items)
+//                {
+//                    if (item.isBeingMoved())
+//                    {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public String getMouseOver()
+//            {
+//                for (FlowComponent item : items)
+//                {
+//                    if (item.isBeingMoved())
+//                    {
+//                        return Localization.EXIT_GROUP_DROP.toString();
+//                    }
+//                }
+//                return super.getMouseOver();
+//            }
+//        });
     }
 
     private List<Integer> removedIds;
