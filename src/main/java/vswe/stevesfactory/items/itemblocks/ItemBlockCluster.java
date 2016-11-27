@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.items.itemblocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,16 +11,15 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ClusterRegistry;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.lib.ModInfo;
 
 import java.util.List;
 
-public class ItemCluster extends ItemBlock
+public class ItemBlockCluster extends ItemBlock
 {
-    public ItemCluster(Block block)
+    public ItemBlockCluster(Block block)
     {
         super(block);
         setHasSubtypes(true);
@@ -53,7 +52,7 @@ public class ItemCluster extends ItemBlock
         if (compound != null && compound.hasKey(NBT_CABLE))
         {
             NBTTagCompound cable = compound.getCompoundTag(NBT_CABLE);
-            byte[] types = cable.getByteArray(ItemCluster.NBT_TYPES);
+            byte[] types = cable.getByteArray(ItemBlockCluster.NBT_TYPES);
             for (byte type : types)
             {
                 list.add(ClusterRegistry.getRegistryList().get(type).getItemStack().getDisplayName());

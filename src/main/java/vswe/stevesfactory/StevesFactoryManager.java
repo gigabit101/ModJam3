@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import vswe.stevesfactory.components.ModItemHelper;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.init.ModRecipes;
 import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.network.FileHelper;
 import vswe.stevesfactory.network.PacketEventHandler;
@@ -44,7 +45,8 @@ public class StevesFactoryManager
     {
         packetHandler.register(new PacketEventHandler());
 
-        ModBlocks.addRecipes();
+        ModRecipes.init();
+
         //new ChatListener();
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 

@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.items.itemblocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
@@ -6,10 +6,11 @@ import net.minecraft.item.ItemStack;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.lib.ModInfo;
+import vswe.stevesfactory.tiles.TileEntityCamouflage;
 
-public class ItemRelay extends ItemBlock
+public class ItemBlockCamouflage extends ItemBlock
 {
-    public ItemRelay(Block block)
+    public ItemBlockCamouflage(Block block)
     {
         super(block);
         setHasSubtypes(true);
@@ -19,6 +20,6 @@ public class ItemRelay extends ItemBlock
     @Override
     public String getUnlocalizedName(ItemStack item)
     {
-        return "tile." + ModInfo.UNLOCALIZED_START + (ModBlocks.blockCableRelay.isAdvanced(item.getItemDamage()) ? ModBlocks.CABLE_ADVANCED_RELAY_UNLOCALIZED_NAME : ModBlocks.CABLE_RELAY_UNLOCALIZED_NAME);
+        return "tile." + ModInfo.UNLOCALIZED_START + TileEntityCamouflage.CamouflageType.values()[ModBlocks.blockCableCamouflage.getId(item.getItemDamage())].getUnlocalized();
     }
 }

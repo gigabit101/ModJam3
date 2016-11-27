@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import vswe.stevesfactory.client.CreativeTabSFM;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.tiles.TileEntityCamouflage;
 import vswe.stevesfactory.tiles.TileEntityCluster;
@@ -27,7 +28,7 @@ public class BlockCableCamouflages extends BlockCamouflageBase
     public BlockCableCamouflages()
     {
         super(Material.IRON);
-        setCreativeTab(ModBlocks.creativeTab);
+        setCreativeTab(CreativeTabSFM.instance);
         setSoundType(SoundType.METAL);
         setHardness(1.2F);
     }

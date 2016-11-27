@@ -7,7 +7,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.RecipeSorter;
-import vswe.stevesfactory.blocks.ItemCluster;
+import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +49,9 @@ public class ClusterRecipe implements IRecipe
             boolean foundClusterComponent = false;
             List<Integer> types = new ArrayList<Integer>();
             NBTTagCompound compound = cluster.getTagCompound();
-            if (compound != null && compound.hasKey(ItemCluster.NBT_CABLE))
+            if (compound != null && compound.hasKey(ItemBlockCluster.NBT_CABLE))
             {
-                byte[] typeIds = compound.getCompoundTag(ItemCluster.NBT_CABLE).getByteArray(ItemCluster.NBT_TYPES);
+                byte[] typeIds = compound.getCompoundTag(ItemBlockCluster.NBT_CABLE).getByteArray(ItemBlockCluster.NBT_TYPES);
                 for (byte typeId : typeIds)
                 {
                     types.add((int) typeId);
@@ -101,8 +101,8 @@ public class ClusterRecipe implements IRecipe
             NBTTagCompound newCompound = new NBTTagCompound();
             output.setTagCompound(newCompound);
             NBTTagCompound subCompound = new NBTTagCompound();
-            newCompound.setTag(ItemCluster.NBT_CABLE, subCompound);
-            subCompound.setByteArray(ItemCluster.NBT_TYPES, typeIds);
+            newCompound.setTag(ItemBlockCluster.NBT_CABLE, subCompound);
+            subCompound.setByteArray(ItemBlockCluster.NBT_TYPES, typeIds);
 
             return true;
         }

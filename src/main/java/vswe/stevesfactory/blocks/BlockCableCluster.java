@@ -25,18 +25,21 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import vswe.stevesfactory.api.ICable;
+import vswe.stevesfactory.client.CreativeTabSFM;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockCableCluster extends BlockCamouflageBase
+public class BlockCableCluster extends BlockCamouflageBase implements ICable
 {
     public BlockCableCluster()
     {
         super(Material.IRON);
-        setCreativeTab(ModBlocks.creativeTab);
+        setCreativeTab(CreativeTabSFM.instance);
         setSoundType(SoundType.METAL);
         setHardness(2F);
     }
@@ -107,8 +110,8 @@ public class BlockCableCluster extends BlockCamouflageBase
             NBTTagCompound compound = new NBTTagCompound();
             itemStack.setTagCompound(compound);
             NBTTagCompound cable = new NBTTagCompound();
-            compound.setTag(ItemCluster.NBT_CABLE, cable);
-            cable.setByteArray(ItemCluster.NBT_TYPES, cluster.getTypes());
+            compound.setTag(ItemBlockCluster.NBT_CABLE, cable);
+            cable.setByteArray(ItemBlockCluster.NBT_TYPES, cluster.getTypes());
             return itemStack;
         }
         return null;

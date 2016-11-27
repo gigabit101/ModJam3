@@ -15,27 +15,17 @@ import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityBUD;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 
-public class BlockCableBUD extends BlockContainer
+public class BlockCableBUD extends BlockSFM
 {
     public BlockCableBUD()
     {
-        super(Material.IRON);
-        setCreativeTab(ModBlocks.creativeTab);
-        setSoundType(SoundType.METAL);
         setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
-        setHardness(1.2F);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
         return new TileEntityBUD();
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
     }
 
     @Override
@@ -48,14 +38,4 @@ public class BlockCableBUD extends BlockContainer
         }
         super.neighborChanged(state, world, pos, blockIn);
     }
-
-//    @Override
-//    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
-//    {
-//        TileEntityBUD bud = TileEntityCluster.getTileEntity(TileEntityBUD.class, world, pos);
-//        if (bud != null)
-//        {
-//            bud.onTrigger();
-//        }
-//    }
 }

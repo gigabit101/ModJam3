@@ -25,16 +25,12 @@ import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
-public class BlockManager extends BlockContainer
+public class BlockManager extends BlockSFM
 {
     public BlockManager()
     {
-        super(Material.IRON);
-
         setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.MANAGER_UNLOCALIZED_NAME);
-        setSoundType(SoundType.METAL);
-        setCreativeTab(ModBlocks.creativeTab);
-        setHardness(2F);
+        setUpdateInventorys(true);
     }
 
     public static final IProperty LIMITLESS = PropertyBool.create("limitless");

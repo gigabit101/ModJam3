@@ -17,6 +17,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import vswe.stevesfactory.client.CreativeTabSFM;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 import vswe.stevesfactory.tiles.TileEntityClusterElement;
@@ -28,7 +29,7 @@ public abstract class BlockCableDirectionAdvanced extends BlockContainer
     public BlockCableDirectionAdvanced()
     {
         super(Material.IRON);
-        setCreativeTab(ModBlocks.creativeTab);
+        setCreativeTab(CreativeTabSFM.instance);
         setSoundType(SoundType.METAL);
         setHardness(1.2F);
     }

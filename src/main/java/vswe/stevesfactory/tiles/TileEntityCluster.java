@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ClusterRegistry;
 import vswe.stevesfactory.blocks.ITileEntityInterface;
-import vswe.stevesfactory.blocks.ItemCluster;
+import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
 import vswe.stevesfactory.network.*;
 
 import java.util.ArrayList;
@@ -55,10 +55,10 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     {
         NBTTagCompound compound = itemStack.getTagCompound();
 
-        if (compound != null && compound.hasKey(ItemCluster.NBT_CABLE))
+        if (compound != null && compound.hasKey(ItemBlockCluster.NBT_CABLE))
         {
-            NBTTagCompound cable = compound.getCompoundTag(ItemCluster.NBT_CABLE);
-            byte[] types = cable.getByteArray(ItemCluster.NBT_TYPES);
+            NBTTagCompound cable = compound.getCompoundTag(ItemBlockCluster.NBT_CABLE);
+            byte[] types = cable.getByteArray(ItemBlockCluster.NBT_TYPES);
             loadElements(types);
         }
     }

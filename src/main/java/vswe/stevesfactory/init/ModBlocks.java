@@ -1,16 +1,17 @@
 package vswe.stevesfactory.init;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.items.itemblocks.ItemBlockCamouflage;
+import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
+import vswe.stevesfactory.items.itemblocks.ItemBlockIntake;
+import vswe.stevesfactory.items.itemblocks.ItemBlockRelay;
 import vswe.stevesfactory.tiles.*;
 
 public final class ModBlocks
 {
+    //TODO move all to lib
     public static final byte NBT_CURRENT_PROTOCOL_VERSION = 13;
     public static final String NBT_PROTOCOL_VERSION = "ProtocolVersion";
 
@@ -78,26 +79,10 @@ public final class ModBlocks
     public static BlockCableCamouflages blockCableCamouflage;
     public static BlockCableSign blockCableSign;
 
-    public static CreativeTabs creativeTab;
 
-
+    //TODO move to register
     public static void init()
     {
-        creativeTab = new CreativeTabs("sfm")
-        {
-            @Override
-            public ItemStack getIconItemStack()
-            {
-                return new ItemStack(blockManager);
-            }
-
-            @Override
-            public Item getTabIconItem()
-            {
-                return null;
-            }
-        };
-
         blockManager = new BlockManager();
         GameRegistry.registerBlock(blockManager, MANAGER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityManager.class, MANAGER_TILE_ENTITY_TAG);
@@ -106,7 +91,7 @@ public final class ModBlocks
         GameRegistry.registerBlock(blockCable, CABLE_NAME_TAG);
 
         blockCableRelay = new BlockCableRelay();
-        GameRegistry.registerBlock(blockCableRelay, ItemRelay.class, CABLE_RELAY_NAME_TAG);
+        GameRegistry.registerBlock(blockCableRelay, ItemBlockRelay.class, CABLE_RELAY_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityRelay.class, CABLE_RELAY_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityRelay.class, blockCableRelay, new ItemStack(blockCableRelay, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityRelay.class, blockCableRelay, new ItemStack(blockCableRelay, 1, 8)));
@@ -127,7 +112,7 @@ public final class ModBlocks
         ClusterRegistry.register(TileEntityCreative.class, blockCableCreative);
 
         blockCableIntake = new BlockCableIntake();
-        GameRegistry.registerBlock(blockCableIntake, ItemIntake.class, CABLE_INTAKE_NAME_TAG);
+        GameRegistry.registerBlock(blockCableIntake, ItemBlockIntake.class, CABLE_INTAKE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityIntake.class, CABLE_INTAKE_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 8)));
@@ -143,11 +128,11 @@ public final class ModBlocks
         ClusterRegistry.register(TileEntityBreaker.class, blockCableBreaker);
 
         blockCableCluster = new BlockCableCluster();
-        GameRegistry.registerBlock(blockCableCluster, ItemCluster.class, CABLE_CLUSTER_NAME_TAG);
+        GameRegistry.registerBlock(blockCableCluster, ItemBlockCluster.class, CABLE_CLUSTER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCluster.class, CABLE_CLUSTER_TILE_ENTITY_TAG);
 
         blockCableCamouflage = new BlockCableCamouflages();
-        GameRegistry.registerBlock(blockCableCamouflage, ItemCamouflage.class, CABLE_CAMOUFLAGE_NAME_TAG);
+        GameRegistry.registerBlock(blockCableCamouflage, ItemBlockCamouflage.class, CABLE_CAMOUFLAGE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCamouflage.class, CABLE_CAMOUFLAGE_TILE_ENTITY_TAG);
 
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryMetaSensitive(TileEntityCamouflage.class, blockCableCamouflage, new ItemStack(blockCableCamouflage, 1, 0)));
@@ -158,117 +143,5 @@ public final class ModBlocks
         GameRegistry.registerBlock(blockCableSign, CABLE_SIGN_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntitySignUpdater.class, CABLE_SIGN_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntitySignUpdater.class, blockCableSign);
-    }
-
-    public static void addRecipes()
-    {
-        GameRegistry.addRecipe(new ItemStack(blockManager),
-                "III",
-                "IRI",
-                "SPS",
-                'R', Blocks.REDSTONE_BLOCK,
-                'P', Blocks.PISTON,
-                'I', Items.IRON_INGOT,
-                'S', Blocks.STONE
-        );
-
-        GameRegistry.addRecipe(new ItemStack(blockCable, 8),
-                "GPG",
-                "IRI",
-                "GPG",
-                'R', Items.REDSTONE,
-                'G', Blocks.GLASS,
-                'I', Items.IRON_INGOT,
-                'P', Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableRelay, 1),
-                blockCable,
-                Blocks.HOPPER
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableOutput, 1),
-                blockCable,
-                Items.REDSTONE,
-                Items.REDSTONE,
-                Items.REDSTONE
-        );
-
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableInput, 1),
-                blockCable,
-                Items.REDSTONE
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableRelay, 1, 8),
-                new ItemStack(blockCableRelay, 1, 0),
-                new ItemStack(Items.DYE, 1, 4)
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableIntake, 1, 0),
-                blockCable,
-                Blocks.HOPPER,
-                Blocks.HOPPER,
-                Blocks.DROPPER
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableBUD, 1),
-                blockCable,
-                Items.QUARTZ,
-                Items.QUARTZ,
-                Items.QUARTZ
-        );
-
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableBreaker, 1),
-                blockCable,
-                Items.IRON_PICKAXE,
-                Blocks.DISPENSER
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableIntake, 1, 8),
-                new ItemStack(blockCableIntake, 1, 0),
-                Items.GOLD_INGOT
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableCluster, 1),
-                blockCable,
-                Items.ENDER_PEARL,
-                Items.ENDER_PEARL,
-                Items.ENDER_PEARL
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableCamouflage, 1, 0),
-                blockCable,
-                new ItemStack(Blocks.WOOL, 1, 14),
-                new ItemStack(Blocks.WOOL, 1, 13),
-                new ItemStack(Blocks.WOOL, 1, 11)
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableCamouflage, 1, 1),
-                new ItemStack(blockCableCamouflage, 1, 0),
-                new ItemStack(blockCableCamouflage, 1, 0),
-                Blocks.IRON_BARS,
-                Blocks.IRON_BARS
-        );
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableCamouflage, 1, 2),
-                new ItemStack(blockCableCamouflage, 1, 1),
-                Blocks.STICKY_PISTON
-        );
-
-
-        GameRegistry.addShapelessRecipe(new ItemStack(blockCableSign, 1),
-                blockCable,
-                new ItemStack(Items.DYE, 0),
-                Items.FEATHER
-        );
-
-        GameRegistry.addRecipe(new ClusterUpgradeRecipe());
-        GameRegistry.addRecipe(new ClusterRecipe());
-    }
-
-    private ModBlocks()
-    {
     }
 }

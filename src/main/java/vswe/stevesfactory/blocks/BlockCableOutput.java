@@ -1,14 +1,10 @@
 package vswe.stevesfactory.blocks;
 
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -17,22 +13,16 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
-import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 import vswe.stevesfactory.tiles.TileEntityOutput;
 
-//This is indeed not a subclass to the cable, you can't relay signals through this block
-public class BlockCableOutput extends BlockContainer
+public class BlockCableOutput extends BlockSFM
 {
     public BlockCableOutput()
     {
-        super(Material.IRON);
-        setCreativeTab(ModBlocks.creativeTab);
-        setSoundType(SoundType.METAL);
         setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.CABLE_OUTPUT_UNLOCALIZED_NAME);
-        setHardness(1.2F);
     }
 
     @Override
@@ -76,12 +66,6 @@ public class BlockCableOutput extends BlockContainer
             return ((IExtendedBlockState) state).withProperty(STRONG_SIDES, strongVals).withProperty(WEAK_SIDES, weakVals);
         }
         return state;
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
     }
 
     @Override
