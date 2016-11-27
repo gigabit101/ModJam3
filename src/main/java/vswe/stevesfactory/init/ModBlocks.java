@@ -1,5 +1,7 @@
 package vswe.stevesfactory.init;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import vswe.stevesfactory.beta.BlockWirelessReciver;
@@ -11,6 +13,8 @@ import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
 import vswe.stevesfactory.items.itemblocks.ItemBlockIntake;
 import vswe.stevesfactory.items.itemblocks.ItemBlockRelay;
 import vswe.stevesfactory.tiles.*;
+
+import java.lang.reflect.InvocationTargetException;
 
 public final class ModBlocks
 {
@@ -85,59 +89,58 @@ public final class ModBlocks
     public static BlockWirelessReciver blockWirelessReciver;
 
 
-    //TODO move to register
     public static void init()
     {
         blockManager = new BlockManager();
-        GameRegistry.registerBlock(blockManager, MANAGER_NAME_TAG);
+        registerBlock(blockManager, MANAGER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityManager.class, MANAGER_TILE_ENTITY_TAG);
 
         blockCable = new BlockCable();
-        GameRegistry.registerBlock(blockCable, CABLE_NAME_TAG);
+        registerBlock(blockCable, CABLE_NAME_TAG);
 
         blockCableRelay = new BlockCableRelay();
-        GameRegistry.registerBlock(blockCableRelay, ItemBlockRelay.class, CABLE_RELAY_NAME_TAG);
+        registerBlock(blockCableRelay, ItemBlockRelay.class, CABLE_RELAY_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityRelay.class, CABLE_RELAY_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityRelay.class, blockCableRelay, new ItemStack(blockCableRelay, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityRelay.class, blockCableRelay, new ItemStack(blockCableRelay, 1, 8)));
 
         blockCableOutput = new BlockCableOutput();
-        GameRegistry.registerBlock(blockCableOutput, CABLE_OUTPUT_NAME_TAG);
+        registerBlock(blockCableOutput, CABLE_OUTPUT_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityOutput.class, CABLE_OUTPUT_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityOutput.class, blockCableOutput);
 
         blockCableInput = new BlockCableInput();
-        GameRegistry.registerBlock(blockCableInput, CABLE_INPUT_NAME_TAG);
+        registerBlock(blockCableInput, CABLE_INPUT_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityInput.class, CABLE_INPUT_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityInput.class, blockCableInput);
 
         blockCableCreative = new BlockCableCreative();
-        GameRegistry.registerBlock(blockCableCreative, CABLE_CREATIVE_NAME_TAG);
+        registerBlock(blockCableCreative, CABLE_CREATIVE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCreative.class, CABLE_CREATIVE_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityCreative.class, blockCableCreative);
 
         blockCableIntake = new BlockCableIntake();
-        GameRegistry.registerBlock(blockCableIntake, ItemBlockIntake.class, CABLE_INTAKE_NAME_TAG);
+        registerBlock(blockCableIntake, ItemBlockIntake.class, CABLE_INTAKE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityIntake.class, CABLE_INTAKE_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 8)));
 
         blockCableBUD = new BlockCableBUD();
-        GameRegistry.registerBlock(blockCableBUD, CABLE_BUD_NAME_TAG);
+        registerBlock(blockCableBUD, CABLE_BUD_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityBUD.class, CABLE_BUD_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityBUD.class, blockCableBUD);
 
         blockCableBreaker = new BlockCableBreaker();
-        GameRegistry.registerBlock(blockCableBreaker, CABLE_BREAKER_NAME_TAG);
+        registerBlock(blockCableBreaker, CABLE_BREAKER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityBreaker.class, CABLE_BREAKER_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityBreaker.class, blockCableBreaker);
 
         blockCableCluster = new BlockCableCluster();
-        GameRegistry.registerBlock(blockCableCluster, ItemBlockCluster.class, CABLE_CLUSTER_NAME_TAG);
+        registerBlock(blockCableCluster, ItemBlockCluster.class, CABLE_CLUSTER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCluster.class, CABLE_CLUSTER_TILE_ENTITY_TAG);
 
         blockCableCamouflage = new BlockCableCamouflages();
-        GameRegistry.registerBlock(blockCableCamouflage, ItemBlockCamouflage.class, CABLE_CAMOUFLAGE_NAME_TAG);
+        registerBlock(blockCableCamouflage, ItemBlockCamouflage.class, CABLE_CAMOUFLAGE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCamouflage.class, CABLE_CAMOUFLAGE_TILE_ENTITY_TAG);
 
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryMetaSensitive(TileEntityCamouflage.class, blockCableCamouflage, new ItemStack(blockCableCamouflage, 1, 0)));
@@ -145,14 +148,38 @@ public final class ModBlocks
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryMetaSensitive(TileEntityCamouflage.class, blockCableCamouflage, new ItemStack(blockCableCamouflage, 1, 2)));
 
         blockCableSign = new BlockCableSign();
-        GameRegistry.registerBlock(blockCableSign, CABLE_SIGN_NAME_TAG);
+        registerBlock(blockCableSign, CABLE_SIGN_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntitySignUpdater.class, CABLE_SIGN_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntitySignUpdater.class, blockCableSign);
 
+        //BETA
         blockWirelessTransmitter = new BlockWirelessTransmitter();
-        GameRegistry.registerBlock(blockWirelessTransmitter, ItemBlockBeta.class, "wirelesstransmitter");
+        registerBlock(blockWirelessTransmitter, ItemBlockBeta.class, "wirelesstransmitter");
 
         blockWirelessReciver = new BlockWirelessReciver();
-        GameRegistry.registerBlock(blockWirelessReciver, ItemBlockBeta.class, "wirelessreciver");
+        registerBlock(blockWirelessReciver, ItemBlockBeta.class, "wirelessreciver");
+    }
+
+    public static void registerBlock(Block block, String name)
+    {
+        block.setRegistryName(name);
+        GameRegistry.register(block);
+        GameRegistry.register(new ItemBlock(block), block.getRegistryName());
+    }
+
+    public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
+    {
+        block.setRegistryName(name);
+        GameRegistry.register(block);
+        try
+        {
+            ItemBlock itemBlock = itemclass.getConstructor(Block.class).newInstance(block);
+            itemBlock.setRegistryName(name);
+            GameRegistry.register(itemBlock);
+        }
+        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
