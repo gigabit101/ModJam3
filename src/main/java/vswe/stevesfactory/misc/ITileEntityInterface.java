@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.misc;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;

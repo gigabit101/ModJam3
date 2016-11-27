@@ -17,7 +17,8 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import vswe.stevesfactory.client.CreativeTabSFM;
-import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.misc.PropertyCamouflageType;
+import vswe.stevesfactory.misc.UnlistedBlockPosProperty;
 import vswe.stevesfactory.tiles.TileEntityCamouflage;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 

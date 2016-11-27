@@ -3,7 +3,7 @@ package vswe.stevesfactory.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import vswe.stevesfactory.tiles.TileEntityRelay;
-import vswe.stevesfactory.blocks.UserPermission;
+import vswe.stevesfactory.misc.UserPermission;
 
 import java.util.List;
 

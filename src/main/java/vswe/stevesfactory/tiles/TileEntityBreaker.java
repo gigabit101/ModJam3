@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import vswe.stevesfactory.blocks.BlockCableBreaker;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.misc.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.network.*;
 

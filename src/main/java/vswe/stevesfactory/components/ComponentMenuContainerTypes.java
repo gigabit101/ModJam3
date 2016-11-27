@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import vswe.stevesfactory.misc.ConnectionBlockType;
 import vswe.stevesfactory.container.ContainerManager;
 import vswe.stevesfactory.client.gui.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;

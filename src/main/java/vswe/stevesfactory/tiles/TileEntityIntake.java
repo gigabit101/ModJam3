@@ -11,7 +11,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.misc.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;

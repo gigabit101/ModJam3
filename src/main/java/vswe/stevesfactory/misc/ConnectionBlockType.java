@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.misc;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

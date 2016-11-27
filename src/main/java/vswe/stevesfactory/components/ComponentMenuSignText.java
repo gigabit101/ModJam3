@@ -13,7 +13,6 @@ import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
 
-
 public class ComponentMenuSignText extends ComponentMenu
 {
     private static final int TEXT_BOX_SIZE_W = 64;

@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
-import vswe.stevesfactory.blocks.ConnectionBlock;
+import vswe.stevesfactory.misc.ConnectionBlock;
 import vswe.stevesfactory.tiles.TileEntityManager;
-import vswe.stevesfactory.blocks.WorldCoordinate;
+import vswe.stevesfactory.misc.WorldCoordinate;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.network.PacketHandler;
 

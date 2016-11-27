@@ -124,8 +124,6 @@ public abstract class GuiBase extends GuiAntiNEI
 
     public void drawMouseOver(String str, int x, int y, int width)
     {
-
-
         drawMouseOver(getLinesFromText(str, width), x, y);
     }
 
@@ -334,10 +332,8 @@ public abstract class GuiBase extends GuiAntiNEI
             {
                 return (String) str.get(0);
             }
-        } catch (Throwable ignored)
-        {
         }
-
+        catch (Throwable ignored) {}
         return "Unknown";
     }
 
@@ -389,10 +385,8 @@ public abstract class GuiBase extends GuiAntiNEI
             {
                 return item;
             }
-        } catch (Throwable ignored)
-        {
         }
-
+        catch (Throwable ignored) {}
 
         try
         {
@@ -402,10 +396,8 @@ public abstract class GuiBase extends GuiAntiNEI
             {
                 return items.get(0);
             }
-        } catch (Throwable ignored)
-        {
         }
-
+        catch (Throwable ignored) {}
 
         //get it from its id and meta
         return new ItemStack(block, 1, block.getMetaFromState(state));
@@ -431,11 +423,11 @@ public abstract class GuiBase extends GuiAntiNEI
 
         itemRender.zLevel = 1F;
 
-
         try
         {
             itemRender.renderItemIntoGUI(itemstack, x + guiLeft, y + guiTop);
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             if (itemstack.getItemDamage() != 0)
             {
@@ -443,7 +435,8 @@ public abstract class GuiBase extends GuiAntiNEI
                 newStack.setItemDamage(0);
                 drawItemStack(newStack, x, y);
             }
-        } finally
+        }
+        finally
         {
             itemRender.zLevel = 0F;
 
@@ -454,7 +447,6 @@ public abstract class GuiBase extends GuiAntiNEI
             GlStateManager.enableAlpha();
             GlStateManager.popMatrix();
         }
-
     }
 
     public int getStringWidth(String str)
@@ -494,12 +486,6 @@ public abstract class GuiBase extends GuiAntiNEI
         GlStateManager.disableTexture2D();
         GlStateManager.color(0.4F, 0.4F, 0.4F, 1F);
 
-        //GlStateManager.enableBlend();
-        //GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_COLOR);
-        //GL11.glShadeModel(GL11.GL_SMOOTH);
-        //GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        //GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-        //GL11.glLineWidth(5);
         GL11.glLineWidth(1 + 5 * this.width / 500F);
 
         GL11.glBegin(GL11.GL_LINES);
@@ -518,7 +504,6 @@ public abstract class GuiBase extends GuiAntiNEI
     public final void drawDefaultBackground()
     {
         super.drawDefaultBackground();
-
         startScaling();
     }
 
@@ -526,9 +511,7 @@ public abstract class GuiBase extends GuiAntiNEI
     @Override
     public void drawScreen(int x, int y, float f)
     {
-
         super.drawScreen(scaleX(x), scaleY(y), f);
-
         stopScaling();
     }
 

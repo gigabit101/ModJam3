@@ -20,9 +20,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.misc.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ClusterRegistry;
-import vswe.stevesfactory.blocks.ITileEntityInterface;
+import vswe.stevesfactory.misc.ITileEntityInterface;
 import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
 import vswe.stevesfactory.network.*;
 

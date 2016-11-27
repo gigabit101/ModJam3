@@ -2,6 +2,9 @@ package vswe.stevesfactory.init;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import vswe.stevesfactory.beta.BlockWirelessReciver;
+import vswe.stevesfactory.beta.BlockWirelessTransmitter;
+import vswe.stevesfactory.beta.ItemBlockBeta;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.items.itemblocks.ItemBlockCamouflage;
 import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
@@ -78,6 +81,8 @@ public final class ModBlocks
     public static BlockCableCluster blockCableCluster;
     public static BlockCableCamouflages blockCableCamouflage;
     public static BlockCableSign blockCableSign;
+    public static BlockWirelessTransmitter blockWirelessTransmitter;
+    public static BlockWirelessReciver blockWirelessReciver;
 
 
     //TODO move to register
@@ -143,5 +148,11 @@ public final class ModBlocks
         GameRegistry.registerBlock(blockCableSign, CABLE_SIGN_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntitySignUpdater.class, CABLE_SIGN_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntitySignUpdater.class, blockCableSign);
+
+        blockWirelessTransmitter = new BlockWirelessTransmitter();
+        GameRegistry.registerBlock(blockWirelessTransmitter, ItemBlockBeta.class, "wirelesstransmitter");
+
+        blockWirelessReciver = new BlockWirelessReciver();
+        GameRegistry.registerBlock(blockWirelessReciver, ItemBlockBeta.class, "wirelessreciver");
     }
 }

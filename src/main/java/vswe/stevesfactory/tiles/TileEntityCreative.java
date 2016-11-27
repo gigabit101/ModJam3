@@ -9,7 +9,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.misc.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.EnumSet;

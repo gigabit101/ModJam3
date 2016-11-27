@@ -2,7 +2,7 @@ package vswe.stevesfactory.components;
 
 
 import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import vswe.stevesfactory.misc.ConnectionBlockType;
 
 import java.util.List;
 

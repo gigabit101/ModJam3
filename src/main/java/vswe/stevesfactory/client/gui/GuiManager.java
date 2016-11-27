@@ -25,7 +25,6 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class GuiManager extends GuiBase
 {
-
     public GuiManager(TileEntityManager manager, InventoryPlayer player)
     {
         super(new ContainerManager(manager, player));
@@ -384,7 +383,6 @@ public class GuiManager extends GuiBase
     private boolean useMouseOver = true;
 
     private List<SecretCode> codes = new ArrayList<SecretCode>();
-
     {
         codes.add(new SecretCode("animate")
         {

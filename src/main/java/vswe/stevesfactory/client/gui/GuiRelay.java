@@ -10,7 +10,7 @@ import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.container.ContainerRelay;
 import vswe.stevesfactory.tiles.TileEntityRelay;
-import vswe.stevesfactory.blocks.UserPermission;
+import vswe.stevesfactory.misc.UserPermission;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;

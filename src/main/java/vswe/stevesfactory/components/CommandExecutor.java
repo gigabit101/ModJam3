@@ -1,6 +1,5 @@
 package vswe.stevesfactory.components;
 
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -9,8 +8,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
-import vswe.stevesfactory.blocks.ConnectionBlock;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import vswe.stevesfactory.misc.ConnectionBlock;
+import vswe.stevesfactory.misc.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityCreative;
 import vswe.stevesfactory.tiles.TileEntityManager;
 

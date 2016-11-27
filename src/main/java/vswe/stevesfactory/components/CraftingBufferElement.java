@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.IItemHandler;
-import vswe.stevesfactory.blocks.ConnectionBlockType;
+import vswe.stevesfactory.misc.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
 import java.util.*;

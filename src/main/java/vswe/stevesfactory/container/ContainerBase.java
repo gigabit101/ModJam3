@@ -3,7 +3,7 @@ package vswe.stevesfactory.container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
-import vswe.stevesfactory.blocks.ITileEntityInterface;
+import vswe.stevesfactory.misc.ITileEntityInterface;
 
 import java.util.List;
 

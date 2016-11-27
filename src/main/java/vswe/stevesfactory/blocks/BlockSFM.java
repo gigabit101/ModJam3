@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import vswe.stevesfactory.api.ICable;
 import vswe.stevesfactory.client.CreativeTabSFM;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.misc.WorldCoordinate;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
 import java.util.ArrayList;

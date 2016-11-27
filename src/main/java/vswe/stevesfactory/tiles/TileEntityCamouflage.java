@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.blocks.BlockCamouflageBase;
-import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.misc.ClusterMethodRegistration;
 import vswe.stevesfactory.components.ComponentMenuCamouflageInside;
 import vswe.stevesfactory.components.ComponentMenuCamouflageShape;
 import vswe.stevesfactory.init.ModBlocks;

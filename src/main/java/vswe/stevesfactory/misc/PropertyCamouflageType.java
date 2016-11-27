@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.misc;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

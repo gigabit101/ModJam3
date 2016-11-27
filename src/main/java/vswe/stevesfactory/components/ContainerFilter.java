@@ -1,7 +1,7 @@
 package vswe.stevesfactory.components;
 
 import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.blocks.ConnectionBlock;
+import vswe.stevesfactory.misc.ConnectionBlock;
 import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.client.gui.GuiManager;
 

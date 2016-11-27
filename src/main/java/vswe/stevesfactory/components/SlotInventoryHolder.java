@@ -3,7 +3,8 @@ package vswe.stevesfactory.components;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import vswe.stevesfactory.blocks.*;
+import vswe.stevesfactory.misc.IRedstoneNode;
+import vswe.stevesfactory.misc.ITriggerNode;
 import vswe.stevesfactory.tiles.*;
 import vswe.stevesfactory.wrappers.CapabilityHelper;
 

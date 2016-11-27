@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.misc;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.property.IUnlistedProperty;
