@@ -3,7 +3,7 @@ package vswe.stevesfactory.components;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
 package vswe.stevesfactory.components;
 
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.tiles.TileEntityManager;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;

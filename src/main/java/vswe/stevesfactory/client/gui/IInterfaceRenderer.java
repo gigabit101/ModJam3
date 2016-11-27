@@ -1,7 +1,8 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.client.gui;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import vswe.stevesfactory.client.gui.GuiManager;
 
 @SideOnly(Side.CLIENT)
 public interface IInterfaceRenderer

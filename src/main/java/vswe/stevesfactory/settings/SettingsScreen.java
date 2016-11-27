@@ -4,13 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.CheckBox;
 import vswe.stevesfactory.components.CheckBoxList;
 import vswe.stevesfactory.components.ComponentType;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.interfaces.IInterfaceRenderer;
+import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.client.gui.IInterfaceRenderer;
 
 import java.util.ArrayList;
 import java.util.List;

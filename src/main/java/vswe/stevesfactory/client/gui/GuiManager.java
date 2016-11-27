@@ -1,4 +1,4 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,8 +9,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.animation.AnimationController;
+import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.client.AnimationController;
+import vswe.stevesfactory.container.ContainerManager;
 import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.network.DataBitHelper;

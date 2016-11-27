@@ -1,19 +1,16 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.RecipeSorter;
-import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ClusterUpgradeRecipe extends ShapelessRecipes
 {
-
     private static final ItemStack RESULT;
     private static final List RECIPE;
 

@@ -6,6 +6,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+@Deprecated
 public class InventoryWrapperHorse extends InventoryWrapper
 {
     private EntityHorse horse;

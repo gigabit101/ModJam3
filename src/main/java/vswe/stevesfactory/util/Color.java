@@ -1,4 +1,4 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.util;
 
 public enum Color
 {

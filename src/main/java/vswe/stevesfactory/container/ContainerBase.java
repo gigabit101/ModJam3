@@ -1,4 +1,4 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

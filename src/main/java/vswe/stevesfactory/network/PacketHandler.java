@@ -15,8 +15,8 @@ import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.Connection;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.components.Point;
-import vswe.stevesfactory.interfaces.ContainerBase;
-import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.container.ContainerBase;
+import vswe.stevesfactory.container.ContainerManager;
 
 public class PacketHandler
 {

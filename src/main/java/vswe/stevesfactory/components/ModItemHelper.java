@@ -9,8 +9,6 @@ import java.util.Map;
 
 public final class ModItemHelper
 {
-
-
     private static Map<ResourceLocation, String> items;
 
     public static void init()

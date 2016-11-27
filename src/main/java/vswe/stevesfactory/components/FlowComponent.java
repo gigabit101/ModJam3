@@ -8,8 +8,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
 import vswe.stevesfactory.tiles.TileEntityManager;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.container.ContainerManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 import vswe.stevesfactory.network.*;
 import vswe.stevesfactory.settings.Settings;
 

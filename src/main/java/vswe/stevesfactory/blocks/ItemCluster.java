@@ -10,9 +10,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.init.ClusterRegistry;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 
 import java.util.List;
 
@@ -65,6 +67,6 @@ public class ItemCluster extends ItemBlock
     @Override
     public String getUnlocalizedName(ItemStack item)
     {
-        return "tile." + StevesFactoryManager.UNLOCALIZED_START + (ModBlocks.blockCableCluster.isAdvanced(item.getItemDamage()) ? ModBlocks.CABLE_ADVANCED_CLUSTER_UNLOCALIZED_NAME : ModBlocks.CABLE_CLUSTER_UNLOCALIZED_NAME);
+        return "tile." + ModInfo.UNLOCALIZED_START + (ModBlocks.blockCableCluster.isAdvanced(item.getItemDamage()) ? ModBlocks.CABLE_ADVANCED_CLUSTER_UNLOCALIZED_NAME : ModBlocks.CABLE_CLUSTER_UNLOCALIZED_NAME);
     }
 }

@@ -1,4 +1,4 @@
-package vswe.stevesfactory.animation;
+package vswe.stevesfactory.client;
 
 import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.*;

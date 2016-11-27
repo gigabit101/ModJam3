@@ -6,11 +6,10 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import vswe.stevesfactory.StevesFactoryManager;
-import vswe.stevesfactory.blocks.client.ModelLoader;
+import vswe.stevesfactory.client.camouflage.ModelLoader;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.settings.Settings;
 
 public class ClientProxy extends CommonProxy
@@ -82,6 +81,6 @@ public class ClientProxy extends CommonProxy
 
     public static String getResource(String resource)
     {
-        return (StevesFactoryManager.MODID.toLowerCase() + ":") + resource;
+        return (ModInfo.MOD_ID.toLowerCase() + ":") + resource;
     }
 }

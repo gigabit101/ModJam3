@@ -1,4 +1,4 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -7,7 +7,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.container.ContainerRelay;
 import vswe.stevesfactory.tiles.TileEntityRelay;
 import vswe.stevesfactory.blocks.UserPermission;
 import vswe.stevesfactory.network.DataBitHelper;

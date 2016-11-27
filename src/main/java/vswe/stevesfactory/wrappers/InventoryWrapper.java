@@ -5,6 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
+@Deprecated
 public abstract class InventoryWrapper implements IInventory
 {
     protected IInventory inventory;

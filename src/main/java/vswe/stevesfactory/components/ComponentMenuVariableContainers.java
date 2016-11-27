@@ -1,6 +1,6 @@
 package vswe.stevesfactory.components;
 
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 
 import java.util.EnumSet;

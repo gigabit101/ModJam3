@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks.client;
+package vswe.stevesfactory.client.camouflage;
 
 import com.google.common.base.Function;
 import net.minecraft.block.Block;

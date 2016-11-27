@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import vswe.stevesfactory.blocks.ClusterMethodRegistration;
-import vswe.stevesfactory.blocks.ClusterRegistry;
+import vswe.stevesfactory.init.ClusterRegistry;
 
 import java.util.EnumSet;
 

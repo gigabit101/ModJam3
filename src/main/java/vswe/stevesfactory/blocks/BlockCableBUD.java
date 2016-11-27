@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityBUD;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 
@@ -21,7 +22,7 @@ public class BlockCableBUD extends BlockContainer
         super(Material.IRON);
         setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
-        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
+        setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.CABLE_BUD_UNLOCALIZED_NAME);
         setHardness(1.2F);
     }
 

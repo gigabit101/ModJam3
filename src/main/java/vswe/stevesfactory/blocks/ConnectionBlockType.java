@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.tiles.*;
 
 import javax.annotation.Nullable;

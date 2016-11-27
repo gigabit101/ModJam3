@@ -19,6 +19,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 import vswe.stevesfactory.tiles.TileEntityOutput;
 
@@ -30,7 +31,7 @@ public class BlockCableOutput extends BlockContainer
         super(Material.IRON);
         setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
-        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_OUTPUT_UNLOCALIZED_NAME);
+        setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.CABLE_OUTPUT_UNLOCALIZED_NAME);
         setHardness(1.2F);
     }
 

@@ -11,13 +11,13 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
-import vswe.stevesfactory.interfaces.IInterfaceRenderer;
+import vswe.stevesfactory.container.ContainerManager;
+import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.client.gui.IInterfaceRenderer;
 import vswe.stevesfactory.network.*;
 import vswe.stevesfactory.settings.Settings;
 

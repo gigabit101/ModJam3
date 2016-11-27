@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.ContainerManager;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.container.ContainerManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -20,8 +20,6 @@ import java.util.List;
 
 public class ComponentMenuItem extends ComponentMenuStuff
 {
-
-
     protected ComponentMenuItem(FlowComponent parent, Class<? extends Setting> settingClass)
     {
         super(parent, settingClass);

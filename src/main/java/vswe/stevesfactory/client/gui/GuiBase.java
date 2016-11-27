@@ -1,4 +1,4 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.client.gui;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityClusterElement;
 import vswe.stevesfactory.settings.Settings;
 
@@ -91,7 +92,7 @@ public abstract class GuiBase extends GuiAntiNEI
 
     public static ResourceLocation registerTexture(String name)
     {
-        return new ResourceLocation(StevesFactoryManager.RESOURCE_LOCATION, "textures/gui/" + name + ".png");
+        return new ResourceLocation(ModInfo.MOD_RESOURCE_LOCATION, "textures/gui/" + name + ".png");
     }
 
     public void drawString(String str, int x, int y, float mult, int color)

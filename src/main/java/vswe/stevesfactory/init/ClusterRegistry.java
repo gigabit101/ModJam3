@@ -1,4 +1,4 @@
-package vswe.stevesfactory.blocks;
+package vswe.stevesfactory.init;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;

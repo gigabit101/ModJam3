@@ -1,7 +1,8 @@
-package vswe.stevesfactory;
+package vswe.stevesfactory.lib;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.translation.I18n;
+import vswe.stevesfactory.StevesFactoryManager;
 
 public enum Localization
 {
@@ -377,7 +378,7 @@ public enum Localization
 
     public String toString()
     {
-        return I18n.translateToLocal("gui." + StevesFactoryManager.UNLOCALIZED_START + name);
+        return I18n.translateToLocal("gui." + ModInfo.UNLOCALIZED_START + name);
     }
 
     public static Localization getDirectionLocalization(EnumFacing facing)

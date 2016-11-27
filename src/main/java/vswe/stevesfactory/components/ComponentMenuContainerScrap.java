@@ -2,9 +2,9 @@ package vswe.stevesfactory.components;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 
 import java.util.List;
 

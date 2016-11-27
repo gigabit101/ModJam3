@@ -1,4 +1,4 @@
-package vswe.stevesfactory;
+package vswe.stevesfactory.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;

@@ -9,6 +9,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.World;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityCreative;
 
 public class BlockCableCreative extends BlockContainer
@@ -18,7 +19,7 @@ public class BlockCableCreative extends BlockContainer
         super(Material.IRON);
         setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
-        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_CREATIVE_UNLOCALIZED_NAME);
+        setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.CABLE_CREATIVE_UNLOCALIZED_NAME);
         setHardness(1.2F);
     }
 

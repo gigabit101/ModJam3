@@ -8,7 +8,6 @@ import vswe.stevesfactory.network.DataWriter;
 
 import java.util.List;
 
-
 public abstract class Setting
 {
     private int id;

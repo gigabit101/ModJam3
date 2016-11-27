@@ -10,8 +10,6 @@ import vswe.stevesfactory.wrappers.CapabilityHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-//import net.minecraftforge.fluids.IFluidHandler;
-
 public class SlotInventoryHolder
 {
     private TileEntity inventory;

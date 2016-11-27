@@ -1,6 +1,6 @@
 package vswe.stevesfactory.components;
 
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 
 public enum FuzzyMode
 {

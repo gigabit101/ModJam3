@@ -1,8 +1,5 @@
 package vswe.stevesfactory;
 
-import net.minecraft.block.SoundType;
-import net.minecraftforge.client.event.sound.SoundEvent;
-import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -13,31 +10,27 @@ import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import vswe.stevesfactory.components.ModItemHelper;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.network.FileHelper;
 import vswe.stevesfactory.network.PacketEventHandler;
 import vswe.stevesfactory.proxy.CommonProxy;
 
-@Mod(modid = StevesFactoryManager.MODID, name = "Steve's Factory Manager", version = "1.0.9")
+@Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME, version = ModInfo.MOD_VERSION)
 public class StevesFactoryManager
 {
-    public static final String MODID = "StevesFactoryManager";
-    public static final String RESOURCE_LOCATION = "stevesfactorymanager";
-    public static final String CHANNEL = "FactoryManager";
-    public static final String UNLOCALIZED_START = "sfm.";
-
     public static FMLEventChannel packetHandler;
 
     @SidedProxy(clientSide = "vswe.stevesfactory.proxy.ClientProxy", serverSide = "vswe.stevesfactory.proxy.CommonProxy")
     public static CommonProxy proxy;
 
-    @Mod.Instance(MODID)
+    @Mod.Instance(ModInfo.MOD_ID)
     public static StevesFactoryManager instance;
 
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        packetHandler = NetworkRegistry.INSTANCE.newEventDrivenChannel(CHANNEL);
+        packetHandler = NetworkRegistry.INSTANCE.newEventDrivenChannel(ModInfo.MOD_CHANNEL_ID);
 
         ModBlocks.init();
 

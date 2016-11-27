@@ -1,4 +1,4 @@
-package vswe.stevesfactory.interfaces;
+package vswe.stevesfactory.client.gui;
 
 import com.google.common.collect.Sets;
 import net.minecraft.client.Minecraft;

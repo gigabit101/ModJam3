@@ -3,8 +3,8 @@ package vswe.stevesfactory.components;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.Localization;
-import vswe.stevesfactory.interfaces.Color;
+import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.util.Color;
 
 public enum VariableColor
 {

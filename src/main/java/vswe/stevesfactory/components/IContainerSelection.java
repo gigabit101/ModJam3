@@ -1,9 +1,8 @@
 package vswe.stevesfactory.components;
 
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 
 public interface IContainerSelection
 {

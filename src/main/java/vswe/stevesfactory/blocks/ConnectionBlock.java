@@ -4,11 +4,11 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.lib.Localization;
 import vswe.stevesfactory.components.ComponentMenuContainer;
 import vswe.stevesfactory.components.IContainerSelection;
 import vswe.stevesfactory.components.Variable;
-import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.client.gui.GuiManager;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
 import java.util.EnumSet;

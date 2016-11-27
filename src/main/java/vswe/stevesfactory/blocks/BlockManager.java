@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
 public class BlockManager extends BlockContainer
@@ -30,7 +31,7 @@ public class BlockManager extends BlockContainer
     {
         super(Material.IRON);
 
-        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.MANAGER_UNLOCALIZED_NAME);
+        setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.MANAGER_UNLOCALIZED_NAME);
         setSoundType(SoundType.METAL);
         setCreativeTab(ModBlocks.creativeTab);
         setHardness(2F);
