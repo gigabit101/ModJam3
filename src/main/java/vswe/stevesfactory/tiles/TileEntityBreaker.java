@@ -200,7 +200,6 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             {
                 ItemStack newStack = itemStack.copy();
 
-
                 if (!broken)
                 {
                     for (int i = 0; i < inventoryCache.size(); i++)
@@ -561,7 +560,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     {
         if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            return (T) new InvWrapper(this);
+            return (T) new InvWrapper (this);
         }
         return super.getCapability(capability, facing);
     }

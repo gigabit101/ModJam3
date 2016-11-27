@@ -351,7 +351,8 @@ public class CommandExecutor
         if (ret.isEmpty())
         {
             return null;
-        } else
+        }
+        else
         {
             return ret;
         }
@@ -396,16 +397,10 @@ public class CommandExecutor
                 if (menuTarget.isActive(side))
                 {
                     int[] inventoryValidSlots;
-                    if (inventory instanceof ISidedInventory)
+                    inventoryValidSlots = new int[inventory.getSlots()];
+                    for (int j = 0; j < inventoryValidSlots.length; j++)
                     {
-                        inventoryValidSlots = ((ISidedInventory) inventory).getSlotsForFace(EnumFacing.getFront(side));
-                    } else
-                    {
-                        inventoryValidSlots = new int[inventory.getSlots()];
-                        for (int j = 0; j < inventoryValidSlots.length; j++)
-                        {
-                            inventoryValidSlots[j] = j;
-                        }
+                        inventoryValidSlots[j] = j;
                     }
                     int start;
                     int end;
@@ -413,7 +408,8 @@ public class CommandExecutor
                     {
                         start = menuTarget.getStart(side);
                         end = menuTarget.getEnd(side);
-                    } else
+                    }
+                    else
                     {
                         start = 0;
                         end = inventory.getSlots();
@@ -424,7 +420,6 @@ public class CommandExecutor
                         continue;
                     }
 
-
                     for (int inventoryValidSlot : inventoryValidSlots)
                     {
                         if (inventoryValidSlot >= start && inventoryValidSlot <= end)
@@ -433,7 +428,8 @@ public class CommandExecutor
                             if (target == null)
                             {
                                 validSlots.put(inventoryValidSlot, new SlotSideTarget(inventoryValidSlot, side));
-                            } else
+                            }
+                            else
                             {
                                 target.addSide(side);
                             }
@@ -490,32 +486,36 @@ public class CommandExecutor
 
     private boolean isSlotValid(IItemHandler inventory, ItemStack item, SlotSideTarget slot, boolean isInput)
     {
-        if (item == null)
+//        if (item == null)
+//        {
+//            return false;
+//        }
+//        else if (inventory instanceof ISidedInventory)
+//        {
+//            boolean hasValidSide = false;
+//            for (int side : slot.getSides())
+//            {
+//                if (isInput && ((ISidedInventory) inventory).canExtractItem(slot.getSlot(), item, EnumFacing.getFront(side)))
+//                {
+//                    hasValidSide = true;
+//                    break;
+//                } else if (!isInput && ((ISidedInventory) inventory).canInsertItem(slot.getSlot(), item, EnumFacing.getFront(side)))
+//                {
+//                    hasValidSide = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!hasValidSide)
+//            {
+//                return false;
+//            }
+//        }
+        if(item != null)
         {
-            return false;
+            return isInput || inventory.insertItem(slot.getSlot(), item, true) != item;
         }
-        else if (inventory instanceof ISidedInventory)
-        {
-            boolean hasValidSide = false;
-            for (int side : slot.getSides())
-            {
-                if (isInput && ((ISidedInventory) inventory).canExtractItem(slot.getSlot(), item, EnumFacing.getFront(side)))
-                {
-                    hasValidSide = true;
-                    break;
-                } else if (!isInput && ((ISidedInventory) inventory).canInsertItem(slot.getSlot(), item, EnumFacing.getFront(side)))
-                {
-                    hasValidSide = true;
-                    break;
-                }
-            }
-
-            if (!hasValidSide)
-            {
-                return false;
-            }
-        }
-        return isInput || inventory.insertItem(slot.getSlot(), item, true) != item;
+        return false;
     }
 
     private void getItems(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories)

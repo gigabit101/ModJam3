@@ -76,6 +76,4 @@ public class BlockCableSign extends BlockContainer
             sign.setMetaData(meta);
         }
     }
-
-
 }

@@ -1,12 +1,10 @@
 package vswe.stevesfactory.components;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SlotSideTarget
 {
-
     private int slot;
     private List<Integer> sides;
 
