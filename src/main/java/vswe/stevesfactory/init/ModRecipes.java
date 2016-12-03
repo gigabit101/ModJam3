@@ -4,6 +4,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 /**
  * Created by Gigabit101 on 27/11/2016.
@@ -113,6 +115,11 @@ public class ModRecipes
                 new ItemStack(Items.DYE, 0),
                 Items.FEATHER
         );
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.memoryDisc), " x ", "xyx", " x ", 'x', "ingotIron", 'y', new ItemStack(ModBlocks.blockManager)));
+
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.memoryDisc), new ItemStack(ModItems.memoryDisc)));
+
 
         GameRegistry.addRecipe(new ClusterUpgradeRecipe());
         GameRegistry.addRecipe(new ClusterRecipe());

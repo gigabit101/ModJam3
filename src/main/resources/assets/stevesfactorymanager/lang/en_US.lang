@@ -405,3 +405,4 @@ gui.sfm.PermissionDenied=No access
 # ======================================
 
 itemGroup.sfm=Steve's Factory Manager
+item.sfm.memorydisc.name=Memory Disc

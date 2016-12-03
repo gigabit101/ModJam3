@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import vswe.stevesfactory.components.ModItemHelper;
 import vswe.stevesfactory.init.ModBlocks;
+import vswe.stevesfactory.init.ModItems;
 import vswe.stevesfactory.init.ModRecipes;
 import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.network.FileHelper;
@@ -34,6 +35,8 @@ public class StevesFactoryManager
         packetHandler = NetworkRegistry.INSTANCE.newEventDrivenChannel(ModInfo.MOD_CHANNEL_ID);
 
         ModBlocks.init();
+
+        ModItems.init();
 
         proxy.preInit();
 

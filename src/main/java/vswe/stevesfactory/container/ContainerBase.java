@@ -12,7 +12,6 @@ public abstract class ContainerBase extends Container
     private ITileEntityInterface te;
     private InventoryPlayer player;
 
-
     protected ContainerBase(ITileEntityInterface te, InventoryPlayer player)
     {
         this.te = te;

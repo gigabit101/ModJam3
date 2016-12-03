@@ -14,7 +14,7 @@ public class CreativeTabSFM extends CreativeTabs
 
     public CreativeTabSFM()
     {
-        super(ModInfo.MOD_ID);
+        super(ModInfo.UNLOCALIZED_START);
     }
 
     @Override
