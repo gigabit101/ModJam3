@@ -9,6 +9,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
+import org.lwjgl.Sys;
+import vswe.stevesfactory.ItemUtils;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityCreative;
@@ -494,28 +496,7 @@ public class CommandExecutor
         {
             return false;
         }
-        else if (inventory instanceof ISidedInventory)
-        {
-            boolean hasValidSide = false;
-            for (int side : slot.getSides())
-            {
-                if (isInput && ((ISidedInventory) inventory).canExtractItem(slot.getSlot(), item, EnumFacing.getFront(side)))
-                {
-                    hasValidSide = true;
-                    break;
-                } else if (!isInput && ((ISidedInventory) inventory).canInsertItem(slot.getSlot(), item, EnumFacing.getFront(side)))
-                {
-                    hasValidSide = true;
-                    break;
-                }
-            }
-
-            if (!hasValidSide)
-            {
-                return false;
-            }
-        }
-        return isInput || inventory.insertItem(slot.getSlot(), item, true) != item;
+        return isInput || (ItemUtils.isItemEqual(inventory.getStackInSlot(slot.getSlot()), item, true, true) || inventory.getStackInSlot(slot.getSlot()) == null);//(inventory.insertItem(slot.getSlot(), item, true) == null);
     }
 
     private void getItems(ComponentMenu componentMenu, List<SlotInventoryHolder> inventories)
@@ -824,7 +805,6 @@ public class CommandExecutor
                         if (newItem)
                         {
                             inventory.insertItem(slot.getSlot(), itemInSlot, false);
-                            break;
                         }
 
                         boolean done = false;
@@ -835,8 +815,6 @@ public class CommandExecutor
                             done = true;
                         }
 
-//                        inventory.markDirty();
-                        inventory.getSlots();
                         subElement.onUpdate();
 
                         if (done)
