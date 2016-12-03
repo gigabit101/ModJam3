@@ -6,7 +6,6 @@ import vswe.stevesfactory.tiles.TileEntityBUD;
 import java.util.EnumSet;
 import java.util.List;
 
-
 public class TriggerHelperBUD extends TriggerHelper
 {
     public static final int TRIGGER_BUD_BLOCK_ID = 5;

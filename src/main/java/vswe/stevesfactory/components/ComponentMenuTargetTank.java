@@ -13,22 +13,22 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuTargetTank extends ComponentMenuTarget
 {
+    private RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            DataWriter dw = getWriterForServerComponentPacket();
+            dw.writeData(selectedDirectionId, DataBitHelper.MENU_TARGET_DIRECTION_ID);
+            dw.writeData(DataTypeHeader.START_OR_TANK_DATA.getId(), DataBitHelper.MENU_TARGET_TYPE_HEADER);
+            dw.writeBoolean(selectedOption == 1);
+            PacketHandler.sendDataToServer(dw);
+        }
+    };
+
     public ComponentMenuTargetTank(FlowComponent parent)
     {
         super(parent);
-
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeData(selectedDirectionId, DataBitHelper.MENU_TARGET_DIRECTION_ID);
-                dw.writeData(DataTypeHeader.START_OR_TANK_DATA.getId(), DataBitHelper.MENU_TARGET_TYPE_HEADER);
-                dw.writeBoolean(selectedOption == 1);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
 
         radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y, Localization.EMPTY_TANK));
         radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + RADIO_BUTTON_SPACING, Localization.FILLED_TANK));
@@ -39,7 +39,6 @@ public class ComponentMenuTargetTank extends ComponentMenuTarget
     private static final int RADIO_BUTTON_SPACING = 12;
 
     private boolean[] onlyFull = new boolean[directions.length];
-    private RadioButtonList radioButtons;
 
     @Override
     protected Button getSecondButton()

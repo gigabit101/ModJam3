@@ -13,6 +13,16 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuPulse extends ComponentMenu
 {
+    private RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            radioButtons.setSelectedOption(selectedOption);
+
+            sendServerPacket(ComponentSyncType.RADIO_BUTTON);
+        }
+    };
 
     public ComponentMenuPulse(FlowComponent parent)
     {
@@ -39,17 +49,6 @@ public class ComponentMenuPulse extends ComponentMenu
                 sendServerPacket(ComponentSyncType.CHECK_BOX);
             }
         });
-
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                radioButtons.setSelectedOption(selectedOption);
-
-                sendServerPacket(ComponentSyncType.RADIO_BUTTON);
-            }
-        };
 
         for (int i = 0; i < PULSE_OPTIONS.values().length; i++)
         {
@@ -128,7 +127,6 @@ public class ComponentMenuPulse extends ComponentMenu
 
     private CheckBoxList checkBoxes;
     private boolean usePulse;
-    private RadioButtonList radioButtons;
     private TextBoxNumberList textBoxes;
     private TextBoxNumber ticksTextBox;
     private TextBoxNumber secondsTextBox;

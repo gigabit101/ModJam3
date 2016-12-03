@@ -14,20 +14,19 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuSplit extends ComponentMenu
 {
+    private RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            setSelectedOption(selectedOption);
+            sendServerData(0);
+        }
+    };
+
     public ComponentMenuSplit(FlowComponent parent)
     {
         super(parent);
-
-
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-                sendServerData(0);
-            }
-        };
 
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.SEQUENTIAL));
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y + SPACING_Y, Localization.SPLIT));
@@ -77,7 +76,6 @@ public class ComponentMenuSplit extends ComponentMenu
         });
     }
 
-    private RadioButtonList radioButtons;
     private CheckBoxList checkBoxes;
     private boolean useFair;
     private boolean useEmpty;

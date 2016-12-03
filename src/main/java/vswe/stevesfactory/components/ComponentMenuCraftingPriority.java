@@ -12,20 +12,31 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuCraftingPriority extends ComponentMenu
 {
+    private RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            DataWriter dw = getWriterForServerComponentPacket();
+            dw.writeBoolean(selectedOption == 0);
+            PacketHandler.sendDataToServer(dw);
+        }
+    };
+
     public ComponentMenuCraftingPriority(FlowComponent parent)
     {
         super(parent);
 
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeBoolean(selectedOption == 0);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
+//        radioButtons = new RadioButtonList()
+//        {
+//            @Override
+//            public void updateSelectedOption(int selectedOption)
+//            {
+//                DataWriter dw = getWriterForServerComponentPacket();
+//                dw.writeBoolean(selectedOption == 0);
+//                PacketHandler.sendDataToServer(dw);
+//            }
+//        };
 
 
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.PRIORITY_MOVE_FIRST));
@@ -35,8 +46,6 @@ public class ComponentMenuCraftingPriority extends ComponentMenu
     private static final int RADIO_X = 5;
     private static final int RADIO_Y = 5;
     private static final int RADIO_MARGIN = 13;
-
-    private RadioButtonList radioButtons;
 
     @Override
     public String getName()

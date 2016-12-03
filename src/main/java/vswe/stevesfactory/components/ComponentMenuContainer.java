@@ -35,7 +35,6 @@ import java.util.List;
 
 public abstract class ComponentMenuContainer extends ComponentMenu
 {
-
     private static final int BACK_SRC_X = 46;
     private static final int BACK_SRC_Y = 52;
     private static final int BACK_SIZE_W = 9;
@@ -67,7 +66,6 @@ public abstract class ComponentMenuContainer extends ComponentMenu
     private Page currentPage;
     protected List<Integer> selectedInventories;
     private List<IContainerSelection> inventories;
-    protected RadioButtonList radioButtonsMulti;
     protected ScrollController<IContainerSelection> scrollController;
     private ConnectionBlockType validType;
     @SideOnly(Side.CLIENT)
@@ -76,6 +74,16 @@ public abstract class ComponentMenuContainer extends ComponentMenu
     private static final ContainerFilter filter = new ContainerFilter(); //this one is static so all of the menus will share the selection
     private List<Variable> filterVariables;
     private boolean clientUpdate; //ugly quick way to fix client/server issue
+    public RadioButtonList radioButtonsMulti = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            DataWriter dw = getWriterForServerComponentPacket();
+            writeRadioButtonData(dw, selectedOption);
+            PacketHandler.sendDataToServer(dw);
+        }
+    };
 
 
     protected EnumSet<ConnectionBlockType> getValidTypes()
@@ -90,16 +98,16 @@ public abstract class ComponentMenuContainer extends ComponentMenu
 
         selectedInventories = new ArrayList<Integer>();
         filterVariables = new ArrayList<Variable>();
-        radioButtonsMulti = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                DataWriter dw = getWriterForServerComponentPacket();
-                writeRadioButtonData(dw, selectedOption);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
+//        radioButtonsMulti = new RadioButtonList()
+//        {
+//            @Override
+//            public void updateSelectedOption(int selectedOption)
+//            {
+//                DataWriter dw = getWriterForServerComponentPacket();
+//                writeRadioButtonData(dw, selectedOption);
+//                PacketHandler.sendDataToServer(dw);
+//            }
+//        };
 
         initRadioButtons();
 

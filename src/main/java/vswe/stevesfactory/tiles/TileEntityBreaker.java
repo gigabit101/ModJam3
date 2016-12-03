@@ -492,8 +492,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             if (placeDirection == null)
                 placeDirection = BlockCableBreaker.getSide(getBlockMetadata()); //might be a cheap fix, but seams to some kind of sync bug between threads or something
             dw.writeData(placeDirection.getIndex(), DataBitHelper.PLACE_DIRECTION);
-        } else
-        {
+        } else {
             //nothing to write, empty packet
         }
     }

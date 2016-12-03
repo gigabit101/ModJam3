@@ -10,7 +10,6 @@ import java.util.List;
 
 public abstract class RadioButtonList
 {
-
     private static final int RADIO_SIZE = 8;
     private static final int RADIO_SRC_X = 30;
     private static final int RADIO_SRC_Y = 52;
@@ -23,7 +22,6 @@ public abstract class RadioButtonList
     public RadioButtonList()
     {
         radioButtonList = new ArrayList<RadioButton>();
-
     }
 
     @SideOnly(Side.CLIENT)

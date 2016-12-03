@@ -13,6 +13,19 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuRedstoneOutput extends ComponentMenu
 {
+    private RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            setSelectedOption(selectedOption);
+            DataWriter dw = getWriterForServerComponentPacket();
+            dw.writeBoolean(false); //header
+            dw.writeData(selectedOption, DataBitHelper.MENU_REDSTONE_OUTPUT_TYPE);
+            PacketHandler.sendDataToServer(dw);
+        }
+    };
+
     public ComponentMenuRedstoneOutput(FlowComponent parent)
     {
         super(parent);
@@ -38,19 +51,6 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu
         });
         textBox.setNumber(15);
 
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeBoolean(false); //header
-                dw.writeData(selectedOption, DataBitHelper.MENU_REDSTONE_OUTPUT_TYPE);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
-
         for (int i = 0; i < Settings.values().length; i++)
         {
             int ix = i % 2;
@@ -66,7 +66,6 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu
 
     private TextBoxNumberList textBoxes;
     private TextBoxNumber textBox;
-    private RadioButtonList radioButtons;
 
     public int getSelectedStrength()
     {

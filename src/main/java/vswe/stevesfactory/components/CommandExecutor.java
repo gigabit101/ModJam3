@@ -474,7 +474,8 @@ public class CommandExecutor
                     if (target == null)
                     {
                         validTanks.put(0, new SlotSideTarget(0, side));
-                    } else
+                    }
+                    else
                     {
                         target.addSide(side);
                     }
@@ -485,31 +486,6 @@ public class CommandExecutor
 
     private boolean isSlotValid(IItemHandler inventory, ItemStack item, SlotSideTarget slot, boolean isInput)
     {
-//        if (item == null)
-//        {
-//            return false;
-//        }
-//        else if (inventory instanceof ISidedInventory)
-//        {
-//            boolean hasValidSide = false;
-//            for (int side : slot.getSides())
-//            {
-//                if (isInput && ((ISidedInventory) inventory).canExtractItem(slot.getSlot(), item, EnumFacing.getFront(side)))
-//                {
-//                    hasValidSide = true;
-//                    break;
-//                } else if (!isInput && ((ISidedInventory) inventory).canInsertItem(slot.getSlot(), item, EnumFacing.getFront(side)))
-//                {
-//                    hasValidSide = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!hasValidSide)
-//            {
-//                return false;
-//            }
-//        }
         if(item != null)
         {
             return isInput || inventory.insertItem(slot.getSlot(), item, true) != item;
@@ -540,7 +516,8 @@ public class CommandExecutor
                         }
                     }
                 }
-            } else
+            }
+            else
             {
                 for (SlotSideTarget slot : inventory.getValidSlots().values())
                 {
@@ -609,7 +586,8 @@ public class CommandExecutor
                         }
                     }
                 }
-            } else
+            }
+            else
             {
                 for (SlotSideTarget slot : tank.getValidSlots().values())
                 {
@@ -654,7 +632,6 @@ public class CommandExecutor
                             Setting setting = isFluidValid(componentMenu, fluidStack);
                             addFluidToBuffer(menuItem, tank, setting, fluidStack, side);
                         }
-
                         for (IFluidTankProperties fluidTankInfo : tank.getTank().getTankProperties())
                         {
                             if (fluidTankInfo != null)
@@ -675,7 +652,6 @@ public class CommandExecutor
         {
             FlowComponent owner = menuItem.getParent();
             StackTankHolder target = new StackTankHolder(fluidStack, tank.getTank(), EnumFacing.getFront(side));
-
             boolean added = false;
             for (FluidBufferElement fluidBufferElement : fluidBuffer)
             {
@@ -685,7 +661,6 @@ public class CommandExecutor
                     break;
                 }
             }
-
             if (!added)
             {
                 FluidBufferElement itemBufferElement = new FluidBufferElement(owner, setting, tank, menuItem.useWhiteList(), target);
@@ -697,7 +672,6 @@ public class CommandExecutor
     private Setting isItemValid(ComponentMenu componentMenu, ItemStack itemStack)
     {
         ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
-
         for (Setting setting : menuItem.getSettings())
         {
             if (((ItemSetting) setting).isEqualForCommandExecutor(itemStack))
@@ -705,14 +679,12 @@ public class CommandExecutor
                 return setting;
             }
         }
-
         return null;
     }
 
     private Setting isFluidValid(ComponentMenu componentMenu, FluidStack fluidStack)
     {
         ComponentMenuStuff menuItem = (ComponentMenuStuff) componentMenu;
-
         if (fluidStack != null)
         {
             String fluidName = fluidStack.getFluid().getName();
@@ -724,7 +696,6 @@ public class CommandExecutor
                 }
             }
         }
-
         return null;
     }
 
@@ -753,7 +724,6 @@ public class CommandExecutor
                 insertItemsFromInputBufferElement(menuItem, inventories, outputCounters, inventoryHolder, craftingBufferElement);
             }
         }
-
     }
 
     private void insertItemsFromInputBufferElement(ComponentMenuStuff menuItem, List<SlotInventoryHolder> inventories, List<OutputItemCounter> outputCounters, SlotInventoryHolder inventoryHolder, IItemBufferElement itemBufferElement)
@@ -834,10 +804,7 @@ public class CommandExecutor
                             done = true;
                         }
 
-//                        inventory.markDirty();
-                        inventory.getSlots();
                         subElement.onUpdate();
-
                         if (done)
                         {
                             break;
@@ -867,7 +834,6 @@ public class CommandExecutor
             while (bufferIterator.hasNext())
             {
                 FluidBufferElement fluidBufferElement = bufferIterator.next();
-
 
                 Iterator<StackTankHolder> fluidIterator = fluidBufferElement.getHolders().iterator();
                 while (fluidIterator.hasNext())
@@ -944,7 +910,8 @@ public class CommandExecutor
                 calculateConditionData(componentMenu, inventories.get(i), conditionSettingCheckerMap, useFluids);
             }
             return checkConditionResult(componentMenu, conditionSettingCheckerMap);
-        } else
+        }
+        else
         {
             boolean useAnd = inventories.get(0).getSharedOption() == 1;
             for (int i = 0; i < inventories.size(); i++)
@@ -972,7 +939,8 @@ public class CommandExecutor
         if (useFluids)
         {
             calculateConditionDataFluid(componentMenu, inventoryHolder, conditionSettingCheckerMap);
-        } else
+        }
+        else
         {
             calculateConditionDataItem(componentMenu, inventoryHolder, conditionSettingCheckerMap);
         }
@@ -1176,7 +1144,8 @@ public class CommandExecutor
                 if (remove)
                 {
                     variable.remove(id);
-                } else if (id >= 0 && id < inventories.size() && inventories.get(id).isOfAnyType(validTypes))
+                }
+                else if (id >= 0 && id < inventories.size() && inventories.get(id).isOfAnyType(validTypes))
                 {
                     variable.add(id);
                 }

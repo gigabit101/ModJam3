@@ -42,10 +42,25 @@ public class ContainerFilter
 
     public CheckBoxList checkBoxes;
     public TextBoxNumberList textBoxes;
-    public RadioButtonList radioButtonsSelection;
+    public RadioButtonList radioButtonsSelection = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            setSelectedOption(selectedOption);
+        }
+    };
+
     public ScrollController<Variable> scrollControllerVariable;
     public List<Integer> filterVariableSelection;
-    public RadioButtonList radioButtonVariable;
+    public RadioButtonList radioButtonVariable = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            setSelectedOption(selectedOption);
+        }
+    };
 
     private CheckBox invertFilterMatch;
     private CheckBox[] useSubFilter;
@@ -106,14 +121,6 @@ public class ContainerFilter
             checkBoxes.addCheckBox(invertRange[i + 3] = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.DISTANCE, CHECK_BOX_DISTANCE_INVERT_X, y));
         }
 
-        radioButtonsSelection = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-            }
-        };
         Localization[] selection = {Localization.ONLY_SELECTED, Localization.HIDE_SELECTED};
         for (int i = 0; i < selection.length; i++)
         {
@@ -160,14 +167,6 @@ public class ContainerFilter
             }
         };
 
-        radioButtonVariable = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-            }
-        };
 
         Localization[] varOptions = {Localization.USE_UNUSED, Localization.USE_FILTER};
         for (int i = 0; i < varOptions.length; i++)

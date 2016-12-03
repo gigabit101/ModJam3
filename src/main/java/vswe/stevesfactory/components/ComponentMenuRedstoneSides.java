@@ -16,6 +16,16 @@ import java.util.List;
 
 public abstract class ComponentMenuRedstoneSides extends ComponentMenu
 {
+    public RadioButtonList radioButtonList = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            setFirstOption(selectedOption == 0);
+            sendServerData(true);
+        }
+    };
+
     public ComponentMenuRedstoneSides(FlowComponent parent)
     {
         super(parent);
@@ -29,15 +39,6 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu
             checkBoxList.addCheckBox(new CheckBoxSide(i));
         }
 
-        radioButtonList = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setFirstOption(selectedOption == 0);
-                sendServerData(true);
-            }
-        };
 
         radioButtonList.setSelectedOption(1);
 
@@ -96,7 +97,6 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu
     }
 
     private CheckBoxList checkBoxList;
-    protected RadioButtonList radioButtonList;
     protected int selection;
 
 

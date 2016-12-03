@@ -15,50 +15,50 @@ import java.util.List;
 
 public class ComponentMenuVariable extends ComponentMenu
 {
+    private RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            setSelectedOption(selectedOption);
+            DataWriter dw = getWriterForServerComponentPacket();
+            dw.writeBoolean(true); //var || mode
+            dw.writeBoolean(false); //mode
+            dw.writeData(selectedOption, DataBitHelper.CONTAINER_MODE);
+            PacketHandler.sendDataToServer(dw);
+        }
+
+        @Override
+        public int getSelectedOption()
+        {
+            int id = super.getSelectedOption();
+            VariableMode mode = VariableMode.values()[id];
+            if (mode.declaration != isDeclaration())
+            {
+                setSelectedOption(id = getDefaultId());
+            }
+
+            return id;
+        }
+
+        @Override
+        public void setSelectedOption(int selectedOption)
+        {
+            super.setSelectedOption(selectedOption);
+
+            if (isDeclaration())
+            {
+                getParent().getManager().updateVariables();
+            }
+        }
+    };
+
     public ComponentMenuVariable(FlowComponent parent)
     {
         super(parent);
 
         int declarationCount = 0;
         int modificationCount = 0;
-
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeBoolean(true); //var || mode
-                dw.writeBoolean(false); //mode
-                dw.writeData(selectedOption, DataBitHelper.CONTAINER_MODE);
-                PacketHandler.sendDataToServer(dw);
-            }
-
-            @Override
-            public int getSelectedOption()
-            {
-                int id = super.getSelectedOption();
-                VariableMode mode = VariableMode.values()[id];
-                if (mode.declaration != isDeclaration())
-                {
-                    setSelectedOption(id = getDefaultId());
-                }
-
-                return id;
-            }
-
-            @Override
-            public void setSelectedOption(int selectedOption)
-            {
-                super.setSelectedOption(selectedOption);
-
-                if (isDeclaration())
-                {
-                    getParent().getManager().updateVariables();
-                }
-            }
-        };
 
         for (int i = 0; i < VariableMode.values().length; i++)
         {
@@ -164,7 +164,6 @@ public class ComponentMenuVariable extends ComponentMenu
     private static final int CHECK_BOX_Y = 52;
 
 
-    private RadioButtonList radioButtons;
     private VariableDisplay varDisplay;
     private int selectedVariable = 0;
     private CheckBoxList checkBoxes;

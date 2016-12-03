@@ -19,7 +19,17 @@ import java.util.List;
 
 public abstract class ComponentMenuStuff extends ComponentMenu
 {
-
+    public RadioButtonList radioButtons = new RadioButtonList()
+    {
+        @Override
+        public void updateSelectedOption(int selectedOption)
+        {
+            DataWriter dw = getWriterForServerComponentPacket();
+            dw.writeBoolean(false); //no specific item
+            writeRadioButtonRefreshState(dw, selectedOption == 0);
+            PacketHandler.sendDataToServer(dw);
+        }
+    };
 
     public ComponentMenuStuff(FlowComponent parent, Class<? extends Setting> settingClass)
     {
@@ -44,19 +54,6 @@ public abstract class ComponentMenuStuff extends ComponentMenu
 
         }
         numberTextBoxes = new TextBoxNumberList();
-
-
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeBoolean(false); //no specific item
-                writeRadioButtonRefreshState(dw, selectedOption == 0);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
 
         initRadioButtons();
 
@@ -265,7 +262,6 @@ public abstract class ComponentMenuStuff extends ComponentMenu
     private boolean editSetting;
     protected TextBoxNumberList numberTextBoxes;
 
-    protected RadioButtonList radioButtons;
     protected CheckBoxList checkBoxes;
 
     @SideOnly(Side.CLIENT)
