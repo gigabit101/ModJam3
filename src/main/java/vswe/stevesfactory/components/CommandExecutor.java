@@ -11,7 +11,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.Sys;
 import vswe.stevesfactory.ItemUtils;
-import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityCreative;
@@ -599,55 +598,56 @@ public class CommandExecutor
                     List<IFluidTankProperties> tankInfos = new ArrayList<IFluidTankProperties>();
                     for (int side : slot.getSides())
                     {
-                        IFluidTankProperties[] currentTankInfos = tank.getTank().getTankProperties();
-                        if (currentTankInfos == null)
+                        try
                         {
-                            continue;
-                        }
-                        for (IFluidTankProperties fluidTankInfo : currentTankInfos)
-                        {
-                            if (fluidTankInfo == null)
+                            //This is null when used with EnderIO Tanks??
+                            IFluidTankProperties[] currentTankInfos = tank.getTank().getTankProperties();
+                            if (currentTankInfos == null)
                             {
                                 continue;
                             }
-
-                            boolean alreadyUsed = false;
-                            for (IFluidTankProperties tankInfo : tankInfos)
+                            for (IFluidTankProperties fluidTankInfo : currentTankInfos)
                             {
-                                try
+                                if (fluidTankInfo == null)
+                                {
+                                    continue;
+                                }
+
+                                boolean alreadyUsed = false;
+                                for (IFluidTankProperties tankInfo : tankInfos)
                                 {
                                     if (FluidStack.areFluidStackTagsEqual(tankInfo.getContents(), fluidTankInfo.getContents()) && tankInfo.getCapacity() == fluidTankInfo.getCapacity())
                                     {
                                         alreadyUsed = true;
                                     }
-                                }catch (Exception e){System.out.print(StevesFactoryManager.MODID + "But why!!!!");}
+                                }
+
+                                if (alreadyUsed)
+                                {
+                                    continue;
+                                }
+
+                                FluidStack fluidStack = fluidTankInfo.getContents();
+
+                                if (fluidStack == null)
+                                {
+                                    continue;
+                                }
+
+                                fluidStack = fluidStack.copy();
+
+                                Setting setting = isFluidValid(componentMenu, fluidStack);
+                                addFluidToBuffer(menuItem, tank, setting, fluidStack, side);
                             }
 
-                            if (alreadyUsed)
+                            for (IFluidTankProperties fluidTankInfo : tank.getTank().getTankProperties())
                             {
-                                continue;
+                                if (fluidTankInfo != null)
+                                {
+                                    tankInfos.add(fluidTankInfo);
+                                }
                             }
-
-                            FluidStack fluidStack = fluidTankInfo.getContents();
-
-                            if (fluidStack == null)
-                            {
-                                continue;
-                            }
-
-                            fluidStack = fluidStack.copy();
-
-                            Setting setting = isFluidValid(componentMenu, fluidStack);
-                            addFluidToBuffer(menuItem, tank, setting, fluidStack, side);
-                        }
-
-                        for (IFluidTankProperties fluidTankInfo : tank.getTank().getTankProperties())
-                        {
-                            if (fluidTankInfo != null)
-                            {
-                                tankInfos.add(fluidTankInfo);
-                            }
-                        }
+                        }catch (Exception e){}
                     }
                 }
             }
