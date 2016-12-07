@@ -11,6 +11,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.Sys;
 import vswe.stevesfactory.ItemUtils;
+import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.blocks.ConnectionBlock;
 import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityCreative;
@@ -613,10 +614,13 @@ public class CommandExecutor
                             boolean alreadyUsed = false;
                             for (IFluidTankProperties tankInfo : tankInfos)
                             {
-                                if (FluidStack.areFluidStackTagsEqual(tankInfo.getContents(), fluidTankInfo.getContents()) && tankInfo.getCapacity() == fluidTankInfo.getCapacity())
+                                try
                                 {
-                                    alreadyUsed = true;
-                                }
+                                    if (FluidStack.areFluidStackTagsEqual(tankInfo.getContents(), fluidTankInfo.getContents()) && tankInfo.getCapacity() == fluidTankInfo.getCapacity())
+                                    {
+                                        alreadyUsed = true;
+                                    }
+                                }catch (Exception e){System.out.print(StevesFactoryManager.MODID + "But why!!!!");}
                             }
 
                             if (alreadyUsed)
@@ -802,12 +806,13 @@ public class CommandExecutor
                         itemInSlot.stackSize += moveCount;
                         subElement.reduceAmount(moveCount);
 
+                        boolean done = false;
                         if (newItem)
                         {
                             inventory.insertItem(slot.getSlot(), itemInSlot, false);
+                            break;
                         }
 
-                        boolean done = false;
                         if (subElement.getSizeLeft() == 0)
                         {
                             subElement.remove();
