@@ -9,6 +9,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.Sys;
 import vswe.stevesfactory.ItemUtils;
 import vswe.stevesfactory.blocks.ConnectionBlock;
@@ -781,52 +783,43 @@ public class CommandExecutor
                 {
                     continue;
                 }
-
-                ItemStack itemInSlot = inventory.getStackInSlot(slot.getSlot());
-                boolean newItem = itemInSlot == null;
-                if (newItem || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
+                    boolean done = false;
+                if(itemStack != null)
                 {
-                    int itemCountInSlot = newItem ? 0 : itemInSlot.stackSize;
-
-                    //TODO 64 should be slots max size
-                    int moveCount = Math.min(subElement.getSizeLeft(), Math.min(64, itemStack.getMaxStackSize()) - itemCountInSlot);
-
-                    moveCount = outputItemCounter.retrieveItemCount(moveCount);
-                    moveCount = itemBufferElement.retrieveItemCount(moveCount);
-                    if (moveCount > 0)
+                    if (ItemHandlerHelper.insertItem(inventory, itemStack.copy(), true) == null)
                     {
-                        if (newItem)
+                        ItemHandlerHelper.insertItem(inventory, itemStack.copy(), false);
+                        outputItemCounter.modifyStackSize(itemStack.stackSize);
+                        subElement.reduceAmount(itemStack.stackSize);
+                        itemBufferElement.decreaseStackSize(itemStack.stackSize);
+                        done = true;
+                    } else
+                    {
+                        int remain = 0;
+                        remain = ItemHandlerHelper.insertItem(inventory, itemStack.copy(), false).stackSize;
+                        if (remain > 0)
                         {
-                            itemInSlot = itemStack.copy();
-                            itemInSlot.stackSize = 0;
-                        }
-
-                        itemBufferElement.decreaseStackSize(moveCount);
-                        outputItemCounter.modifyStackSize(moveCount);
-                        itemInSlot.stackSize += moveCount;
-                        subElement.reduceAmount(moveCount);
-
-                        boolean done = false;
-                        if (newItem)
-                        {
-                            inventory.insertItem(slot.getSlot(), itemInSlot, false);
-                            break;
-                        }
-
-                        if (subElement.getSizeLeft() == 0)
-                        {
-                            subElement.remove();
-                            itemBufferElement.removeSubElement();
-                            done = true;
-                        }
-
-                        subElement.onUpdate();
-
-                        if (done)
-                        {
-                            break;
+                            int i = itemStack.copy().stackSize - remain;
+                            outputItemCounter.modifyStackSize(i);
+                            subElement.reduceAmount(i);
+                            itemBufferElement.decreaseStackSize(i);
+                            remain = 0;
                         }
                     }
+                }
+
+                if (subElement.getSizeLeft() == 0)
+                {
+                    subElement.remove();
+                    itemBufferElement.removeSubElement();
+                    done = true;
+                }
+
+                subElement.onUpdate();
+
+                if (done)
+                {
+                    break;
                 }
             }
         }
