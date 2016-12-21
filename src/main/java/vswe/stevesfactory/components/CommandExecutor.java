@@ -750,80 +750,162 @@ public class CommandExecutor
 
         IItemBufferSubElement subElement;
         itemBufferElement.prepareSubElements();
-        while ((subElement = itemBufferElement.getSubElement()) != null)
-        {
+        while ((subElement = itemBufferElement.getSubElement()) != null) {
             ItemStack itemStack = subElement.getItemStack();
 
             Setting setting = isItemValid(menuItem, itemStack);
 
-            if ((menuItem.useWhiteList() == (setting == null)) && (setting == null || !setting.isLimitedByAmount()))
-            {
+            if ((menuItem.useWhiteList() == (setting == null)) &&  (setting == null || !setting.isLimitedByAmount())) {
                 continue;
             }
 
             OutputItemCounter outputItemCounter = null;
-            for (OutputItemCounter e : outputCounters)
-            {
-                if (e.areSettingsSame(setting))
-                {
+            for (OutputItemCounter e : outputCounters) {
+                if (e.areSettingsSame(setting)) {
                     outputItemCounter = e;
                     break;
                 }
             }
 
-            if (outputItemCounter == null)
-            {
+            if (outputItemCounter == null) {
                 outputItemCounter = new OutputItemCounter(itemBuffer, inventories, inventory, setting, menuItem.useWhiteList());
                 outputCounters.add(outputItemCounter);
             }
 
-            for (SlotSideTarget slot : inventoryHolder.getValidSlots().values())
-            {
-                if (!isSlotValid(inventory, itemStack, slot, false))
-                {
+            for (SlotSideTarget slot : inventoryHolder.getValidSlots().values()) {
+                if (!isSlotValid(inventory, itemStack, slot, false)) {
                     continue;
                 }
-                    boolean done = false;
-                if(itemStack != null)
-                {
-                    if (ItemHandlerHelper.insertItem(inventory, itemStack.copy(), true) == null)
+
+                ItemStack itemInSlot = inventory.getStackInSlot(slot.getSlot());
+                boolean newItem = itemInSlot == null;
+                if (newItem || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable())){
+                    int itemCountInSlot = newItem ? 0 : itemInSlot.stackSize;
+                    int slotCount = 0;
+                    if(itemStack != null)
                     {
-                        ItemHandlerHelper.insertItem(inventory, itemStack.copy(), false);
-                        outputItemCounter.modifyStackSize(itemStack.stackSize);
-                        subElement.reduceAmount(itemStack.stackSize);
-                        itemBufferElement.decreaseStackSize(itemStack.stackSize);
-                        done = true;
-                    } else
-                    {
-                        int remain = 0;
-                        remain = ItemHandlerHelper.insertItem(inventory, itemStack.copy(), false).stackSize;
-                        if (remain > 0)
-                        {
-                            int i = itemStack.copy().stackSize - remain;
-                            outputItemCounter.modifyStackSize(i);
-                            subElement.reduceAmount(i);
-                            itemBufferElement.decreaseStackSize(i);
-                            remain = 0;
+                        int c = inventory.insertItem(slot.getSlot(), new ItemStack(itemStack.getItem(), Integer.MAX_VALUE), true).stackSize;
+                        slotCount = Integer.MAX_VALUE - c;
+                    }
+
+                    int moveCount = Math.min(subElement.getSizeLeft(), Math.min(slotCount, itemStack.getMaxStackSize()) - itemCountInSlot);
+
+                    moveCount = outputItemCounter.retrieveItemCount(moveCount);
+                    moveCount = itemBufferElement.retrieveItemCount(moveCount);
+                    if (moveCount > 0) {
+
+                        if (newItem) {
+                            itemInSlot = itemStack.copy();
+                            itemInSlot.stackSize = 0;
+                        }
+
+                        itemBufferElement.decreaseStackSize(moveCount);
+                        outputItemCounter.modifyStackSize(moveCount);
+                        itemInSlot.stackSize += moveCount;
+                        subElement.reduceAmount(moveCount);
+
+                        if (newItem) {
+                            inventory.insertItem(slot.getSlot(), itemInSlot, false);
+//                            inventory.setInventorySlotContents(slot.getSlot(), itemInSlot);
+                        }
+
+                        boolean done = false;
+                        if (subElement.getSizeLeft() == 0) {
+                            subElement.remove();
+                            itemBufferElement.removeSubElement();
+                            done = true;
+                        }
+
+//                        inventory.markDirty();
+                        subElement.onUpdate();
+
+                        if (done) {
+                            break;
                         }
                     }
                 }
 
-                if (subElement.getSizeLeft() == 0)
-                {
-                    subElement.remove();
-                    itemBufferElement.removeSubElement();
-                    done = true;
-                }
-
-                subElement.onUpdate();
-
-                if (done)
-                {
-                    break;
-                }
             }
         }
         itemBufferElement.releaseSubElements();
+//        IItemHandler inventory = inventoryHolder.getInventory();
+//
+//        IItemBufferSubElement subElement;
+//        itemBufferElement.prepareSubElements();
+//        while ((subElement = itemBufferElement.getSubElement()) != null)
+//        {
+//            ItemStack itemStack = subElement.getItemStack();
+//
+//            Setting setting = isItemValid(menuItem, itemStack);
+//
+//            if ((menuItem.useWhiteList() == (setting == null)) && (setting == null || !setting.isLimitedByAmount()))
+//            {
+//                continue;
+//            }
+//
+//            OutputItemCounter outputItemCounter = null;
+//            for (OutputItemCounter e : outputCounters)
+//            {
+//                if (e.areSettingsSame(setting))
+//                {
+//                    outputItemCounter = e;
+//                    break;
+//                }
+//            }
+//
+//            if (outputItemCounter == null)
+//            {
+//                outputItemCounter = new OutputItemCounter(itemBuffer, inventories, inventory, setting, menuItem.useWhiteList());
+//                outputCounters.add(outputItemCounter);
+//            }
+//
+//            for (SlotSideTarget slot : inventoryHolder.getValidSlots().values())
+//            {
+//                if (!isSlotValid(inventory, itemStack, slot, false))
+//                {
+//                    continue;
+//                }
+//                    boolean done = false;
+//                if(itemStack != null)
+//                {
+//                    if (ItemHandlerHelper.insertItem(inventory, itemStack.copy(), true) == null)
+//                    {
+//                        ItemHandlerHelper.insertItem(inventory, itemStack.copy(), false);
+//                        outputItemCounter.modifyStackSize(itemStack.stackSize);
+//                        subElement.reduceAmount(itemStack.stackSize);
+//                        itemBufferElement.decreaseStackSize(itemStack.stackSize);
+//                        done = true;
+//                    } else
+//                    {
+//                        int remain = 0;
+//                        remain = ItemHandlerHelper.insertItem(inventory, itemStack.copy(), false).stackSize;
+//                        if (remain > 0)
+//                        {
+//                            int i = itemStack.copy().stackSize - remain;
+//                            outputItemCounter.modifyStackSize(i);
+//                            subElement.reduceAmount(i);
+//                            itemBufferElement.decreaseStackSize(i);
+//                            remain = 0;
+//                        }
+//                    }
+//                }
+//
+//                if (subElement.getSizeLeft() == 0)
+//                {
+//                    subElement.remove();
+//                    itemBufferElement.removeSubElement();
+//                    done = true;
+//                }
+//
+//                subElement.onUpdate();
+//
+//                if (done)
+//                {
+//                    break;
+//                }
+//            }
+//        }
+//        itemBufferElement.releaseSubElements();
     }
 
 

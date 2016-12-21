@@ -17,7 +17,7 @@ import vswe.stevesfactory.network.FileHelper;
 import vswe.stevesfactory.network.PacketEventHandler;
 import vswe.stevesfactory.proxy.CommonProxy;
 
-@Mod(modid = StevesFactoryManager.MODID, name = "Steve's Factory Manager", version = "1.0.11")
+@Mod(modid = StevesFactoryManager.MODID, name = "Steve's Factory Manager", version = "1.0.12")
 public class StevesFactoryManager
 {
     public static final String MODID = "StevesFactoryManager";
