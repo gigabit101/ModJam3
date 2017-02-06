@@ -18,18 +18,18 @@ public class ComponentMenuCamouflageInside extends ComponentMenuCamouflageAdvanc
     {
         super(parent);
 
-        radioButtons = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-
-                DataWriter dw = getWriterForServerComponentPacket();
-                dw.writeData(radioButtons.getSelectedOption(), DataBitHelper.CAMOUFLAGE_INSIDE);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
+//        radioButtons = new RadioButtonList()
+//        {
+//            @Override
+//            public void updateSelectedOption(int selectedOption)
+//            {
+//                setSelectedOption(selectedOption);
+//
+//                DataWriter dw = getWriterForServerComponentPacket();
+//                dw.writeData(radioButtons.getSelectedOption(), DataBitHelper.CAMOUFLAGE_INSIDE);
+//                PacketHandler.sendDataToServer(dw);
+//            }
+        //};
 
         for (int i = 0; i < InsideSetType.values().length; i++)
         {

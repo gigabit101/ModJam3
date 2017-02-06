@@ -67,98 +67,98 @@ public class ContainerFilter
         Localization[] subFilterLabels = {Localization.FILTER_POSITION_LABEL, Localization.FILTER_DISTANCE_LABEL, Localization.FILTER_SELECTION_LABEL, Localization.FILTER_VARIABLE_LABEL};
         useSubFilter = new CheckBox[subFilterLabels.length];
 
-        for (int i = 0; i < subFilterPages.length; i++)
-        {
-            checkBoxes.addCheckBox(useSubFilter[i] = new CheckBoxPage(subFilterLabels[i], ComponentMenuContainer.Page.FILTER, CHECK_BOX_X, CHECK_BOX_FILTER_Y + CHECK_BOX_FILTER_SPACING * i));
-        }
-        checkBoxes.addCheckBox(invertFilterMatch = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.FILTER, CHECK_BOX_X, CHECK_BOX_FILTER_INVERT_Y));
-
-        useRange = new CheckBox[5];
-        lowerRange = new TextBoxPage[useRange.length];
-        higherRange = new TextBoxPage[useRange.length];
-        invertRange = new CheckBox[useRange.length];
-
-
-        textBoxes = new TextBoxNumberList();
-        Localization[] xyz = {Localization.X, Localization.Y, Localization.Z};
-        for (int i = 0; i < xyz.length; i++)
-        {
-            int y = CHECK_BOX_POSITION_Y + CHECK_BOX_POSITION_SPACING * i;
-
-            checkBoxes.addCheckBox(useRange[i] = new CheckBoxPage(xyz[i], ComponentMenuContainer.Page.POSITION, CHECK_BOX_X, y));
-            textBoxes.addTextBox(lowerRange[i] = new TextBoxPage(ComponentMenuContainer.Page.POSITION, TEXT_BOX_POSITION_X_1, y + TEXT_BOX_Y_OFFSET, true, -128));
-            textBoxes.addTextBox(higherRange[i] = new TextBoxPage(ComponentMenuContainer.Page.POSITION, TEXT_BOX_POSITION_X_2, y + TEXT_BOX_Y_OFFSET, true, 128));
-            checkBoxes.addCheckBox(invertRange[i] = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.POSITION, CHECK_BOX_POSITION_INVERT_X, y));
-        }
-
-        Localization[] distance = {Localization.CABLE_DISTANCE, Localization.DISTANCE};
-
-        for (int i = 0; i < distance.length; i++)
-        {
-            int y = CHECK_BOX_DISTANCE_Y + CHECK_BOX_DISTANCE_SPACING * i;
-
-            checkBoxes.addCheckBox(useRange[i + 3] = new CheckBoxPage(distance[i], ComponentMenuContainer.Page.DISTANCE, CHECK_BOX_X, y));
-
-            y += DISTANCE_SECOND_LINE;
-
-            textBoxes.addTextBox(lowerRange[i + 3] = new TextBoxPage(ComponentMenuContainer.Page.DISTANCE, TEXT_BOX_DISTANCE_X_1, y + TEXT_BOX_Y_OFFSET, false, 0));
-            textBoxes.addTextBox(higherRange[i + 3] = new TextBoxPage(ComponentMenuContainer.Page.DISTANCE, TEXT_BOX_DISTANCE_X_2, y + TEXT_BOX_Y_OFFSET, false, 128));
-            checkBoxes.addCheckBox(invertRange[i + 3] = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.DISTANCE, CHECK_BOX_DISTANCE_INVERT_X, y));
-        }
-
-        radioButtonsSelection = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                setSelectedOption(selectedOption);
-            }
-        };
-        Localization[] selection = {Localization.ONLY_SELECTED, Localization.HIDE_SELECTED};
-        for (int i = 0; i < selection.length; i++)
-        {
-            radioButtonsSelection.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + RADIO_BUTTON_SPACING * i, selection[i]));
-        }
+//        for (int i = 0; i < subFilterPages.length; i++)
+//        {
+//            checkBoxes.addCheckBox(useSubFilter[i] = new CheckBoxPage(subFilterLabels[i], ComponentMenuContainer.Page.FILTER, CHECK_BOX_X, CHECK_BOX_FILTER_Y + CHECK_BOX_FILTER_SPACING * i));
+//        }
+//        checkBoxes.addCheckBox(invertFilterMatch = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.FILTER, CHECK_BOX_X, CHECK_BOX_FILTER_INVERT_Y));
+//
+//        useRange = new CheckBox[5];
+//        lowerRange = new TextBoxPage[useRange.length];
+//        higherRange = new TextBoxPage[useRange.length];
+//        invertRange = new CheckBox[useRange.length];
+//
+//
+//        textBoxes = new TextBoxNumberList();
+//        Localization[] xyz = {Localization.X, Localization.Y, Localization.Z};
+//        for (int i = 0; i < xyz.length; i++)
+//        {
+//            int y = CHECK_BOX_POSITION_Y + CHECK_BOX_POSITION_SPACING * i;
+//
+//            checkBoxes.addCheckBox(useRange[i] = new CheckBoxPage(xyz[i], ComponentMenuContainer.Page.POSITION, CHECK_BOX_X, y));
+//            textBoxes.addTextBox(lowerRange[i] = new TextBoxPage(ComponentMenuContainer.Page.POSITION, TEXT_BOX_POSITION_X_1, y + TEXT_BOX_Y_OFFSET, true, -128));
+//            textBoxes.addTextBox(higherRange[i] = new TextBoxPage(ComponentMenuContainer.Page.POSITION, TEXT_BOX_POSITION_X_2, y + TEXT_BOX_Y_OFFSET, true, 128));
+//            checkBoxes.addCheckBox(invertRange[i] = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.POSITION, CHECK_BOX_POSITION_INVERT_X, y));
+//        }
+//
+//        Localization[] distance = {Localization.CABLE_DISTANCE, Localization.DISTANCE};
+//
+//        for (int i = 0; i < distance.length; i++)
+//        {
+//            int y = CHECK_BOX_DISTANCE_Y + CHECK_BOX_DISTANCE_SPACING * i;
+//
+//            checkBoxes.addCheckBox(useRange[i + 3] = new CheckBoxPage(distance[i], ComponentMenuContainer.Page.DISTANCE, CHECK_BOX_X, y));
+//
+//            y += DISTANCE_SECOND_LINE;
+//
+//            textBoxes.addTextBox(lowerRange[i + 3] = new TextBoxPage(ComponentMenuContainer.Page.DISTANCE, TEXT_BOX_DISTANCE_X_1, y + TEXT_BOX_Y_OFFSET, false, 0));
+//            textBoxes.addTextBox(higherRange[i + 3] = new TextBoxPage(ComponentMenuContainer.Page.DISTANCE, TEXT_BOX_DISTANCE_X_2, y + TEXT_BOX_Y_OFFSET, false, 128));
+//            checkBoxes.addCheckBox(invertRange[i + 3] = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.DISTANCE, CHECK_BOX_DISTANCE_INVERT_X, y));
+//        }
+//
+//        radioButtonsSelection = new RadioButtonList()
+//        {
+//            @Override
+//            public void updateSelectedOption(int selectedOption)
+//            {
+//                setSelectedOption(selectedOption);
+//            }
+//        };
+//        Localization[] selection = {Localization.ONLY_SELECTED, Localization.HIDE_SELECTED};
+//        for (int i = 0; i < selection.length; i++)
+//        {
+//            radioButtonsSelection.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + RADIO_BUTTON_SPACING * i, selection[i]));
+//        }
 
         //checkBoxes.addCheckBox(new CheckBoxPage(Localization.RELOAD_ON_CHANGE, ComponentMenuContainer.Page.SELECTION, CHECK_BOX_X, CHECK_BOX_SELECTION_Y));
 
-        scrollControllerVariable = new ScrollController<Variable>(false)
-        {
-            @Override
-            protected List<Variable> updateSearch(String search, boolean all)
-            {
-                if (currentMenu == null)
-                {
-                    return new ArrayList<Variable>();
-                }
-
-                return new ArrayList<Variable>(currentMenu.getFilterVariables());
-            }
-
-            @Override
-            protected void onClick(Variable variable, int mX, int mY, int button)
-            {
-                if (filterVariableSelection.contains(variable.getId()))
-                {
-                    filterVariableSelection.remove((Integer) variable.getId());
-                } else
-                {
-                    filterVariableSelection.add(variable.getId());
-                }
-            }
-
-            @Override
-            protected void draw(GuiManager gui, Variable variable, int x, int y, boolean hover)
-            {
-                currentMenu.drawContainer(gui, variable, filterVariableSelection, x, y, hover);
-            }
-
-            @Override
-            protected void drawMouseOver(GuiManager gui, Variable variable, int mX, int mY)
-            {
-                gui.drawMouseOver(currentMenu.getMouseOverForContainer(variable, filterVariableSelection), mX, mY);
-            }
-        };
+//        scrollControllerVariable = new ScrollController<Variable>(false)
+//        {
+//            @Override
+//            protected List<Variable> updateSearch(String search, boolean all)
+//            {
+//                if (currentMenu == null)
+//                {
+//                    return new ArrayList<Variable>();
+//                }
+//
+//                return new ArrayList<Variable>(currentMenu.getFilterVariables());
+//            }
+//
+//            @Override
+//            protected void onClick(Variable variable, int mX, int mY, int button)
+//            {
+//                if (filterVariableSelection.contains(variable.getId()))
+//                {
+//                    filterVariableSelection.remove((Integer) variable.getId());
+//                } else
+//                {
+//                    filterVariableSelection.add(variable.getId());
+//                }
+//            }
+//
+//            @Override
+//            protected void draw(GuiManager gui, Variable variable, int x, int y, boolean hover)
+//            {
+//                currentMenu.drawContainer(gui, variable, filterVariableSelection, x, y, hover);
+//            }
+//
+//            @Override
+//            protected void drawMouseOver(GuiManager gui, Variable variable, int mX, int mY)
+//            {
+//                gui.drawMouseOver(currentMenu.getMouseOverForContainer(variable, filterVariableSelection), mX, mY);
+//            }
+//        };
 
         radioButtonVariable = new RadioButtonList()
         {
@@ -174,14 +174,14 @@ public class ContainerFilter
         {
             radioButtonVariable.add(new RadioButton(RADIO_BUTTON_X + RADIO_BUTTON_SPACING_X * i, RADIO_BUTTON_Y_VARIABLE, varOptions[i]));
         }
-        checkBoxes.addCheckBox(variableInvert = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.VARIABLE, CHECK_BOX_X, CHECK_BOX_INVERT_VARIABLE_Y)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return super.isVisible() && isVariableListVisible();
-            }
-        });
+//        checkBoxes.addCheckBox(variableInvert = new CheckBoxPage(Localization.INVERT, ComponentMenuContainer.Page.VARIABLE, CHECK_BOX_X, CHECK_BOX_INVERT_VARIABLE_Y)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return super.isVisible() && isVariableListVisible();
+//            }
+//        });
     }
 
     public boolean isVariableListVisible()

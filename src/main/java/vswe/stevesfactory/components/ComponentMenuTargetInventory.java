@@ -54,26 +54,27 @@ public class ComponentMenuTargetInventory extends ComponentMenuTarget
     @Override
     protected Button getSecondButton()
     {
-        return new Button(27)
-        {
-            @Override
-            protected String getLabel()
-            {
-                return useAdvancedSetting(selectedDirectionId) ? Localization.ALL_SLOTS.toString() : Localization.ID_RANGE.toString();
-            }
-
-            @Override
-            protected String getMouseOverText()
-            {
-                return useAdvancedSetting(selectedDirectionId) ? Localization.ALL_SLOTS_LONG.toString() : Localization.ID_RANGE_LONG.toString();
-            }
-
-            @Override
-            protected void onClicked()
-            {
-                writeData(DataTypeHeader.USE_ADVANCED_SETTING, useAdvancedSetting(selectedDirectionId) ? 0 : 1);
-            }
-        };
+//        return new Button(27)
+//        {
+//            @Override
+//            protected String getLabel()
+//            {
+//                return useAdvancedSetting(selectedDirectionId) ? Localization.ALL_SLOTS.toString() : Localization.ID_RANGE.toString();
+//            }
+//
+//            @Override
+//            protected String getMouseOverText()
+//            {
+//                return useAdvancedSetting(selectedDirectionId) ? Localization.ALL_SLOTS_LONG.toString() : Localization.ID_RANGE_LONG.toString();
+//            }
+//
+//            @Override
+//            protected void onClicked()
+//            {
+//                writeData(DataTypeHeader.USE_ADVANCED_SETTING, useAdvancedSetting(selectedDirectionId) ? 0 : 1);
+//            }
+//        };
+	    return null;
     }
 
     @SideOnly(Side.CLIENT)

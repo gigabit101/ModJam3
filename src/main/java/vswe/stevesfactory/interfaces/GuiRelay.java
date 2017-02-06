@@ -32,250 +32,250 @@ public class GuiRelay extends GuiBase
 
         this.relay = relay;
 
-        buttons.add(new Button(Localization.GIVE_PERMISSION, BUTTON_X_LEFT, BUTTON_Y_DOWN)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() == -1;
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return getUserPermission() == null;
-            }
-
-            @Override
-            public void onClick()
-            {
-                if (relay.getPermissions().size() < TileEntityRelay.PERMISSION_MAX_LENGTH)
-                {
-                    relay.getPermissions().add(new UserPermission(getUserId(), getUserName()));
-                    addUser();
-                }
-            }
-        });
-
-        buttons.add(new Button(Localization.REVOKE_PERMISSION, BUTTON_X_RIGHT, BUTTON_Y_DOWN)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() == -1;
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return getUserPermission() != null;
-            }
-
-            @Override
-            public void onClick()
-            {
-                removeUser();
-            }
-        });
-
-        buttons.add(new Button(Localization.ACTIVATE_USER, BUTTON_X_LEFT, BUTTON_Y_TOP)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() != -1 && isOp(getUserPermission(), true);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return !relay.getPermissions().get(getSelectedPermission()).isActive();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.getPermissions().get(getSelectedPermission()).setActive(true);
-                updateUser(getSelectedPermission());
-            }
-        });
-
-
-        buttons.add(new Button(Localization.DEACTIVATE_USER, BUTTON_X_RIGHT, BUTTON_Y_TOP)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() != -1 && isOp(getUserPermission(), true);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return relay.getPermissions().get(getSelectedPermission()).isActive();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.getPermissions().get(getSelectedPermission()).setActive(false);
-                updateUser(getSelectedPermission());
-            }
-        });
-
-        buttons.add(new Button(Localization.DELETE_USER, BUTTON_X_MIDDLE, BUTTON_Y_BOT)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() != -1 && isOp(getUserPermission(), true);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return true;
-            }
-
-            @Override
-            public void onClick()
-            {
-                removeUser(getSelectedPermission());
-                selectedPermission = -1;
-            }
-        });
-
-        buttons.add(new Button(Localization.MAKE_EDITOR, BUTTON_X_LEFT, BUTTON_Y_MIDDLE)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() != -1 && isOwner(getUserPermission(), true) && !isOwner(relay.getPermissions().get(getSelectedPermission()), false);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return !relay.getPermissions().get(getSelectedPermission()).isOp();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.getPermissions().get(getSelectedPermission()).setOp(true);
-                updateUser(getSelectedPermission());
-            }
-        });
-
-        buttons.add(new Button(Localization.REMOVE_EDITOR, BUTTON_X_RIGHT, BUTTON_Y_MIDDLE)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() != -1 && isOwner(getUserPermission(), true) && !isOwner(relay.getPermissions().get(getSelectedPermission()), false);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return relay.getPermissions().get(getSelectedPermission()).isOp();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.getPermissions().get(getSelectedPermission()).setOp(false);
-                updateUser(getSelectedPermission());
-            }
-        });
-
-        buttons.add(new Button(Localization.SHOW_LIST_TO_ALL, BUTTON_X_LEFT, BUTTON_Y_FURTHER_DOWN)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() == -1 && isOp(getUserPermission(), true);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return relay.doesListRequireOp();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.setListRequireOp(false);
-                updateGlobalSettings();
-            }
-        });
-
-        buttons.add(new Button(Localization.SHOW_TO_EDITORS, BUTTON_X_RIGHT, BUTTON_Y_FURTHER_DOWN)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() == -1 && isOp(getUserPermission(), true);
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return !relay.doesListRequireOp();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.setListRequireOp(true);
-                updateGlobalSettings();
-            }
-        });
-
-        buttons.add(new Button(Localization.ENABLE_CREATIVE_MODE, BUTTON_X_LEFT, BUTTON_Y_FAR_BOT)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() == -1 && isOp(getUserPermission(), true) && (Minecraft.getMinecraft().playerController.isInCreativeMode() || relay.isCreativeMode());
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return !relay.isCreativeMode();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.setCreativeMode(true);
-                updateGlobalSettings();
-            }
-        });
-
-        buttons.add(new Button(Localization.DISABLE_CREATIVE_MODE, BUTTON_X_RIGHT, BUTTON_Y_FAR_BOT)
-        {
-            @Override
-            public boolean isVisible()
-            {
-                return getSelectedPermission() == -1 && isOp(getUserPermission(), true) && (Minecraft.getMinecraft().playerController.isInCreativeMode() || relay.isCreativeMode());
-            }
-
-            @Override
-            public boolean isEnabled()
-            {
-                return relay.isCreativeMode();
-            }
-
-            @Override
-            public void onClick()
-            {
-                relay.setCreativeMode(false);
-                updateGlobalSettings();
-            }
-        });
+//        buttons.add(new Button(Localization.GIVE_PERMISSION, BUTTON_X_LEFT, BUTTON_Y_DOWN)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() == -1;
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return getUserPermission() == null;
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                if (relay.getPermissions().size() < TileEntityRelay.PERMISSION_MAX_LENGTH)
+//                {
+//                    relay.getPermissions().add(new UserPermission(getUserId(), getUserName()));
+//                    addUser();
+//                }
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.REVOKE_PERMISSION, BUTTON_X_RIGHT, BUTTON_Y_DOWN)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() == -1;
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return getUserPermission() != null;
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                removeUser();
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.ACTIVATE_USER, BUTTON_X_LEFT, BUTTON_Y_TOP)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() != -1 && isOp(getUserPermission(), true);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return !relay.getPermissions().get(getSelectedPermission()).isActive();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.getPermissions().get(getSelectedPermission()).setActive(true);
+//                updateUser(getSelectedPermission());
+//            }
+//        });
+//
+//
+//        buttons.add(new Button(Localization.DEACTIVATE_USER, BUTTON_X_RIGHT, BUTTON_Y_TOP)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() != -1 && isOp(getUserPermission(), true);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return relay.getPermissions().get(getSelectedPermission()).isActive();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.getPermissions().get(getSelectedPermission()).setActive(false);
+//                updateUser(getSelectedPermission());
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.DELETE_USER, BUTTON_X_MIDDLE, BUTTON_Y_BOT)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() != -1 && isOp(getUserPermission(), true);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return true;
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                removeUser(getSelectedPermission());
+//                selectedPermission = -1;
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.MAKE_EDITOR, BUTTON_X_LEFT, BUTTON_Y_MIDDLE)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() != -1 && isOwner(getUserPermission(), true) && !isOwner(relay.getPermissions().get(getSelectedPermission()), false);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return !relay.getPermissions().get(getSelectedPermission()).isOp();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.getPermissions().get(getSelectedPermission()).setOp(true);
+//                updateUser(getSelectedPermission());
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.REMOVE_EDITOR, BUTTON_X_RIGHT, BUTTON_Y_MIDDLE)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() != -1 && isOwner(getUserPermission(), true) && !isOwner(relay.getPermissions().get(getSelectedPermission()), false);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return relay.getPermissions().get(getSelectedPermission()).isOp();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.getPermissions().get(getSelectedPermission()).setOp(false);
+//                updateUser(getSelectedPermission());
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.SHOW_LIST_TO_ALL, BUTTON_X_LEFT, BUTTON_Y_FURTHER_DOWN)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() == -1 && isOp(getUserPermission(), true);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return relay.doesListRequireOp();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.setListRequireOp(false);
+//                updateGlobalSettings();
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.SHOW_TO_EDITORS, BUTTON_X_RIGHT, BUTTON_Y_FURTHER_DOWN)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() == -1 && isOp(getUserPermission(), true);
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return !relay.doesListRequireOp();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.setListRequireOp(true);
+//                updateGlobalSettings();
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.ENABLE_CREATIVE_MODE, BUTTON_X_LEFT, BUTTON_Y_FAR_BOT)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() == -1 && isOp(getUserPermission(), true) && (Minecraft.getMinecraft().playerController.isInCreativeMode() || relay.isCreativeMode());
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return !relay.isCreativeMode();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.setCreativeMode(true);
+//                updateGlobalSettings();
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.DISABLE_CREATIVE_MODE, BUTTON_X_RIGHT, BUTTON_Y_FAR_BOT)
+//        {
+//            @Override
+//            public boolean isVisible()
+//            {
+//                return getSelectedPermission() == -1 && isOp(getUserPermission(), true) && (Minecraft.getMinecraft().playerController.isInCreativeMode() || relay.isCreativeMode());
+//            }
+//
+//            @Override
+//            public boolean isEnabled()
+//            {
+//                return relay.isCreativeMode();
+//            }
+//
+//            @Override
+//            public void onClick()
+//            {
+//                relay.setCreativeMode(false);
+//                updateGlobalSettings();
+//            }
+//        });
     }
 
 

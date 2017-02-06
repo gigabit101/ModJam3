@@ -34,47 +34,47 @@ public class ComponentMenuSplit extends ComponentMenu
 
         checkBoxes = new CheckBoxList();
 
-        checkBoxes.addCheckBox(new CheckBox(Localization.FAIR_SPLIT, CHECK_BOX_X, RADIO_Y + 2 * SPACING_Y)
-        {
-            @Override
-            public void setValue(boolean val)
-            {
-                setFair(val);
-            }
-
-            @Override
-            public boolean getValue()
-            {
-                return useFair();
-            }
-
-            @Override
-            public void onUpdate()
-            {
-                sendServerData(1);
-            }
-        });
-
-        checkBoxes.addCheckBox(new CheckBox(Localization.EMPTY_PINS, CHECK_BOX_X, RADIO_Y + 3 * SPACING_Y)
-        {
-            @Override
-            public void setValue(boolean val)
-            {
-                setEmpty(val);
-            }
-
-            @Override
-            public boolean getValue()
-            {
-                return useEmpty();
-            }
-
-            @Override
-            public void onUpdate()
-            {
-                sendServerData(2);
-            }
-        });
+//        checkBoxes.addCheckBox(new CheckBox(Localization.FAIR_SPLIT, CHECK_BOX_X, RADIO_Y + 2 * SPACING_Y)
+//        {
+//            @Override
+//            public void setValue(boolean val)
+//            {
+//                setFair(val);
+//            }
+//
+//            @Override
+//            public boolean getValue()
+//            {
+//                return useFair();
+//            }
+//
+//            @Override
+//            public void onUpdate()
+//            {
+//                sendServerData(1);
+//            }
+//        });
+//
+//        checkBoxes.addCheckBox(new CheckBox(Localization.EMPTY_PINS, CHECK_BOX_X, RADIO_Y + 3 * SPACING_Y)
+//        {
+//            @Override
+//            public void setValue(boolean val)
+//            {
+//                setEmpty(val);
+//            }
+//
+//            @Override
+//            public boolean getValue()
+//            {
+//                return useEmpty();
+//            }
+//
+//            @Override
+//            public void onUpdate()
+//            {
+//                sendServerData(2);
+//            }
+//        });
     }
 
     private RadioButtonList radioButtons;

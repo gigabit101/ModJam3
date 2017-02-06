@@ -44,26 +44,27 @@ public class ComponentMenuTargetTank extends ComponentMenuTarget
     @Override
     protected Button getSecondButton()
     {
-        return new Button(27)
-        {
-            @Override
-            protected String getLabel()
-            {
-                return useAdvancedSetting(selectedDirectionId) ? Localization.ADVANCED_MODE.toString() : Localization.SIMPLE_MODE.toString();
-            }
-
-            @Override
-            protected String getMouseOverText()
-            {
-                return useAdvancedSetting(selectedDirectionId) ? Localization.SIMPLE_MODE_LONG.toString() : Localization.ADVANCED_MODE_LONG.toString();
-            }
-
-            @Override
-            protected void onClicked()
-            {
-                writeData(DataTypeHeader.USE_ADVANCED_SETTING, useAdvancedSetting(selectedDirectionId) ? 0 : 1);
-            }
-        };
+//        return new Button(27)
+//        {
+//            @Override
+//            protected String getLabel()
+//            {
+//                return useAdvancedSetting(selectedDirectionId) ? Localization.ADVANCED_MODE.toString() : Localization.SIMPLE_MODE.toString();
+//            }
+//
+//            @Override
+//            protected String getMouseOverText()
+//            {
+//                return useAdvancedSetting(selectedDirectionId) ? Localization.SIMPLE_MODE_LONG.toString() : Localization.ADVANCED_MODE_LONG.toString();
+//            }
+//
+//            @Override
+//            protected void onClicked()
+//            {
+//                writeData(DataTypeHeader.USE_ADVANCED_SETTING, useAdvancedSetting(selectedDirectionId) ? 0 : 1);
+//            }
+//        };
+	    return null;
     }
 
     @SideOnly(Side.CLIENT)

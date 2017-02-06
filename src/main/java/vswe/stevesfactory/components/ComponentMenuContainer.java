@@ -86,334 +86,334 @@ public abstract class ComponentMenuContainer extends ComponentMenu
 
         selectedInventories = new ArrayList<Integer>();
         filterVariables = new ArrayList<Variable>();
-        radioButtonsMulti = new RadioButtonList()
-        {
-            @Override
-            public void updateSelectedOption(int selectedOption)
-            {
-                DataWriter dw = getWriterForServerComponentPacket();
-                writeRadioButtonData(dw, selectedOption);
-                PacketHandler.sendDataToServer(dw);
-            }
-        };
+//        radioButtonsMulti = new RadioButtonList()
+//        {
+//            @Override
+//            public void updateSelectedOption(int selectedOption)
+//            {
+//                DataWriter dw = getWriterForServerComponentPacket();
+//                writeRadioButtonData(dw, selectedOption);
+//                PacketHandler.sendDataToServer(dw);
+//            }
+//        };
 
         initRadioButtons();
 
-        scrollController = new ScrollController<IContainerSelection>(getDefaultSearch())
-        {
-            @Override
-            protected List<IContainerSelection> updateSearch(String search, boolean all)
-            {
-                if (search.equals("") || !clientUpdate || cachedInterface == null)
-                {
-                    return new ArrayList<IContainerSelection>();
-                }
-
-                if (inventories == null)
-                {
-                    inventories = getInventories(getParent().getManager());
-                }
-
-                if (search.equals(".var"))
-                {
-                    return new ArrayList<IContainerSelection>(filterVariables);
-                }
-
-
-                boolean noFilter = search.equals(".nofilter");
-                boolean selected = search.equals(".selected");
-
-                List<IContainerSelection> ret = new ArrayList<IContainerSelection>(inventories);
-
-                Iterator<IContainerSelection> iterator = ret.iterator();
-                while (iterator.hasNext())
-                {
-                    IContainerSelection element = iterator.next();
-
-                    if (selected && selectedInventories.contains(element.getId()))
-                    {
-                        continue;
-                    } else if (!element.isVariable())
-                    {
-                        ConnectionBlock block = (ConnectionBlock) element;
-                        if (noFilter)
-                        {
-                            continue;
-                        } else if (all || block.getName(cachedInterface).toLowerCase().contains(search))
-                        {
-                            if (filter.matches(getParent().getManager(), selectedInventories, block))
-                            {
-                                continue;
-                            }
-                        }
-                    }
-
-                    iterator.remove();
-                }
-
-
-                return ret;
-            }
-
-            @SideOnly(Side.CLIENT)
-            @Override
-            protected void onClick(IContainerSelection iContainerSelection, int mX, int mY, int button)
-            {
-                if (GuiScreen.isShiftKeyDown() && mX != -1 && mY != -1)
-                {
-                    if (cachedTooltip != null && cachedId == iContainerSelection.getId())
-                    {
-                        if (!locked)
-                        {
-                            lockedX = mX;
-                            lockedY = mY;
-                        }
-                        locked = !locked;
-                    }
-                } else
-                {
-                    setSelectedInventoryAndSync(iContainerSelection.getId(), !selectedInventories.contains(iContainerSelection.getId()));
-                }
-            }
-
-            @SideOnly(Side.CLIENT)
-            @Override
-            protected void draw(GuiManager gui, IContainerSelection iContainerSelection, int x, int y, boolean hover)
-            {
-                drawContainer(gui, iContainerSelection, selectedInventories, x, y, hover);
-            }
-
-            private boolean locked;
-            private int lockedX;
-            private int lockedY;
-            @SideOnly(Side.CLIENT)
-            private ToolTip cachedTooltip;
-            private int cachedId;
-            private IContainerSelection cachedContainer;
-            private boolean keepCache;
-
-            @SideOnly(Side.CLIENT)
-            class ToolTip implements IAdvancedTooltip
-            {
-                private ItemStack[] items;
-                private List<String>[] itemTexts;
-                List<String> prefix;
-                List<String> suffix;
-                List<String> lockedSuffix;
-
-                @SideOnly(Side.CLIENT)
-                public ToolTip(GuiManager gui, ConnectionBlock block)
-                {
-                    items = new ItemStack[EnumFacing.values().length];
-                    itemTexts = new List[EnumFacing.values().length];
-
-                    World world = block.getTileEntity().getWorld();
-                    int x = block.getTileEntity().getPos().getX();
-                    int y = block.getTileEntity().getPos().getY();
-                    int z = block.getTileEntity().getPos().getZ();
-
-                    for (EnumFacing direction : EnumFacing.values())
-                    {
-                        int targetX = x + direction.getFrontOffsetX();
-                        int targetY = y + direction.getFrontOffsetY();
-                        int targetZ = z + direction.getFrontOffsetZ();
-
-                        ItemStack item = gui.getItemStackFromBlock(world, targetX, targetY, targetZ);
-                        items[direction.ordinal()] = item;
-
-                        List<String> text = new ArrayList<String>();
-                        if (item != null && item.getItem() != null)
-                        {
-                            text.add(gui.getItemName(item));
-                        }
-                        String side = Localization.getDirectionLocalization(direction).toString();
-                        text.add(Color.YELLOW + side);
-
-                        TileEntity te = world.getTileEntity(new BlockPos(targetX, targetY, targetZ));
-                        if (te instanceof TileEntitySign)
-                        {
-                            TileEntitySign sign = (TileEntitySign) te;
-                            for (ITextComponent txt : sign.signText)
-                            {
-                                if (!txt.getFormattedText().isEmpty())
-                                {
-                                    text.add(Color.GRAY + txt.getFormattedText());
-                                }
-                            }
-                        }
-
-                        itemTexts[direction.ordinal()] = text;
-                    }
-
-                    prefix = getMouseOverForContainer(block, selectedInventories);
-                    prefix.add("");
-                    prefix.add(Color.LIGHT_BLUE + Localization.TOOLTIP_ADJACENT.toString());
-
-                    suffix = new ArrayList<String>();
-                    suffix.add(Color.GRAY + Localization.TOOLTIP_LOCK.toString());
-
-                    lockedSuffix = gui.getLinesFromText(Localization.TOOLTIP_UNLOCK.toString(), getMinWidth(gui));
-                    for (int i = 0; i < lockedSuffix.size(); i++)
-                    {
-                        lockedSuffix.set(i, Color.GRAY + lockedSuffix.get(i));
-                    }
-
-                }
-
-                @SideOnly(Side.CLIENT)
-                @Override
-                public int getMinWidth(GuiBase gui)
-                {
-                    return 110;
-                }
-
-                @SideOnly(Side.CLIENT)
-                @Override
-                public int getExtraHeight(GuiBase gui)
-                {
-                    return 70;
-                }
-
-                private static final int SRC_X = 30;
-                private static final int SRC_Y = 20;
-
-                @SideOnly(Side.CLIENT)
-                private void drawBlock(GuiBase gui, int x, int y, int mX, int mY, EnumFacing direction)
-                {
-                    GlStateManager.color(1, 1, 1, 1);
-                    GuiBase.bindTexture(gui.getComponentResource());
-                    gui.drawTexture(x, y, SRC_X, SRC_Y + (CollisionHelper.inBounds(x, y, 16, 16, mX, mY) ? 16 : 0), 16, 16);
-
-                    ItemStack item = items[direction.ordinal()];
-                    if (item != null && item.getItem() != null)
-                    {
-                        gui.drawItemStack(item, x, y);
-                        gui.drawItemAmount(item, x, y);
-                    }
-                }
-
-                @SideOnly(Side.CLIENT)
-                private boolean drawBlockMouseOver(GuiBase gui, int x, int y, int mX, int mY, EnumFacing direction)
-                {
-                    if (CollisionHelper.inBounds(x, y, 16, 16, mX, mY))
-                    {
-                        List<String> itemText = itemTexts[direction.ordinal()];
-                        if (itemText != null)
-                        {
-                            gui.drawMouseOver(itemText, mX, mY);
-                        }
-                        return true;
-                    } else
-                    {
-                        return false;
-                    }
-                }
-
-
-                @SideOnly(Side.CLIENT)
-                @Override
-                public void drawContent(GuiBase gui, int x, int y, int mX, int mY)
-                {
-                    drawBlock(gui, x + 25, y + 5, mX, mY, EnumFacing.NORTH);
-                    drawBlock(gui, x + 5, y + 25, mX, mY, EnumFacing.WEST);
-                    drawBlock(gui, x + 25, y + 45, mX, mY, EnumFacing.SOUTH);
-                    drawBlock(gui, x + 45, y + 25, mX, mY, EnumFacing.EAST);
-
-                    drawBlock(gui, x + 80, y + 15, mX, mY, EnumFacing.UP);
-                    drawBlock(gui, x + 80, y + 35, mX, mY, EnumFacing.DOWN);
-                }
-
-                @SideOnly(Side.CLIENT)
-                private void drawMouseOverMouseOver(GuiBase gui, int x, int y, int mX, int mY)
-                {
-                    boolean ignored =
-                            drawBlockMouseOver(gui, x + 25, y + 5, mX, mY, EnumFacing.NORTH) ||
-                                    drawBlockMouseOver(gui, x + 5, y + 25, mX, mY, EnumFacing.WEST) ||
-                                    drawBlockMouseOver(gui, x + 25, y + 45, mX, mY, EnumFacing.SOUTH) ||
-                                    drawBlockMouseOver(gui, x + 45, y + 25, mX, mY, EnumFacing.EAST) ||
-
-                                    drawBlockMouseOver(gui, x + 80, y + 15, mX, mY, EnumFacing.UP) ||
-                                    drawBlockMouseOver(gui, x + 80, y + 35, mX, mY, EnumFacing.DOWN);
-                }
-
-                @SideOnly(Side.CLIENT)
-                @Override
-                public List<String> getPrefix(GuiBase gui)
-                {
-                    return prefix;
-                }
-
-                @SideOnly(Side.CLIENT)
-                @Override
-                public List<String> getSuffix(GuiBase gui)
-                {
-                    return locked ? lockedSuffix : suffix;
-                }
-            }
-
-
-            @SideOnly(Side.CLIENT)
-            @Override
-            public void drawMouseOver(GuiManager gui, int mX, int mY)
-            {
-                if (locked && GuiBase.isShiftKeyDown())
-                {
-                    drawMouseOver(gui, cachedContainer, lockedX, lockedY, mX, mY);
-                    cachedTooltip.drawMouseOverMouseOver(gui, lockedX + gui.getAdvancedToolTipContentStartX(cachedTooltip), lockedY + gui.getAdvancedToolTipContentStartY(cachedTooltip), mX, mY);
-                } else
-                {
-                    locked = false;
-                    keepCache = false;
-                    super.drawMouseOver(gui, mX, mY);
-                    if (!keepCache)
-                    {
-                        cachedTooltip = null;
-                        cachedContainer = null;
-                    }
-                }
-            }
-
-            @SideOnly(Side.CLIENT)
-            @Override
-            protected void drawMouseOver(GuiManager gui, IContainerSelection iContainerSelection, int mX, int mY)
-            {
-                drawMouseOver(gui, iContainerSelection, mX, mY, mX, mY);
-            }
-
-            @SideOnly(Side.CLIENT)
-            private void drawMouseOver(GuiManager gui, IContainerSelection iContainerSelection, int x, int y, int mX, int mY)
-            {
-                boolean isBlock = !iContainerSelection.isVariable();
-
-                if (GuiScreen.isShiftKeyDown() && isBlock)
-                {
-                    if (cachedTooltip == null || cachedId != iContainerSelection.getId())
-                    {
-                        cachedContainer = iContainerSelection;
-                        cachedTooltip = new ToolTip(gui, (ConnectionBlock) iContainerSelection);
-                        cachedId = iContainerSelection.getId();
-                    }
-                    keepCache = true;
-
-                    gui.drawMouseOver(cachedTooltip, x, y, mX, mY);
-                } else
-                {
-                    List<String> lines = getMouseOverForContainer(iContainerSelection, selectedInventories);
-                    if (isBlock)
-                    {
-                        if (lines == null)
-                        {
-                            lines = new ArrayList<String>();
-                        }
-
-                        lines.add("");
-                        lines.add(Color.GRAY + Localization.TOOLTIP_EXTRA_INFO.toString());
-                    }
-
-                    gui.drawMouseOver(lines, mX, mY);
-                }
-            }
-        };
+//        scrollController = new ScrollController<IContainerSelection>(getDefaultSearch())
+//        {
+//            @Override
+//            protected List<IContainerSelection> updateSearch(String search, boolean all)
+//            {
+//                if (search.equals("") || !clientUpdate || cachedInterface == null)
+//                {
+//                    return new ArrayList<IContainerSelection>();
+//                }
+//
+//                if (inventories == null)
+//                {
+//                    inventories = getInventories(getParent().getManager());
+//                }
+//
+//                if (search.equals(".var"))
+//                {
+//                    return new ArrayList<IContainerSelection>(filterVariables);
+//                }
+//
+//
+//                boolean noFilter = search.equals(".nofilter");
+//                boolean selected = search.equals(".selected");
+//
+//                List<IContainerSelection> ret = new ArrayList<IContainerSelection>(inventories);
+//
+//                Iterator<IContainerSelection> iterator = ret.iterator();
+//                while (iterator.hasNext())
+//                {
+//                    IContainerSelection element = iterator.next();
+//
+//                    if (selected && selectedInventories.contains(element.getId()))
+//                    {
+//                        continue;
+//                    } else if (!element.isVariable())
+//                    {
+//                        ConnectionBlock block = (ConnectionBlock) element;
+//                        if (noFilter)
+//                        {
+//                            continue;
+//                        } else if (all || block.getName(cachedInterface).toLowerCase().contains(search))
+//                        {
+//                            if (filter.matches(getParent().getManager(), selectedInventories, block))
+//                            {
+//                                continue;
+//                            }
+//                        }
+//                    }
+//
+//                    iterator.remove();
+//                }
+//
+//
+//                return ret;
+//            }
+//
+//            @SideOnly(Side.CLIENT)
+//            @Override
+//            protected void onClick(IContainerSelection iContainerSelection, int mX, int mY, int button)
+//            {
+//                if (GuiScreen.isShiftKeyDown() && mX != -1 && mY != -1)
+//                {
+//                    if (cachedTooltip != null && cachedId == iContainerSelection.getId())
+//                    {
+//                        if (!locked)
+//                        {
+//                            lockedX = mX;
+//                            lockedY = mY;
+//                        }
+//                        locked = !locked;
+//                    }
+//                } else
+//                {
+//                    setSelectedInventoryAndSync(iContainerSelection.getId(), !selectedInventories.contains(iContainerSelection.getId()));
+//                }
+//            }
+//
+//            @SideOnly(Side.CLIENT)
+//            @Override
+//            protected void draw(GuiManager gui, IContainerSelection iContainerSelection, int x, int y, boolean hover)
+//            {
+//                drawContainer(gui, iContainerSelection, selectedInventories, x, y, hover);
+//            }
+//
+//            private boolean locked;
+//            private int lockedX;
+//            private int lockedY;
+//            @SideOnly(Side.CLIENT)
+//            private ToolTip cachedTooltip;
+//            private int cachedId;
+//            private IContainerSelection cachedContainer;
+//            private boolean keepCache;
+//
+//            @SideOnly(Side.CLIENT)
+//            class ToolTip implements IAdvancedTooltip
+//            {
+//                private ItemStack[] items;
+//                private List<String>[] itemTexts;
+//                List<String> prefix;
+//                List<String> suffix;
+//                List<String> lockedSuffix;
+//
+//                @SideOnly(Side.CLIENT)
+//                public ToolTip(GuiManager gui, ConnectionBlock block)
+//                {
+//                    items = new ItemStack[EnumFacing.values().length];
+//                    itemTexts = new List[EnumFacing.values().length];
+//
+//                    World world = block.getTileEntity().getWorld();
+//                    int x = block.getTileEntity().getPos().getX();
+//                    int y = block.getTileEntity().getPos().getY();
+//                    int z = block.getTileEntity().getPos().getZ();
+//
+//                    for (EnumFacing direction : EnumFacing.values())
+//                    {
+//                        int targetX = x + direction.getFrontOffsetX();
+//                        int targetY = y + direction.getFrontOffsetY();
+//                        int targetZ = z + direction.getFrontOffsetZ();
+//
+//                        ItemStack item = gui.getItemStackFromBlock(world, targetX, targetY, targetZ);
+//                        items[direction.ordinal()] = item;
+//
+//                        List<String> text = new ArrayList<String>();
+//                        if (item != null && item.getItem() != null)
+//                        {
+//                            text.add(gui.getItemName(item));
+//                        }
+//                        String side = Localization.getDirectionLocalization(direction).toString();
+//                        text.add(Color.YELLOW + side);
+//
+//                        TileEntity te = world.getTileEntity(new BlockPos(targetX, targetY, targetZ));
+//                        if (te instanceof TileEntitySign)
+//                        {
+//                            TileEntitySign sign = (TileEntitySign) te;
+//                            for (ITextComponent txt : sign.signText)
+//                            {
+//                                if (!txt.getFormattedText().isEmpty())
+//                                {
+//                                    text.add(Color.GRAY + txt.getFormattedText());
+//                                }
+//                            }
+//                        }
+//
+//                        itemTexts[direction.ordinal()] = text;
+//                    }
+//
+//                    prefix = getMouseOverForContainer(block, selectedInventories);
+//                    prefix.add("");
+//                    prefix.add(Color.LIGHT_BLUE + Localization.TOOLTIP_ADJACENT.toString());
+//
+//                    suffix = new ArrayList<String>();
+//                    suffix.add(Color.GRAY + Localization.TOOLTIP_LOCK.toString());
+//
+//                    lockedSuffix = gui.getLinesFromText(Localization.TOOLTIP_UNLOCK.toString(), getMinWidth(gui));
+//                    for (int i = 0; i < lockedSuffix.size(); i++)
+//                    {
+//                        lockedSuffix.set(i, Color.GRAY + lockedSuffix.get(i));
+//                    }
+//
+//                }
+//
+//                @SideOnly(Side.CLIENT)
+//                @Override
+//                public int getMinWidth(GuiBase gui)
+//                {
+//                    return 110;
+//                }
+//
+//                @SideOnly(Side.CLIENT)
+//                @Override
+//                public int getExtraHeight(GuiBase gui)
+//                {
+//                    return 70;
+//                }
+//
+//                private static final int SRC_X = 30;
+//                private static final int SRC_Y = 20;
+//
+//                @SideOnly(Side.CLIENT)
+//                private void drawBlock(GuiBase gui, int x, int y, int mX, int mY, EnumFacing direction)
+//                {
+//                    GlStateManager.color(1, 1, 1, 1);
+//                    GuiBase.bindTexture(gui.getComponentResource());
+//                    gui.drawTexture(x, y, SRC_X, SRC_Y + (CollisionHelper.inBounds(x, y, 16, 16, mX, mY) ? 16 : 0), 16, 16);
+//
+//                    ItemStack item = items[direction.ordinal()];
+//                    if (item != null && item.getItem() != null)
+//                    {
+//                        gui.drawItemStack(item, x, y);
+//                        gui.drawItemAmount(item, x, y);
+//                    }
+//                }
+//
+//                @SideOnly(Side.CLIENT)
+//                private boolean drawBlockMouseOver(GuiBase gui, int x, int y, int mX, int mY, EnumFacing direction)
+//                {
+//                    if (CollisionHelper.inBounds(x, y, 16, 16, mX, mY))
+//                    {
+//                        List<String> itemText = itemTexts[direction.ordinal()];
+//                        if (itemText != null)
+//                        {
+//                            gui.drawMouseOver(itemText, mX, mY);
+//                        }
+//                        return true;
+//                    } else
+//                    {
+//                        return false;
+//                    }
+//                }
+//
+//
+//                @SideOnly(Side.CLIENT)
+//                @Override
+//                public void drawContent(GuiBase gui, int x, int y, int mX, int mY)
+//                {
+//                    drawBlock(gui, x + 25, y + 5, mX, mY, EnumFacing.NORTH);
+//                    drawBlock(gui, x + 5, y + 25, mX, mY, EnumFacing.WEST);
+//                    drawBlock(gui, x + 25, y + 45, mX, mY, EnumFacing.SOUTH);
+//                    drawBlock(gui, x + 45, y + 25, mX, mY, EnumFacing.EAST);
+//
+//                    drawBlock(gui, x + 80, y + 15, mX, mY, EnumFacing.UP);
+//                    drawBlock(gui, x + 80, y + 35, mX, mY, EnumFacing.DOWN);
+//                }
+//
+//                @SideOnly(Side.CLIENT)
+//                private void drawMouseOverMouseOver(GuiBase gui, int x, int y, int mX, int mY)
+//                {
+//                    boolean ignored =
+//                            drawBlockMouseOver(gui, x + 25, y + 5, mX, mY, EnumFacing.NORTH) ||
+//                                    drawBlockMouseOver(gui, x + 5, y + 25, mX, mY, EnumFacing.WEST) ||
+//                                    drawBlockMouseOver(gui, x + 25, y + 45, mX, mY, EnumFacing.SOUTH) ||
+//                                    drawBlockMouseOver(gui, x + 45, y + 25, mX, mY, EnumFacing.EAST) ||
+//
+//                                    drawBlockMouseOver(gui, x + 80, y + 15, mX, mY, EnumFacing.UP) ||
+//                                    drawBlockMouseOver(gui, x + 80, y + 35, mX, mY, EnumFacing.DOWN);
+//                }
+//
+//                @SideOnly(Side.CLIENT)
+//                @Override
+//                public List<String> getPrefix(GuiBase gui)
+//                {
+//                    return prefix;
+//                }
+//
+//                @SideOnly(Side.CLIENT)
+//                @Override
+//                public List<String> getSuffix(GuiBase gui)
+//                {
+//                    return locked ? lockedSuffix : suffix;
+//                }
+//            }
+//
+//
+//            @SideOnly(Side.CLIENT)
+//            @Override
+//            public void drawMouseOver(GuiManager gui, int mX, int mY)
+//            {
+//                if (locked && GuiBase.isShiftKeyDown())
+//                {
+//                    drawMouseOver(gui, cachedContainer, lockedX, lockedY, mX, mY);
+//                    cachedTooltip.drawMouseOverMouseOver(gui, lockedX + gui.getAdvancedToolTipContentStartX(cachedTooltip), lockedY + gui.getAdvancedToolTipContentStartY(cachedTooltip), mX, mY);
+//                } else
+//                {
+//                    locked = false;
+//                    keepCache = false;
+//                    super.drawMouseOver(gui, mX, mY);
+//                    if (!keepCache)
+//                    {
+//                        cachedTooltip = null;
+//                        cachedContainer = null;
+//                    }
+//                }
+//            }
+//
+//            @SideOnly(Side.CLIENT)
+//            @Override
+//            protected void drawMouseOver(GuiManager gui, IContainerSelection iContainerSelection, int mX, int mY)
+//            {
+//                drawMouseOver(gui, iContainerSelection, mX, mY, mX, mY);
+//            }
+//
+//            @SideOnly(Side.CLIENT)
+//            private void drawMouseOver(GuiManager gui, IContainerSelection iContainerSelection, int x, int y, int mX, int mY)
+//            {
+//                boolean isBlock = !iContainerSelection.isVariable();
+//
+//                if (GuiScreen.isShiftKeyDown() && isBlock)
+//                {
+//                    if (cachedTooltip == null || cachedId != iContainerSelection.getId())
+//                    {
+//                        cachedContainer = iContainerSelection;
+//                        cachedTooltip = new ToolTip(gui, (ConnectionBlock) iContainerSelection);
+//                        cachedId = iContainerSelection.getId();
+//                    }
+//                    keepCache = true;
+//
+//                    gui.drawMouseOver(cachedTooltip, x, y, mX, mY);
+//                } else
+//                {
+//                    List<String> lines = getMouseOverForContainer(iContainerSelection, selectedInventories);
+//                    if (isBlock)
+//                    {
+//                        if (lines == null)
+//                        {
+//                            lines = new ArrayList<String>();
+//                        }
+//
+//                        lines.add("");
+//                        lines.add(Color.GRAY + Localization.TOOLTIP_EXTRA_INFO.toString());
+//                    }
+//
+//                    gui.drawMouseOver(lines, mX, mY);
+//                }
+//            }
+//        };
 
         buttons = new ArrayList<Button>();
         buttons.add(new PageButton(Localization.FILTER_SHORT, Page.MAIN, Localization.FILTER_LONG, Page.FILTER, false, 102, 21));
@@ -425,71 +425,71 @@ public abstract class ComponentMenuContainer extends ComponentMenu
         {
             buttons.add(new ComponentMenuContainer.PageButton(Localization.SUB_MENU_SHORT, ComponentMenuContainer.Page.FILTER, Localization.SUB_MENU_LONG, subFilterPages[i], true, FILTER_BUTTON_X, CHECK_BOX_FILTER_Y + CHECK_BOX_FILTER_SPACING * i + FILTER_BUTTON_Y));
         }
-        buttons.add(new ComponentMenuContainer.Button(Localization.CLEAR_SHORT, ComponentMenuContainer.Page.FILTER, Localization.CLEAR_LONG, true, FILTER_RESET_BUTTON_X, CHECK_BOX_FILTER_INVERT_Y)
-        {
-            @Override
-            void onClick()
-            {
-                filter.clear();
-            }
-        });
+//        buttons.add(new ComponentMenuContainer.Button(Localization.CLEAR_SHORT, ComponentMenuContainer.Page.FILTER, Localization.CLEAR_LONG, true, FILTER_RESET_BUTTON_X, CHECK_BOX_FILTER_INVERT_Y)
+//        {
+//            @Override
+//            void onClick()
+//            {
+//                filter.clear();
+//            }
+//        });
 
-        buttons.add(new Button(Localization.SELECT_ALL_SHORT, Page.MAIN, Localization.SELECT_ALL_LONG, false, 102, 51)
-        {
-            @Override
-            void onClick()
-            {
-                for (IContainerSelection iContainerSelection : scrollController.getResult())
-                {
-                    if (!selectedInventories.contains(iContainerSelection.getId()))
-                    {
-                        scrollController.onClick(iContainerSelection, -1, -1, 0);
-                    }
-                }
-            }
-        });
-
-        buttons.add(new Button(Localization.SELECT_NONE_SHORT, Page.MAIN, Localization.SELECT_NONE_LONG, false, 111, 51)
-        {
-            @Override
-            void onClick()
-            {
-                for (IContainerSelection iContainerSelection : scrollController.getResult())
-                {
-                    if (selectedInventories.contains(iContainerSelection.getId()))
-                    {
-                        scrollController.onClick(iContainerSelection, -1, -1, 0);
-                    }
-                }
-            }
-        });
-
-        buttons.add(new Button(Localization.SELECT_INVERT_SHORT, Page.MAIN, Localization.SELECT_INVERT_LONG, false, 102, 60)
-        {
-            @Override
-            void onClick()
-            {
-                for (IContainerSelection iContainerSelection : scrollController.getResult())
-                {
-                    scrollController.onClick(iContainerSelection, -1, -1, 0);
-                }
-            }
-        });
-
-        buttons.add(new Button(Localization.SELECT_VARIABLE_SHORT, Page.MAIN, Localization.SELECT_VARIABLE_LONG, false, 111, 60)
-        {
-            @Override
-            void onClick()
-            {
-                if (scrollController.getText().equals(".var"))
-                {
-                    scrollController.setTextAndCursor(".all");
-                } else
-                {
-                    scrollController.setTextAndCursor(".var");
-                }
-            }
-        });
+//        buttons.add(new Button(Localization.SELECT_ALL_SHORT, Page.MAIN, Localization.SELECT_ALL_LONG, false, 102, 51)
+//        {
+//            @Override
+//            void onClick()
+//            {
+//                for (IContainerSelection iContainerSelection : scrollController.getResult())
+//                {
+//                    if (!selectedInventories.contains(iContainerSelection.getId()))
+//                    {
+//                        scrollController.onClick(iContainerSelection, -1, -1, 0);
+//                    }
+//                }
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.SELECT_NONE_SHORT, Page.MAIN, Localization.SELECT_NONE_LONG, false, 111, 51)
+//        {
+//            @Override
+//            void onClick()
+//            {
+//                for (IContainerSelection iContainerSelection : scrollController.getResult())
+//                {
+//                    if (selectedInventories.contains(iContainerSelection.getId()))
+//                    {
+//                        scrollController.onClick(iContainerSelection, -1, -1, 0);
+//                    }
+//                }
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.SELECT_INVERT_SHORT, Page.MAIN, Localization.SELECT_INVERT_LONG, false, 102, 60)
+//        {
+//            @Override
+//            void onClick()
+//            {
+//                for (IContainerSelection iContainerSelection : scrollController.getResult())
+//                {
+//                    scrollController.onClick(iContainerSelection, -1, -1, 0);
+//                }
+//            }
+//        });
+//
+//        buttons.add(new Button(Localization.SELECT_VARIABLE_SHORT, Page.MAIN, Localization.SELECT_VARIABLE_LONG, false, 111, 60)
+//        {
+//            @Override
+//            void onClick()
+//            {
+//                if (scrollController.getText().equals(".var"))
+//                {
+//                    scrollController.setTextAndCursor(".all");
+//                } else
+//                {
+//                    scrollController.setTextAndCursor(".var");
+//                }
+//            }
+//        });
 
         currentPage = Page.MAIN;
     }
