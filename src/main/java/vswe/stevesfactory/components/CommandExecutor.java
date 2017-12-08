@@ -781,15 +781,24 @@ public class CommandExecutor
                 boolean newItem = itemInSlot == null;
                 if (newItem || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable())){
                     int itemCountInSlot = newItem ? 0 : itemInSlot.stackSize;
+                    
                     int slotCount = 0;
                     if(itemStack != null)
                     {
-                        int c = inventory.insertItem(slot.getSlot(), new ItemStack(itemStack.getItem(), Integer.MAX_VALUE), true).stackSize;
-                        slotCount = Integer.MAX_VALUE - c;
+                        ItemStack simulateStack = inventory.insertItem(slot.getSlot(), new ItemStack(itemStack.getItem(), Integer.MAX_VALUE), true);
+                        if(simulateStack != null)
+                        {
+                            int c = simulateStack.stackSize;
+                            slotCount = Integer.MAX_VALUE - c;
+                        } else
+                        {
+                            slotCount = Integer.MAX_VALUE;
+                        }
+                        
                     }
-
+                    
                     int moveCount = Math.min(subElement.getSizeLeft(), Math.min(slotCount, itemStack.getMaxStackSize()) - itemCountInSlot);
-
+                    
                     moveCount = outputItemCounter.retrieveItemCount(moveCount);
                     moveCount = itemBufferElement.retrieveItemCount(moveCount);
                     if (moveCount > 0) {
