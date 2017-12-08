@@ -54,15 +54,16 @@ public class SlotStackInventoryHolder implements IItemBufferSubElement
 
     public void reduceAmount(int val)
     {
-        if(itemStack.stackSize == val)
+        int stackSize = itemStack.stackSize;
+        
+        ItemStack extractStack = inventory.extractItem(getSlot(), val, false);
+        int extractSize  = (extractStack != null) ? extractStack.stackSize : 0;
+        
+        if(extractSize > 0 && stackSize == itemStack.stackSize)
         {
-            inventory.extractItem(getSlot(), itemStack.stackSize, false);
+            itemStack.stackSize -= extractSize;
         }
-        else
-        {
-            itemStack.stackSize -= val;
-            sizeLeft -= val;
-        }
+        sizeLeft -= extractSize;
     }
 
     public SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair)
