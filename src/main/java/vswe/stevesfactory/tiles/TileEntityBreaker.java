@@ -39,7 +39,7 @@ import java.util.UUID;
 public class TileEntityBreaker extends TileEntityClusterElement implements IInventory, IPacketBlock
 {
     private static final String FAKE_PLAYER_NAME = "[SFM_PLAYER]";
-    private static final UUID FAKE_PLAYER_ID = null;
+    private static final UUID FAKE_PLAYER_ID = UUID.fromString("cce05ba6-38aa-4f1b-8ed6-1f279d6281ff");
     private List<ItemStack> inventory;
     private List<ItemStack> inventoryCache;
     private boolean broken;
