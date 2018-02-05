@@ -277,7 +277,7 @@ public class ComponentMenuUpdateBlock extends ComponentMenuItem
     public int getBlockId()
     {
         ItemSetting itemSetting = (ItemSetting) getSettings().get(0);
-        return itemSetting.getItem() == null ? 0 : Item.getIdFromItem(itemSetting.getItem().getItem());
+        return itemSetting.getItem().isEmpty() ? 0 : Item.getIdFromItem(itemSetting.getItem().getItem());
     }
 
     public boolean isIdInverted()

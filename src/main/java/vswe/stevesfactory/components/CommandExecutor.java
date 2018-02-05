@@ -241,7 +241,7 @@ public class CommandExecutor
 
                         if (items.isFirstRadioButtonSelected() || items.getSettings().get(0).isValid())
                         {
-                            ItemStack itemStack = items.isFirstRadioButtonSelected() ? null : ((ItemSetting) items.getSettings().get(0)).getItem();
+                            ItemStack itemStack = items.isFirstRadioButtonSelected() ? ItemStack.EMPTY : ((ItemSetting) items.getSettings().get(0)).getItem();
                             for (SlotInventoryHolder slotInventoryHolder : camouflage)
                             {
                                 slotInventoryHolder.getCamouflage().setBounds(shape);
@@ -513,7 +513,7 @@ public class CommandExecutor
                         for (Setting setting : menuItem.getSettings())
                         {
                             ItemStack item = ((ItemSetting) setting).getItem();
-                            if (item != null)
+                            if (!item.isEmpty())
                             {
                                 item = item.copy();
                                 item.setCount( setting.isLimitedByAmount() ? setting.getAmount() : setting.getDefaultAmount());

@@ -1,23 +1,25 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
+# exclude all
+/*
 
-# idea
-out
-*.ipr
-*.iws
-*.iml
-.idea
+# Include important folders
 
-# gradle
-build
+# Gradle stuff
+!gradle/
+!gradlew
+!gradlew.bat
+!build.gradle
+!build.properties
+!project.properties
+!settings.gradle
 
-# other
-eclipse
-run
-libs
-classes
+# Other Files.
+!LICENSE.txt
+!README.md
+!setup.bat
+
+# Include git important files
+!.gitmodules
+!.gitignore
+
+# Include Important Folders
+!src/

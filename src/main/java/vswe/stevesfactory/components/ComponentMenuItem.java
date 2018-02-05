@@ -17,6 +17,7 @@ import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -257,7 +258,7 @@ public class ComponentMenuItem extends ComponentMenuStuff
             for (int i = 0; i < itemLength; i++)
             {
                 ItemStack item = inventory.getStackInSlot(i);
-                if (item != null)
+                if (!item.isEmpty())
                 {
                     item = item.copy();
                     item.setCount(1);

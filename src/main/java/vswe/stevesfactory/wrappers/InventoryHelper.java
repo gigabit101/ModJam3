@@ -54,11 +54,11 @@ public class InventoryHelper
     {
         if(getType(tileEntity) == EnumInventoryType.IInventory)
         {
-            return ((IInventory) tileEntity).getStackInSlot(id) == null;
+            return ((IInventory) tileEntity).getStackInSlot(id).isEmpty();
         }
         if(getType(tileEntity) == EnumInventoryType.Capability)
         {
-            return ((IItemHandler) tileEntity).getStackInSlot(id) == null;
+            return ((IItemHandler) tileEntity).getStackInSlot(id).isEmpty();
         }
         return false;
     }

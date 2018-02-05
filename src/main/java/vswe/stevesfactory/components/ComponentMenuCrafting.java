@@ -57,7 +57,7 @@ public class ComponentMenuCrafting extends ComponentMenuItem
     public void draw(GuiManager gui, int mX, int mY)
     {
         super.draw(gui, mX, mY);
-        if (!isEditing() && !isSearching() && resultItem.getItem() != null)
+        if (!isEditing() && !isSearching() && !resultItem.getItem().isEmpty())
         {
             drawResultObject(gui, resultItem.getItem(), getResultX(), getResultY());
 
@@ -70,7 +70,7 @@ public class ComponentMenuCrafting extends ComponentMenuItem
     public void drawMouseOver(GuiManager gui, int mX, int mY)
     {
         super.drawMouseOver(gui, mX, mY);
-        if (!isEditing() && !isSearching() && resultItem.getItem() != null)
+        if (!isEditing() && !isSearching() && !resultItem.getItem().isEmpty())
         {
             if (CollisionHelper.inBounds(getResultX(), getResultY(), ITEM_SIZE, ITEM_SIZE, mX, mY))
             {

@@ -71,7 +71,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
 
     public void setOwner(EntityLivingBase entity)
     {
-        if (entity != null && entity instanceof EntityPlayer)
+        if (entity instanceof EntityPlayer)
         {
             owner = entity.getUniqueID();
         }
@@ -227,7 +227,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
                 return inventory.getStackInSlot(i);
             }
 
-            return null;
+            return ItemStack.EMPTY;
         } finally
         {
             unBlockUsage();
@@ -246,7 +246,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
                 return inventory.decrStackSize(i, j);
             }
 
-            return null;
+            return ItemStack.EMPTY;
         } finally
         {
             unBlockUsage();
@@ -257,7 +257,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     public ItemStack removeStackFromSlot(int i)
     {
         //don't drop the things twice
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -692,7 +692,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         {
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 
-            if (te != null && type.isInstance(te))
+            if (type.isInstance(te))
             {
                 if (te instanceof TileEntityRelay)
                 {

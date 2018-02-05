@@ -113,7 +113,7 @@ public class BlockManager extends BlockContainer
     private void updateInventories(World world, BlockPos pos)
     {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity != null && tileEntity instanceof TileEntityManager)
+        if (tileEntity instanceof TileEntityManager)
         {
             ((TileEntityManager) tileEntity).updateInventories();
         }

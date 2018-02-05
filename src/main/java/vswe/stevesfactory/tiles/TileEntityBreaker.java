@@ -80,7 +80,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     {
         List<ItemStack> items = new ArrayList<ItemStack>();
 
-        if (itemstack != null && itemstack.getItem() != null && itemstack.getCount() > 0)
+        if (!itemstack.isEmpty() && itemstack.getItem() != null && itemstack.getCount() > 0)
         {
             EnumFacing side = EnumFacing.getFront(getBlockMetadata() % EnumFacing.values().length);
             EnumFacing direction = placeDirection.getOpposite();
@@ -126,7 +126,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             {
                 for (ItemStack itemStack : player.inventory.mainInventory)
                 {
-                    if (itemStack != null && itemStack.getCount() > 0)
+                    if (!itemStack.isEmpty() && itemStack.getCount() > 0)
                     {
                         items.add(itemStack);
                     }
@@ -196,7 +196,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
         List<ItemStack> ret = new ArrayList<ItemStack>();
         for (ItemStack itemStack : inventory)
         {
-            if (itemStack != null)
+            if (!itemStack.isEmpty())
             {
                 ItemStack newStack = itemStack.copy();
 
@@ -207,20 +207,20 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                     {
                         ItemStack copyStack = inventoryCache.get(i);
 
-                        if (copyStack != null && newStack.isItemEqual(copyStack) && ItemStack.areItemStackTagsEqual(newStack, copyStack))
+                        if (!copyStack.isEmpty() && newStack.isItemEqual(copyStack) && ItemStack.areItemStackTagsEqual(newStack, copyStack))
                         {
                             int max = Math.min(copyStack.getCount(), newStack.getCount());
 
                             copyStack.shrink(max);
                             if (copyStack.getCount() == 0)
                             {
-                                inventoryCache.set(0, null);
+                                inventoryCache.set(0, ItemStack.EMPTY);
                             }
 
                             newStack.shrink(max);
                             if (newStack.getCount() == 0)
                             {
-                                newStack = null;
+                                newStack = ItemStack.EMPTY;
                                 break;
                             }
                         }
@@ -228,7 +228,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                 }
 
 
-                if (newStack != null)
+                if (!newStack.isEmpty())
                 {
                     ret.add(newStack);
                 }
@@ -256,7 +256,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             return getInventory().get(id);
         } else
         {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -265,11 +265,11 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     {
 
         ItemStack item = getStackInSlot(id);
-        if (item != null)
+        if (!item.isEmpty())
         {
             if (item.getCount() <= count)
             {
-                getInventory().set(id, null);
+                getInventory().set(id, ItemStack.EMPTY);
                 return item;
             }
 
@@ -277,13 +277,13 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
 
             if (item.getCount() == 0)
             {
-                getInventory().set(id, null);
+                getInventory().set(id, ItemStack.EMPTY);
             }
 
             return ret;
         } else
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
     }
@@ -299,14 +299,14 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
         } else
         {
             getInventory().add(itemstack);
-            inventoryCache.add(null);
+            inventoryCache.add(ItemStack.EMPTY);
         }
     }
 
     @Override
     public ItemStack removeStackFromSlot(int i)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
 
@@ -395,7 +395,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                 ItemStack itemStack = inventory.get(i);
                 ItemStack itemStackCopy = inventoryCache.get(i);
 
-                if (itemStackCopy != null && (itemStack == null || Item.getIdFromItem(itemStack.getItem()) != Item.getIdFromItem(itemStackCopy.getItem()) || itemStack.getItemDamage() != itemStackCopy.getItemDamage() || !ItemStack.areItemStackTagsEqual(itemStack, itemStackCopy) || itemStack.getCount() < itemStackCopy.getCount()))
+                if (!itemStackCopy.isEmpty() && (itemStack.isEmpty() || Item.getIdFromItem(itemStack.getItem()) != Item.getIdFromItem(itemStackCopy.getItem()) || itemStack.getItemDamage() != itemStackCopy.getItemDamage() || !ItemStack.areItemStackTagsEqual(itemStack, itemStackCopy) || itemStack.getCount() < itemStackCopy.getCount()))
                 {
                     match = false;
                     break;

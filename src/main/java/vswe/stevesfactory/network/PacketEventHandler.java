@@ -55,7 +55,7 @@ public class PacketEventHandler
             int z = dr.readData(DataBitHelper.WORLD_COORDINATE);
 
             TileEntity te = player.world.getTileEntity(new BlockPos(x, y, z));
-            if (te != null && te instanceof IPacketBlock)
+            if (te instanceof IPacketBlock)
             {
                 int id = dr.readData(((IPacketBlock) te).infoBitLength(false));
                 ((IPacketBlock) te).readData(dr, player, false, id);
@@ -101,7 +101,7 @@ public class PacketEventHandler
             int z = dr.readData(DataBitHelper.WORLD_COORDINATE);
 
             TileEntity te = player.world.getTileEntity(new BlockPos(x, y, z));
-            if (te != null && te instanceof IPacketBlock)
+            if (te instanceof IPacketBlock)
             {
                 int id = dr.readData(((IPacketBlock) te).infoBitLength(true));
                 ((IPacketBlock) te).readData(dr, player, true, id);

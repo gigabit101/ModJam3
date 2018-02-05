@@ -30,7 +30,7 @@ public class CraftingDummy extends InventoryCrafting
     @Override
     public ItemStack getStackInSlot(int id)
     {
-        if (overrideMap != null && overrideMap.get(id) != null && overrideMap.get(id).getCount() > 0)
+        if (overrideMap != null && !overrideMap.get(id).isEmpty() && overrideMap.get(id).getCount() > 0)
         {
             return overrideMap.get(id);
         } else
@@ -56,19 +56,18 @@ public class CraftingDummy extends InventoryCrafting
     @Override
     public ItemStack removeStackFromSlot(int par1)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack decrStackSize(int par1, int par2)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
-        return;
     }
 
     public ItemStack getResult(Map<Integer, ItemStack> overrideMap)

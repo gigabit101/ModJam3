@@ -222,7 +222,7 @@ public abstract class ComponentMenuContainer extends ComponentMenu
                         items[direction.ordinal()] = item;
 
                         List<String> text = new ArrayList<String>();
-                        if (item != null && item.getItem() != null)
+                        if (!item.isEmpty())
                         {
                             text.add(gui.getItemName(item));
                         }
@@ -285,7 +285,7 @@ public abstract class ComponentMenuContainer extends ComponentMenu
                     gui.drawTexture(x, y, SRC_X, SRC_Y + (CollisionHelper.inBounds(x, y, 16, 16, mX, mY) ? 16 : 0), 16, 16);
 
                     ItemStack item = items[direction.ordinal()];
-                    if (item != null && item.getItem() != null)
+                    if (!item.isEmpty())
                     {
                         gui.drawItemStack(item, x, y);
                         gui.drawItemAmount(item, x, y);

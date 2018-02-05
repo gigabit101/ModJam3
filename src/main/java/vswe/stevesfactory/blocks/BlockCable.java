@@ -83,7 +83,7 @@ public class BlockCable extends Block implements ICable
                                 if (block.getBlock() == ModBlocks.blockManager)
                                 {
                                     TileEntity tileEntity = world.getTileEntity(new BlockPos(target.getX(), target.getY(), target.getZ()));
-                                    if (tileEntity != null && tileEntity instanceof TileEntityManager)
+                                    if (tileEntity instanceof TileEntityManager)
                                     {
                                         ((TileEntityManager) tileEntity).updateInventories();
                                     }

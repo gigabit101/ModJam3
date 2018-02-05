@@ -237,7 +237,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
                 for (int i = 0; i < 9; i++)
                 {
                     CraftingSetting setting = (CraftingSetting) craftingMenu.getSettings().get(i);
-                    if (foundItems.get(i) == null)
+                    if (foundItems.get(i).isEmpty())
                     {
                         if (!setting.isValid())
                         {
@@ -279,7 +279,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
         if (foundItems.size() == 9)
         {
             result = craftingMenu.getDummy().getResult(foundItems);
-            result = result != null ? result.copy() : null;
+            result = !result.isEmpty() ? result.copy() : ItemStack.EMPTY;
             return true;
         } else
         {

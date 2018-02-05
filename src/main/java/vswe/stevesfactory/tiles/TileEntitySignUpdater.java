@@ -23,7 +23,7 @@ public class TileEntitySignUpdater extends TileEntityClusterElement
     {
         EnumFacing direction = EnumFacing.getFront(getBlockMetadata() % EnumFacing.values().length);
         TileEntity te = world.getTileEntity(new BlockPos(getPos().getX() + direction.getFrontOffsetX(), getPos().getY() + direction.getFrontOffsetY(), getPos().getZ() + direction.getFrontOffsetZ()));
-        if (te != null && te instanceof TileEntitySign)
+        if (te instanceof TileEntitySign)
         {
             TileEntitySign sign = (TileEntitySign) te;
             sign.setPlayer(null);

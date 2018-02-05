@@ -10,7 +10,7 @@ public class ItemUtils
 {
     public static boolean isItemEqual(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT)
     {
-        if (a == null || b == null)
+        if (a.isEmpty() || b.isEmpty())
             return false;
         if (a.getItem() != b.getItem())
             return false;
@@ -32,7 +32,7 @@ public class ItemUtils
         {
             return true;
         }
-        if (a == null || b == null)
+        if (a.isEmpty() || b.isEmpty())
             return false;
         if (useOreDic)
         {

@@ -91,7 +91,7 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
     {
         ItemStack itemStack = getItemStack(world, pos, world.getBlockState(pos));
-        if (itemStack != null)
+        if (!itemStack.isEmpty())
         {
             return itemStack;
         }
@@ -102,7 +102,7 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
     {
         TileEntity te = world.getTileEntity(pos);
 
-        if (te != null && te instanceof TileEntityCluster)
+        if (te instanceof TileEntityCluster)
         {
             TileEntityCluster cluster = (TileEntityCluster) te;
             ItemStack itemStack = new ItemStack(ModBlocks.blockCableCluster, 1, damageDropped(state));
@@ -113,7 +113,7 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
             cable.setByteArray(ItemCluster.NBT_TYPES, cluster.getTypes());
             return itemStack;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
 

@@ -68,19 +68,19 @@ public class TileEntityCreative extends TileEntityClusterElement implements IInv
     @Override
     public ItemStack getStackInSlot(int i)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack decrStackSize(int i, int j)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeStackFromSlot(int i)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

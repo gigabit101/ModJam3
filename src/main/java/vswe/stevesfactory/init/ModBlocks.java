@@ -101,7 +101,7 @@ public final class ModBlocks
             @Override
             public ItemStack getTabIconItem()
             {
-                return null;
+                return ItemStack.EMPTY;
             }
         };
 

@@ -24,7 +24,7 @@ public class InventoryWrapperPlayer extends InventoryWrapper
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack)
     {
-        if (i >= 36 && i <= 39 && itemstack != null)
+        if (i >= 36 && i <= 39 && !itemstack.isEmpty())
         {
             EntityEquipmentSlot armorType = EntityEquipmentSlot.values()[39 - i];
             Item item = itemstack.getItem();

@@ -304,7 +304,7 @@ public abstract class GuiBase extends GuiAntiNEI
     public void drawBlock(TileEntity te, int x, int y)
     {
         ItemStack item = getItemStackFromBlock(te);
-        if (item != null)
+        if (!item.isEmpty())
         {
             drawItemStack(item, x, y);
         }
@@ -315,7 +315,7 @@ public abstract class GuiBase extends GuiAntiNEI
     {
         ItemStack item = getItemStackFromBlock(te);
 
-        if (item != null)
+        if (!item.isEmpty())
         {
             return getItemName(item);
         }
@@ -358,7 +358,7 @@ public abstract class GuiBase extends GuiAntiNEI
             }
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public ItemStack getItemStackFromBlock(World world, int x, int y, int z)
@@ -373,7 +373,7 @@ public abstract class GuiBase extends GuiAntiNEI
             }
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     private ItemStack getItemStackFromBlock(World world, BlockPos pos, Block block, IBlockState state)
@@ -383,7 +383,7 @@ public abstract class GuiBase extends GuiAntiNEI
         {
             //try to get it by picking the block
             ItemStack item = block.getPickBlock(state, new RayTraceResult(RayTraceResult.Type.BLOCK, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), EnumFacing.UP, pos), world, pos, FMLClientHandler.instance().getClientPlayerEntity());
-            if (item != null)
+            if (!item.isEmpty())
             {
                 return item;
             }

@@ -260,7 +260,7 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
         int oldId = ids[side];
         int oldMeta = metas[side];
 
-        if (item == null)
+        if (item.isEmpty())
         {
             ids[side] = 0;
             metas[side] = 0;

@@ -141,7 +141,7 @@ public class ItemBufferElement implements IItemBufferElement
 
     public ItemStack getItemStack()
     {
-        if (setting != null && setting.getItem() != null)
+        if (setting != null && !setting.getItem().isEmpty())
         {
             return setting.getItem();
         } else
