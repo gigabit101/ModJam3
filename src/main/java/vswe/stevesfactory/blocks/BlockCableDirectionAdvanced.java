@@ -15,9 +15,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import vswe.stevesfactory.client.CreativeTabSFM;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 import vswe.stevesfactory.tiles.TileEntityClusterElement;
@@ -29,9 +29,10 @@ public abstract class BlockCableDirectionAdvanced extends BlockContainer
     public BlockCableDirectionAdvanced()
     {
         super(Material.IRON);
-        setCreativeTab(CreativeTabSFM.instance);
+        setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
         setHardness(1.2F);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
     public static final IProperty FACING = PropertyDirection.create("facing");
@@ -64,22 +65,18 @@ public abstract class BlockCableDirectionAdvanced extends BlockContainer
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack item)
     {
-        int meta = addAdvancedMeta(BlockPistonBase.getFacingFromEntity(pos, entity).getIndex(), item.getItemDamage());
+        world.setBlockState(pos, state.withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, entity)), 2);
 
         TileEntityClusterElement element = TileEntityCluster.getTileEntity(getTeClass(), world, pos);
-        if (element != null)
-        {
-            element.setMetaData(meta);
-        }
     }
 
     protected abstract Class<? extends TileEntityClusterElement> getTeClass();
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tabs, List list)
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> list)
     {
-        list.add(new ItemStack(item, 1, 0));
-        list.add(new ItemStack(item, 1, 8));
+        list.add(new ItemStack(this, 1, 0));
+        list.add(new ItemStack(this, 1, 8));
     }
 
     public boolean isAdvanced(int meta)

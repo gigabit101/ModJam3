@@ -3,7 +3,7 @@ package vswe.stevesfactory.components;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ public abstract class RadioButtonList
     public RadioButtonList()
     {
         radioButtonList = new ArrayList<RadioButton>();
+
     }
 
     @SideOnly(Side.CLIENT)

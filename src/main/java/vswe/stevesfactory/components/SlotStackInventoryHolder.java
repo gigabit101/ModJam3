@@ -3,66 +3,60 @@ package vswe.stevesfactory.components;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-public class SlotStackInventoryHolder implements IItemBufferSubElement
-{
+public class SlotStackInventoryHolder implements IItemBufferSubElement {
     private ItemStack itemStack;
     private IItemHandler inventory;
     private int slot;
     private int sizeLeft;
 
-    public SlotStackInventoryHolder(ItemStack itemStack, IItemHandler inventory, int slot)
-    {
+    public SlotStackInventoryHolder(ItemStack itemStack, IItemHandler inventory, int slot) {
         this.itemStack = itemStack;
         this.inventory = inventory;
         this.slot = slot;
-        this.sizeLeft = itemStack.stackSize;
+        this.sizeLeft = itemStack.getCount();
     }
 
-    public ItemStack getItemStack()
-    {
+    public ItemStack getItemStack() {
         return itemStack;
     }
 
 
-    public IItemHandler getInventory()
-    {
+    public IItemHandler getInventory() {
         return inventory;
     }
 
 
-    public int getSlot()
-    {
+    public int getSlot() {
         return slot;
     }
 
     @Override
-    public void remove()
-    {
-        if (itemStack.stackSize == 0)
-        {
-            getInventory().insertItem(getSlot(), null, false);
+    public void remove() {
+        if (itemStack.getCount() == 0) {
+            getInventory().insertItem(getSlot(), ItemStack.EMPTY, false);
         }
     }
 
     @Override
-    public void onUpdate(){}
+    public void onUpdate() {}
 
-    public int getSizeLeft()
-    {
-        return Math.min(itemStack.stackSize, sizeLeft);
+    public int getSizeLeft() {
+        return Math.min(itemStack.getCount(), sizeLeft);
     }
 
     public void reduceAmount(int val)
     {
-        if(itemStack.stackSize == val)
+        int stackSize = itemStack.getCount();
+
+        ItemStack extractStack = inventory.extractItem(getSlot(), val, false);
+
+        int extractSize = (!extractStack.isEmpty()) ? extractStack.getCount() : 0;
+
+        if (extractSize > 0 && stackSize == itemStack.getCount())
         {
-            inventory.extractItem(getSlot(), itemStack.stackSize, false);
+            inventory.extractItem(getSlot(), extractSize, false);
         }
-        else
-        {
-            itemStack.stackSize -= val;
-            sizeLeft -= val;
-        }
+        sizeLeft -= extractSize;
     }
 
     public SlotStackInventoryHolder getSplitElement(int elementAmount, int id, boolean fair)

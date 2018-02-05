@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.blocks.BlockCamouflageBase;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.components.ComponentMenuCamouflageInside;
 import vswe.stevesfactory.components.ComponentMenuCamouflageShape;
 import vswe.stevesfactory.init.ModBlocks;
@@ -266,7 +266,7 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
             metas[side] = 0;
         } else if (item.getItem() != null && item.getItem() instanceof ItemBlock)
         {
-            Block block = ((ItemBlock) item.getItem()).block;
+            Block block = ((ItemBlock) item.getItem()).getBlock();
             if (block != null)
             {
                 ids[side] = Block.getIdFromBlock(block);
@@ -406,7 +406,7 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
                     }
                 }
             }
-            worldObj.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
+            world.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
         }
     }
 
@@ -430,7 +430,7 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
     @Override
     public void update()
     {
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             keepClientDataUpdated();
         } else
@@ -446,7 +446,7 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
     @SideOnly(Side.CLIENT)
     protected void keepClientDataUpdated()
     {
-        double distance = Minecraft.getMinecraft().thePlayer.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
+        double distance = Minecraft.getMinecraft().player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
 
         if (distance > Math.pow(PacketHandler.BLOCK_UPDATE_RANGE, 2))
         {
@@ -454,7 +454,7 @@ public class TileEntityCamouflage extends TileEntityClusterElement implements IP
         } else if (!hasClientUpdatedData && distance < Math.pow(PacketHandler.BLOCK_UPDATE_RANGE - UPDATE_BUFFER_DISTANCE, 2))
         {
             hasClientUpdatedData = true;
-            PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().thePlayer, 0);
+            PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().player, 0);
         }
     }
 

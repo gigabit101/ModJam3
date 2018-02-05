@@ -3,9 +3,9 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -13,16 +13,6 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuPulse extends ComponentMenu
 {
-    private RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            radioButtons.setSelectedOption(selectedOption);
-
-            sendServerPacket(ComponentSyncType.RADIO_BUTTON);
-        }
-    };
 
     public ComponentMenuPulse(FlowComponent parent)
     {
@@ -50,11 +40,21 @@ public class ComponentMenuPulse extends ComponentMenu
             }
         });
 
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                radioButtons.setSelectedOption(selectedOption);
+
+                sendServerPacket(ComponentSyncType.RADIO_BUTTON);
+            }
+        };
+
         for (int i = 0; i < PULSE_OPTIONS.values().length; i++)
         {
             int x = i % 2;
             int y = i / 2;
-
 
             radioButtons.add(new RadioButton(RADIO_BUTTON_X + x * RADIO_BUTTON_SPACING_X, RADIO_BUTTON_Y + y * RADIO_BUTTON_SPACING_Y, PULSE_OPTIONS.values()[i].getName()));
         }
@@ -127,6 +127,7 @@ public class ComponentMenuPulse extends ComponentMenu
 
     private CheckBoxList checkBoxes;
     private boolean usePulse;
+    private RadioButtonList radioButtons;
     private TextBoxNumberList textBoxes;
     private TextBoxNumber ticksTextBox;
     private TextBoxNumber secondsTextBox;

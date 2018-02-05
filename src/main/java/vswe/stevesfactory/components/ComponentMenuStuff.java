@@ -5,9 +5,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -19,23 +19,9 @@ import java.util.List;
 
 public abstract class ComponentMenuStuff extends ComponentMenu
 {
-    public RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            DataWriter dw = getWriterForServerComponentPacket();
-            dw.writeBoolean(false); //no specific item
-            writeRadioButtonRefreshState(dw, selectedOption == 0);
-            PacketHandler.sendDataToServer(dw);
-        }
-    };
-
     public ComponentMenuStuff(FlowComponent parent, Class<? extends Setting> settingClass)
     {
         super(parent);
-
-
         settings = new ArrayList<Setting>();
         externalSettings = new ArrayList<Setting>();
         for (int i = 0; i < getSettingCount(); i++)
@@ -54,6 +40,19 @@ public abstract class ComponentMenuStuff extends ComponentMenu
 
         }
         numberTextBoxes = new TextBoxNumberList();
+
+
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                DataWriter dw = getWriterForServerComponentPacket();
+                dw.writeBoolean(false); //no specific item
+                writeRadioButtonRefreshState(dw, selectedOption == 0);
+                PacketHandler.sendDataToServer(dw);
+            }
+        };
 
         initRadioButtons();
 
@@ -170,7 +169,6 @@ public abstract class ComponentMenuStuff extends ComponentMenu
                 {
                     gui.drawMouseOver(getSettingObjectMouseOver(setting), mX, mY);
                 }
-
             }
         };
     }
@@ -262,6 +260,7 @@ public abstract class ComponentMenuStuff extends ComponentMenu
     private boolean editSetting;
     protected TextBoxNumberList numberTextBoxes;
 
+    protected RadioButtonList radioButtons;
     protected CheckBoxList checkBoxes;
 
     @SideOnly(Side.CLIENT)

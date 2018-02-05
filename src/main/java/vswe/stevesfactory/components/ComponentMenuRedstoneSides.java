@@ -4,9 +4,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -16,16 +16,6 @@ import java.util.List;
 
 public abstract class ComponentMenuRedstoneSides extends ComponentMenu
 {
-    public RadioButtonList radioButtonList = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            setFirstOption(selectedOption == 0);
-            sendServerData(true);
-        }
-    };
-
     public ComponentMenuRedstoneSides(FlowComponent parent)
     {
         super(parent);
@@ -39,6 +29,15 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu
             checkBoxList.addCheckBox(new CheckBoxSide(i));
         }
 
+        radioButtonList = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                setFirstOption(selectedOption == 0);
+                sendServerData(true);
+            }
+        };
 
         radioButtonList.setSelectedOption(1);
 
@@ -97,6 +96,7 @@ public abstract class ComponentMenuRedstoneSides extends ComponentMenu
     }
 
     private CheckBoxList checkBoxList;
+    protected RadioButtonList radioButtonList;
     protected int selection;
 
 

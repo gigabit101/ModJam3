@@ -1,5 +1,6 @@
 package vswe.stevesfactory.network;
 
+import io.netty.buffer.ByteBufUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -8,10 +9,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.container.ContainerBase;
+import vswe.stevesfactory.interfaces.ContainerBase;
 
 public class PacketEventHandler
 {
@@ -19,21 +21,14 @@ public class PacketEventHandler
     @SubscribeEvent
     public void onClientPacket(final FMLNetworkEvent.ClientCustomPacketEvent event)
     {
-        FMLClientHandler.instance().getClient().addScheduledTask(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                processClientPacket(event);
-            }
-        });
+        FMLClientHandler.instance().getClient().addScheduledTask(() -> processClientPacket(event));
     }
 
     @SideOnly(Side.CLIENT)
     private void processClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event)
     {
-        DataReader dr = new DataReader(event.getPacket().payload().array());
-        EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+        DataReader dr = new DataReader(ByteBufUtil.getBytes(event.getPacket().payload()));//new DataReader(event.getPacket().payload().array().clone());
+        EntityPlayer player = FMLClientHandler.instance().getClient().player;
 
         boolean useContainer = dr.readBoolean();
 
@@ -59,7 +54,7 @@ public class PacketEventHandler
             int y = dr.readData(DataBitHelper.WORLD_COORDINATE);
             int z = dr.readData(DataBitHelper.WORLD_COORDINATE);
 
-            TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
+            TileEntity te = player.world.getTileEntity(new BlockPos(x, y, z));
             if (te != null && te instanceof IPacketBlock)
             {
                 int id = dr.readData(((IPacketBlock) te).infoBitLength(false));
@@ -73,21 +68,19 @@ public class PacketEventHandler
     @SubscribeEvent
     public void onServerPacket(final FMLNetworkEvent.ServerCustomPacketEvent event)
     {
-        EntityPlayerMP player = ((NetHandlerPlayServer) event.getHandler()).playerEntity;
-        player.getServerWorld().addScheduledTask(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                processServerPacket(event);
-            }
-        });
+        EntityPlayerMP player = ((NetHandlerPlayServer) event.getHandler()).player;
+        player.getServerWorld().addScheduledTask(() -> processServerPacket(event));
     }
 
     private void processServerPacket(FMLNetworkEvent.ServerCustomPacketEvent event)
     {
-        DataReader dr = new DataReader(event.getPacket().payload().array());
-        EntityPlayer player = ((NetHandlerPlayServer) event.getHandler()).playerEntity;
+//        if(!event.getPacket().payload().hasArray())
+//        {
+//            return;
+//        }
+
+        DataReader dr = new DataReader(ByteBufUtil.getBytes(event.getPacket().payload()));//new DataReader(event.getPacket().payload().array().clone());
+        EntityPlayer player = ((NetHandlerPlayServer) event.getHandler()).player;
 
         boolean useContainer = dr.readBoolean();
 
@@ -107,7 +100,7 @@ public class PacketEventHandler
             int y = dr.readData(DataBitHelper.WORLD_COORDINATE);
             int z = dr.readData(DataBitHelper.WORLD_COORDINATE);
 
-            TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
+            TileEntity te = player.world.getTileEntity(new BlockPos(x, y, z));
             if (te != null && te instanceof IPacketBlock)
             {
                 int id = dr.readData(((IPacketBlock) te).infoBitLength(true));

@@ -20,10 +20,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
-import vswe.stevesfactory.init.ClusterRegistry;
-import vswe.stevesfactory.misc.ITileEntityInterface;
-import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ClusterRegistry;
+import vswe.stevesfactory.blocks.ITileEntityInterface;
+import vswe.stevesfactory.blocks.ItemCluster;
 import vswe.stevesfactory.network.*;
 
 import java.util.ArrayList;
@@ -55,10 +55,10 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
     {
         NBTTagCompound compound = itemStack.getTagCompound();
 
-        if (compound != null && compound.hasKey(ItemBlockCluster.NBT_CABLE))
+        if (compound != null && compound.hasKey(ItemCluster.NBT_CABLE))
         {
-            NBTTagCompound cable = compound.getCompoundTag(ItemBlockCluster.NBT_CABLE);
-            byte[] types = cable.getByteArray(ItemBlockCluster.NBT_TYPES);
+            NBTTagCompound cable = compound.getCompoundTag(ItemCluster.NBT_CABLE);
+            byte[] types = cable.getByteArray(ItemCluster.NBT_TYPES);
             loadElements(types);
         }
     }
@@ -86,7 +86,7 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
                 methodRegistration.get(clusterMethodRegistration).add(new Pair(block, element));
             }
             element.setPos(new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
-            element.setWorldObj(worldObj);
+            element.setWorld(world);
             element.setPartOfCluster(true);
         }
     }
@@ -118,7 +118,7 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
             element.update();
         }
 
-        if (!requestedInfo && worldObj.isRemote)
+        if (!requestedInfo && world.isRemote)
         {
             requestedInfo = true;
             requestData();
@@ -127,16 +127,16 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
 
     public void setWorldObject(TileEntityClusterElement te)
     {
-        if (!te.hasWorldObj())
+        if (!te.hasWorld())
         {
-            te.setWorldObj(this.worldObj);
+            te.setWorld(this.world);
         }
     }
 
     @SideOnly(Side.CLIENT)
     private void requestData()
     {
-        PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().thePlayer, 1);
+        PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().player, 1);
     }
 
     private List<Pair> getRegistrations(ClusterMethodRegistration method)
@@ -231,7 +231,7 @@ public class TileEntityCluster extends TileEntity implements ITileEntityInterfac
         for (Pair blockContainer : getRegistrations(ClusterMethodRegistration.ON_BLOCK_ACTIVATED))
         {
             setWorldObject(blockContainer.te);
-            if (blockContainer.registry.getBlock().onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ))
+            if (blockContainer.registry.getBlock().onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ))
             {
                 return true;
             }

@@ -14,19 +14,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.misc.ConnectionBlock;
-import vswe.stevesfactory.misc.ConnectionBlockType;
-import vswe.stevesfactory.client.gui.GuiBase;
-import vswe.stevesfactory.client.gui.GuiManager;
-import vswe.stevesfactory.client.gui.IAdvancedTooltip;
-import vswe.stevesfactory.container.ContainerManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.blocks.ConnectionBlock;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityManager;
+import vswe.stevesfactory.interfaces.*;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
-import vswe.stevesfactory.util.Color;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -35,6 +31,7 @@ import java.util.List;
 
 public abstract class ComponentMenuContainer extends ComponentMenu
 {
+
     private static final int BACK_SRC_X = 46;
     private static final int BACK_SRC_Y = 52;
     private static final int BACK_SIZE_W = 9;
@@ -66,6 +63,7 @@ public abstract class ComponentMenuContainer extends ComponentMenu
     private Page currentPage;
     protected List<Integer> selectedInventories;
     private List<IContainerSelection> inventories;
+    protected RadioButtonList radioButtonsMulti;
     protected ScrollController<IContainerSelection> scrollController;
     private ConnectionBlockType validType;
     @SideOnly(Side.CLIENT)
@@ -74,16 +72,6 @@ public abstract class ComponentMenuContainer extends ComponentMenu
     private static final ContainerFilter filter = new ContainerFilter(); //this one is static so all of the menus will share the selection
     private List<Variable> filterVariables;
     private boolean clientUpdate; //ugly quick way to fix client/server issue
-    public RadioButtonList radioButtonsMulti = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            DataWriter dw = getWriterForServerComponentPacket();
-            writeRadioButtonData(dw, selectedOption);
-            PacketHandler.sendDataToServer(dw);
-        }
-    };
 
 
     protected EnumSet<ConnectionBlockType> getValidTypes()
@@ -98,16 +86,16 @@ public abstract class ComponentMenuContainer extends ComponentMenu
 
         selectedInventories = new ArrayList<Integer>();
         filterVariables = new ArrayList<Variable>();
-//        radioButtonsMulti = new RadioButtonList()
-//        {
-//            @Override
-//            public void updateSelectedOption(int selectedOption)
-//            {
-//                DataWriter dw = getWriterForServerComponentPacket();
-//                writeRadioButtonData(dw, selectedOption);
-//                PacketHandler.sendDataToServer(dw);
-//            }
-//        };
+        radioButtonsMulti = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                DataWriter dw = getWriterForServerComponentPacket();
+                writeRadioButtonData(dw, selectedOption);
+                PacketHandler.sendDataToServer(dw);
+            }
+        };
 
         initRadioButtons();
 

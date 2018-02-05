@@ -1,6 +1,5 @@
 package vswe.stevesfactory.network;
 
-
 public enum DataBitHelper
 {
     FLOW_CONTROL_COUNT(9),

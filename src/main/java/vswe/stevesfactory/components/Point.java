@@ -10,9 +10,7 @@ public class Point
         this.y = y;
     }
 
-    public Point()
-    {
-    }
+    public Point() {}
 
     public int getX()
     {

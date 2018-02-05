@@ -1,15 +1,17 @@
 package vswe.stevesfactory.components;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -20,6 +22,8 @@ import java.util.List;
 
 public class ComponentMenuItem extends ComponentMenuStuff
 {
+
+
     protected ComponentMenuItem(FlowComponent parent, Class<? extends Setting> settingClass)
     {
         super(parent, settingClass);
@@ -58,23 +62,6 @@ public class ComponentMenuItem extends ComponentMenuStuff
                 writeServerData(DataTypeHeader.META);
             }
         });
-
-        /*checkBoxes.addCheckBox(new CheckBox("Is detection fuzzy?", 5, 40) {
-            @Override
-            public void setValue(boolean val) {
-                getSelectedSetting().setFuzzyMode(val ? FuzzyMode.FUZZY : FuzzyMode.PRECISE);
-            }
-
-            @Override
-            public boolean getValue() {
-                return getSelectedSetting().getFuzzyMode() == FuzzyMode.FUZZY;
-            }
-
-            @Override
-            public void onUpdate() {
-                writeServerData(DataTypeHeader.USE_FUZZY);
-            }
-        });*/
     }
 
     public ComponentMenuItem(FlowComponent parent)
@@ -261,11 +248,11 @@ public class ComponentMenuItem extends ComponentMenuStuff
     @Override
     protected List updateSearch(String search, boolean showAll)
     {
-        List ret = new ArrayList();
+        NonNullList<ItemStack> ret = NonNullList.create();
 
         if (search.equals(".inv"))
         {
-            IInventory inventory = Minecraft.getMinecraft().thePlayer.inventory;
+            IInventory inventory = Minecraft.getMinecraft().player.inventory;
             int itemLength = inventory.getSizeInventory();
             for (int i = 0; i < itemLength; i++)
             {
@@ -273,7 +260,7 @@ public class ComponentMenuItem extends ComponentMenuStuff
                 if (item != null)
                 {
                     item = item.copy();
-                    item.stackSize = 1;
+                    item.setCount(1);
                     boolean exists = false;
                     for (Object other : ret)
                     {
@@ -299,12 +286,14 @@ public class ComponentMenuItem extends ComponentMenuStuff
 
                 if (item != null && item.getCreativeTab() != null)
                 {
-                    item.getSubItems(item, null, ret);
+                    item.getSubItems(item.getCreativeTab(), ret);
                 }
             }
 
             if (!showAll)
             {
+                Thread thread = new Thread();
+                thread.start();
                 Iterator<ItemStack> itemIterator = ret.iterator();
 
                 while (itemIterator.hasNext())
@@ -316,7 +305,7 @@ public class ComponentMenuItem extends ComponentMenuStuff
                     //if it encounters some weird items
                     try
                     {
-                        description = itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+                        description = itemStack.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL);
                     } catch (Throwable ex)
                     {
                         itemIterator.remove();
@@ -353,7 +342,7 @@ public class ComponentMenuItem extends ComponentMenuStuff
     {
         try
         {
-            return itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+            return itemStack.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL);
         } catch (Exception ex)
         {
             if (itemStack.getItemDamage() == 0)

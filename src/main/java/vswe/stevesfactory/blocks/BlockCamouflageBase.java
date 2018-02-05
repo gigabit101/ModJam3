@@ -17,6 +17,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.tiles.TileEntityCamouflage;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 
+import javax.annotation.Nullable;
+
 public abstract class BlockCamouflageBase extends BlockContainer
 {
     protected BlockCamouflageBase(Material material)
@@ -44,7 +46,7 @@ public abstract class BlockCamouflageBase extends BlockContainer
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         if (!setBlockCollisionBoundsBasedOnState(state, world, pos))
         {

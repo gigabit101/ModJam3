@@ -5,7 +5,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
-@Deprecated
 public abstract class InventoryWrapper implements IInventory
 {
     protected IInventory inventory;
@@ -76,9 +75,9 @@ public abstract class InventoryWrapper implements IInventory
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
+    public boolean isUsableByPlayer(EntityPlayer entityplayer)
     {
-        return inventory.isUseableByPlayer(entityplayer);
+        return inventory.isUsableByPlayer(entityplayer);
     }
 
     @Override

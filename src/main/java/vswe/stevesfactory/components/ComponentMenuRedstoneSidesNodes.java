@@ -1,7 +1,7 @@
 package vswe.stevesfactory.components;
 
 
-import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.Localization;
 
 public class ComponentMenuRedstoneSidesNodes extends ComponentMenuRedstoneSidesTrigger
 {

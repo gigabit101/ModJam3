@@ -22,15 +22,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
-public class BlockManager extends BlockSFM
+public class BlockManager extends BlockContainer
 {
     public BlockManager()
     {
-        setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.MANAGER_UNLOCALIZED_NAME);
-        setUpdateInventorys(true);
+        super(Material.IRON);
+
+        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.MANAGER_UNLOCALIZED_NAME);
+        setSoundType(SoundType.METAL);
+        setCreativeTab(ModBlocks.creativeTab);
+        setHardness(2F);
     }
 
     public static final IProperty LIMITLESS = PropertyBool.create("limitless");
@@ -60,22 +63,21 @@ public class BlockManager extends BlockSFM
         return new TileEntityManager();
     }
 
-
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if (!world.isRemote)
+        if(!world.isRemote)
         {
-            FMLNetworkHandler.openGui(player, StevesFactoryManager.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
+            player.openGui(StevesFactoryManager.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
         }
-
         return true;
     }
 
+
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn)
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
-        super.neighborChanged(state, worldIn, pos, blockIn);
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         updateInventories(worldIn, pos);
     }
 

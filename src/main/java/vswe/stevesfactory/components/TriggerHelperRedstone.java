@@ -1,7 +1,7 @@
 package vswe.stevesfactory.components;
 
 import net.minecraft.util.EnumFacing;
-import vswe.stevesfactory.misc.ConnectionBlockType;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityInput;
 
 import java.util.EnumSet;
@@ -82,7 +82,6 @@ public class TriggerHelperRedstone extends TriggerHelper
                     activateTrigger(item, EnumSet.of(ConnectionOption.REDSTONE_PULSE_LOW));
                 }
             }
-
         }
     }
 }

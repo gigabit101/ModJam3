@@ -9,7 +9,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import vswe.stevesfactory.tiles.TileEntityManager;
-import vswe.stevesfactory.container.ContainerBase;
+import vswe.stevesfactory.interfaces.ContainerBase;
 import vswe.stevesfactory.settings.Settings;
 import vswe.stevesfactory.util.Utils;
 
@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static vswe.stevesfactory.lib.ModInfo.MOD_CHANNEL_ID;
+import static vswe.stevesfactory.StevesFactoryManager.CHANNEL;
 import static vswe.stevesfactory.StevesFactoryManager.packetHandler;
 
 public class DataWriter
@@ -92,7 +92,7 @@ public class DataWriter
     {
         writeFinalBits();
         PacketBuffer buf = new PacketBuffer(Unpooled.copiedBuffer(((ByteArrayOutputStream) stream).toByteArray()));
-        return new FMLProxyPacket(buf, MOD_CHANNEL_ID);
+        return new FMLProxyPacket(buf, CHANNEL);
     }
 
     void sendPlayerPackets(double x, double y, double z, double r, int dimension)

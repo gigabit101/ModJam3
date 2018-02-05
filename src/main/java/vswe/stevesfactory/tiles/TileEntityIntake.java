@@ -11,7 +11,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
@@ -31,16 +31,21 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public ItemStack getStackInSlot(int id)
     {
         updateInventory();
         id--;
         if (id < 0 || !canPickUp(items.get(id)))
         {
-            return null;
+            return ItemStack.EMPTY;
         } else
         {
-            return items.get(id).getEntityItem();
+            return items.get(id).getItem();
         }
     }
 
@@ -48,25 +53,25 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
     public ItemStack decrStackSize(int id, int count)
     {
         ItemStack item = getStackInSlot(id);
-        if (item != null)
+        if (!item.isEmpty())
         {
-            if (item.stackSize <= count)
+            if (item.getCount() <= count)
             {
-                setInventorySlotContents(id, null);
+                setInventorySlotContents(id, ItemStack.EMPTY);
                 return item;
             }
 
             ItemStack ret = item.splitStack(count);
 
-            if (item.stackSize == 0)
+            if (item.getCount() == 0)
             {
-                setInventorySlotContents(id, null);
+                setInventorySlotContents(id, ItemStack.EMPTY);
             }
 
             return ret;
         } else
         {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -77,7 +82,7 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
         id--;
         if (id < 0 || !canPickUp(items.get(id)))
         {
-            if (itemstack != null)
+            if (!itemstack.isEmpty())
             {
                 EnumFacing direction = EnumFacing.getFront(ModBlocks.blockCableIntake.getSideMeta(getBlockMetadata()) % EnumFacing.values().length);
 
@@ -90,7 +95,7 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
                     posY -= 0.1;
                 }
 
-                EntityItem item = new EntityItem(worldObj, posX, posY, posZ, itemstack);
+                EntityItem item = new EntityItem(world, posX, posY, posZ, itemstack);
 
                 item.motionX = direction.getFrontOffsetX() * 0.2;
                 item.motionY = direction.getFrontOffsetY() * 0.2;
@@ -98,7 +103,7 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
 
 
                 item.setPickupDelay(40);
-                worldObj.spawnEntityInWorld(item);
+                world.spawnEntity(item);
 
 
                 if (id < 0)
@@ -109,14 +114,14 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
                     items.set(id, item);
                 }
             }
-        } else if (itemstack != null)
+        } else if (!itemstack.isEmpty())
         {
-            items.get(id).setEntityItemStack(itemstack);
+            items.get(id).setItem(itemstack);
         } else
         {
             //seems to be an issue with setting it to null
-            items.get(id).setEntityItemStack(items.get(id).getEntityItem().copy());
-            items.get(id).getEntityItem().stackSize = 0;
+            items.get(id).setItem(items.get(id).getItem().copy());
+            items.get(id).getItem().setCount(0);
             items.get(id).setDead();
         }
     }
@@ -155,7 +160,7 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
             int highY = getPos().getY() + 1 + DISTANCE;
             int highZ = getPos().getZ() + 1 + DISTANCE;
 
-            items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(lowX, lowY, lowZ, highX, highY, highZ));
+            items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(lowX, lowY, lowZ, highX, highY, highZ));
 
             //remove items we can't use right away, this check is done when we interact with items too, to make sure it hasn't changed
             for (Iterator<EntityItem> iterator = items.iterator(); iterator.hasNext(); )
@@ -172,7 +177,7 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
     @Override
     public ItemStack removeStackFromSlot(int i)
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -182,22 +187,16 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
+    public boolean isUsableByPlayer(EntityPlayer entityplayer)
     {
         return false;
     }
 
     @Override
-    public void openInventory(EntityPlayer player)
-    {
-
-    }
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory(EntityPlayer player)
-    {
-
-    }
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack)
@@ -212,10 +211,7 @@ public class TileEntityIntake extends TileEntityClusterElement implements IInven
     }
 
     @Override
-    public void setField(int id, int value)
-    {
-
-    }
+    public void setField(int id, int value) {}
 
     @Override
     public int getFieldCount()

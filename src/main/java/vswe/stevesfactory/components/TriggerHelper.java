@@ -1,9 +1,9 @@
 package vswe.stevesfactory.components;
 
 import net.minecraft.util.EnumFacing;
-import vswe.stevesfactory.misc.ConnectionBlockType;
-import vswe.stevesfactory.misc.IRedstoneNode;
-import vswe.stevesfactory.misc.ITriggerNode;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
+import vswe.stevesfactory.blocks.IRedstoneNode;
+import vswe.stevesfactory.blocks.ITriggerNode;
 
 import java.util.EnumSet;
 import java.util.List;

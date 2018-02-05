@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.components.ComponentMenuSignText;
 
 import java.util.EnumSet;
@@ -22,7 +22,7 @@ public class TileEntitySignUpdater extends TileEntityClusterElement
     public void updateSign(ComponentMenuSignText menu)
     {
         EnumFacing direction = EnumFacing.getFront(getBlockMetadata() % EnumFacing.values().length);
-        TileEntity te = worldObj.getTileEntity(new BlockPos(getPos().getX() + direction.getFrontOffsetX(), getPos().getY() + direction.getFrontOffsetY(), getPos().getZ() + direction.getFrontOffsetZ()));
+        TileEntity te = world.getTileEntity(new BlockPos(getPos().getX() + direction.getFrontOffsetX(), getPos().getY() + direction.getFrontOffsetY(), getPos().getZ() + direction.getFrontOffsetZ()));
         if (te != null && te instanceof TileEntitySign)
         {
             TileEntitySign sign = (TileEntitySign) te;
@@ -44,7 +44,7 @@ public class TileEntitySignUpdater extends TileEntityClusterElement
             if (updated)
             {
                 sign.markDirty();
-                worldObj.notifyBlockUpdate(sign.getPos(), getWorld().getBlockState(sign.getPos()), getWorld().getBlockState(sign.getPos()), 3);
+                world.notifyBlockUpdate(sign.getPos(), getWorld().getBlockState(sign.getPos()), getWorld().getBlockState(sign.getPos()), 3);
             }
         }
     }

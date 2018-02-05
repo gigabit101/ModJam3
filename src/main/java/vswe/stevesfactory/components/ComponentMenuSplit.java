@@ -3,9 +3,9 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -14,19 +14,20 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuSplit extends ComponentMenu
 {
-    private RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            setSelectedOption(selectedOption);
-            sendServerData(0);
-        }
-    };
-
     public ComponentMenuSplit(FlowComponent parent)
     {
         super(parent);
+
+
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                setSelectedOption(selectedOption);
+                sendServerData(0);
+            }
+        };
 
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y, Localization.SEQUENTIAL));
         radioButtons.add(new RadioButton(RADIO_X, RADIO_Y + SPACING_Y, Localization.SPLIT));
@@ -76,6 +77,7 @@ public class ComponentMenuSplit extends ComponentMenu
         });
     }
 
+    private RadioButtonList radioButtons;
     private CheckBoxList checkBoxes;
     private boolean useFair;
     private boolean useEmpty;

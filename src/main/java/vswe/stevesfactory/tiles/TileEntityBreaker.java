@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import vswe.stevesfactory.blocks.BlockCableBreaker;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.network.*;
 
@@ -57,10 +57,10 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             int y = getPos().getY() + direction.getFrontOffsetY();
             int z = getPos().getZ() + direction.getFrontOffsetZ();
             BlockPos pos = new BlockPos(x, y, z);
-            IBlockState state = worldObj.getBlockState(pos);
+            IBlockState state = world.getBlockState(pos);
             if (canBreakBlock(state, state.getBlock(), pos))
             {
-                inventory = state.getBlock().getDrops(worldObj, pos, state, 0);
+                inventory = state.getBlock().getDrops(world, pos, state, 0);
             }
             if (inventory == null)
             {
@@ -80,7 +80,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     {
         List<ItemStack> items = new ArrayList<ItemStack>();
 
-        if (itemstack != null && itemstack.getItem() != null && itemstack.stackSize > 0)
+        if (itemstack != null && itemstack.getItem() != null && itemstack.getCount() > 0)
         {
             EnumFacing side = EnumFacing.getFront(getBlockMetadata() % EnumFacing.values().length);
             EnumFacing direction = placeDirection.getOpposite();
@@ -89,7 +89,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             float hitY = 0.5F + direction.getFrontOffsetY() * 0.5F;
             float hitZ = 0.5F + direction.getFrontOffsetZ() * 0.5F;
 
-            EntityPlayerMP player = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(FAKE_PLAYER_ID, FAKE_PLAYER_NAME));
+            EntityPlayerMP player = FakePlayerFactory.get((WorldServer) world, new GameProfile(FAKE_PLAYER_ID, FAKE_PLAYER_NAME));
             int rotationSide = ROTATION_SIDE_MAPPING[direction.ordinal()];
 
             player.prevRotationPitch = player.rotationYaw = rotationSide * 90;
@@ -106,14 +106,14 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                 player.inventory.clear();
                 player.inventory.currentItem = 0;
                 player.inventory.setInventorySlotContents(0, itemstack);
-                ActionResult<ItemStack> result = itemstack.useItemRightClick(worldObj, player, EnumHand.MAIN_HAND);
+                ActionResult<ItemStack> result = itemstack.useItemRightClick(world, player, EnumHand.MAIN_HAND);
                 if (result.getType().equals(EnumActionResult.PASS) && ItemStack.areItemStacksEqual(result.getResult(), itemstack))
                 {
                     int x = getPos().getX() + side.getFrontOffsetX() - direction.getFrontOffsetX();
                     int y = getPos().getY() + side.getFrontOffsetY() - direction.getFrontOffsetY();
                     int z = getPos().getZ() + side.getFrontOffsetZ() - direction.getFrontOffsetZ();
 
-                    player.interactionManager.processRightClickBlock(player, worldObj, itemstack, EnumHand.MAIN_HAND, new BlockPos(x, y, z), direction, hitX, hitY, hitZ);
+                    player.interactionManager.processRightClickBlock(player, world, itemstack, EnumHand.MAIN_HAND, new BlockPos(x, y, z), direction, hitX, hitY, hitZ);
 
                 } else
                 {
@@ -126,7 +126,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             {
                 for (ItemStack itemStack : player.inventory.mainInventory)
                 {
-                    if (itemStack != null && itemStack.stackSize > 0)
+                    if (itemStack != null && itemStack.getCount() > 0)
                     {
                         items.add(itemStack);
                     }
@@ -147,7 +147,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             setPlaceDirection(EnumFacing.getFront(getBlockMetadata()));
             missingPlaceDirection = false;
         }
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             keepClientDataUpdated();
         }
@@ -173,14 +173,14 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                             y -= 0.1;
                         }
 
-                        EntityItem entityitem = new EntityItem(worldObj, x, y, z, item);
+                        EntityItem entityitem = new EntityItem(world, x, y, z, item);
 
                         entityitem.motionX = direction.getFrontOffsetX() * 0.1;
                         entityitem.motionY = direction.getFrontOffsetY() * 0.1;
                         entityitem.motionZ = direction.getFrontOffsetZ() * 0.1;
 
                         entityitem.setPickupDelay(40);
-                        worldObj.spawnEntityInWorld(entityitem);
+                        world.spawnEntity(entityitem);
                     }
                 }
             }
@@ -200,6 +200,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             {
                 ItemStack newStack = itemStack.copy();
 
+
                 if (!broken)
                 {
                     for (int i = 0; i < inventoryCache.size(); i++)
@@ -208,16 +209,16 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
 
                         if (copyStack != null && newStack.isItemEqual(copyStack) && ItemStack.areItemStackTagsEqual(newStack, copyStack))
                         {
-                            int max = Math.min(copyStack.stackSize, newStack.stackSize);
+                            int max = Math.min(copyStack.getCount(), newStack.getCount());
 
-                            copyStack.stackSize -= max;
-                            if (copyStack.stackSize == 0)
+                            copyStack.shrink(max);
+                            if (copyStack.getCount() == 0)
                             {
                                 inventoryCache.set(0, null);
                             }
 
-                            newStack.stackSize -= max;
-                            if (newStack.stackSize == 0)
+                            newStack.shrink(max);
+                            if (newStack.getCount() == 0)
                             {
                                 newStack = null;
                                 break;
@@ -243,6 +244,11 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public ItemStack getStackInSlot(int id)
     {
         if (id < getInventory().size())
@@ -261,7 +267,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
         ItemStack item = getStackInSlot(id);
         if (item != null)
         {
-            if (item.stackSize <= count)
+            if (item.getCount() <= count)
             {
                 getInventory().set(id, null);
                 return item;
@@ -269,7 +275,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
 
             ItemStack ret = item.splitStack(count);
 
-            if (item.stackSize == 0)
+            if (item.getCount() == 0)
             {
                 getInventory().set(id, null);
             }
@@ -329,7 +335,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
+    public boolean isUsableByPlayer(EntityPlayer entityplayer)
     {
         return false;
     }
@@ -389,7 +395,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                 ItemStack itemStack = inventory.get(i);
                 ItemStack itemStackCopy = inventoryCache.get(i);
 
-                if (itemStackCopy != null && (itemStack == null || Item.getIdFromItem(itemStack.getItem()) != Item.getIdFromItem(itemStackCopy.getItem()) || itemStack.getItemDamage() != itemStackCopy.getItemDamage() || !ItemStack.areItemStackTagsEqual(itemStack, itemStackCopy) || itemStack.stackSize < itemStackCopy.stackSize))
+                if (itemStackCopy != null && (itemStack == null || Item.getIdFromItem(itemStack.getItem()) != Item.getIdFromItem(itemStackCopy.getItem()) || itemStack.getItemDamage() != itemStackCopy.getItemDamage() || !ItemStack.areItemStackTagsEqual(itemStack, itemStackCopy) || itemStack.getCount() < itemStackCopy.getCount()))
                 {
                     match = false;
                     break;
@@ -405,7 +411,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                 int z = getPos().getZ() + direction.getFrontOffsetZ();
 
                 BlockPos pos = new BlockPos(x, y, z);
-                IBlockState state = worldObj.getBlockState(pos);
+                IBlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
 
 
@@ -413,9 +419,9 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
                 {
                     broken = true;
                     int meta = state.getBlock().getMetaFromState(state);
-                    block.breakBlock(worldObj, pos, state);
+                    block.breakBlock(world, pos, state);
 //                   worldObj.playAuxSFX(2001, pos, Block.getIdFromBlock(block) + (meta << 12));
-                    worldObj.setBlockToAir(pos);
+                    world.setBlockToAir(pos);
                 }
 
             }
@@ -424,7 +430,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
 
     private boolean canBreakBlock(IBlockState state, Block block, BlockPos pos)
     {
-        return block != null && Block.getIdFromBlock(block) != Block.getIdFromBlock(Blocks.BEDROCK) && block.getBlockHardness(state, worldObj, pos) >= 0;
+        return block != null && Block.getIdFromBlock(block) != Block.getIdFromBlock(Blocks.BEDROCK) && block.getBlockHardness(state, world, pos) >= 0;
     }
 
     @Override
@@ -445,7 +451,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             setPlaceDirection(EnumFacing.getFront(tagCompound.getByte(NBT_DIRECTION)));
         } else
         {
-            if (worldObj != null)
+            if (world != null)
             {
                 setPlaceDirection(EnumFacing.getFront(getBlockMetadata()));
             } else
@@ -472,7 +478,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             return;
         }
 
-        double distance = Minecraft.getMinecraft().thePlayer.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
+        double distance = Minecraft.getMinecraft().player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
 
         if (distance > Math.pow(PacketHandler.BLOCK_UPDATE_RANGE, 2))
         {
@@ -480,7 +486,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
         } else if (!hasUpdatedData && distance < Math.pow(PacketHandler.BLOCK_UPDATE_RANGE - UPDATE_BUFFER_DISTANCE, 2))
         {
             hasUpdatedData = true;
-            PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().thePlayer, 0);
+            PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().player, 0);
         }
     }
 
@@ -492,7 +498,8 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             if (placeDirection == null)
                 placeDirection = BlockCableBreaker.getSide(getBlockMetadata()); //might be a cheap fix, but seams to some kind of sync bug between threads or something
             dw.writeData(placeDirection.getIndex(), DataBitHelper.PLACE_DIRECTION);
-        } else {
+        } else
+        {
             //nothing to write, empty packet
         }
     }
@@ -508,7 +515,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
         {
             int val = dr.readData(DataBitHelper.PLACE_DIRECTION);
             setPlaceDirection(EnumFacing.getFront(val));
-            worldObj.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
+            world.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
             markDirty();
         }
     }
@@ -531,7 +538,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
             this.placeDirection = placeDirection;
             this.markDirty();
 
-            if (!isPartOfCluster() && worldObj != null && !worldObj.isRemote)
+            if (!isPartOfCluster() && world != null && !world.isRemote)
             {
                 PacketHandler.sendBlockPacket(this, null, 0);
             }
@@ -559,7 +566,7 @@ public class TileEntityBreaker extends TileEntityClusterElement implements IInve
     {
         if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            return (T) new InvWrapper (this);
+            return (T) new InvWrapper(this);
         }
         return super.getCapability(capability, facing);
     }

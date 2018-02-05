@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -26,9 +27,7 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import vswe.stevesfactory.api.ICable;
-import vswe.stevesfactory.client.CreativeTabSFM;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
     public BlockCableCluster()
     {
         super(Material.IRON);
-        setCreativeTab(CreativeTabSFM.instance);
+        setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
         setHardness(2F);
     }
@@ -110,8 +109,8 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
             NBTTagCompound compound = new NBTTagCompound();
             itemStack.setTagCompound(compound);
             NBTTagCompound cable = new NBTTagCompound();
-            compound.setTag(ItemBlockCluster.NBT_CABLE, cable);
-            cable.setByteArray(ItemBlockCluster.NBT_TYPES, cluster.getTypes());
+            compound.setTag(ItemCluster.NBT_CABLE, cable);
+            cable.setByteArray(ItemCluster.NBT_TYPES, cluster.getTypes());
             return itemStack;
         }
         return null;
@@ -145,9 +144,6 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack itemStack)
     {
-        int meta = addAdvancedMeta(BlockPistonBase.getFacingFromEntity(pos, entity).getIndex(), itemStack.getItemDamage());
-        world.setBlockState(pos, state.getBlock().getStateFromMeta(meta), 2);
-
         TileEntityCluster cluster = getTe(world, pos);
 
         if (cluster != null)
@@ -157,8 +153,9 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
         }
     }
 
+
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn)
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
         TileEntityCluster cluster = getTe(world, pos);
         Block block = world.getBlockState(pos).getBlock();
@@ -172,7 +169,7 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
         {
             ModBlocks.blockCable.updateInventories(world, pos);
         }
-        super.neighborChanged(state, world, pos, blockIn);
+        super.neighborChanged(state, world, pos, blockIn, fromPos);
     }
 
     @Override
@@ -256,29 +253,28 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
         {
             return cluster.isProvidingStrongPower(state, blockAccess, pos, side);
         }
-
         return 0;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         TileEntityCluster cluster = getTe(world, pos);
 
         if (cluster != null)
         {
-            return cluster.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+            return cluster.onBlockActivated(world, pos, state, player, hand, player.getHeldItem(hand), facing, hitX, hitY, hitZ);
         }
         return false;
     }
 
-
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tabs, List list)
+    public void getSubBlocks(CreativeTabs item, NonNullList<ItemStack> list)
     {
-        list.add(new ItemStack(item, 1, 0));
-        list.add(new ItemStack(item, 1, 8));
+        list.add(new ItemStack(this, 1, 0));
+        list.add(new ItemStack(this, 1, 8));
     }
+
 
     public boolean isAdvanced(int meta)
     {
@@ -319,6 +315,12 @@ public class BlockCableCluster extends BlockCamouflageBase implements ICable
 
     @Override
     public boolean isFullCube(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isCable()
     {
         return true;
     }

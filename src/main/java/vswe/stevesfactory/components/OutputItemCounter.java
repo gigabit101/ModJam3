@@ -48,7 +48,7 @@ public class OutputItemCounter
             ItemStack item = inventory.getStackInSlot(i);
             if (((ItemSetting) setting).isEqualForCommandExecutor(item))
             {
-                currentInventoryStackSize += item.stackSize;
+                currentInventoryStackSize += item.getCount();
             }
         }
     }
@@ -68,10 +68,10 @@ public class OutputItemCounter
             int itemsAllowedToBeMoved;
             if (useWhiteList)
             {
-                itemsAllowedToBeMoved = ((ItemSetting) setting).getItem().stackSize - currentInventoryStackSize;
+                itemsAllowedToBeMoved = ((ItemSetting) setting).getItem().getCount() - currentInventoryStackSize;
             } else
             {
-                itemsAllowedToBeMoved = currentBufferStackSize - ((ItemSetting) setting).getItem().stackSize;
+                itemsAllowedToBeMoved = currentBufferStackSize - ((ItemSetting) setting).getItem().getCount();
             }
             return Math.min(itemsAllowedToBeMoved, desiredItemCount);
         }

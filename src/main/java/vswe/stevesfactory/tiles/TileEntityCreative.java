@@ -5,62 +5,64 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
 import vswe.stevesfactory.init.ModBlocks;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public class TileEntityCreative extends TileEntityClusterElement implements IInventory, IFluidHandler
 {
-    @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
-    {
-        return resource == null ? 0 : resource.amount;
-    }
-
-    @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
-    {
-        return resource == null ? null : resource.copy();
-    }
-
-    @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
-    {
-        return null;
-    }
-
-    @Override
-    public boolean canFill(EnumFacing from, Fluid fluid)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid)
-    {
-        return true;
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from)
-    {
-        return new FluidTankInfo[0];
-    }
+//    @Override
+//    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
+//    {
+//        return resource == null ? 0 : resource.amount;
+//    }
+//
+//    @Override
+//    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
+//    {
+//        return resource == null ? null : resource.copy();
+//    }
+//
+//    @Override
+//    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
+//    {
+//        return null;
+//    }
+//
+//    @Override
+//    public boolean canFill(EnumFacing from, Fluid fluid)
+//    {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean canDrain(EnumFacing from, Fluid fluid)
+//    {
+//        return true;
+//    }
+//
+//    @Override
+//    public FluidTankInfo[] getTankInfo(EnumFacing from)
+//    {
+//        return new FluidTankInfo[0];
+//    }
 
     @Override
     public int getSizeInventory()
     {
         return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 
     @Override
@@ -112,8 +114,7 @@ public class TileEntityCreative extends TileEntityClusterElement implements IInv
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
-    {
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return false;
     }
 
@@ -172,26 +173,26 @@ public class TileEntityCreative extends TileEntityClusterElement implements IInv
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    public IFluidTankProperties[] getTankProperties()
     {
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)// || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-        {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
+        return new IFluidTankProperties[0];
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    public int fill(FluidStack resource, boolean doFill)
     {
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return (T) new InvWrapper(this);
-        }
-//        else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-//        {
-//            return (T) new FluidHandlerWrapper(this);
-//        }
-        return super.getCapability(capability, facing);
+        return resource == null ? 0 : resource.amount;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
+        return resource == null ? null : resource.copy();
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        return null;
     }
 }

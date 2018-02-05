@@ -1,6 +1,5 @@
 package vswe.stevesfactory.components;
 
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 public class CraftingDummy extends InventoryCrafting
 {
-
     private int inventoryWidth;
 
     private ComponentMenuCrafting crafting;
@@ -32,12 +30,12 @@ public class CraftingDummy extends InventoryCrafting
     @Override
     public ItemStack getStackInSlot(int id)
     {
-        if (overrideMap != null && overrideMap.get(id) != null && overrideMap.get(id).stackSize > 0)
+        if (overrideMap != null && overrideMap.get(id) != null && overrideMap.get(id).getCount() > 0)
         {
             return overrideMap.get(id);
         } else
         {
-            return id < 0 || id >= this.getSizeInventory() ? null : ((CraftingSetting) crafting.getSettings().get(id)).getItem();
+            return id < 0 || id >= this.getSizeInventory() ? ItemStack.EMPTY : ((CraftingSetting) crafting.getSettings().get(id)).getItem();
         }
     }
 
@@ -51,10 +49,9 @@ public class CraftingDummy extends InventoryCrafting
             return this.getStackInSlot(k);
         } else
         {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
-
 
     @Override
     public ItemStack removeStackFromSlot(int par1)
@@ -67,7 +64,6 @@ public class CraftingDummy extends InventoryCrafting
     {
         return null;
     }
-
 
     @Override
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
@@ -90,21 +86,23 @@ public class CraftingDummy extends InventoryCrafting
     public ItemStack getResult()
     {
         IRecipe recipe = getRecipe();
-        return recipe == null ? null : recipe.getCraftingResult(this);
+        if(recipe != null)
+        {
+            return recipe.getCraftingResult(this);
+        }
+        return ItemStack.EMPTY;
     }
 
     public IRecipe getRecipe()
     {
-        for (int i = 0; i < CraftingManager.getInstance().getRecipeList().size(); ++i)
+        try
         {
-            IRecipe recipe = (IRecipe) CraftingManager.getInstance().getRecipeList().get(i);
-
-            if (recipe.matches(this, crafting.getParent().getManager().getWorld()))
-            {
-                return recipe;
-            }
+            return CraftingManager.findMatchingRecipe(this, crafting.getParent().getManager().getWorld());
         }
-
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         return null;
     }
 

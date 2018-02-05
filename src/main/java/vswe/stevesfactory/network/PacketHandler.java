@@ -9,14 +9,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.misc.ITileEntityInterface;
+import vswe.stevesfactory.blocks.ITileEntityInterface;
 import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.ComponentMenu;
 import vswe.stevesfactory.components.Connection;
 import vswe.stevesfactory.components.FlowComponent;
 import vswe.stevesfactory.components.Point;
-import vswe.stevesfactory.container.ContainerBase;
-import vswe.stevesfactory.container.ContainerManager;
+import vswe.stevesfactory.interfaces.ContainerBase;
+import vswe.stevesfactory.interfaces.ContainerManager;
 
 public class PacketHandler
 {
@@ -58,19 +58,6 @@ public class PacketHandler
         dw.close();
     }
 
-
-
-   /* public static void readBlockPacket(DataReader data) {
-        int x = data.readData(DataBitHelper.WORLD_COORDINATE);
-        int y = data.readData(DataBitHelper.WORLD_COORDINATE);
-        int z = data.readData(DataBitHelper.WORLD_COORDINATE);
-
-        World world = Minecraft.getMinecraft().theWorld;
-        if (world.getBlockId(x, y, z) == Blocks.blockCable.blockID) {
-            Blocks.blockCable.update(world, x, y, z);
-        }
-    }*/
-
     public static DataWriter getWriterForUpdate(Container container)
     {
         DataWriter dw = new DataWriter();
@@ -98,7 +85,7 @@ public class PacketHandler
     @SideOnly(Side.CLIENT)
     private static DataWriter getBaseWriterForServerPacket()
     {
-        Container container = Minecraft.getMinecraft().thePlayer.openContainer;
+        Container container = Minecraft.getMinecraft().player.openContainer;
         if (container != null)
         {
             DataWriter dw = new DataWriter();
@@ -255,7 +242,7 @@ public class PacketHandler
         {
             TileEntity te = (TileEntity) block;
             BlockPos pos = te.getPos();
-            boolean onServer = player == null || !player.worldObj.isRemote;
+            boolean onServer = player == null || !player.world.isRemote;
 
             DataWriter dw = new DataWriter();
             dw.writeBoolean(false); //no container

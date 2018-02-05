@@ -10,50 +10,51 @@ import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import vswe.stevesfactory.components.ModItemHelper;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.init.ModItems;
-import vswe.stevesfactory.init.ModRecipes;
-import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.network.FileHelper;
 import vswe.stevesfactory.network.PacketEventHandler;
 import vswe.stevesfactory.proxy.CommonProxy;
 
-@Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME, version = ModInfo.MOD_VERSION)
+@Mod(modid = StevesFactoryManager.MODID, name = "Steve's Factory Manager", version = "@VERSION@", dependencies = "required-after:forge@[14.21.0.2359,);required-after:reborncore")
 public class StevesFactoryManager
 {
+    public static final String MODID = "stevesfactorymanager";
+    public static final String RESOURCE_LOCATION = "stevesfactorymanager";
+    public static final String CHANNEL = "factorymanager";
+    public static final String UNLOCALIZED_START = "sfm.";
+
     public static FMLEventChannel packetHandler;
 
     @SidedProxy(clientSide = "vswe.stevesfactory.proxy.ClientProxy", serverSide = "vswe.stevesfactory.proxy.CommonProxy")
     public static CommonProxy proxy;
 
-    @Mod.Instance(ModInfo.MOD_ID)
+    @Mod.Instance(MODID)
     public static StevesFactoryManager instance;
 
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        packetHandler = NetworkRegistry.INSTANCE.newEventDrivenChannel(ModInfo.MOD_CHANNEL_ID);
+        packetHandler = NetworkRegistry.INSTANCE.newEventDrivenChannel(CHANNEL);
 
         ModBlocks.init();
-
-        ModItems.init();
 
         proxy.preInit();
 
         FileHelper.setConfigDir(event.getModConfigurationDirectory());
+
+        packetHandler.register(new PacketEventHandler());
+
+        ModBlocks.addRecipes();
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+
+        FMLInterModComms.sendMessage("Waila", "register", "Provider.callbackRegister");
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        packetHandler.register(new PacketEventHandler());
 
-        ModRecipes.init();
-
-        //new ChatListener();
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-
-        FMLInterModComms.sendMessage("Waila", "register", "Provider.callbackRegister");
     }
 
     @Mod.EventHandler

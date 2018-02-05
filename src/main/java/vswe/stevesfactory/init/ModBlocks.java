@@ -1,24 +1,22 @@
 package vswe.stevesfactory.init;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import vswe.stevesfactory.beta.BlockWirelessReciver;
-import vswe.stevesfactory.beta.BlockWirelessTransmitter;
-import vswe.stevesfactory.beta.ItemBlockBeta;
+import net.minecraftforge.registries.GameData;
+import reborncore.RebornRegistry;
+import reborncore.common.util.RebornCraftingHelper;
+import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.blocks.*;
-import vswe.stevesfactory.items.itemblocks.ItemBlockCamouflage;
-import vswe.stevesfactory.items.itemblocks.ItemBlockCluster;
-import vswe.stevesfactory.items.itemblocks.ItemBlockIntake;
-import vswe.stevesfactory.items.itemblocks.ItemBlockRelay;
+import vswe.stevesfactory.items.ItemMemoryDisk;
 import vswe.stevesfactory.tiles.*;
-
-import java.lang.reflect.InvocationTargetException;
 
 public final class ModBlocks
 {
-    //TODO move all to lib
     public static final byte NBT_CURRENT_PROTOCOL_VERSION = 13;
     public static final String NBT_PROTOCOL_VERSION = "ProtocolVersion";
 
@@ -28,7 +26,6 @@ public final class ModBlocks
 
     public static final String CABLE_NAME_TAG = "BlockCableName";
     public static final String CABLE_UNLOCALIZED_NAME = "BlockCable";
-
 
     private static final String CABLE_RELAY_TILE_ENTITY_TAG = "TileEntityCableRelayName";
     public static final String CABLE_RELAY_NAME_TAG = "BlockCableRelayName";
@@ -85,62 +82,79 @@ public final class ModBlocks
     public static BlockCableCluster blockCableCluster;
     public static BlockCableCamouflages blockCableCamouflage;
     public static BlockCableSign blockCableSign;
-    public static BlockWirelessTransmitter blockWirelessTransmitter;
-    public static BlockWirelessReciver blockWirelessReciver;
+
+    public static ItemMemoryDisk itemMemoryDisk;
+
+    public static CreativeTabs creativeTab;
 
 
     public static void init()
     {
+        creativeTab = new CreativeTabs("sfm")
+        {
+            @Override
+            public ItemStack getIconItemStack()
+            {
+                return new ItemStack(blockManager);
+            }
+
+            @Override
+            public ItemStack getTabIconItem()
+            {
+                return null;
+            }
+        };
+
         blockManager = new BlockManager();
-        registerBlock(blockManager, MANAGER_NAME_TAG);
+        RebornRegistry.registerBlock(blockManager, MANAGER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityManager.class, MANAGER_TILE_ENTITY_TAG);
 
         blockCable = new BlockCable();
-        registerBlock(blockCable, CABLE_NAME_TAG);
+        RebornRegistry.registerBlock(blockCable, CABLE_NAME_TAG);
 
         blockCableRelay = new BlockCableRelay();
-        registerBlock(blockCableRelay, ItemBlockRelay.class, CABLE_RELAY_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableRelay, ItemRelay.class, CABLE_RELAY_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityRelay.class, CABLE_RELAY_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityRelay.class, blockCableRelay, new ItemStack(blockCableRelay, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityRelay.class, blockCableRelay, new ItemStack(blockCableRelay, 1, 8)));
 
         blockCableOutput = new BlockCableOutput();
-        registerBlock(blockCableOutput, CABLE_OUTPUT_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableOutput, CABLE_OUTPUT_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityOutput.class, CABLE_OUTPUT_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityOutput.class, blockCableOutput);
 
         blockCableInput = new BlockCableInput();
-        registerBlock(blockCableInput, CABLE_INPUT_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableInput, CABLE_INPUT_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityInput.class, CABLE_INPUT_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityInput.class, blockCableInput);
 
-        blockCableCreative = new BlockCableCreative();
-        registerBlock(blockCableCreative, CABLE_CREATIVE_NAME_TAG);
-        GameRegistry.registerTileEntity(TileEntityCreative.class, CABLE_CREATIVE_TILE_ENTITY_TAG);
-        ClusterRegistry.register(TileEntityCreative.class, blockCableCreative);
+//        blockCableCreative = new BlockCableCreative();
+//        RebornRegistry.registerBlock(blockCableCreative, CABLE_CREATIVE_NAME_TAG);
+//        GameRegistry.registerTileEntity(TileEntityCreative.class, CABLE_CREATIVE_TILE_ENTITY_TAG);
+//        ClusterRegistry.register(TileEntityCreative.class, blockCableCreative);
 
         blockCableIntake = new BlockCableIntake();
-        registerBlock(blockCableIntake, ItemBlockIntake.class, CABLE_INTAKE_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableIntake, ItemIntake.class, CABLE_INTAKE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityIntake.class, CABLE_INTAKE_TILE_ENTITY_TAG);
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 0)));
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryAdvancedSensitive(TileEntityIntake.class, blockCableIntake, new ItemStack(blockCableIntake, 1, 8)));
 
         blockCableBUD = new BlockCableBUD();
-        registerBlock(blockCableBUD, CABLE_BUD_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableBUD, CABLE_BUD_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityBUD.class, CABLE_BUD_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityBUD.class, blockCableBUD);
 
-        blockCableBreaker = new BlockCableBreaker();
-        registerBlock(blockCableBreaker, CABLE_BREAKER_NAME_TAG);
-        GameRegistry.registerTileEntity(TileEntityBreaker.class, CABLE_BREAKER_TILE_ENTITY_TAG);
-        ClusterRegistry.register(TileEntityBreaker.class, blockCableBreaker);
+//        blockCableBreaker = new BlockCableBreaker();
+//        RebornRegistry.registerBlock(blockCableBreaker, CABLE_BREAKER_NAME_TAG);
+//        GameRegistry.registerTileEntity(TileEntityBreaker.class, CABLE_BREAKER_TILE_ENTITY_TAG);
+//        ClusterRegistry.register(TileEntityBreaker.class, blockCableBreaker);
 
         blockCableCluster = new BlockCableCluster();
-        registerBlock(blockCableCluster, ItemBlockCluster.class, CABLE_CLUSTER_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableCluster, ItemCluster.class, CABLE_CLUSTER_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCluster.class, CABLE_CLUSTER_TILE_ENTITY_TAG);
 
         blockCableCamouflage = new BlockCableCamouflages();
-        registerBlock(blockCableCamouflage, ItemBlockCamouflage.class, CABLE_CAMOUFLAGE_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableCamouflage, ItemCamouflage.class, CABLE_CAMOUFLAGE_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityCamouflage.class, CABLE_CAMOUFLAGE_TILE_ENTITY_TAG);
 
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryMetaSensitive(TileEntityCamouflage.class, blockCableCamouflage, new ItemStack(blockCableCamouflage, 1, 0)));
@@ -148,38 +162,124 @@ public final class ModBlocks
         ClusterRegistry.register(new ClusterRegistry.ClusterRegistryMetaSensitive(TileEntityCamouflage.class, blockCableCamouflage, new ItemStack(blockCableCamouflage, 1, 2)));
 
         blockCableSign = new BlockCableSign();
-        registerBlock(blockCableSign, CABLE_SIGN_NAME_TAG);
+        RebornRegistry.registerBlock(blockCableSign, CABLE_SIGN_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntitySignUpdater.class, CABLE_SIGN_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntitySignUpdater.class, blockCableSign);
 
-        //BETA
-        blockWirelessTransmitter = new BlockWirelessTransmitter();
-        registerBlock(blockWirelessTransmitter, ItemBlockBeta.class, "wirelesstransmitter");
-
-        blockWirelessReciver = new BlockWirelessReciver();
-        registerBlock(blockWirelessReciver, ItemBlockBeta.class, "wirelessreciver");
+        itemMemoryDisk = new ItemMemoryDisk();
+        RebornRegistry.registerItem(itemMemoryDisk);
     }
 
-    public static void registerBlock(Block block, String name)
+    public static void addRecipes()
     {
-        block.setRegistryName(name);
-        GameRegistry.register(block);
-        GameRegistry.register(new ItemBlock(block), block.getRegistryName());
+        RebornCraftingHelper.addShapedOreRecipe(new ItemStack(blockManager),
+                "III",
+                "IRI",
+                "SPS",
+                'R', Blocks.REDSTONE_BLOCK,
+                'P', Blocks.PISTON,
+                'I', Items.IRON_INGOT,
+                'S', Blocks.STONE
+        );
+
+        RebornCraftingHelper.addShapedOreRecipe(new ItemStack(blockCable, 8),
+                "GPG",
+                "IRI",
+                "GPG",
+                'R', Items.REDSTONE,
+                'G', Blocks.GLASS,
+                'I', Items.IRON_INGOT,
+                'P', Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableRelay, 1),
+                blockCable,
+                Blocks.HOPPER
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableOutput, 1),
+                blockCable,
+                Items.REDSTONE,
+                Items.REDSTONE,
+                Items.REDSTONE
+        );
+
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableInput, 1),
+                blockCable,
+                Items.REDSTONE
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableRelay, 1, 8),
+                new ItemStack(blockCableRelay, 1, 0),
+                new ItemStack(Items.DYE, 1, 4)
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableIntake, 1, 0),
+                blockCable,
+                Blocks.HOPPER,
+                Blocks.HOPPER,
+                Blocks.DROPPER
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableBUD, 1),
+                blockCable,
+                Items.QUARTZ,
+                Items.QUARTZ,
+                Items.QUARTZ
+        );
+
+
+//        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableBreaker, 1),
+//                blockCable,
+//                Items.IRON_PICKAXE,
+//                Blocks.DISPENSER
+//        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableIntake, 1, 8),
+                new ItemStack(blockCableIntake, 1, 0),
+                Items.GOLD_INGOT
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableCluster, 1),
+                blockCable,
+                Items.ENDER_PEARL,
+                Items.ENDER_PEARL,
+                Items.ENDER_PEARL
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableCamouflage, 1, 0),
+                blockCable,
+                new ItemStack(Blocks.WOOL, 1, 14),
+                new ItemStack(Blocks.WOOL, 1, 13),
+                new ItemStack(Blocks.WOOL, 1, 11)
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableCamouflage, 1, 1),
+                new ItemStack(blockCableCamouflage, 1, 0),
+                new ItemStack(blockCableCamouflage, 1, 0),
+                Blocks.IRON_BARS,
+                Blocks.IRON_BARS
+        );
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableCamouflage, 1, 2),
+                new ItemStack(blockCableCamouflage, 1, 1),
+                Blocks.STICKY_PISTON
+        );
+
+
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(blockCableSign, 1),
+                blockCable,
+                new ItemStack(Items.DYE, 0),
+                Items.FEATHER
+        );
+
+        RebornCraftingHelper.addShapedOreRecipe(new ItemStack(itemMemoryDisk), " x ", "xyx", " x ", 'x', "ingotIron", 'y', new ItemStack(ModBlocks.blockManager));
+        RebornCraftingHelper.addShapelessOreRecipe(new ItemStack(itemMemoryDisk), new ItemStack(itemMemoryDisk));
+
+//        GameData.register_impl(new ClusterUpgradeRecipe());
+        GameData.register_impl(new ClusterRecipe(new ResourceLocation(StevesFactoryManager.UNLOCALIZED_START + "clusterrecipe")));
     }
 
-    public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
-    {
-        block.setRegistryName(name);
-        GameRegistry.register(block);
-        try
-        {
-            ItemBlock itemBlock = itemclass.getConstructor(Block.class).newInstance(block);
-            itemBlock.setRegistryName(name);
-            GameRegistry.register(itemBlock);
-        }
-        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-        {
-            e.printStackTrace();
-        }
-    }
+    private ModBlocks() {}
 }

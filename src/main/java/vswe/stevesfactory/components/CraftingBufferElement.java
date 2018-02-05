@@ -1,19 +1,20 @@
 package vswe.stevesfactory.components;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.IItemHandler;
-import vswe.stevesfactory.misc.ConnectionBlockType;
+import vswe.stevesfactory.blocks.ConnectionBlockType;
 import vswe.stevesfactory.tiles.TileEntityManager;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class CraftingBufferElement implements IItemBufferElement, IItemBufferSubElement
 {
-
-    private static final ItemStack DUMMY_ITEM = new ItemStack(Item.getItemById(1), 0, 0);
+    private static final ItemStack DUMMY_ITEM = ItemStack.EMPTY;
 
     private CommandExecutor executor;
     private ComponentMenuCrafting craftingMenu;
@@ -31,7 +32,14 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
         this.craftingMenu = craftingMenu;
         this.scrapMenu = scrapMenu;
         recipe = craftingMenu.getDummy().getRecipe();
-        result = recipe == null ? null : recipe.getCraftingResult(craftingMenu.getDummy());
+        if(recipe != null)
+        {
+            result = recipe.getCraftingResult(craftingMenu.getDummy());
+        }
+        else
+            {
+                result = ItemStack.EMPTY;
+            }
         containerItems = new ArrayList<ItemStack>();
     }
 
@@ -46,7 +54,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     @Override
     public IItemBufferSubElement getSubElement()
     {
-        if (isCrafting && result != null)
+        if (isCrafting && !result.isEmpty())
         {
             isCrafting = false;
             return this;
@@ -65,12 +73,12 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     @Override
     public void releaseSubElements()
     {
-        if (result != null)
+        if (!result.isEmpty())
         {
             if (overflowBuffer > 0)
             {
                 ItemStack overflow = result.copy();
-                overflow.stackSize = overflowBuffer;
+                overflow.setCount(overflowBuffer);
                 disposeOfExtraItem(overflow);
                 overflowBuffer = 0;
             }
@@ -99,25 +107,24 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
                 if (inventory.insertItem(i, itemStack, true) != itemStack)
                 {
                     ItemStack itemInSlot = inventory.getStackInSlot(i);
-                    if (itemInSlot == null || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
+                    if (itemInSlot.isEmpty() || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
                     {
-                        int itemCountInSlot = itemInSlot == null ? 0 : itemInSlot.stackSize;
+                        int itemCountInSlot = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
 
-                        int moveCount = Math.min(itemStack.stackSize, Math.min(64, itemStack.getMaxStackSize()) - itemCountInSlot);
+                        int moveCount = Math.min(itemStack.getCount(), Math.min(inventory.getSlotLimit(i), itemStack.getMaxStackSize()) - itemCountInSlot);
 
                         if (moveCount > 0)
                         {
-                            if (itemInSlot == null)
+                            if (itemInSlot.isEmpty())
                             {
                                 itemInSlot = itemStack.copy();
-                                itemInSlot.stackSize = 0;
+                                itemInSlot.setCount(0);
                                 inventory.insertItem(i, itemInSlot, false);
                             }
 
-                            itemInSlot.stackSize += moveCount;
-                            itemStack.stackSize -= moveCount;
-//                            inventory.markDirty();
-                            if (itemStack.stackSize == 0)
+                            itemInSlot.grow(moveCount);
+                            itemStack.shrink(moveCount);
+                            if (itemStack.getCount() == 0)
                             {
                                 return;
                             }
@@ -138,7 +145,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
         entityitem.motionY = rand.nextGaussian() * SPEED_MULTIPLIER + 0.2F;
         entityitem.motionZ = rand.nextGaussian() * SPEED_MULTIPLIER;
 
-        manager.getWorld().spawnEntityInWorld(entityitem);
+        manager.getWorld().spawnEntity(entityitem);
     }
 
     @Override
@@ -175,7 +182,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     {
         if (!justRemoved)
         {
-            return overflowBuffer > 0 ? overflowBuffer : findItems(false) ? result.stackSize : 0;
+            return overflowBuffer > 0 ? overflowBuffer : findItems(false) ? result.getCount() : 0;
         } else
         {
             justRemoved = false;
@@ -193,7 +200,7 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
         } else
         {
             findItems(true);
-            overflowBuffer = result.stackSize - amount;
+            overflowBuffer = result.getCount() - amount;
         }
         isCrafting = true;
     }
@@ -235,7 +242,8 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
                         if (!setting.isValid())
                         {
                             foundItems.put(i, DUMMY_ITEM);
-                        } else if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack))
+                        }
+                        else if (subCount > 0 && setting.isEqualForCommandExecutor(itemstack))
                         {
                             foundItems.put(i, itemstack.copy());
 

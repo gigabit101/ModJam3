@@ -5,13 +5,14 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
+
 
 public class ComponentMenuSignText extends ComponentMenu
 {
@@ -144,10 +145,7 @@ public class ComponentMenuSignText extends ComponentMenu
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawMouseOver(GuiManager gui, int mX, int mY)
-    {
-
-    }
+    public void drawMouseOver(GuiManager gui, int mX, int mY) {}
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -195,16 +193,10 @@ public class ComponentMenuSignText extends ComponentMenu
     }
 
     @Override
-    public void onDrag(int mX, int mY, boolean isMenuOpen)
-    {
-
-    }
+    public void onDrag(int mX, int mY, boolean isMenuOpen) {}
 
     @Override
-    public void onRelease(int mX, int mY, boolean isMenuOpen)
-    {
-
-    }
+    public void onRelease(int mX, int mY, boolean isMenuOpen) {}
 
     @Override
     public void writeData(DataWriter dw)

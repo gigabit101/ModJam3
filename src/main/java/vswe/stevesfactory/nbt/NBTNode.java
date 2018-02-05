@@ -90,7 +90,6 @@ public class NBTNode
 
     public String getName()
     {
-
         if (tag == null)
         {
             return "Element";

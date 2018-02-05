@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-@Deprecated
+
 public class InventoryWrapperPlayer extends InventoryWrapper
 {
     private EntityPlayer player;
@@ -13,6 +13,12 @@ public class InventoryWrapperPlayer extends InventoryWrapper
     {
         super(player.inventory);
         this.player = player;
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return false;
     }
 
     @Override

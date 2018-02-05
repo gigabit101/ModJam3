@@ -6,18 +6,21 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
+import reborncore.common.network.VanillaPacketDispatcher;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.components.*;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
-import vswe.stevesfactory.client.gui.IInterfaceRenderer;
-import vswe.stevesfactory.misc.*;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.interfaces.IInterfaceRenderer;
 import vswe.stevesfactory.network.*;
 import vswe.stevesfactory.settings.Settings;
 
@@ -98,10 +101,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
         buttons.add(new Button(Localization.PREFERENCES)
         {
             @Override
-            protected void onClick(DataReader dr)
-            {
-
-            }
+            protected void onClick(DataReader dr) {}
 
             @Override
             public boolean onClick(DataWriter dw)
@@ -149,7 +149,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
             @Override
             public boolean isVisible()
             {
-                return !worldObj.isRemote || selectedComponent != null;
+                return !world.isRemote || selectedComponent != null;
             }
 
             @Override
@@ -212,7 +212,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
     public void removeFlowComponent(int idToRemove)
     {
         removeFlowComponent(idToRemove, items);
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             removedIds.add(idToRemove);
         } else
@@ -289,7 +289,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
                             if (!visited.contains(target) && (Settings.isLimitless(this) || inventories.size() < MAX_CONNECTED_INVENTORIES))
                             {
                                 visited.add(target);
-                                TileEntity te = worldObj.getTileEntity(new BlockPos(target.getX(), target.getY(), target.getZ()));
+                                TileEntity te = world.getTileEntity(new BlockPos(target.getX(), target.getY(), target.getZ()));
 
                                 if (te instanceof TileEntityCluster)
                                 {
@@ -305,17 +305,15 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
                                 }
 
                                 BlockPos pos = new BlockPos(target.getX(), target.getY(), target.getZ());
-                                if ((Settings.isLimitless(this) || element.getDepth() < MAX_CABLE_LENGTH) && ModBlocks.blockCable.isCable(worldObj.getBlockState(pos).getBlock(), worldObj.getBlockState(pos).getBlock().getMetaFromState(worldObj.getBlockState(pos))))
+                                if ((Settings.isLimitless(this) || element.getDepth() < MAX_CABLE_LENGTH) && ModBlocks.blockCable.isCable(world.getBlockState(pos).getBlock(), world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))))
                                 {
                                     queue.add(target);
                                 }
                             }
                         }
-
                     }
                 }
             }
-
         }
 
         if (!firstInventoryUpdate)
@@ -341,7 +339,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
                 }
             }
 
-            if (!worldObj.isRemote)
+            if (!world.isRemote)
             {
                 updateInventorySelection(oldCoordinates);
             } else
@@ -454,7 +452,6 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
         return newSelection;
     }
 
-
     public Connection getCurrentlyConnecting()
     {
         return currentlyConnecting;
@@ -471,9 +468,9 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
     public void update()
     {
         justSentServerComponentRemovalPacket = false;
-        if (!worldObj.isRemote)
-        {
 
+        if (!world.isRemote)
+        {
             if (timer >= 20)
             {
                 timer = 0;
@@ -568,7 +565,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
     public void readGenericData(DataReader dr)
     {
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             if (dr.readBoolean())
             {
@@ -713,7 +710,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
     @Override
     public void readUpdatedData(DataReader dr, EntityPlayer player)
     {
-        if (!worldObj.isRemote && dr.readBoolean())
+        if (!world.isRemote && dr.readBoolean())
         {
             boolean val = dr.readBoolean();
             if ((val || !isUsingUnlimitedStuff()) && player.capabilities.isCreativeMode)
@@ -731,7 +728,7 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
             return;
         }
 
-        boolean isNew = worldObj.isRemote && dr.readBoolean();
+        boolean isNew = world.isRemote && dr.readBoolean();
         if (isNew)
         {
             readAllComponentData(dr);
@@ -879,7 +876,6 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
 
     private class ButtonCreate extends Button
     {
-
         private ComponentType type;
 
         protected ButtonCreate(ComponentType type)
@@ -1002,7 +998,6 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
     {
         int version = nbtTagCompound.getByte(ModBlocks.NBT_PROTOCOL_VERSION);
 
-
         timer = nbtTagCompound.getByte(NBT_TIMER);
 
         NBTTagList components = nbtTagCompound.getTagList(NBT_COMPONENTS, 10);
@@ -1050,7 +1045,6 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
             NBTTagCompound variableTag = variablesTag.getCompoundTagAt(i);
             variables[i].readFromNBT(variableTag);
         }
-
     }
 
     public void writeContentToNBT(NBTTagCompound nbtTagCompound, boolean pickup)
@@ -1078,5 +1072,4 @@ public class TileEntityManager extends TileEntity implements ITileEntityInterfac
         }
         nbtTagCompound.setTag(NBT_VARIABLES, variablesTag);
     }
-
 }

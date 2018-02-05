@@ -8,8 +8,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
-import vswe.stevesfactory.misc.IRedstoneNode;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.IRedstoneNode;
 import vswe.stevesfactory.components.ComponentMenuPulse;
 import vswe.stevesfactory.components.ComponentMenuRedstoneOutput;
 import vswe.stevesfactory.components.ComponentMenuRedstoneSidesEmitter;
@@ -67,10 +67,8 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
     public void updateState(ComponentMenuRedstoneSidesEmitter sides, ComponentMenuRedstoneOutput output, ComponentMenuPulse pulse)
     {
         boolean updateClient = false;
-        for (int i = 0; i < EnumFacing.values().length; i++)
-        {
-            if (sides.isSideRequired(i))
-            {
+        for (int i = 0; i < EnumFacing.values().length; i++) {
+            if (sides.isSideRequired(i)) {
                 int oldStrength = updatedStrength[i];
                 boolean oldStrong = updatedStrong[i];
 
@@ -78,9 +76,10 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                 updatedStrong[i] = sides.useStrongSignal();
 
 
-//                if (((updatedStrength[i] > 0) != (oldStrength > 0)) || (oldStrong != updatedStrong[i])) {
+//                if (((updatedStrength[i] > 0) != (oldStrength > 0)) || (oldStrong != updatedStrong[i]))
+//                {
 //                    updateClient = true;
-//                    System.out.print(getPower());
+//                }
 
                 boolean updateBlocks = oldStrength != updatedStrength[i] || oldStrong != updatedStrong[i];
                 if (updateBlocks)
@@ -88,26 +87,20 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                     updateClient = true;
                 }
 
-
                 if (updateBlocks)
                 {
                     addBlockScheduledForUpdate(EnumFacing.getFront(i));
                 }
 
-                if (pulse.shouldEmitPulse())
-                {
+                if (pulse.shouldEmitPulse()) {
                     PulseTimer timer = new PulseTimer(oldStrength, oldStrong, pulse.getPulseTime() + 1); //add one to counter the first tick (which is the same tick as we add it)
                     List<PulseTimer> timers = pulseTimers[i];
 
-                    if (timers.size() < 200)
-                    { //to block a huge amount of pulses at the same time
-                        switch (pulse.getSelectedPulseOverride())
-                        {
+                    if (timers.size() < 200) { //to block a huge amount of pulses at the same time
+                        switch (pulse.getSelectedPulseOverride()) {
                             case EXTEND_OLD:
-                                if (timers.size() > 0)
-                                {
-                                    if (timers.size() > 1)
-                                    {
+                                if (timers.size() > 0) {
+                                    if (timers.size() > 1) {
                                         PulseTimer temp = timers.get(0);
                                         timers.clear();
                                         timers.add(temp);
@@ -115,8 +108,7 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
 
                                     PulseTimer oldTimer = timers.get(0);
                                     oldTimer.ticks = Math.max(oldTimer.ticks, timer.ticks);
-                                } else
-                                {
+                                }else{
                                     timers.add(timer);
                                 }
                                 break;
@@ -128,8 +120,7 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                                 timers.add(timer);
                                 break;
                             case KEEP_OLD:
-                                if (timers.isEmpty())
-                                {
+                                if (timers.isEmpty()) {
                                     timers.add(timer);
                                 }
                         }
@@ -198,9 +189,14 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
 
     private void notifyUpdate(BlockPos pos, boolean spread)
     {
-        if (worldObj.getBlockState(pos).getBlock() != ModBlocks.blockCable && (pos.getX() != getPos().getX() || pos.getY() != getPos().getY() || pos.getZ() != getPos().getZ()))
+        if (world.getBlockState(pos).getBlock() != null)
         {
-            worldObj.notifyBlockOfStateChange(pos, ModBlocks.blockCableOutput);
+            for (EnumFacing enumfacing : EnumFacing.values())
+            {
+                world.notifyNeighborsOfStateChange(pos.offset(enumfacing), world.getBlockState(pos).getBlock(), false);
+            }
+
+            world.notifyBlockUpdate(pos, ModBlocks.blockCableOutput.getDefaultState(), ModBlocks.blockCableOutput.getDefaultState(), 3);
 
             if (spread)
             {
@@ -323,7 +319,7 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
                     strengths[i] = 0;
                 }
             }
-            worldObj.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
+            world.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
         }
     }
 
@@ -341,10 +337,11 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
     @Override
     public void update()
     {
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             keepClientDataUpdated();
-        } else
+        }
+        else
         {
             updatePulses();
 
@@ -409,7 +406,7 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
             return;
         }
 
-        double distance = Minecraft.getMinecraft().thePlayer.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
+        double distance = Minecraft.getMinecraft().player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
 
         if (distance > Math.pow(PacketHandler.BLOCK_UPDATE_RANGE, 2))
         {
@@ -417,7 +414,7 @@ public class TileEntityOutput extends TileEntityClusterElement implements IPacke
         } else if (!hasUpdatedData && distance < Math.pow(PacketHandler.BLOCK_UPDATE_RANGE - UPDATE_BUFFER_DISTANCE, 2))
         {
             hasUpdatedData = true;
-            PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().thePlayer, 0);
+            PacketHandler.sendBlockPacket(this, Minecraft.getMinecraft().player, 0);
         }
     }
 

@@ -3,7 +3,7 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;

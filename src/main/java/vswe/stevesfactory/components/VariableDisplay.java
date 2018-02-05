@@ -3,12 +3,11 @@ package vswe.stevesfactory.components;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.GuiManager;
 
 public abstract class VariableDisplay
 {
-
     private Localization name;
     private int x;
     private int y;
@@ -89,7 +88,6 @@ public abstract class VariableDisplay
             }
         }
     }
-
 
     public abstract int getValue();
 

@@ -3,32 +3,34 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
 
+
 public class ComponentMenuCamouflageInside extends ComponentMenuCamouflageAdvanced
 {
-    private RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            setSelectedOption(selectedOption);
-
-            DataWriter dw = getWriterForServerComponentPacket();
-            dw.writeData(radioButtons.getSelectedOption(), DataBitHelper.CAMOUFLAGE_INSIDE);
-            PacketHandler.sendDataToServer(dw);
-        }
-    };
-
     public ComponentMenuCamouflageInside(FlowComponent parent)
     {
         super(parent);
+
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                setSelectedOption(selectedOption);
+
+                DataWriter dw = getWriterForServerComponentPacket();
+                dw.writeData(radioButtons.getSelectedOption(), DataBitHelper.CAMOUFLAGE_INSIDE);
+                PacketHandler.sendDataToServer(dw);
+            }
+        };
+
         for (int i = 0; i < InsideSetType.values().length; i++)
         {
             radioButtons.add(new RadioButton(RADIO_BUTTON_X, RADIO_BUTTON_Y + i * RADIO_BUTTON_SPACING, InsideSetType.values()[i].name));
@@ -38,6 +40,8 @@ public class ComponentMenuCamouflageInside extends ComponentMenuCamouflageAdvanc
     private static final int RADIO_BUTTON_X = 5;
     private static final int RADIO_BUTTON_Y = 5;
     private static final int RADIO_BUTTON_SPACING = 12;
+
+    private RadioButtonList radioButtons;
 
     @Override
     protected String getWarningText()

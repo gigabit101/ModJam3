@@ -22,26 +22,27 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import vswe.stevesfactory.blocks.BlockCableRelay;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
-import vswe.stevesfactory.misc.ITileEntityInterface;
-import vswe.stevesfactory.misc.UserPermission;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ITileEntityInterface;
+import vswe.stevesfactory.blocks.UserPermission;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.container.ContainerRelay;
-import vswe.stevesfactory.client.gui.GuiRelay;
+import vswe.stevesfactory.interfaces.ContainerRelay;
+import vswe.stevesfactory.interfaces.GuiRelay;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
 import vswe.stevesfactory.network.PacketHandler;
 import vswe.stevesfactory.wrappers.InventoryWrapper;
-import vswe.stevesfactory.wrappers.InventoryWrapperHorse;
 import vswe.stevesfactory.wrappers.InventoryWrapperPlayer;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -210,6 +211,11 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public ItemStack getStackInSlot(int i)
     {
         try
@@ -348,7 +354,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
+    public boolean isUsableByPlayer(EntityPlayer entityplayer)
     {
         try
         {
@@ -356,7 +362,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
 
             if (inventory != null)
             {
-                return inventory.isUseableByPlayer(entityplayer);
+                return inventory.isUsableByPlayer(entityplayer);
             }
 
             return false;
@@ -492,119 +498,119 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         }
     }
 
-    @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
-    {
-        try
-        {
-            IFluidHandler tank = getTank();
+//    @Override
+//    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
+//    {
+//        try
+//        {
+//            IFluidHandler tank = getTank();
+//
+//            if (tank != null)
+//            {
+//                return tank.fill(from, resource, doFill);
+//            }
+//
+//            return 0;
+//        } finally
+//        {
+//            unBlockUsage();
+//        }
+//    }
 
-            if (tank != null)
-            {
-                return tank.fill(from, resource, doFill);
-            }
-
-            return 0;
-        } finally
-        {
-            unBlockUsage();
-        }
-    }
-
-    @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
-    {
-        try
-        {
-            IFluidHandler tank = getTank();
-
-            if (tank != null)
-            {
-                return tank.drain(from, resource, doDrain);
-            }
-
-            return null;
-        } finally
-        {
-            unBlockUsage();
-        }
-    }
-
-    @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
-    {
-        try
-        {
-            IFluidHandler tank = getTank();
-
-            if (tank != null)
-            {
-                return tank.drain(from, maxDrain, doDrain);
-            }
-
-            return null;
-        } finally
-        {
-            unBlockUsage();
-        }
-    }
-
-    @Override
-    public boolean canFill(EnumFacing from, Fluid fluid)
-    {
-        try
-        {
-            IFluidHandler tank = getTank();
-
-            if (tank != null)
-            {
-                return tank.canFill(from, fluid);
-            }
-
-            return false;
-        } finally
-        {
-            unBlockUsage();
-        }
-    }
-
-    @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid)
-    {
-        try
-        {
-            IFluidHandler tank = getTank();
-
-            if (tank != null)
-            {
-                return tank.canDrain(from, fluid);
-            }
-
-            return false;
-        } finally
-        {
-            unBlockUsage();
-        }
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from)
-    {
-        try
-        {
-            IFluidHandler tank = getTank();
-
-            if (tank != null)
-            {
-                return tank.getTankInfo(from);
-            }
-
-            return new FluidTankInfo[0];
-        } finally
-        {
-            unBlockUsage();
-        }
-    }
+//    @Override
+//    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
+//    {
+//        try
+//        {
+//            IFluidHandler tank = getTank();
+//
+//            if (tank != null)
+//            {
+//                return tank.drain(from, resource, doDrain);
+//            }
+//
+//            return null;
+//        } finally
+//        {
+//            unBlockUsage();
+//        }
+//    }
+//
+//    @Override
+//    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
+//    {
+//        try
+//        {
+//            IFluidHandler tank = getTank();
+//
+//            if (tank != null)
+//            {
+//                return tank.drain(from, maxDrain, doDrain);
+//            }
+//
+//            return null;
+//        } finally
+//        {
+//            unBlockUsage();
+//        }
+//    }
+//
+//    @Override
+//    public boolean canFill(EnumFacing from, Fluid fluid)
+//    {
+//        try
+//        {
+//            IFluidHandler tank = getTank();
+//
+//            if (tank != null)
+//            {
+//                return tank.canFill(from, fluid);
+//            }
+//
+//            return false;
+//        } finally
+//        {
+//            unBlockUsage();
+//        }
+//    }
+//
+//    @Override
+//    public boolean canDrain(EnumFacing from, Fluid fluid)
+//    {
+//        try
+//        {
+//            IFluidHandler tank = getTank();
+//
+//            if (tank != null)
+//            {
+//                return tank.canDrain(from, fluid);
+//            }
+//
+//            return false;
+//        } finally
+//        {
+//            unBlockUsage();
+//        }
+//    }
+//
+//    @Override
+//    public FluidTankInfo[] getTankInfo(EnumFacing from)
+//    {
+//        try
+//        {
+//            IFluidHandler tank = getTank();
+//
+//            if (tank != null)
+//            {
+//                return tank.getTankInfo(from);
+//            }
+//
+//            return new FluidTankInfo[0];
+//        } finally
+//        {
+//            unBlockUsage();
+//        }
+//    }
 
 
     @Override
@@ -728,9 +734,9 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         if (entity instanceof EntityPlayer)
         {
             return new InventoryWrapperPlayer((EntityPlayer) entity);
-        } else if (entity instanceof EntityHorse)
-        {
-            return new InventoryWrapperHorse((EntityHorse) entity);
+//        } else if (entity instanceof EntityHorse)
+//        {
+//            return new InventoryWrapperHorse((EntityHorse) entity);
         } else
         {
             return null;
@@ -835,7 +841,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
     @Override
     public void readUpdatedData(DataReader dr, EntityPlayer player)
     {
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             boolean action = dr.readBoolean();
             if (action)
@@ -848,7 +854,7 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
         UUID userId = player.getUniqueID();
 
         boolean isOp = false;
-        if (worldObj.isRemote || userId.equals(owner))
+        if (world.isRemote || userId.equals(owner))
         {
             isOp = true;
         } else
@@ -880,13 +886,13 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
                     }
                 }
 
-                if (worldObj.isRemote)
+                if (world.isRemote)
                 {
                     permission.setActive(dr.readBoolean());
                     permission.setOp(dr.readBoolean());
                 }
 
-                if (permissions.size() < TileEntityRelay.PERMISSION_MAX_LENGTH && (worldObj.isRemote || permission.getUserId().equals(userId)))
+                if (permissions.size() < TileEntityRelay.PERMISSION_MAX_LENGTH && (world.isRemote || permission.getUserId().equals(userId)))
                 {
                     permissions.add(permission);
                 }
@@ -1085,5 +1091,68 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
             return (T) new InvWrapper(this);
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return new IFluidTankProperties[0];
+    }
+
+    @Override
+    public int fill(FluidStack resource, boolean doFill) {
+        try
+        {
+            IFluidHandler tank = getTank();
+
+            if (tank != null)
+            {
+                return tank.fill(resource, doFill);
+            }
+
+            return 0;
+        } finally
+        {
+            unBlockUsage();
+        }
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain)
+    {
+        try
+        {
+            IFluidHandler tank = getTank();
+
+            if (tank != null)
+            {
+                return tank.drain(resource, doDrain);
+            }
+
+            return null;
+        } finally
+        {
+            unBlockUsage();
+        }
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain)
+    {
+        try
+        {
+            IFluidHandler tank = getTank();
+
+            if (tank != null)
+            {
+                return tank.drain(maxDrain, doDrain);
+            }
+
+            return null;
+        } finally
+        {
+            unBlockUsage();
+        }
     }
 }

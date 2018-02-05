@@ -4,13 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
+import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.tiles.TileEntityManager;
 import vswe.stevesfactory.components.CheckBox;
 import vswe.stevesfactory.components.CheckBoxList;
 import vswe.stevesfactory.components.ComponentType;
-import vswe.stevesfactory.client.gui.GuiManager;
-import vswe.stevesfactory.client.gui.IInterfaceRenderer;
+import vswe.stevesfactory.interfaces.GuiManager;
+import vswe.stevesfactory.interfaces.IInterfaceRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -250,7 +250,7 @@ public class SettingsScreen implements IInterfaceRenderer
             @Override
             public boolean isVisible()
             {
-                return Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode;
+                return Minecraft.getMinecraft().player.capabilities.isCreativeMode;
             }
         });
     }
@@ -264,7 +264,7 @@ public class SettingsScreen implements IInterfaceRenderer
         }
 
         gui.drawString(Localization.PREFERENCES.toString(), START_X - 2, 6, 0x404040);
-        if (Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+        if (Minecraft.getMinecraft().player.capabilities.isCreativeMode)
         {
             gui.drawString(Localization.SETTINGS.toString(), START_SETTINGS_X - 2, 6, 0x404040);
         }

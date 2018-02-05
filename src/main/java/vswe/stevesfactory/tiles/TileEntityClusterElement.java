@@ -5,8 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
-import vswe.stevesfactory.init.ClusterRegistry;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ClusterRegistry;
 
 import java.util.EnumSet;
 
@@ -55,7 +55,7 @@ public abstract class TileEntityClusterElement extends TileEntity implements ITi
             this.meta = state.getBlock().getMetaFromState(state);
         } else
         {
-            worldObj.setBlockState(pos, state, 2);
+            world.setBlockState(pos, state, 2);
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class TileEntityClusterElement extends TileEntity implements ITi
             this.meta = meta;
         } else
         {
-            worldObj.setBlockState(pos, worldObj.getBlockState(pos).getBlock().getStateFromMeta(meta), 2);
+            world.setBlockState(pos, world.getBlockState(pos).getBlock().getStateFromMeta(meta), 2);
         }
     }
 

@@ -1,6 +1,5 @@
 package vswe.stevesfactory.components;
 
-
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public class ItemBufferElement implements IItemBufferElement
             if (useWhiteList)
             {
                 int movedItems = totalStackSize - currentStackSize;
-                itemsAllowedToBeMoved = setting.getItem().stackSize - movedItems;
+                itemsAllowedToBeMoved = setting.getItem().getCount() - movedItems;
 
                 int amountLeft = itemsAllowedToBeMoved % sharedBy;
                 itemsAllowedToBeMoved /= sharedBy;
@@ -127,7 +126,7 @@ public class ItemBufferElement implements IItemBufferElement
                 }
             } else
             {
-                itemsAllowedToBeMoved = currentStackSize - setting.getItem().stackSize;
+                itemsAllowedToBeMoved = currentStackSize - setting.getItem().getCount();
             }
 
 
@@ -161,7 +160,7 @@ public class ItemBufferElement implements IItemBufferElement
                 ItemStack item = holder.getItemStack();
                 if (((ItemSetting) setting).isEqualForCommandExecutor(item))
                 {
-                    bufferSize += item.stackSize;
+                    bufferSize += item.getCount();
                 }
             }
 
@@ -170,10 +169,10 @@ public class ItemBufferElement implements IItemBufferElement
                 int maxSize;
                 if (useWhiteList)
                 {
-                    maxSize = setting.getItem().stackSize;
+                    maxSize = setting.getItem().getCount();
                 } else
                 {
-                    maxSize = totalStackSize - setting.getItem().stackSize;
+                    maxSize = totalStackSize - setting.getItem().getCount();
                 }
                 bufferSize = Math.min(bufferSize, maxSize);
             }

@@ -3,9 +3,9 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -16,19 +16,19 @@ import java.util.Comparator;
 
 public class ComponentMenuListOrder extends ComponentMenu
 {
-    private RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            setSelectedOption(selectedOption);
-            sendServerData(UpdateType.TYPE);
-        }
-    };
-
     public ComponentMenuListOrder(FlowComponent parent)
     {
         super(parent);
+
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                setSelectedOption(selectedOption);
+                sendServerData(UpdateType.TYPE);
+            }
+        };
 
         for (int i = 0; i < LoopOrder.values().length; i++)
         {
@@ -127,6 +127,7 @@ public class ComponentMenuListOrder extends ComponentMenu
 
     private TextBoxNumberList textBoxes;
     private TextBoxNumber textBox;
+    private RadioButtonList radioButtons;
     private CheckBoxList checkBoxes;
     private boolean reversed;
     private boolean all;

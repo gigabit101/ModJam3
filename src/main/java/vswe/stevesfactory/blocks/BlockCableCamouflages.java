@@ -10,15 +10,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import vswe.stevesfactory.client.CreativeTabSFM;
-import vswe.stevesfactory.misc.PropertyCamouflageType;
-import vswe.stevesfactory.misc.UnlistedBlockPosProperty;
+import vswe.stevesfactory.init.ModBlocks;
 import vswe.stevesfactory.tiles.TileEntityCamouflage;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 
@@ -29,7 +28,7 @@ public class BlockCableCamouflages extends BlockCamouflageBase
     public BlockCableCamouflages()
     {
         super(Material.IRON);
-        setCreativeTab(CreativeTabSFM.instance);
+        setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
         setHardness(1.2F);
     }
@@ -79,11 +78,11 @@ public class BlockCableCamouflages extends BlockCamouflageBase
     }
 
     @Override
-    public void getSubBlocks(Item block, CreativeTabs tabs, List list)
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> list)
     {
         for (int i = 0; i < TileEntityCamouflage.CamouflageType.values().length; i++)
         {
-            list.add(new ItemStack(block, 1, i));
+            list.add(new ItemStack(this, 1, i));
         }
     }
 

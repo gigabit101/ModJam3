@@ -84,7 +84,6 @@ public class Connection
         return nodes;
     }
 
-
     public Point getSelectedNode()
     {
         return selectedNode;

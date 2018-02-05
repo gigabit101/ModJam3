@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
-import vswe.stevesfactory.misc.ISystemListener;
-import vswe.stevesfactory.misc.ITriggerNode;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.ISystemListener;
+import vswe.stevesfactory.blocks.ITriggerNode;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class TileEntityBUD extends TileEntityClusterElement implements ISystemLi
 
     public void updateData()
     {
-        if (worldObj != null)
+        if (world != null)
         {
             data = new int[data.length];
             for (int i = 0; i < data.length; i++)
@@ -71,7 +71,7 @@ public class TileEntityBUD extends TileEntityClusterElement implements ISystemLi
                 int y = direction.getFrontOffsetY() + this.getPos().getY();
                 int z = direction.getFrontOffsetZ() + this.getPos().getZ();
 
-                IBlockState state = worldObj.getBlockState(new BlockPos(x, y, z));
+                IBlockState state = world.getBlockState(new BlockPos(x, y, z));
 
                 data[i] = (Block.getIdFromBlock(state.getBlock()) << 4) | (state.getBlock().getMetaFromState(state) & 15);
             }

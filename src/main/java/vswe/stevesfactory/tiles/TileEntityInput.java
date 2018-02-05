@@ -4,10 +4,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import vswe.stevesfactory.misc.ClusterMethodRegistration;
-import vswe.stevesfactory.misc.IRedstoneNode;
-import vswe.stevesfactory.misc.ISystemListener;
-import vswe.stevesfactory.misc.ITriggerNode;
+import vswe.stevesfactory.blocks.ClusterMethodRegistration;
+import vswe.stevesfactory.blocks.IRedstoneNode;
+import vswe.stevesfactory.blocks.ISystemListener;
+import vswe.stevesfactory.blocks.ITriggerNode;
 import vswe.stevesfactory.init.ModBlocks;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
         {
             EnumFacing direction = EnumFacing.getFront(i);
             BlockPos pos = new BlockPos(direction.getFrontOffsetX() + this.getPos().getX(), direction.getFrontOffsetY() + this.getPos().getY(), direction.getFrontOffsetZ() + this.getPos().getZ());
-            isPowered[i] = worldObj.getRedstonePower(pos, direction);
+            isPowered[i] = world.getRedstonePower(pos, direction);
         }
 
         for (int i = managerList.size() - 1; i >= 0; i--)
@@ -51,7 +51,7 @@ public class TileEntityInput extends TileEntityClusterElement implements IRedsto
         }
 
         oldPowered = isPowered;
-        System.out.print(worldObj.getRedstonePower(pos, null));
+//        System.out.print(world.getRedstonePower(pos, null));
     }
 
     @Override

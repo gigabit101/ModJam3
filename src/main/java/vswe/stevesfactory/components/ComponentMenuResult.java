@@ -3,9 +3,9 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -13,42 +13,43 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuResult extends ComponentMenu
 {
-    private RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            DataWriter dw = getWriterForServerComponentPacket();
-            writeData(dw, selectedOption);
-            PacketHandler.sendDataToServer(dw);
-        }
-
-        @Override
-        public void setSelectedOption(int selectedOption)
-        {
-            super.setSelectedOption(selectedOption);
-
-            if (selectedOption >= sets.length)
-            {
-                System.out.println(getParent().getType().getLongName());
-            }
-            getParent().setConnectionSet(sets[radioButtons.getSelectedOption()]);
-
-            if (getParent().getType() == ComponentType.VARIABLE)
-            {
-                getParent().getManager().updateVariables();
-            } else if (getParent().getType() == ComponentType.NODE)
-            {
-                getParent().setParent(getParent().getParent());
-            }
-        }
-    };
 
     public ComponentMenuResult(FlowComponent parent)
     {
         super(parent);
 
         sets = parent.getType().getSets();
+
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                DataWriter dw = getWriterForServerComponentPacket();
+                writeData(dw, selectedOption);
+                PacketHandler.sendDataToServer(dw);
+            }
+
+            @Override
+            public void setSelectedOption(int selectedOption)
+            {
+                super.setSelectedOption(selectedOption);
+
+                if (selectedOption >= sets.length)
+                {
+                    System.out.println(getParent().getType().getLongName());
+                }
+                getParent().setConnectionSet(sets[radioButtons.getSelectedOption()]);
+
+                if (getParent().getType() == ComponentType.VARIABLE)
+                {
+                    getParent().getManager().updateVariables();
+                } else if (getParent().getType() == ComponentType.NODE)
+                {
+                    getParent().setParent(getParent().getParent());
+                }
+            }
+        };
 
         for (int i = 0; i < sets.length; i++)
         {
@@ -72,6 +73,7 @@ public class ComponentMenuResult extends ComponentMenu
     private static final int RADIO_MARGIN = 13;
 
     private ConnectionSet[] sets;
+    private RadioButtonList radioButtons;
 
     @Override
     public String getName()

@@ -1,10 +1,14 @@
 package vswe.stevesfactory.blocks;
 
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -13,16 +17,23 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
+import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.init.ModBlocks;
-import vswe.stevesfactory.lib.ModInfo;
 import vswe.stevesfactory.tiles.TileEntityCluster;
 import vswe.stevesfactory.tiles.TileEntityOutput;
 
-public class BlockCableOutput extends BlockSFM
+import java.util.Random;
+
+//This is indeed not a subclass to the cable, you can't relay signals through this block
+public class BlockCableOutput extends BlockContainer
 {
     public BlockCableOutput()
     {
-        setUnlocalizedName(ModInfo.UNLOCALIZED_START + ModBlocks.CABLE_OUTPUT_UNLOCALIZED_NAME);
+        super(Material.IRON);
+        setCreativeTab(ModBlocks.creativeTab);
+        setSoundType(SoundType.METAL);
+        setUnlocalizedName(StevesFactoryManager.UNLOCALIZED_START + ModBlocks.CABLE_OUTPUT_UNLOCALIZED_NAME);
+        setHardness(1.2F);
     }
 
     @Override
@@ -57,7 +68,8 @@ public class BlockCableOutput extends BlockSFM
                     if (tileEntity.hasStrongSignalAtSide(facing))
                     {
                         strongVals |= 1 << facing.getIndex();
-                    } else
+                    }
+                    else
                     {
                         weakVals |= 1 << facing.getIndex();
                     }
@@ -66,6 +78,12 @@ public class BlockCableOutput extends BlockSFM
             return ((IExtendedBlockState) state).withProperty(STRONG_SIDES, strongVals).withProperty(WEAK_SIDES, weakVals);
         }
         return state;
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.MODEL;
     }
 
     @Override
@@ -105,5 +123,23 @@ public class BlockCableOutput extends BlockSFM
     public boolean canProvidePower(IBlockState state)
     {
         return true;
+    }
+
+    @Override
+    public boolean getWeakChanges(IBlockAccess world, BlockPos pos)
+    {
+        return true;
+    }
+
+    @Override
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        for (EnumFacing enumfacing : EnumFacing.values())
+        {
+            worldIn.notifyNeighborsOfStateChange(pos.offset(enumfacing), this, true);
+        }
+
+        super.updateTick(worldIn, pos, state, rand);
+//        worldIn.notifyNeighborsOfStateExcept(pos, this, null);
     }
 }

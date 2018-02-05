@@ -3,8 +3,7 @@ package vswe.stevesfactory.components;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.client.gui.GuiManager;
-
+import vswe.stevesfactory.interfaces.GuiManager;
 
 public class TextBoxLogic
 {

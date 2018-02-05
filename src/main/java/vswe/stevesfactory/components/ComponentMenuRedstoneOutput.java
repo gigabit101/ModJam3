@@ -3,9 +3,9 @@ package vswe.stevesfactory.components;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.container.ContainerManager;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.ContainerManager;
+import vswe.stevesfactory.interfaces.GuiManager;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -13,19 +13,6 @@ import vswe.stevesfactory.network.PacketHandler;
 
 public class ComponentMenuRedstoneOutput extends ComponentMenu
 {
-    private RadioButtonList radioButtons = new RadioButtonList()
-    {
-        @Override
-        public void updateSelectedOption(int selectedOption)
-        {
-            setSelectedOption(selectedOption);
-            DataWriter dw = getWriterForServerComponentPacket();
-            dw.writeBoolean(false); //header
-            dw.writeData(selectedOption, DataBitHelper.MENU_REDSTONE_OUTPUT_TYPE);
-            PacketHandler.sendDataToServer(dw);
-        }
-    };
-
     public ComponentMenuRedstoneOutput(FlowComponent parent)
     {
         super(parent);
@@ -51,6 +38,19 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu
         });
         textBox.setNumber(15);
 
+        radioButtons = new RadioButtonList()
+        {
+            @Override
+            public void updateSelectedOption(int selectedOption)
+            {
+                setSelectedOption(selectedOption);
+                DataWriter dw = getWriterForServerComponentPacket();
+                dw.writeBoolean(false); //header
+                dw.writeData(selectedOption, DataBitHelper.MENU_REDSTONE_OUTPUT_TYPE);
+                PacketHandler.sendDataToServer(dw);
+            }
+        };
+
         for (int i = 0; i < Settings.values().length; i++)
         {
             int ix = i % 2;
@@ -66,6 +66,7 @@ public class ComponentMenuRedstoneOutput extends ComponentMenu
 
     private TextBoxNumberList textBoxes;
     private TextBoxNumber textBox;
+    private RadioButtonList radioButtons;
 
     public int getSelectedStrength()
     {

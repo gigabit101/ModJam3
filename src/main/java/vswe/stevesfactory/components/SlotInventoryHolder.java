@@ -1,13 +1,16 @@
 package vswe.stevesfactory.components;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import vswe.stevesfactory.misc.IRedstoneNode;
-import vswe.stevesfactory.misc.ITriggerNode;
+import net.minecraftforge.items.ItemStackHandler;
+import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.tiles.*;
 import vswe.stevesfactory.wrappers.CapabilityHelper;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +36,16 @@ public class SlotInventoryHolder
     public IItemHandler getInventory()
     {
         return CapabilityHelper.getItemCapabilitySafe(inventory);
+    }
+
+    @Nullable
+    public IItemHandler getInventory(EnumFacing facing)
+    {
+        if(inventory.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing))
+        {
+            return inventory.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+        }
+        return null;
     }
 
     public IFluidHandler getTank()

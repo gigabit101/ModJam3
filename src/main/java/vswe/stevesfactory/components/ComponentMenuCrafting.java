@@ -1,10 +1,12 @@
 package vswe.stevesfactory.components;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vswe.stevesfactory.CollisionHelper;
-import vswe.stevesfactory.lib.Localization;
-import vswe.stevesfactory.client.gui.GuiManager;
+import vswe.stevesfactory.Localization;
+import vswe.stevesfactory.interfaces.GuiManager;
 
 public class ComponentMenuCrafting extends ComponentMenuItem
 {
@@ -58,6 +60,7 @@ public class ComponentMenuCrafting extends ComponentMenuItem
         if (!isEditing() && !isSearching() && resultItem.getItem() != null)
         {
             drawResultObject(gui, resultItem.getItem(), getResultX(), getResultY());
+
             gui.drawItemAmount(resultItem.getItem(), getResultX(), getResultY());
         }
     }
@@ -81,7 +84,7 @@ public class ComponentMenuCrafting extends ComponentMenuItem
     public void onClick(int mX, int mY, int button)
     {
         super.onClick(mX, mY, button);
-        if (!isEditing() && !isSearching() && resultItem.getItem() != null)
+        if (!isEditing() && !isSearching() && !resultItem.getItem().isEmpty())
         {
             if (button == 1 && CollisionHelper.inBounds(getResultX(), getResultY(), ITEM_SIZE, ITEM_SIZE, mX, mY))
             {

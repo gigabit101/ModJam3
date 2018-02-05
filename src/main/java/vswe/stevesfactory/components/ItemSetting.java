@@ -4,8 +4,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import vswe.stevesfactory.util.ItemUtils;
-import vswe.stevesfactory.lib.Localization;
+import net.minecraftforge.oredict.OreDictionary;
+import vswe.stevesfactory.ItemUtils;
+import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.network.DataBitHelper;
 import vswe.stevesfactory.network.DataReader;
 import vswe.stevesfactory.network.DataWriter;
@@ -64,7 +65,7 @@ public class ItemSetting extends Setting
     @Override
     public int getAmount()
     {
-        return item == null ? 0 : item.stackSize;
+        return item == null ? 0 : item.getCount();
     }
 
     @Override
@@ -72,7 +73,7 @@ public class ItemSetting extends Setting
     {
         if (item != null)
         {
-            item.stackSize = val;
+            item.setCount(val);
         }
     }
 
@@ -94,6 +95,10 @@ public class ItemSetting extends Setting
 
     public ItemStack getItem()
     {
+        if(item == null)
+        {
+            return ItemStack.EMPTY;
+        }
         return item;
     }
 
@@ -163,7 +168,7 @@ public class ItemSetting extends Setting
     public void save(NBTTagCompound settingTag)
     {
         settingTag.setShort(NBT_SETTING_ITEM_ID, (short) Item.getIdFromItem(item.getItem()));
-        settingTag.setShort(NBT_SETTING_ITEM_COUNT, (short) item.stackSize);
+        settingTag.setShort(NBT_SETTING_ITEM_COUNT, (short) item.getCount());
         settingTag.setShort(NBT_SETTING_ITEM_DMG, (short) item.getItemDamage());
         settingTag.setByte(NBT_SETTING_FUZZY, (byte) fuzzyMode.ordinal());
         if (item.getTagCompound() != null)

@@ -1,6 +1,5 @@
 package vswe.stevesfactory.components;
 
-
 import net.minecraft.item.ItemStack;
 
 public interface IItemBufferSubElement
