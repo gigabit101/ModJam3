@@ -283,7 +283,7 @@ public class GuiRelay extends GuiBase
     private List<Button> buttons = new ArrayList<Button>();
     private int currentPage;
 
-    private static final ResourceLocation TEXTURE = registerTexture("Relay");
+    private static final ResourceLocation TEXTURE = registerTexture("relay");
 
     private static final int LIST_POS_X = 12;
     private static final int LIST_POS_Y = 14;

@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
 import vswe.stevesfactory.ItemUtils;
 import vswe.stevesfactory.Localization;
 import vswe.stevesfactory.network.DataBitHelper;
@@ -18,6 +17,7 @@ public class ItemSetting extends Setting
 {
     private FuzzyMode fuzzyMode;
     private ItemStack item;
+    private int amount;
 
     public ItemSetting(int id)
     {
@@ -27,14 +27,14 @@ public class ItemSetting extends Setting
     @Override
     public List<String> getMouseOver()
     {
-        if (item != null && GuiScreen.isShiftKeyDown())
+        if (!item.isEmpty() && GuiScreen.isShiftKeyDown())
         {
             return ComponentMenuItem.getToolTip(item);
         }
 
         List<String> ret = new ArrayList<String>();
 
-        if (item == null)
+        if (item.isEmpty())
         {
             ret.add(Localization.NO_ITEM_SELECTED.toString());
         } else
@@ -44,7 +44,7 @@ public class ItemSetting extends Setting
 
         ret.add("");
         ret.add(Localization.CHANGE_ITEM.toString());
-        if (item != null)
+        if (!item.isEmpty())
         {
             ret.add(Localization.EDIT_SETTING.toString());
             ret.add(Localization.FULL_DESCRIPTION.toString());
@@ -59,28 +59,28 @@ public class ItemSetting extends Setting
         super.clear();
 
         fuzzyMode = FuzzyMode.PRECISE;
-        item = null;
+        item = ItemStack.EMPTY;
+	    amount = 1;
     }
 
     @Override
     public int getAmount()
     {
-        return item == null ? 0 : item.getCount();
+        return item.isEmpty() ? 0 : amount;
     }
 
     @Override
     public void setAmount(int val)
     {
-        if (item != null)
-        {
-            item.setCount(val);
+        if (!item.isEmpty()) {
+	        amount = val;
         }
     }
 
     @Override
     public boolean isValid()
     {
-        return item != null;
+        return !item.isEmpty();
     }
 
     public FuzzyMode getFuzzyMode()
@@ -95,11 +95,13 @@ public class ItemSetting extends Setting
 
     public ItemStack getItem()
     {
-        if(item == null)
-        {
-            return ItemStack.EMPTY;
-        }
-        return item;
+        return item.copy();
+    }
+
+    public ItemStack getActualItem() {
+	    ItemStack copy = item.copy();
+	    copy.setCount(amount);
+	    return copy;
     }
 
     @Override
@@ -124,8 +126,10 @@ public class ItemSetting extends Setting
     @Override
     public void copyFrom(Setting setting)
     {
-        item = ((ItemSetting) setting).getItem().copy();
-        fuzzyMode = ((ItemSetting) setting).fuzzyMode;
+    	ItemSetting other = (ItemSetting) setting;
+        item = other.item.copy();
+        fuzzyMode = other.fuzzyMode;
+        amount = other.amount;
     }
 
     @Override
@@ -144,7 +148,8 @@ public class ItemSetting extends Setting
     @Override
     public void load(NBTTagCompound settingTag)
     {
-        item = new ItemStack(Item.getItemById(settingTag.getShort(NBT_SETTING_ITEM_ID)), settingTag.getShort(NBT_SETTING_ITEM_COUNT), settingTag.getShort(NBT_SETTING_ITEM_DMG));
+        item = new ItemStack(Item.getItemById(settingTag.getShort(NBT_SETTING_ITEM_ID)), 1, settingTag.getShort(NBT_SETTING_ITEM_DMG));
+        amount = settingTag.getShort(NBT_SETTING_ITEM_COUNT);
 
         //used to be a boolean
         if (settingTag.hasKey(NBT_SETTING_FUZZY_OLD))
@@ -168,7 +173,7 @@ public class ItemSetting extends Setting
     public void save(NBTTagCompound settingTag)
     {
         settingTag.setShort(NBT_SETTING_ITEM_ID, (short) Item.getIdFromItem(item.getItem()));
-        settingTag.setShort(NBT_SETTING_ITEM_COUNT, (short) item.getCount());
+        settingTag.setShort(NBT_SETTING_ITEM_COUNT, (short) amount);
         settingTag.setShort(NBT_SETTING_ITEM_DMG, (short) item.getItemDamage());
         settingTag.setByte(NBT_SETTING_FUZZY, (byte) fuzzyMode.ordinal());
         if (item.getTagCompound() != null)
@@ -196,23 +201,23 @@ public class ItemSetting extends Setting
 
     public boolean isEqualForCommandExecutor(ItemStack other)
     {
-        if (!isValid() || other == null)
+        if (!isValid() || other.isEmpty())
         {
             return false;
-        } else
-        {
+        } else {
+	        ItemStack thisItem = getActualItem();
             switch (fuzzyMode)
             {
                 case ORE_DICTIONARY:
-                    return ItemUtils.isItemEqual(other, this.getItem(), true, true, true);
+                    return ItemUtils.isItemEqual(other, thisItem, true, true, true);
                 case PRECISE:
-                    return Item.getIdFromItem(this.getItem().getItem()) == Item.getIdFromItem(other.getItem()) && this.getItem().getItemDamage() == other.getItemDamage() && ItemStack.areItemStackTagsEqual(getItem(), other);
+                    return Item.getIdFromItem(thisItem.getItem()) == Item.getIdFromItem(other.getItem()) && thisItem.getItemDamage() == other.getItemDamage() && ItemStack.areItemStackTagsEqual(thisItem, other);
                 case NBT_FUZZY:
-                    return Item.getIdFromItem(this.getItem().getItem()) == Item.getIdFromItem(other.getItem()) && this.getItem().getItemDamage() == other.getItemDamage();
+                    return Item.getIdFromItem(thisItem.getItem()) == Item.getIdFromItem(other.getItem()) && thisItem.getItemDamage() == other.getItemDamage();
                 case FUZZY:
-                    return Item.getIdFromItem(this.getItem().getItem()) == Item.getIdFromItem(other.getItem());
+                    return Item.getIdFromItem(thisItem.getItem()) == Item.getIdFromItem(other.getItem());
                 case MOD_GROUPING:
-                    return ModItemHelper.areItemsFromSameMod(this.getItem().getItem(), other.getItem());
+                    return ModItemHelper.areItemsFromSameMod(thisItem.getItem(), other.getItem());
                 case ALL:
                     return true;
                 default:

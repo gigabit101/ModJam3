@@ -35,9 +35,9 @@ public class GuiManager extends GuiBase
         Keyboard.enableRepeatEvents(true);
     }
 
-    private static final ResourceLocation BACKGROUND_1 = registerTexture("Background1");
-    private static final ResourceLocation BACKGROUND_2 = registerTexture("Background2");
-    private static final ResourceLocation COMPONENTS = registerTexture("FlowComponents");
+    private static final ResourceLocation BACKGROUND_1 = registerTexture("background_1");
+    private static final ResourceLocation BACKGROUND_2 = registerTexture("background_2");
+    private static final ResourceLocation COMPONENTS = registerTexture("flow_components");
 
     @Override
     public ResourceLocation getComponentResource()
