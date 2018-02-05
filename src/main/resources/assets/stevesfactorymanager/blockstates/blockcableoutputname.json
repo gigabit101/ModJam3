@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "stevesfactorymanager:builtin/cable_emitter" }
+        "normal": { "model": "stevesfactorymanager:cable_emitter" }
     }
 }
