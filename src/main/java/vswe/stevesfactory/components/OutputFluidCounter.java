@@ -2,6 +2,7 @@ package vswe.stevesfactory.components;
 
 
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
 
@@ -45,17 +46,15 @@ public class OutputFluidCounter
     {
         int max = 0;
 
-        for (SlotSideTarget slotSideTarget : tankHolder.getValidSlots().values())
+        for (SideSlotTarget slotSideTarget : tankHolder.getValidSlots().values())
         {
-            for (int side : slotSideTarget.getSides())
-            {
-                FluidStack temp = tankHolder.getTank().drain(CommandExecutor.MAX_FLUID_TRANSFER, false);
+	        IFluidHandler tank = tankHolder.getTank(slotSideTarget.getSide());
+        	FluidStack temp = tank.drain(CommandExecutor.MAX_FLUID_TRANSFER, false);
 
-                if (temp != null && temp.getFluid().getName().equals(((FluidSetting) setting).getFluidName()))
-                {
-                    max = Math.max(max, temp.amount);
-                }
-            }
+        	if (temp != null && temp.getFluid().getName().equals(((FluidSetting) setting).getFluidName()))
+        	{
+        		max = Math.max(max, temp.amount);
+        	}
         }
 
         currentTankTransferSize += max;

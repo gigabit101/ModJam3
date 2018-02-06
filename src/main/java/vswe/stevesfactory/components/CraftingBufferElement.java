@@ -97,40 +97,43 @@ public class CraftingBufferElement implements IItemBufferElement, IItemBufferSub
     {
         TileEntityManager manager = craftingMenu.getParent().getManager();
         List<SlotInventoryHolder> inventories = CommandExecutor.getContainers(manager, scrapMenu, ConnectionBlockType.INVENTORY);
+        CommandExecutor.getValidSlots(scrapMenu, inventories);
 
         for (SlotInventoryHolder inventoryHolder : inventories)
         {
-            IItemHandler inventory = inventoryHolder.getInventory();
 
-            for (int i = 0; i < inventory.getSlots(); i++)
+            for(SideSlotTarget sideSlotTarget : inventoryHolder.getValidSlots().values())
             {
-                if (inventory.insertItem(i, itemStack, true) != itemStack)
-                {
-                    ItemStack itemInSlot = inventory.getStackInSlot(i);
-                    if (itemInSlot.isEmpty() || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
-                    {
-                        int itemCountInSlot = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
+	            IItemHandler inventory = inventoryHolder.getInventory(sideSlotTarget.getSide());
+	            for (int slot : sideSlotTarget.getSlots())
+	            {
+		            if (inventory.insertItem(slot, itemStack, true) != itemStack)
+		            {
+			            ItemStack itemInSlot = inventory.getStackInSlot(slot);
+			            if (itemInSlot.isEmpty() || (itemInSlot.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(itemStack, itemInSlot) && itemStack.isStackable()))
+			            {
+				            int itemCountInSlot = itemInSlot.isEmpty() ? 0 : itemInSlot.getCount();
 
-                        int moveCount = Math.min(itemStack.getCount(), Math.min(inventory.getSlotLimit(i), itemStack.getMaxStackSize()) - itemCountInSlot);
+				            int moveCount = Math.min(itemStack.getCount(), Math.min(inventory.getSlotLimit(slot), itemStack.getMaxStackSize()) - itemCountInSlot);
 
-                        if (moveCount > 0)
-                        {
-                            if (itemInSlot.isEmpty())
-                            {
-                                itemInSlot = itemStack.copy();
-                                itemInSlot.setCount(0);
-                                inventory.insertItem(i, itemInSlot, false);
-                            }
+				            if (moveCount > 0)
+				            {
+					            if (itemInSlot.isEmpty())
+					            {
+						            itemInSlot = itemStack.copy();
+						            itemInSlot.setCount(0);
+						            inventory.insertItem(slot, itemInSlot, false);
+					            }
 
-                            itemInSlot.grow(moveCount);
-                            itemStack.shrink(moveCount);
-                            if (itemStack.getCount() == 0)
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
+					            itemInSlot.grow(moveCount);
+					            itemStack.shrink(moveCount);
+					            if (itemStack.getCount() == 0) {
+						            return;
+					            }
+				            }
+			            }
+		            }
+	            }
             }
         }
 

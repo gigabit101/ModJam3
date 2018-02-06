@@ -40,10 +40,6 @@ public final class ModBlocks
     public static final String CABLE_INPUT_NAME_TAG = "BlockCableInputName";
     public static final String CABLE_INPUT_UNLOCALIZED_NAME = "BlockCableInput";
 
-    private static final String CABLE_CREATIVE_TILE_ENTITY_TAG = "TileEntityCableCreativeName";
-    public static final String CABLE_CREATIVE_NAME_TAG = "BlockCableCreativeName";
-    public static final String CABLE_CREATIVE_UNLOCALIZED_NAME = "BlockCableCreative";
-
     private static final String CABLE_INTAKE_TILE_ENTITY_TAG = "TileEntityCableIntakeName";
     public static final String CABLE_INTAKE_NAME_TAG = "BlockCableIntakeName";
     public static final String CABLE_INTAKE_UNLOCALIZED_NAME = "BlockCableIntake";
@@ -75,7 +71,6 @@ public final class ModBlocks
     public static BlockCableRelay blockCableRelay;
     public static BlockCableOutput blockCableOutput;
     public static BlockCableInput blockCableInput;
-    public static BlockCableCreative blockCableCreative;
     public static BlockCableIntake blockCableIntake;
     public static BlockCableBUD blockCableBUD;
     public static BlockCableBreaker blockCableBreaker;
@@ -127,11 +122,6 @@ public final class ModBlocks
         RebornRegistry.registerBlock(blockCableInput, CABLE_INPUT_NAME_TAG);
         GameRegistry.registerTileEntity(TileEntityInput.class, CABLE_INPUT_TILE_ENTITY_TAG);
         ClusterRegistry.register(TileEntityInput.class, blockCableInput);
-
-//        blockCableCreative = new BlockCableCreative();
-//        RebornRegistry.registerBlock(blockCableCreative, CABLE_CREATIVE_NAME_TAG);
-//        GameRegistry.registerTileEntity(TileEntityCreative.class, CABLE_CREATIVE_TILE_ENTITY_TAG);
-//        ClusterRegistry.register(TileEntityCreative.class, blockCableCreative);
 
         blockCableIntake = new BlockCableIntake();
         RebornRegistry.registerBlock(blockCableIntake, ItemIntake.class, CABLE_INTAKE_NAME_TAG);

@@ -3,12 +3,10 @@ package vswe.stevesfactory.components;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.tiles.*;
-import vswe.stevesfactory.wrappers.CapabilityHelper;
+import vswe.stevesfactory.util.CapabilityUtils;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -17,7 +15,7 @@ import java.util.Map;
 public class SlotInventoryHolder
 {
     private TileEntity inventory;
-    private Map<Integer, SlotSideTarget> validSlots;
+    private Map<EnumFacing, SideSlotTarget> validSlots;
     private int sharedOption;
     private int id;
 
@@ -33,24 +31,16 @@ public class SlotInventoryHolder
         return id;
     }
 
-    public IItemHandler getInventory()
-    {
-        return CapabilityHelper.getItemCapabilitySafe(inventory);
-    }
-
     @Nullable
     public IItemHandler getInventory(EnumFacing facing)
     {
-        if(inventory.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing))
-        {
-            return inventory.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
-        }
-        return null;
+        return CapabilityUtils.getItemHandler(inventory, facing);
     }
 
-    public IFluidHandler getTank()
+    @Nullable
+    public IFluidHandler getTank(EnumFacing facing)
     {
-        return CapabilityHelper.getFluidCapabilitySafe(inventory);
+    	return CapabilityUtils.getFluidHandler(inventory, facing);
     }
 
     public TileEntityOutput getEmitter()
@@ -83,11 +73,11 @@ public class SlotInventoryHolder
         return (TileEntitySignUpdater) inventory;
     }
 
-    public Map<Integer, SlotSideTarget> getValidSlots()
+    public Map<EnumFacing, SideSlotTarget> getValidSlots()
     {
         if (validSlots == null)
         {
-            validSlots = new HashMap<Integer, SlotSideTarget>();
+            validSlots = new HashMap<>();
         }
         return validSlots;
     }

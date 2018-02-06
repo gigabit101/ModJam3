@@ -3,18 +3,19 @@ package vswe.stevesfactory.components;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.IdentityHashMap;
 import java.util.List;
 
 public class OutputItemCounter
 {
-    private Setting setting;
+    private ItemSetting setting;
     private boolean useWhiteList;
     private int currentInventoryStackSize;
     private int currentBufferStackSize;
 
-    public OutputItemCounter(List<ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories, IItemHandler inventory, Setting setting, boolean useWhiteList)
+    public OutputItemCounter(List<ItemBufferElement> itemBuffer, List<SlotInventoryHolder> inventories, SlotInventoryHolder inventoryHolder, Setting setting, boolean useWhiteList)
     {
-        this.setting = setting;
+        this.setting = (ItemSetting) setting;
         this.useWhiteList = useWhiteList;
 
         if (setting != null && ((ItemSetting) setting).getItem() != null && setting.isLimitedByAmount())
@@ -25,11 +26,11 @@ public class OutputItemCounter
                 {
                     for (SlotInventoryHolder slotInventoryHolder : inventories)
                     {
-                        addInventory(slotInventoryHolder.getInventory());
+                        addInventory(slotInventoryHolder);
                     }
                 } else
                 {
-                    addInventory(inventory);
+                    addInventory(inventoryHolder);
                 }
             } else
             {
@@ -41,16 +42,19 @@ public class OutputItemCounter
         }
     }
 
-    private void addInventory(IItemHandler inventory)
+    private void addInventory(SlotInventoryHolder inventoryHolder)
     {
-        for (int i = 0; i < inventory.getSlots(); i++)
-        {
-            ItemStack item = inventory.getStackInSlot(i);
-            if (((ItemSetting) setting).isEqualForCommandExecutor(item))
-            {
-                currentInventoryStackSize += item.getCount();
-            }
-        }
+	    IdentityHashMap<ItemStack, Object> seenStacks = new IdentityHashMap<>();
+	    for (SideSlotTarget sideSlotTarget : inventoryHolder.getValidSlots().values()) {
+	    	IItemHandler inventory = inventoryHolder.getInventory(sideSlotTarget.getSide());
+		    for(int slot : sideSlotTarget.getSlots()) {
+			    ItemStack item = inventory.getStackInSlot(slot);
+			    if (!seenStacks.containsKey(item) && setting.isEqualForCommandExecutor(item)) {
+			    	seenStacks.put(item, null);
+				    currentInventoryStackSize += item.getCount();
+			    }
+		    }
+	    }
     }
 
     public boolean areSettingsSame(Setting setting)
@@ -68,10 +72,10 @@ public class OutputItemCounter
             int itemsAllowedToBeMoved;
             if (useWhiteList)
             {
-                itemsAllowedToBeMoved = ((ItemSetting) setting).getItem().getCount() - currentInventoryStackSize;
+                itemsAllowedToBeMoved = setting.getItem().getCount() - currentInventoryStackSize;
             } else
             {
-                itemsAllowedToBeMoved = currentBufferStackSize - ((ItemSetting) setting).getItem().getCount();
+                itemsAllowedToBeMoved = currentBufferStackSize - setting.getItem().getCount();
             }
             return Math.min(itemsAllowedToBeMoved, desiredItemCount);
         }
