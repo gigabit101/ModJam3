@@ -23,6 +23,7 @@ import vswe.stevesfactory.tiles.TileEntityCluster;
 import vswe.stevesfactory.tiles.TileEntityClusterElement;
 
 import java.util.List;
+import java.util.Random;
 
 public abstract class BlockCableDirectionAdvanced extends BlockContainer
 {
@@ -32,7 +33,7 @@ public abstract class BlockCableDirectionAdvanced extends BlockContainer
         setCreativeTab(ModBlocks.creativeTab);
         setSoundType(SoundType.METAL);
         setHardness(1.2F);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ADVANCED, false));
     }
 
     public static final IProperty FACING = PropertyDirection.create("facing");
@@ -65,9 +66,13 @@ public abstract class BlockCableDirectionAdvanced extends BlockContainer
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack item)
     {
-        world.setBlockState(pos, state.withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, entity)), 2);
+        int meta = addAdvancedMeta(EnumFacing.getDirectionFromEntityLiving(pos, entity).getIndex(), item.getItemDamage());
 
         TileEntityClusterElement element = TileEntityCluster.getTileEntity(getTeClass(), world, pos);
+        if (element != null)
+        {
+            element.setMetaData(meta);
+        }
     }
 
     protected abstract Class<? extends TileEntityClusterElement> getTeClass();
@@ -109,5 +114,4 @@ public abstract class BlockCableDirectionAdvanced extends BlockContainer
     {
         return getAdvancedMeta(state.getBlock().getMetaFromState(state));
     }
-
 }
