@@ -1,11 +1,13 @@
 package vswe.stevesfactory.tiles;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -681,7 +683,11 @@ public class TileEntityRelay extends TileEntityClusterElement implements IInvent
             }
         }
 
-        EnumFacing direction = ((EnumFacing) getWorld().getBlockState(getPos()).getValue(BlockCableRelay.FACING));
+	    IBlockState state = getWorld().getBlockState(pos);
+        if(state.getBlock() == Blocks.AIR){
+        	return null;
+        }
+        EnumFacing direction = ((EnumFacing) state.getValue(BlockCableRelay.FACING));
 
         int x = getPos().getX() + direction.getFrontOffsetX();
         int y = getPos().getY() + direction.getFrontOffsetY();
