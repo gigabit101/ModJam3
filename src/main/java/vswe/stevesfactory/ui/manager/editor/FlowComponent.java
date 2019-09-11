@@ -353,11 +353,12 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
         this.submitButton = new SubmitButton(this);
         this.cancelButton = new CancelButton(this, name);
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
-        this.nameBox = new TextField(8, 8, 35, 10)
+        this.nameBox = new TextField(6, 8, 35, 10)
                 .setBackgroundStyle(TextField.BackgroundStyle.NONE)
                 .setText(name)
                 .setTextColor(0xff303030, 0xff303030)
-                .setEditable(false);
+                .setEditable(false)
+                .setFontHeight(6);
         this.inputNodes = ControlFlow.inputNodes(inputNodes);
         this.outputNodes = ControlFlow.outputNodes(outputNodes);
         this.menus = new MenusList<>(120, 130);

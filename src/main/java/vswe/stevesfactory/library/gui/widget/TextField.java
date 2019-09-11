@@ -10,7 +10,7 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.widget.mixin.*;
+import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 import vswe.stevesfactory.utils.RenderingHelper;
 import vswe.stevesfactory.utils.Utils;
 
@@ -109,6 +109,8 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
 
     private int textColor = 0xff000000;
     private int textColorUneditable = 0xff333333;
+    private int fontHeight = fontRenderer().FONT_HEIGHT;
+    private float scaleFactor = 1.0F;
 
     public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -392,7 +394,7 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
     }
 
     private int calculateVerticalOffset() {
-        return (getDimensions().height - fontRenderer().FONT_HEIGHT) / 2;
+        return (getDimensions().height - fontHeight) / 2;
     }
 
     private void ensureVisible() {
@@ -405,6 +407,21 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
                 w = fontRenderer().getStringWidth(text.substring(startOffset, cursor));
             }
         }
+    }
+
+    public int getFontHeight() {
+        return fontHeight;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public TextField setFontHeight(int fontHeight) {
+        this.fontHeight = fontHeight;
+        this.scaleFactor = (float) fontHeight / getDefaultFontHeight();
+        return this;
+    }
+
+    public int getDefaultFontHeight() {
+        return fontRenderer().FONT_HEIGHT;
     }
 
     @Override
@@ -420,15 +437,16 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
 
         backgroundStyle.render(x, y, x2, y2, isInside(mouseX, mouseY), isFocused());
 
-        String renderedText = fontRenderer().trimStringToWidth(this.text.substring(startOffset), getDimensions().width - 10);
-        int textX = x + 5;
+        int width = (int) ((getDimensions().width - 4) * (1F / scaleFactor));
+        String renderedText = fontRenderer().trimStringToWidth(this.text.substring(startOffset), width);
+        int textX = x + 2;
         int textY = y + calculateVerticalOffset();
         GlStateManager.enableTexture();
         if (isEnabled()) {
             if (isEditable()) {
-                fontRenderer().drawString(renderedText, textX, textY, textColor);
+                drawString(renderedText, textX, textY, textColor);
             } else {
-                fontRenderer().drawString(renderedText, textX, textY, textColorUneditable);
+                drawString(renderedText, textX, textY, textColor);
             }
 
             if (isRegionSelected()) {
@@ -448,7 +466,7 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
                 RenderingHelper.drawColorLogic(selectionX - 1, textY, selectionWidth + 1, fontRenderer().FONT_HEIGHT, 60, 147, 242, GlStateManager.LogicOp.OR_REVERSE);
             }
         } else {
-            fontRenderer().drawString(renderedText, textX, textY, 0xffa0a0a0);
+            drawString(renderedText, textX, textY, 0xffa0a0a0);
         }
 
         if (isFocused()) {
@@ -459,6 +477,14 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
         }
 
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
+    }
+
+    private void drawString(String text, int textX, int textY, int color) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translatef(textX, textY, 0F);
+        GlStateManager.scalef(scaleFactor, scaleFactor, 1F);
+        fontRenderer().drawString(text, 0, 0, color);
+        GlStateManager.popMatrix();
     }
 
     public IBackgroundRenderer getBackgroundStyle() {
