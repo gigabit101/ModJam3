@@ -712,12 +712,6 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
 
     @Override
     public void setLocation(int x, int y) {
-        @Nullable IWidget parent = super.getParentWidget();
-        if (parent != null) {
-            Dimension bounds = parent.getDimensions();
-            x = MathHelper.clamp(x, 0, bounds.width);
-            y = MathHelper.clamp(y, 0, bounds.height);
-        }
         super.setLocation(x, y);
         procedure.setComponentX(x);
         procedure.setComponentY(y);

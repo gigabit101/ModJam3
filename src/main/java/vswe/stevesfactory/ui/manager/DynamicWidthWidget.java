@@ -42,8 +42,6 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
             }
             widget.setX(nextX);
             nextX += widget.getWidth();
-
-            widget.reflow();
         }
 
         return widgets;

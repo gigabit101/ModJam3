@@ -133,7 +133,6 @@ public class FactoryManagerGUI extends WidgetScreen {
             this.focusedWidget = topLevel;
 
             this.asProportional();
-            this.topLevel.reflow();
         }
 
         @Override
@@ -231,6 +230,7 @@ public class FactoryManagerGUI extends WidgetScreen {
             this.selectionPanel = new SelectionPanel();
             this.editorPanel = new EditorPanel();
             this.children = ImmutableList.of(selectionPanel, editorPanel);
+            attachChildren();
         }
 
         @Override
@@ -263,11 +263,13 @@ public class FactoryManagerGUI extends WidgetScreen {
         @Override
         public void reflow() {
             fillWindow();
-            selectionPanel.setParentWidget(this);
+            selectionPanel.setHeight(getHeight());
+            editorPanel.setHeight(getHeight());
             selectionPanel.reflow();
-            editorPanel.setParentWidget(this);
             editorPanel.reflow();
             DynamicWidthWidget.reflowDynamicWidth(getDimensions(), children);
+            selectionPanel.reflow();
+            editorPanel.reflow();
         }
 
         @Override
@@ -283,5 +285,4 @@ public class FactoryManagerGUI extends WidgetScreen {
             return false;
         }
     }
-
 }
