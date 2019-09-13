@@ -53,6 +53,11 @@
   "gui.sfm.ActionMenu.Menus.ExpandAll": "Expand All",
   "gui.sfm.ActionMenu.BlockTarget.Highlight": "Highlight in world",
 
+  "gui.sfm.Editor.XOff": "X: ",
+  "gui.sfm.Editor.YOff": "Y: ",
+  "gui.sfm.Editor.EditOffset": "Enter a new offset: ",
+  "gui.sfm.Editor.InvalidNumberFormat": "Invalid number format: %s!",
+
   "gui.sfm.Menu.Interval": "Interval",
   "gui.sfm.Menu.Interval.Info": "Time between this command is triggered",
   "gui.sfm.Menu.InventorySelection": "Inventories",

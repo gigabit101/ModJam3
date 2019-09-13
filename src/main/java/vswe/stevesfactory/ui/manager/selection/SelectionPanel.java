@@ -9,7 +9,7 @@ import vswe.stevesfactory.library.collections.CompositeUnmodifiableList;
 import vswe.stevesfactory.library.gui.*;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI.TopLevelWidget;
-import vswe.stevesfactory.ui.manager.editor.DynamicWidthWidget;
+import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 
 import javax.annotation.Nonnull;
 import java.util.*;

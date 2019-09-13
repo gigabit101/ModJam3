@@ -1,4 +1,4 @@
-package vswe.stevesfactory.ui.manager.editor;
+package vswe.stevesfactory.ui.manager;
 
 import vswe.stevesfactory.library.gui.IWidget;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
@@ -42,6 +42,8 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
             }
             widget.setX(nextX);
             nextX += widget.getWidth();
+
+            widget.reflow();
         }
 
         return widgets;
