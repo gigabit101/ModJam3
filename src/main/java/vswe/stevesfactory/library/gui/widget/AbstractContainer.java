@@ -88,4 +88,10 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
         setLocation(0, 0);
         setDimensions(getWindow().getContentDimensions());
     }
+
+    public void attachChildren() {
+        for (T child : getChildren()) {
+            child.setParentWidget(this);
+        }
+    }
 }
