@@ -31,7 +31,6 @@ public final class NetworkHandler {
     }
 
     private static void registerClient() {
-        registerMessage(PacketTransferLinkedInventories.class, PacketTransferLinkedInventories::encode, PacketTransferLinkedInventories::decode, PacketTransferLinkedInventories::handle);
     }
 
     private static void registerBoth() {

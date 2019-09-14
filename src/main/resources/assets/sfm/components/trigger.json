@@ -1,0 +1,8 @@
+{
+  "name": "sfm:trigger",
+  "translation_key": "gui.sfm.ComponentSelection.Trigger",
+  "icon": "sfm:textures/gui/component_icon/trigger.png",
+  "members": [
+    "sfm:timed_trigger"
+  ]
+}
