@@ -499,6 +499,10 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
         outputNodes.render(mouseX, mouseY, particleTicks);
         menus.render(mouseX, mouseY, particleTicks);
 
+        if (nameBox.isInside(mouseX, mouseY)) {
+            WidgetScreen.getCurrentScreen().setHoveringText(getName(), mouseX, mouseY);
+        }
+
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
