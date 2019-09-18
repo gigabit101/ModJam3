@@ -1,14 +1,13 @@
 package vswe.stevesfactory.logic.procedure;
 
-import vswe.stevesfactory.logic.item.SingleItemFilter;
-
-import java.util.List;
+import vswe.stevesfactory.logic.item.IItemFilter;
+import vswe.stevesfactory.logic.item.ItemTraitsFilter;
 
 public interface IItemFilterTarget {
 
-    List<SingleItemFilter> getFilters(int id);
+    IItemFilter getFilter(int id);
 
-    default List<SingleItemFilter> getFilters() {
-        return getFilters(0);
+    default IItemFilter getFilter() {
+        return getFilter(0);
     }
 }

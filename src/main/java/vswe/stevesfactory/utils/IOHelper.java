@@ -1,10 +1,16 @@
 package vswe.stevesfactory.utils;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.*;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import vswe.stevesfactory.logic.item.SingleItemFilter;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
 import java.util.function.IntFunction;
@@ -39,30 +45,42 @@ public final class IOHelper {
         }
     }
 
-    public static SingleItemFilter deserializeItemFiler(CompoundNBT tag) {
-        SingleItemFilter filter = new SingleItemFilter();
-        filter.read(tag);
-        return filter;
-    }
-
-    public static <T extends Collection<SingleItemFilter>> T readItemFilters(ListNBT serializedFilters, T target) {
+    public static <T extends Collection<ItemStack>> T readItemStacks(ListNBT serializedFilters, T target) {
         for (int i = 0; i < serializedFilters.size(); i++) {
-            target.add(deserializeItemFiler(serializedFilters.getCompound(i)));
+            target.add(ItemStack.read(serializedFilters.getCompound(i)));
         }
         return target;
     }
 
-    public static ListNBT writeItemFilters(Collection<SingleItemFilter> filters) {
-        return writeItemFilters(filters, new ListNBT());
+    public static ListNBT writeItemStacks(Collection<ItemStack> stacks) {
+        return writeItemStacks(stacks, new ListNBT());
     }
 
-    public static ListNBT writeItemFilters(Collection<SingleItemFilter> filters, ListNBT target) {
-        for (SingleItemFilter filter : filters) {
-            CompoundNBT tag = new CompoundNBT();
-            filter.write(tag);
+    public static ListNBT writeItemStacks(Collection<ItemStack> filters, ListNBT target) {
+        for (ItemStack stack : filters) {
+            target.add(stack.write(new CompoundNBT()));
+        }
+        return target;
+    }
+
+    public static <T extends Collection<Tag<Item>>> T readItemTags(ListNBT serializedFilters, T target) {
+        for (int i = 0; i < serializedFilters.size(); i++) {
+            ResourceLocation id = new ResourceLocation(serializedFilters.getString(i));
+            Tag<Item> tag = new ItemTags.Wrapper(id);
             target.add(tag);
         }
         return target;
+    }
+
+    public static <T> ListNBT writeTags(Collection<Tag<T>> tags, ListNBT target) {
+        for (Tag<?> tag : tags) {
+            target.add(new StringNBT(tag.getId().toString()));
+        }
+        return target;
+    }
+
+    public static <T> ListNBT writeTags(Collection<Tag<T>> tags) {
+        return writeTags(tags, new ListNBT());
     }
 
     public static <T extends Collection<BlockPos>> T readBlockPoses(PacketBuffer buf, T target) {

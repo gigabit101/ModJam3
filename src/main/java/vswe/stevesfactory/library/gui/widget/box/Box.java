@@ -1,6 +1,6 @@
 package vswe.stevesfactory.library.gui.widget.box;
 
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;

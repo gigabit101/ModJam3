@@ -1,7 +1,7 @@
 package vswe.stevesfactory.library.gui.actionmenu;
 
 import net.minecraft.util.ResourceLocation;
-import vswe.stevesfactory.library.gui.IWindow;
+import vswe.stevesfactory.library.gui.window.IWindow;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;

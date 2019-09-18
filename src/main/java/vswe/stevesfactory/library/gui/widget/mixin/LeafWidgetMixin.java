@@ -1,6 +1,6 @@
 package vswe.stevesfactory.library.gui.widget.mixin;
 
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 
 public interface LeafWidgetMixin extends IWidget {
 

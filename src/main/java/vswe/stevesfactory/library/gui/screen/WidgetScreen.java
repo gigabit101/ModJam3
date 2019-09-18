@@ -9,7 +9,8 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.library.collections.CompositeUnmodifiableList;
-import vswe.stevesfactory.library.gui.IWindow;
+import vswe.stevesfactory.library.gui.window.IWindow;
+import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.Inspections;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.window.IPopupWindow;
@@ -18,6 +19,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class WidgetScreen extends Screen implements IGuiEventListener {
+
+    public static final TextureWrapper ITEM_SLOT = TextureWrapper.ofFlowComponent(0, 106, 18, 18);
 
     public static WidgetScreen getCurrentScreen() {
         return (WidgetScreen) Minecraft.getInstance().currentScreen;
@@ -66,7 +69,13 @@ public abstract class WidgetScreen extends Screen implements IGuiEventListener {
             tasks.remove().accept(this);
         }
 
-        popupWindows.removeIf(IPopupWindow::shouldDiscard);
+        popupWindows.removeIf(popup -> {
+            if (popup.shouldDiscard()) {
+                popup.onRemoved();
+                return true;
+            }
+            return false;
+        });
 
         float particleTicks = Minecraft.getInstance().getRenderPartialTicks();
         for (IWindow window : windows) {
@@ -155,7 +164,7 @@ public abstract class WidgetScreen extends Screen implements IGuiEventListener {
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
-        for (IWindow window : regularWindows) {
+        for (IWindow window : windows) {
             window.mouseMoved(mouseX, mouseY);
         }
         primaryWindow.mouseMoved(mouseX, mouseY);

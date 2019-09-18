@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.glfw.GLFW;
-import vswe.stevesfactory.library.gui.IWidget;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.ScissorTest;
 import vswe.stevesfactory.library.gui.widget.TextField;
@@ -20,9 +19,6 @@ import vswe.stevesfactory.utils.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-
-import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
-import static org.lwjgl.opengl.GL11.glDisable;
 
 
 public class WrappingList<T extends IWidget & INamedElement> extends AbstractContainer<IWidget> implements ResizableWidgetMixin {
@@ -146,7 +142,7 @@ public class WrappingList<T extends IWidget & INamedElement> extends AbstractCon
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         if (searchBox.getText().length() > 0 || searchResults.size() > 0) {
             String status = I18n.format("gui.sfm.WrappingList.SearchStatus", searchResults.size());
-            RenderingHelper.drawTextCenteredVertically(status, searchBox.getAbsoluteXRight() + 2, searchBox.getAbsoluteY(), searchBox.getAbsoluteYBottom(), 0x404040);
+            RenderingHelper.drawTextCenteredVertically(status, searchBox.getAbsoluteXRight() + 4, searchBox.getAbsoluteY(), searchBox.getAbsoluteYBottom(), 8, 0x404040);
         }
 
         searchBox.render(mouseX, mouseY, particleTicks);
@@ -155,13 +151,13 @@ public class WrappingList<T extends IWidget & INamedElement> extends AbstractCon
 
         int left = getAbsoluteX() + getScrollingSectionX();
         int top = getAbsoluteY() + getScrollingSectionY();
-
         ScissorTest test = ScissorTest.scaled(left, top, contentArea.width, contentArea.height);
 
-        int sy = getScrollingSectionY();
+        int sTop = getScrollingSectionY();
+        int sBottom = sTop + contentArea.height;
         for (T child : searchResults) {
             int cy = child.getY();
-            if (cy + child.getHeight() > sy && cy < sy + contentArea.height) {
+            if (cy + child.getHeight() > sTop && cy < sBottom) {
                 child.render(mouseX, mouseY, particleTicks);
             }
         }
@@ -388,12 +384,10 @@ public class WrappingList<T extends IWidget & INamedElement> extends AbstractCon
     @Override
     public void setWidth(int width) {
         super.setWidth(width);
-        contentArea.width = width;
     }
 
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
-        contentArea.height = height;
     }
 }

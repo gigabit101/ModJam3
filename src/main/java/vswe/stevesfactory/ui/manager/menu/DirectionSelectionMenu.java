@@ -131,8 +131,4 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IP
     public String getHeadingText() {
         return name;
     }
-
-    @Override
-    public void renderContents(int mouseX, int mouseY, float particleTicks) {
-    }
 }

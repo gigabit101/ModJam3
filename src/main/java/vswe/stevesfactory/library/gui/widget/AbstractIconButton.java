@@ -1,5 +1,6 @@
 package vswe.stevesfactory.library.gui.widget;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -23,11 +24,12 @@ public abstract class AbstractIconButton extends AbstractWidget implements IButt
     @Override
     public void render(int mouseX, int mouseY, float particleTicks) {
         preRenderEvent(mouseX, mouseY);
+        GlStateManager.color3f(1F,1F,1F);
         TextureWrapper tex = isDisabled() ? getTextureDisabled()
                 : isClicked() ? getTextureClicked()
                 : isHovered() ? getTextureHovered()
                 : getTextureNormal();
-        tex.draw(getAbsoluteX(), getAbsoluteY());
+        tex.draw(getAbsoluteX(), getAbsoluteY(), getWidth(), getHeight());
         postRenderEvent(mouseX, mouseY);
     }
 

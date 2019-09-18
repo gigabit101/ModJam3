@@ -1,8 +1,8 @@
 package vswe.stevesfactory.library.gui.widget;
 
-import vswe.stevesfactory.library.gui.*;
 import vswe.stevesfactory.library.gui.widget.mixin.ContainerWidgetMixin;
 import vswe.stevesfactory.library.gui.widget.mixin.RelocatableContainerMixin;
+import vswe.stevesfactory.library.gui.window.IWindow;
 
 import java.awt.*;
 import java.util.Collection;
@@ -28,6 +28,18 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
     public void setParentWidget(IWidget newParent) {
         super.setParentWidget(newParent);
         ContainerWidgetMixin.super.setParentWidget(newParent);
+    }
+
+    @Override
+    public void setWindow(IWindow window) {
+        super.setWindow(window);
+        Collection<T> children = getChildren();
+        if (children != null) {
+            for (T child : children) {
+                // Based on the docs, this will inherit a reference to window from this widget
+                child.setParentWidget(this);
+            }
+        }
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.ScissorTest;
@@ -213,6 +213,7 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
 
     @Override
     public LinearList<T> addChildren(T widget) {
+        widget.setParentWidget(this);
         elements.add(widget);
         return this;
     }
@@ -220,6 +221,9 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
     @Override
     public LinearList<T> addChildren(Collection<T> widgets) {
         elements.addAll(widgets);
+        for (T widget : widgets) {
+            widget.setParentWidget(this);
+        }
         return this;
     }
 
@@ -241,7 +245,7 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
     }
 
     public int getMarginMiddle() {
-        return 10;
+        return 4;
     }
 
     public int getBarLeft() {

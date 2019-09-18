@@ -1,56 +1,44 @@
 package vswe.stevesfactory.library.gui.actionmenu;
 
 import com.google.common.base.Preconditions;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.window.IPopupWindow;
-import vswe.stevesfactory.library.gui.window.NestedEventHandlerMixin;
+import vswe.stevesfactory.library.gui.window.AbstractPopupWindow;
 import vswe.stevesfactory.utils.RenderingHelper;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
-public class ActionMenu implements IPopupWindow, NestedEventHandlerMixin {
+public class ActionMenu extends AbstractPopupWindow {
 
     public static ActionMenu atCursor(double mouseX, double mouseY, List<? extends IEntry> entries) {
         return new ActionMenu((int) mouseX, (int) mouseY, entries);
     }
 
-    private final Point position;
     private final List<? extends IEntry> entries;
     private IEntry focusedEntry;
 
-    private final Dimension contents;
-    private final Dimension border;
-
-    public boolean alive = true;
-
     public ActionMenu(int x, int y, List<? extends IEntry> entries) {
-        this(new Point(x, y), entries);
-    }
-
-    public ActionMenu(Point position, List<? extends IEntry> entries) {
         Preconditions.checkArgument(!entries.isEmpty());
 
-        this.position = position;
         this.entries = entries;
-        this.contents = new Dimension();
-        this.contents.width = entries.stream()
+        int width = entries.stream()
                 .max(Comparator.comparingInt(IEntry::getWidth))
                 .orElseThrow(IllegalArgumentException::new)
                 .getWidth();
-        this.contents.height = entries.stream()
+        int height = entries.stream()
                 .mapToInt(IEntry::getHeight)
                 .sum();
-        this.border = RenderingHelper.toBorder(contents, getBorderSize());
+        setContents(width, height);
+        setPosition(x, y);
 
-        int y = 0;
+        int ey = 0;
         for (IEntry e : entries) {
             e.attach(this);
-            e.setLocation(0, y);
-            y += e.getHeight();
+            e.setLocation(0, ey);
+            e.setWidth(contents.width);
+            ey += e.getHeight();
         }
     }
 
@@ -70,7 +58,7 @@ public class ActionMenu implements IPopupWindow, NestedEventHandlerMixin {
         if (!isInside(mouseX, mouseY)) {
             alive = false;
         }
-        return NestedEventHandlerMixin.super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Nullable
@@ -93,32 +81,17 @@ public class ActionMenu implements IPopupWindow, NestedEventHandlerMixin {
     }
 
     @Override
-    public Dimension getBorder() {
-        return border;
-    }
-
-    @Override
-    public Dimension getContentDimensions() {
-        return contents;
-    }
-
-    @Override
     public List<? extends IEntry> getChildren() {
         return entries;
     }
 
     @Override
-    public Point getPosition() {
-        return position;
+    public boolean shouldDrag() {
+        return false;
     }
 
     @Override
     public int getBorderSize() {
         return 1;
-    }
-
-    @Override
-    public boolean shouldDiscard() {
-        return !alive;
     }
 }

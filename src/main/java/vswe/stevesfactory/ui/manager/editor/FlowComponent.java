@@ -9,7 +9,7 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IProcedureClientData;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.actionmenu.ActionMenu;
 import vswe.stevesfactory.library.gui.actionmenu.CallbackEntry;
@@ -145,7 +145,7 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
 
     public static class RenameButton extends AbstractIconButton {
 
-        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 120, 9, 9);
+        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 124, 9, 9);
         public static final TextureWrapper HOVERING = NORMAL.toRight(1);
 
         public RenameButton(FlowComponent parent) {
@@ -195,7 +195,7 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
 
     public static class SubmitButton extends AbstractIconButton {
 
-        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 129, 7, 7);
+        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 133, 7, 7);
         public static final TextureWrapper HOVERING = NORMAL.toRight(1);
 
         public SubmitButton(FlowComponent parent) {
@@ -248,7 +248,7 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
 
     public static class CancelButton extends AbstractIconButton {
 
-        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 136, 7, 7);
+        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 140, 7, 7);
         public static final TextureWrapper HOVERING = NORMAL.toRight(1);
 
         private String previousName;
@@ -353,11 +353,12 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
         this.submitButton = new SubmitButton(this);
         this.cancelButton = new CancelButton(this, name);
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
-        this.nameBox = new TextField(8, 8, 35, 10)
+        this.nameBox = new TextField(6, 8, 35, 10)
                 .setBackgroundStyle(TextField.BackgroundStyle.NONE)
                 .setText(name)
                 .setTextColor(0xff303030, 0xff303030)
-                .setEditable(false);
+                .setEditable(false)
+                .setFontHeight(6);
         this.inputNodes = ControlFlow.inputNodes(inputNodes);
         this.outputNodes = ControlFlow.outputNodes(outputNodes);
         this.menus = new MenusList<>(120, 130);
@@ -497,6 +498,10 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
         inputNodes.render(mouseX, mouseY, particleTicks);
         outputNodes.render(mouseX, mouseY, particleTicks);
         menus.render(mouseX, mouseY, particleTicks);
+
+        if (nameBox.isInside(mouseX, mouseY)) {
+            WidgetScreen.getCurrentScreen().setHoveringText(getName(), mouseX, mouseY);
+        }
 
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
@@ -729,7 +734,7 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
         receiver.line("Z=" + this.getZIndex());
     }
 
-    public static class MenusList<T extends IWidget> extends LinearList<T> {
+    public static class MenusList<T extends Menu<?>> extends LinearList<T> {
 
         public MenusList(int width, int height) {
             super(width, height);

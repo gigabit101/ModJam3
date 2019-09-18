@@ -3,7 +3,7 @@ package vswe.stevesfactory.ui.manager.menu;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Direction;
 import org.lwjgl.glfw.GLFW;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;

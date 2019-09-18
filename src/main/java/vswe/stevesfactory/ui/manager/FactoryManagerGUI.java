@@ -10,14 +10,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.api.network.INetworkController;
-import vswe.stevesfactory.library.gui.*;
+import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.actionmenu.ActionMenu;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.StrictTableLayout;
 import vswe.stevesfactory.library.gui.layout.StrictTableLayout.GrowDirection;
+import vswe.stevesfactory.library.gui.screen.DisplayListCaches;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
-import vswe.stevesfactory.library.gui.window.NestedEventHandlerMixin;
+import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.window.AbstractWindow;
 import vswe.stevesfactory.ui.manager.editor.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.editor.EditorPanel;
 import vswe.stevesfactory.ui.manager.selection.SelectionPanel;
@@ -42,6 +44,15 @@ public class FactoryManagerGUI extends WidgetScreen {
     public static final ResourceLocation COPY_ICON = RenderingHelper.linkTexture("gui/actions/copy.png");
     public static final ResourceLocation CUT_ICON = RenderingHelper.linkTexture("gui/actions/cut.png");
     public static final ResourceLocation PASTE_ICON = RenderingHelper.linkTexture("gui/actions/paste.png");
+
+    public static final TextureWrapper CLOSE_ICON = TextureWrapper.ofFlowComponent(18, 36, 9, 9);
+    public static final TextureWrapper CLOSE_ICON_HOVERED = CLOSE_ICON.toRight(1);
+    public static final TextureWrapper SETTINGS_ICON = TextureWrapper.ofFlowComponent(18, 106, 18, 18);
+    public static final TextureWrapper SETTINGS_ICON_HOVERED = SETTINGS_ICON.toRight(1);
+    public static final TextureWrapper ADD_ENTRY_ICON = TextureWrapper.ofFlowComponent(18, 125, 8, 8);
+    public static final TextureWrapper ADD_ENTRY_HOVERED_ICON = ADD_ENTRY_ICON.toRight(1);
+    private static final TextureWrapper REMOVE_ENTRY_ICON = TextureWrapper.ofFlowComponent(34, 125, 8, 8);
+    private static final TextureWrapper REMOVE_ENTRY_HOVERED_ICON = REMOVE_ENTRY_ICON.toRight(1);
 
     ///////////////////////////////////////////////////////////////////////////
     // GUI code
@@ -113,15 +124,13 @@ public class FactoryManagerGUI extends WidgetScreen {
         return (PrimaryWindow) super.getPrimaryWindow();
     }
 
-    public static class PrimaryWindow implements IWindow, NestedEventHandlerMixin {
+    public static class PrimaryWindow extends AbstractWindow {
 
         // TODO move to config
         public static final Supplier<Boolean> USE_BACKGROUND_ON_FULLSCREEN = () -> false;
 
         // The location and dimensions will be set in the constructor
         private Rectangle screenBounds = new Rectangle();
-        private Dimension dimensions = new Dimension();
-        private Dimension contentDimensions = new Dimension();
 
         private int backgroundDL;
 
@@ -139,18 +148,8 @@ public class FactoryManagerGUI extends WidgetScreen {
         }
 
         @Override
-        public Dimension getBorder() {
-            return dimensions;
-        }
-
-        @Override
         public int getBorderSize() {
             return 4;
-        }
-
-        @Override
-        public Dimension getContentDimensions() {
-            return contentDimensions;
         }
 
         @Override
@@ -202,11 +201,7 @@ public class FactoryManagerGUI extends WidgetScreen {
             this.screenBounds.x = scaledWidth() / 2 - width / 2;
             this.screenBounds.y = scaledHeight() / 2 - height / 2;
 
-            this.dimensions.width = width;
-            this.dimensions.height = height;
-            this.contentDimensions.width = width - getBorderSize() * 2;
-            this.contentDimensions.height = height - getBorderSize() * 2;
-
+            setBorder(width, height);
             updateBackgroundDL();
         }
 

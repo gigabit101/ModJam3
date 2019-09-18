@@ -2,7 +2,7 @@ package vswe.stevesfactory.library.gui.widget.mixin;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 
 import java.awt.*;
 

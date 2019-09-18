@@ -1,4 +1,4 @@
-package vswe.stevesfactory.library.gui;
+package vswe.stevesfactory.library.gui.widget;
 
 import java.util.Collection;
 import java.util.Iterator;

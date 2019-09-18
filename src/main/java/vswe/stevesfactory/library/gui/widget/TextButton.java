@@ -83,7 +83,11 @@ public class TextButton extends AbstractWidget implements IButton, LeafWidgetMix
     }
 
     protected void renderText() {
-        drawTextCentered(getText(), getAbsoluteY(), getAbsoluteYBottom(), getAbsoluteX(), getAbsoluteXRight(), 0xffffff);
+        drawTextCentered(getText(), getAbsoluteY(), getAbsoluteYBottom(), getAbsoluteX(), getAbsoluteXRight(), getTextColor());
+    }
+
+    public int getTextColor() {
+        return 0xffffff;
     }
 
     public int getNormalBorderColor() {
