@@ -74,5 +74,8 @@
   "gui.sfm.Menu.Deactivate": "Deactivate",
   "gui.sfm.Menu.Delete": "Delete",
   "gui.sfm.Menu.Delete.Info": "Remove this item filter",
-  "gui.sfm.Menu.CloseEditor.Info": "Return to last menu"
+  "gui.sfm.Menu.CloseEditor.Info": "Return to last menu",
+
+  "ComponentGroup.sfm.ItemIO": "Item I/O",
+  "ComponentGroup.sfm.Trigger": "Triggers"
 }

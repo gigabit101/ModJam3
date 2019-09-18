@@ -168,17 +168,15 @@ public abstract class AbstractProcedure implements IProcedure, IProcedureClientD
 
     @Override
     public String getName() {
-        return MoreObjects.firstNonNull(name, "");
+        if (name == null) {
+            name = type.getLocalizedName();
+        }
+        return name;
     }
 
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public boolean isNameInitialized() {
-        return name != null;
     }
 
     /**

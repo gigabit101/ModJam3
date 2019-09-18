@@ -1,6 +1,6 @@
 {
   "name": "sfm:item_io",
-  "translation_key": "gui.sfm.ComponentSelection.ItemIO",
+  "translation_key": "ComponentGroup.sfm.ItemIO",
   "icon": "sfm:textures/gui/component_icon/batched_item_transfer.png",
   "members": [
     "sfm:batched_item_transfer"

@@ -61,8 +61,6 @@ public class StevesFactoryManager {
     private void loadComplete(final FMLLoadCompleteEvent event) {
         ModBlocks.finishLoading();
         ModItems.finishLoading();
-
-        ComponentGroup.setup();
     }
 
     private void serverStarting(final FMLServerStartingEvent event) {

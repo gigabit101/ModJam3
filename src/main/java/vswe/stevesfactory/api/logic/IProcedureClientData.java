@@ -13,6 +13,4 @@ public interface IProcedureClientData {
     String getName();
 
     void setName(String name);
-
-    boolean isNameInitialized();
 }

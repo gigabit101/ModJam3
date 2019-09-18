@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.api.logic.*;
 import vswe.stevesfactory.api.network.INetworkController;
 
@@ -18,6 +17,7 @@ public class SimpleProcedureType<P extends IProcedure> extends ForgeRegistryEntr
     private final Function<INetworkController, P> constructor;
     private final Function<CommandGraph, P> retriever;
     private final ResourceLocation icon;
+    private String translationKey = null;
 
     public SimpleProcedureType(BiFunction<IProcedureType<P>, INetworkController, P> constructor, @Nullable Function<CommandGraph, P> retriever, ResourceLocation icon) {
         this.constructor = c -> constructor.apply(this, c);
@@ -63,6 +63,14 @@ public class SimpleProcedureType<P extends IProcedure> extends ForgeRegistryEntr
     @Override
     public ResourceLocation getIcon() {
         return icon;
+    }
+
+    @Override
+    public String getTranslationKey() {
+        if (translationKey == null) {
+            translationKey = "logic." + getRegistryNameNonnull().toString().replace(':', '.');
+        }
+        return translationKey;
     }
 
     @Nonnull

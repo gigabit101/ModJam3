@@ -312,9 +312,6 @@ public class FlowComponent<P extends IProcedure & IProcedureClientData> extends 
     }
 
     public static <P extends IProcedure & IProcedureClientData> FlowComponent<P> of(P procedure, int inputNodes, int outputNodes) {
-        if (!procedure.isNameInitialized()) {
-            procedure.setName(I18n.format("logic.sfm." + procedure.getRegistryName().getPath()));
-        }
         return new FlowComponent<>(procedure, inputNodes, outputNodes);
     }
 

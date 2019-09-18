@@ -1,27 +1,31 @@
 package vswe.stevesfactory.ui.manager.selection;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import vswe.stevesfactory.api.StevesFactoryManagerAPI;
+import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IProcedureType;
 import vswe.stevesfactory.library.collections.CompositeUnmodifiableList;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.widget.IContainer;
-import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI.TopLevelWidget;
 import vswe.stevesfactory.ui.manager.editor.DynamicWidthWidget;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static vswe.stevesfactory.ui.manager.FactoryManagerGUI.DOWN_RIGHT_4_STRICT_TABLE;
 
-public final class SelectionPanel extends DynamicWidthWidget<ComponentSelectionButton> {
+public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
 
-    private final ImmutableList<ComponentSelectionButton> staticIcons;
-    private final List<ComponentSelectionButton> addendumIcons;
-    private final List<ComponentSelectionButton> icons;
+    public static final ResourceLocation BACKGROUND_NORMAL = new ResourceLocation(StevesFactoryManager.MODID, "textures/gui/component_background/background_normal.png");
+    public static final ResourceLocation BACKGROUND_HOVERED = new ResourceLocation(StevesFactoryManager.MODID, "textures/gui/component_background/background_hovered.png");
+
+    private final ImmutableList<IComponentChoice> staticIcons;
+    private final List<IComponentChoice> addendumIcons;
+    private final List<IComponentChoice> icons;
 
     public SelectionPanel() {
         super(WidthOccupierType.MIN_WIDTH);
@@ -31,11 +35,13 @@ public final class SelectionPanel extends DynamicWidthWidget<ComponentSelectionB
         this.icons = CompositeUnmodifiableList.of(staticIcons, addendumIcons);
     }
 
-    @SuppressWarnings("unchecked")
-    private ImmutableList<ComponentSelectionButton> createStaticIcons() {
-        ImmutableList.Builder<ComponentSelectionButton> icons = ImmutableList.builder();
-        for (IProcedureType<?> factory : StevesFactoryManagerAPI.getProceduresRegistry().getValues()) {
-            icons.add(new ComponentSelectionButton(this, (IProcedureType<IProcedure>) factory));
+    private ImmutableList<IComponentChoice> createStaticIcons() {
+        ImmutableList.Builder<IComponentChoice> icons = ImmutableList.builder();
+        for (ComponentGroup group : ComponentGroup.groups) {
+            icons.add(new GroupComponentChoice(group));
+        }
+        for (IProcedureType<?> type : ComponentGroup.ungroupedTypes) {
+            icons.add(new SingularComponentChoice(type));
         }
         return icons.build();
     }
@@ -43,25 +49,15 @@ public final class SelectionPanel extends DynamicWidthWidget<ComponentSelectionB
     @Override
     public void render(int mouseX, int mouseY, float particleTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        for (IWidget icon : staticIcons) {
+        for (IComponentChoice icon : staticIcons) {
             icon.render(mouseX, mouseY, particleTicks);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
     @Override
-    public List<ComponentSelectionButton> getChildren() {
+    public List<IComponentChoice> getChildren() {
         return icons;
-    }
-
-    @Override
-    public IContainer<ComponentSelectionButton> addChildren(ComponentSelectionButton widget) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public IContainer<ComponentSelectionButton> addChildren(Collection<ComponentSelectionButton> widgets) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

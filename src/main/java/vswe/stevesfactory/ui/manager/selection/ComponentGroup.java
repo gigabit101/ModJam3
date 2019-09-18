@@ -4,57 +4,100 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.util.FileUtil;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.api.logic.IProcedureType;
 
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 public final class ComponentGroup {
 
+    public static final Set<IProcedureType<?>> groupedType = new HashSet<>();
+    public static final Set<IProcedureType<?>> ungroupedTypes = new HashSet<>();
     public static final List<ComponentGroup> groups = new ArrayList<>();
+
+    private static final String defaultComponentsPath = "/assets/" + StevesFactoryManager.MODID + "/components/";
 
     private static File getConfigDirectory() {
         return new File("./config/" + StevesFactoryManager.MODID + "/ComponentGroup/");
     }
 
     public static void setup() {
+        File directory = getConfigDirectory();
+        String[] list = directory.list();
+        JsonParser parser = new JsonParser();
+        if (!directory.exists() || list == null || list.length == 0) {
+            copySettings(parser, directory);
+        }
+
         try {
-            setupInternal();
+            setupInternal(parser, directory);
         } catch (IOException e) {
             StevesFactoryManager.logger.error("Error setting up groups", e);
         }
+
+        categorizeTypes();
     }
 
-    private static void setupInternal() throws IOException {
+    private static void copySettings(JsonParser parser, File configDir) {
+        boolean success = configDir.mkdirs();
 
-        File directory = getConfigDirectory();
-        if (!directory.exists()) {
-            boolean success = directory.mkdirs();
-            Validate.isTrue(success);
+        try (InputStreamReader in = new InputStreamReader(StevesFactoryManager.class.getResourceAsStream(defaultComponentsPath + "@loader.json"))) {
+            JsonObject root = parser.parse(in).getAsJsonObject();
+
+            // Parsing files
+            JsonArray files = root.getAsJsonArray("files");
+            for (JsonElement element : files) {
+                String fileName = element.getAsString();
+                String filePath = defaultComponentsPath + fileName;
+                Path configPath = new File(configDir.getPath() + "/" + fileName).toPath();
+                try (InputStream fileIn = StevesFactoryManager.class.getResourceAsStream(filePath)) {
+                    Files.copy(fileIn, configPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    StevesFactoryManager.logger.error("Error copying default component group config file {}", filePath, e);
+                }
+            }
+        } catch (IOException e) {
+            StevesFactoryManager.logger.error("Error reading loader config", e);
         }
+    }
 
-        JsonParser parser = new JsonParser();
-        for (File file : Objects.requireNonNull(directory.listFiles())) {
+    private static void setupInternal(JsonParser parser, File directory) throws IOException {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (!"json".equals(FilenameUtils.getExtension(file.getName()))) {
                 continue;
             }
+            try (FileReader reader = new FileReader(file)) {
+                JsonElement rootElement = parser.parse(reader);
+                ComponentGroup group = new ComponentGroup();
+                group.setup(rootElement);
+                groups.add(group);
+            }
+        }
+    }
 
-            JsonElement rootElement = parser.parse(new FileReader(file));
-            ComponentGroup group = new ComponentGroup();
-            group.setup(rootElement);
-            groups.add(group);
+    private static void categorizeTypes() {
+        for (ComponentGroup group : groups) {
+            groupedType.addAll(group.members);
+        }
+        for (IProcedureType<?> type : StevesFactoryManagerAPI.getProceduresRegistry().getValues()) {
+            if (!groupedType.contains(type)) {
+                ungroupedTypes.add(type);
+            }
         }
     }
 
