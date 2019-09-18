@@ -1,4 +1,4 @@
-package vswe.stevesfactory.library.gui;
+package vswe.stevesfactory.library.gui.screen;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

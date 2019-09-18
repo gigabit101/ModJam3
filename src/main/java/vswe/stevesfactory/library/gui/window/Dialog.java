@@ -2,8 +2,8 @@ package vswe.stevesfactory.library.gui.window;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import vswe.stevesfactory.library.gui.BackgroundRenderers;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.screen.BackgroundRenderers;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
@@ -101,7 +101,10 @@ public class Dialog extends AbstractPopupWindow {
         return dialog;
     }
 
-    public static final Consumer<Dialog> VANILLA_STYLE_RENDERER = d -> BackgroundRenderers.drawVanillaStyle(d.position.x, d.position.y, d.border.width, d.border.height, 0F);
+    public static final Consumer<Dialog> VANILLA_STYLE_RENDERER = d -> {
+        GlStateManager.enableAlphaTest();
+        BackgroundRenderers.drawVanillaStyle(d.position.x, d.position.y, d.border.width, d.border.height, 0F);
+    };
     public static final int VANILLA_STYLE_BORDER_SIZE = 4;
 
     public static final Consumer<Dialog> FLAT_STYLE_RENDERER = d -> {

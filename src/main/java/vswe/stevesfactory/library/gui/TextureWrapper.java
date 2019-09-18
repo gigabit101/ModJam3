@@ -20,6 +20,10 @@ public class TextureWrapper {
         @Override
         public void draw(int x, int y) {
         }
+
+        @Override
+        public void draw(int x, int y, int width, int height) {
+        }
     };
 
     public static final ResourceLocation FLOW_COMPONENTS = RenderingHelper.linkTexture("gui/flow_components.png");
@@ -65,12 +69,12 @@ public class TextureWrapper {
     }
 
     public void vertices(int x, int y, int width, int height) {
-        int x2 = x + portionWidth;
-        int y2 = y + portionHeight;
+        int x2 = x + width;
+        int y2 = y + height;
         float uFactor = 1.0F / (float) textureWidth;
         float vFactor = 1.0F / (float) textureHeight;
-        int tx2 = tx + width;
-        int ty2 = ty + height;
+        int tx2 = tx + portionWidth;
+        int ty2 = ty + portionHeight;
         RenderingHelper.textureVertices(x, y, x2, y2, getZLevel(), tx * uFactor, ty * vFactor, tx2 * uFactor, ty2 * vFactor);
     }
 

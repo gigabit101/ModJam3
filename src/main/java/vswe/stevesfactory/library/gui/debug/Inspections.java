@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
-import vswe.stevesfactory.library.gui.IWidget;
-import vswe.stevesfactory.library.gui.IWindow;
+import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.window.IWindow;
 import vswe.stevesfactory.utils.RenderingHelper;
 
 import java.awt.*;

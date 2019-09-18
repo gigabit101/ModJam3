@@ -291,6 +291,48 @@ public final class RenderingHelper {
         GlStateManager.color3f(1F, 1F, 1F);
     }
 
+    public static void drawText(String text, int x, int y, int fontHeight, int color) {
+        FontRenderer fr = fontRenderer();
+        float scale = (float) fontHeight / fr.FONT_HEIGHT;
+        GlStateManager.pushMatrix();
+        GlStateManager.translatef(x, y, 0F);
+        GlStateManager.scalef(scale, scale, 1F);
+        fr.drawString(text, 0, 0, color);
+        GlStateManager.popMatrix();
+    }
+
+    public static void drawTextCenteredVertically(String text, int x, int top, int bottom, int fontHeight, int color) {
+        int y = getYForVerticallyCenteredText(top, bottom);
+        GlStateManager.enableTexture();
+        drawText(text, x, y, fontHeight, color);
+        GlStateManager.color3f(1F, 1F, 1F);
+    }
+
+    public static void drawTextCenteredHorizontally(String text, int left, int right, int y, int fontHeight, int color) {
+        int x = getXForHorizontallyCenteredText(text, left, right);
+        GlStateManager.enableTexture();
+        drawText(text, x, y, fontHeight, color);
+        GlStateManager.color3f(1F, 1F, 1F);
+    }
+
+    public static void drawTextCentered(String text, int top, int bottom, int left, int right, int fontHeight, int color) {
+        int x = getXForHorizontallyCenteredText(text, left, right);
+        int y = getYForVerticallyCenteredText(top, bottom);
+        GlStateManager.enableTexture();
+        drawText(text, x, y, fontHeight, color);
+        GlStateManager.color3f(1F, 1F, 1F);
+    }
+
+    public static void drawTextWithShadow(String text, int x, int y, int fontHeight, int color) {
+        FontRenderer fr = fontRenderer();
+        float scale = (float) fontHeight / fr.FONT_HEIGHT;
+        GlStateManager.pushMatrix();
+        GlStateManager.translatef(x, y, 0F);
+        GlStateManager.scalef(scale, scale, 1F);
+        fr.drawStringWithShadow(text, 0, 0, color);
+        GlStateManager.popMatrix();
+    }
+
     public static ResourceLocation linkTexture(String path) {
         return new ResourceLocation(StevesFactoryManager.MODID, "textures/" + path);
     }
@@ -344,8 +386,9 @@ public final class RenderingHelper {
     }
 
     public static void renderOutlines(ClientPlayerEntity p, Set<BlockPos> coordinates, int r, int g, int b, float partialTicks) {
+        double eyeHeight = p.getEyeHeight();
         double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * partialTicks;
-        double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * partialTicks;
+        double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * partialTicks + eyeHeight;
         double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * partialTicks;
 
         RenderHelper.disableStandardItemLighting();
@@ -369,7 +412,7 @@ public final class RenderingHelper {
 
     /**
      * This method expects the GL state matrix to be translated to relative player position already (player.lastTickPos + (player.pos -
-     * player.lastTickPos)* partialTicks)
+     * player.lastTickPos) * partialTicks)
      */
     public static void renderOutlines(Set<BlockPos> coordinates, int r, int g, int b, int thickness) {
         Tessellator tessellator = Tessellator.getInstance();

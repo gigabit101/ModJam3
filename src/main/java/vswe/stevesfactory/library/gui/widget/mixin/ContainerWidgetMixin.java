@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.widget.mixin;
 
-import vswe.stevesfactory.library.gui.*;
+import vswe.stevesfactory.library.gui.widget.IContainer;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 
 public interface ContainerWidgetMixin<T extends IWidget> extends IContainer<T> {
 

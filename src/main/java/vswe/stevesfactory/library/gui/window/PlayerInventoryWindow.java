@@ -1,15 +1,18 @@
 package vswe.stevesfactory.library.gui.window;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import vswe.stevesfactory.library.gui.*;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
+import vswe.stevesfactory.library.gui.screen.BackgroundRenderers;
 import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.slot.AbstractItemSlot;
 import vswe.stevesfactory.library.gui.widget.slot.ItemSlotPanel;
+import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import java.util.List;
 import java.util.function.Function;
@@ -34,12 +37,12 @@ public class PlayerInventoryWindow extends AbstractPopupWindow {
         AbstractIconButton close = new AbstractIconButton(inventory.getWidth() - 8 - 1, 1, 8, 8) {
             @Override
             public TextureWrapper getTextureNormal() {
-                return WidgetScreen.CLOSE;
+                return FactoryManagerGUI.CLOSE_ICON;
             }
 
             @Override
             public TextureWrapper getTextureHovered() {
-                return WidgetScreen.CLOSE_HOVERED;
+                return FactoryManagerGUI.CLOSE_ICON_HOVERED;
             }
 
             @Override
@@ -69,6 +72,7 @@ public class PlayerInventoryWindow extends AbstractPopupWindow {
     @Override
     public void render(int mouseX, int mouseY, float particleTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
+        GlStateManager.enableAlphaTest();
         BackgroundRenderers.drawVanillaStyle(getX(), getY(), getWidth(), getHeight(), 0F);
         renderChildren(mouseX, mouseY, particleTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);

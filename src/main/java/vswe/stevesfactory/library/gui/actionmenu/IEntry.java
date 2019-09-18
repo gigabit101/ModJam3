@@ -2,7 +2,7 @@ package vswe.stevesfactory.library.gui.actionmenu;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
 
 import javax.annotation.Nullable;

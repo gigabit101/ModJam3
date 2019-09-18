@@ -15,8 +15,7 @@ import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.logic.AbstractProcedure;
 import vswe.stevesfactory.logic.Procedures;
-import vswe.stevesfactory.logic.item.GroupItemFilter;
-import vswe.stevesfactory.logic.item.SingleItemFilter;
+import vswe.stevesfactory.logic.item.*;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.menu.*;
 import vswe.stevesfactory.utils.IOHelper;
@@ -35,7 +34,7 @@ public class BatchedItemTransferProcedure extends AbstractProcedure implements I
     private List<Direction> sourceDirections = new ArrayList<>();
     private List<BlockPos> targetInventories = new ArrayList<>();
     private List<Direction> targetDirections = new ArrayList<>();
-    private GroupItemFilter filter = new GroupItemFilter();
+    private IItemFilter filter = new ItemTagFilter();
 
     public BatchedItemTransferProcedure(INetworkController controller) {
         super(Procedures.BATCHED_ITEM_TRANSFER.getFactory(), controller);
@@ -61,32 +60,24 @@ public class BatchedItemTransferProcedure extends AbstractProcedure implements I
             }
         }
 
-        List<ItemStack> extractableItems = new ArrayList<>();
+        List<ItemStack> availableSourceItems = new ArrayList<>();
         for (TileEntity tile : sourceTiles) {
             for (Direction direction : sourceDirections) {
                 LazyOptional<IItemHandler> cap = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
                 if (cap.isPresent()) {
                     IItemHandler handler = cap.orElseThrow(RuntimeException::new);
-                    // TODO filter
-                    for (int i = 0; i < handler.getSlots(); i++) {
-                        ItemStack stack = handler.extractItem(i, Integer.MAX_VALUE, true);
-                        if (!stack.isEmpty()) {
-                            extractableItems.add(stack);
-                        }
-                    }
+                    filter.extractFromInventory(availableSourceItems, handler, true);
                 }
             }
         }
 
-        // Alias for the code to be understandable
-        @SuppressWarnings("UnnecessaryLocalVariable") List<ItemStack> availableSourceItems = extractableItems;
         List<ItemStack> takenSourceItems = new ArrayList<>(availableSourceItems.size());
         for (int i = 0; i < availableSourceItems.size(); i++) {
             // Start with no items taken. Note that this operation will only set the stack to empty, but keeping the item type
             takenSourceItems.add(ItemStack.EMPTY);
         }
 
-        Preconditions.checkState(extractableItems.size() == takenSourceItems.size());
+        Preconditions.checkState(availableSourceItems.size() == takenSourceItems.size());
 
         for (BlockPos pos : targetInventories) {
             TileEntity tile = context.getControllerWorld().getTileEntity(pos);
@@ -156,7 +147,7 @@ public class BatchedItemTransferProcedure extends AbstractProcedure implements I
         sourceDirections = IOHelper.index2Direction(tag.getIntArray("SourceDirections"));
         targetInventories = IOHelper.readBlockPoses(tag.getList("TargetPoses", Constants.NBT.TAG_COMPOUND), new ArrayList<>());
         targetDirections = IOHelper.index2Direction(tag.getIntArray("TargetDirections"));
-        filter = GroupItemFilter.recover(tag.getCompound("Filters"));
+        filter = ItemTraitsFilter.recover(tag.getCompound("Filters"));
     }
 
     @Override
@@ -166,7 +157,8 @@ public class BatchedItemTransferProcedure extends AbstractProcedure implements I
         f.addMenu(new InventorySelectionMenu<>(DESTINATION_INVENTORIES, I18n.format("gui.sfm.Menu.InventorySelection.Destination")));
         f.addMenu(new DirectionSelectionMenu<>(SOURCE_INVENTORIES, I18n.format("gui.sfm.Menu.TargetSides.Source")));
         f.addMenu(new DirectionSelectionMenu<>(DESTINATION_INVENTORIES, I18n.format("gui.sfm.Menu.TargetSides.Destination")));
-        f.addMenu(new ItemFilterMenu<>(FILTERS));
+//        f.addMenu(new ItemTraitsFilterMenu<>(FILTERS));
+        f.addMenu(new ItemTagFilterMenu<>(FILTERS));
         return f;
     }
 
@@ -191,7 +183,7 @@ public class BatchedItemTransferProcedure extends AbstractProcedure implements I
     }
 
     @Override
-    public GroupItemFilter getFilters(int id) {
+    public IItemFilter getFilter(int id) {
         return filter;
     }
 }

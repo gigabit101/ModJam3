@@ -66,7 +66,18 @@
   "gui.sfm.Menu.TargetSides": "Target",
   "gui.sfm.Menu.TargetSides.Source": "Src Target",
   "gui.sfm.Menu.TargetSides.Destination": "Dest Target",
-  "gui.sfm.Menu.ItemFilter": "Items",
+  "gui.sfm.Menu.ItemFilter.Tag": "Tags",
+  "gui.sfm.Menu.AddEntry": "Add entry",
+  "gui.sfm.Menu.ItemFilter.Traits": "Items",
+  "gui.sfm.Menu.ItemFilter.Traits.Settings": "Filter settings",
+  "gui.sfm.Menu.FilterAmount": "Item count",
+  "gui.sfm.Menu.FilterDamage": "Item damage",
+  "gui.sfm.Menu.MatchAmount": "Match count",
+  "gui.sfm.Menu.MatchDamage": "Match damage",
+  "gui.sfm.Menu.MatchTag": "Match NBT",
   "gui.sfm.Menu.Activate": "Activate",
-  "gui.sfm.Menu.Deactivate": "Deactivate"
+  "gui.sfm.Menu.Deactivate": "Deactivate",
+  "gui.sfm.Menu.Delete": "Delete",
+  "gui.sfm.Menu.Delete.Info": "Remove this item filter",
+  "gui.sfm.Menu.CloseEditor.Info": "Return to last menu"
 }

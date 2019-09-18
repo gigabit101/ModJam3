@@ -25,6 +25,7 @@ import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.UserPreferencesPanel;
 import vswe.stevesfactory.ui.manager.editor.ControlFlow.Node;
+import vswe.stevesfactory.ui.manager.editor.ControlFlow.OutputNode;
 import vswe.stevesfactory.utils.NetworkHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -120,6 +121,21 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
             GlStateManager.translatef(xOffset.get(), yOffset.get(), 0F);
             if (selectedNode != null) {
                 Node.drawConnectionLine(selectedNode, mouseX, mouseY);
+            }
+
+            // Iterate in ascending order for rendering as a special case
+            for (FlowComponent<?> child : children) {
+                child.render(mouseX, mouseY, particleTicks);
+            }
+
+            // If this is put into the rendering logic of the nodes, the connection line will be above of of the flow components if
+            // they are in a certain order.
+            // The ideal way to solve this is to use depth testing, however it is such a huge amount of work to change all the GUI code written,
+            // TODO use depth test instead of painter's algorithm
+            for (FlowComponent<?> child : children) {
+                for (Node node : child.getOutputNodes().getChildren()) {
+                    ((OutputNode) node).renderConnectionLine();
+                }
             }
 
             // Iterate in ascending order for rendering as a special case

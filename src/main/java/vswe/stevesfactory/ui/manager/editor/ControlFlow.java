@@ -35,9 +35,6 @@ public abstract class ControlFlow extends AbstractContainer<Node> implements Res
         }
 
         public static void drawConnectionLine(int x1, int y1, int x2, int y2) {
-            // TODO make connection lines render under all flow components
-            // depth doesn't seem to be working
-            GlStateManager.enableDepthTest();
             GlStateManager.disableTexture();
             glEnable(GL11.GL_LINE_SMOOTH);
             glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
@@ -169,7 +166,7 @@ public abstract class ControlFlow extends AbstractContainer<Node> implements Res
         }
     }
 
-    private static final class InputNode extends Node {
+    static final class InputNode extends Node {
 
         private static final TextureWrapper INPUT_NORMAL = TextureWrapper.ofFlowComponent(18, 51, WIDTH, HEIGHT);
         private static final TextureWrapper INPUT_HOVERED = INPUT_NORMAL.toRight(1);
@@ -216,7 +213,7 @@ public abstract class ControlFlow extends AbstractContainer<Node> implements Res
         }
     }
 
-    private static final class OutputNode extends Node {
+    static final class OutputNode extends Node {
 
         private static final TextureWrapper OUTPUT_NORMAL = TextureWrapper.ofFlowComponent(18, 45, WIDTH, HEIGHT);
         private static final TextureWrapper OUTPUT_HOVERED = OUTPUT_NORMAL.toRight(1);
@@ -272,11 +269,15 @@ public abstract class ControlFlow extends AbstractContainer<Node> implements Res
 
         @Override
         public void render(int mouseX, int mouseY, float particleTicks) {
+            // Connection render handled in EditorPanel
+            super.render(mouseX, mouseY, particleTicks);
+        }
+
+        public void renderConnectionLine() {
             InputNode other = getPairedNode();
             if (other != null) {
                 drawConnectionLine(this, other);
             }
-            super.render(mouseX, mouseY, particleTicks);
         }
 
         @Nullable

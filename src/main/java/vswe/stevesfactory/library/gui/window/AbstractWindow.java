@@ -1,8 +1,9 @@
 package vswe.stevesfactory.library.gui.window;
 
-import vswe.stevesfactory.library.gui.*;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.Inspections.IInspectionInfoProvider;
+import vswe.stevesfactory.library.gui.widget.IContainer;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 
 import javax.annotation.Nullable;
 import java.awt.*;

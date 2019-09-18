@@ -1,8 +1,8 @@
 package vswe.stevesfactory.library.gui.screen;
 
 import net.minecraft.client.gui.screen.Screen;
-import vswe.stevesfactory.library.gui.IWidget;
-import vswe.stevesfactory.library.gui.IWindow;
+import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.window.IWindow;
 import vswe.stevesfactory.library.gui.debug.Inspections;
 
 class WidgetTreeInspections extends Inspections {

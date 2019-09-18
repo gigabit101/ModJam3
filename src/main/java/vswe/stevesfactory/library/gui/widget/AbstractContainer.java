@@ -1,8 +1,8 @@
 package vswe.stevesfactory.library.gui.widget;
 
-import vswe.stevesfactory.library.gui.*;
 import vswe.stevesfactory.library.gui.widget.mixin.ContainerWidgetMixin;
 import vswe.stevesfactory.library.gui.widget.mixin.RelocatableContainerMixin;
+import vswe.stevesfactory.library.gui.window.IWindow;
 
 import java.awt.*;
 import java.util.Collection;

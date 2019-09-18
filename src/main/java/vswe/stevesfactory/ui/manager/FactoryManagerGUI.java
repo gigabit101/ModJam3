@@ -10,14 +10,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.api.network.INetworkController;
-import vswe.stevesfactory.library.gui.DisplayListCaches;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.actionmenu.ActionMenu;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.StrictTableLayout;
 import vswe.stevesfactory.library.gui.layout.StrictTableLayout.GrowDirection;
+import vswe.stevesfactory.library.gui.screen.DisplayListCaches;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.window.AbstractWindow;
 import vswe.stevesfactory.ui.manager.editor.EditorPanel;
 import vswe.stevesfactory.ui.manager.selection.SelectionPanel;
@@ -42,6 +43,15 @@ public class FactoryManagerGUI extends WidgetScreen {
     public static final ResourceLocation COPY_ICON = RenderingHelper.linkTexture("gui/actions/copy.png");
     public static final ResourceLocation CUT_ICON = RenderingHelper.linkTexture("gui/actions/cut.png");
     public static final ResourceLocation PASTE_ICON = RenderingHelper.linkTexture("gui/actions/paste.png");
+
+    public static final TextureWrapper CLOSE_ICON = TextureWrapper.ofFlowComponent(18, 36, 9, 9);
+    public static final TextureWrapper CLOSE_ICON_HOVERED = CLOSE_ICON.toRight(1);
+    public static final TextureWrapper SETTINGS_ICON = TextureWrapper.ofFlowComponent(18, 106, 18, 18);
+    public static final TextureWrapper SETTINGS_ICON_HOVERED = SETTINGS_ICON.toRight(1);
+    public static final TextureWrapper ADD_ENTRY_ICON = TextureWrapper.ofFlowComponent(18, 125, 8, 8);
+    public static final TextureWrapper ADD_ENTRY_HOVERED_ICON = ADD_ENTRY_ICON.toRight(1);
+    private static final TextureWrapper REMOVE_ENTRY_ICON = TextureWrapper.ofFlowComponent(34, 125, 8, 8);
+    private static final TextureWrapper REMOVE_ENTRY_HOVERED_ICON = REMOVE_ENTRY_ICON.toRight(1);
 
     ///////////////////////////////////////////////////////////////////////////
     // GUI code

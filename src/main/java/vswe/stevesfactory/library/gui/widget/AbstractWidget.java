@@ -2,14 +2,12 @@ package vswe.stevesfactory.library.gui.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import vswe.stevesfactory.library.gui.IWidget;
-import vswe.stevesfactory.library.gui.IWindow;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.Inspections;
 import vswe.stevesfactory.library.gui.layout.ILayoutDataProvider;
 import vswe.stevesfactory.library.gui.layout.properties.*;
 import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
-import vswe.stevesfactory.utils.RenderingHelper;
+import vswe.stevesfactory.library.gui.window.IWindow;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -168,15 +166,14 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     public void alignTo(IWidget other, Side side, HorizontalAlignment alignment) {
-        if (this.getParentWidget() != other.getParentWidget()) {
-            return;
-        }
-
         int otherLeft = other.getX();
         int otherTop = other.getY();
         int otherRight = otherLeft + other.getWidth();
         int otherBottom = otherTop + other.getHeight();
+        alignTo(otherLeft, otherTop, otherRight, otherBottom, side, alignment);
+    }
 
+    public void alignTo(int otherLeft, int otherTop, int otherRight, int otherBottom, Side side, HorizontalAlignment alignment) {
         switch (side) {
             case TOP:
                 alignBottom(otherTop);
@@ -230,11 +227,11 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     public void alignCenterX(int left, int right) {
-        setX(RenderingHelper.getXForAlignedCenter(left, right, getWidth()));
+        setX(left + (right - left) / 2 - getWidth() / 2);
     }
 
     public void alignRight(int right) {
-        setX(RenderingHelper.getXForAlignedRight(right, getWidth()));
+        setX(right - getWidth());
     }
 
     public void alignTop(int top) {
@@ -242,11 +239,11 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     public void alignCenterY(int top, int bottom) {
-        setY(RenderingHelper.getYForAlignedCenter(top, bottom, getHeight()));
+        setY(top + (bottom - top) / 2 - getHeight() / 2);
     }
 
     public void alignBottom(int bottom) {
-        setY(RenderingHelper.getYForAlignedBottom(bottom, getHeight()));
+        setY(bottom - getHeight());
     }
 
     @Override
@@ -293,9 +290,17 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
         return getPosition().x;
     }
 
+    public int getXRight() {
+        return getX() + getWidth();
+    }
+
     @Override
     public int getY() {
         return getPosition().y;
+    }
+
+    public int getYBottom() {
+        return getY() + getHeight();
     }
 
     @Override

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.library.collections.CompositeUnmodifiableList;
-import vswe.stevesfactory.library.gui.IWindow;
+import vswe.stevesfactory.library.gui.window.IWindow;
 import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.Inspections;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -21,8 +21,6 @@ import java.util.function.Consumer;
 public abstract class WidgetScreen extends Screen implements IGuiEventListener {
 
     public static final TextureWrapper ITEM_SLOT = TextureWrapper.ofFlowComponent(0, 106, 18, 18);
-    public static final TextureWrapper CLOSE = TextureWrapper.ofFlowComponent(18, 36, 9, 9);
-    public static final TextureWrapper CLOSE_HOVERED = CLOSE.toRight(1);
 
     public static WidgetScreen getCurrentScreen() {
         return (WidgetScreen) Minecraft.getInstance().currentScreen;
@@ -166,7 +164,7 @@ public abstract class WidgetScreen extends Screen implements IGuiEventListener {
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
-        for (IWindow window : regularWindows) {
+        for (IWindow window : windows) {
             window.mouseMoved(mouseX, mouseY);
         }
         primaryWindow.mouseMoved(mouseX, mouseY);

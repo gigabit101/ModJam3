@@ -2,7 +2,7 @@ package vswe.stevesfactory.library.gui.window;
 
 public abstract class AbstractPopupWindow extends AbstractWindow implements IPopupWindow {
 
-    private int initialDragLocalX, initialDragLocalY;
+    private int initialDragLocalX = -1, initialDragLocalY = -1;
     public boolean alive = true;
 
     @Override
@@ -10,7 +10,7 @@ public abstract class AbstractPopupWindow extends AbstractWindow implements IPop
         if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
-        if (isInside(mouseX, mouseY)) {
+        if (isInside(mouseX, mouseY) && shouldDrag()) {
             setFocusedWidget(null);
             initialDragLocalX = (int) mouseX - position.x;
             initialDragLocalY = (int) mouseY - position.y;
@@ -48,6 +48,10 @@ public abstract class AbstractPopupWindow extends AbstractWindow implements IPop
 
     private boolean isDragging() {
         return initialDragLocalX != -1 && initialDragLocalY != -1;
+    }
+
+    public boolean shouldDrag() {
+        return true;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package vswe.stevesfactory.library.gui;
+package vswe.stevesfactory.library.gui.screen;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.GlStateManager;

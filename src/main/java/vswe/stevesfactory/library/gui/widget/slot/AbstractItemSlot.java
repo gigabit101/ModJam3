@@ -36,6 +36,7 @@ public abstract class AbstractItemSlot extends AbstractWidget implements LeafWid
         FontRenderer fr = MoreObjects.firstNonNull(stack.getItem().getFontRenderer(stack), minecraft().fontRenderer);
         int x = getAbsoluteX() + 1;
         int y = getAbsoluteY() + 1;
+        GlStateManager.disableDepthTest();
         RenderHelper.enableGUIStandardItemLighting();
         ir.renderItemAndEffectIntoGUI(stack, x, y);
         ir.renderItemOverlayIntoGUI(fr, stack, x, y, null);

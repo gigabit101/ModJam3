@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -41,14 +42,16 @@ public class RadioButton extends AbstractWidget implements IButton, LeafWidgetMi
         texture.draw(x1, y1);
 
         if (!label.isEmpty()) {
-            RenderingHelper.drawTextCenteredVertically(label, x2, y1, y2, 0xffffffff);
+            RenderingHelper.drawTextCenteredVertically(label, x2, y1, y2, 0xff404040);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        check(!checked);
+        if (!checked) {
+            check(true);
+        }
         return true;
     }
 
@@ -72,6 +75,14 @@ public class RadioButton extends AbstractWidget implements IButton, LeafWidgetMi
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public void translateLabel(String translationKey) {
+        label = I18n.format(translationKey);
+    }
+
+    public void translateLabel(String translationKey, Object... args) {
+        label = I18n.format(translationKey, args);
     }
 
     @Override

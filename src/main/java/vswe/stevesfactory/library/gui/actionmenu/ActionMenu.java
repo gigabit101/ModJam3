@@ -1,13 +1,12 @@
 package vswe.stevesfactory.library.gui.actionmenu;
 
 import com.google.common.base.Preconditions;
-import vswe.stevesfactory.library.gui.IWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.window.AbstractPopupWindow;
 import vswe.stevesfactory.utils.RenderingHelper;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
@@ -84,6 +83,11 @@ public class ActionMenu extends AbstractPopupWindow {
     @Override
     public List<? extends IEntry> getChildren() {
         return entries;
+    }
+
+    @Override
+    public boolean shouldDrag() {
+        return false;
     }
 
     @Override

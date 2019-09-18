@@ -1,4 +1,6 @@
-package vswe.stevesfactory.library.gui;
+package vswe.stevesfactory.library.gui.window;
+
+import vswe.stevesfactory.library.gui.widget.IWidget;
 
 import javax.annotation.Nullable;
 import java.awt.*;
