@@ -27,6 +27,7 @@ import vswe.stevesfactory.ui.manager.UserPreferencesPanel;
 import vswe.stevesfactory.ui.manager.editor.ControlFlow.Node;
 import vswe.stevesfactory.ui.manager.editor.ControlFlow.OutputNode;
 import vswe.stevesfactory.utils.NetworkHelper;
+import vswe.stevesfactory.utils.RenderingHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -119,13 +120,10 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
         GlStateManager.pushMatrix();
         {
             GlStateManager.translatef(xOffset.get(), yOffset.get(), 0F);
+            RenderingHelper.translate(xOffset.get(), yOffset.get());
+
             if (selectedNode != null) {
                 Node.drawConnectionLine(selectedNode, mouseX, mouseY);
-            }
-
-            // Iterate in ascending order for rendering as a special case
-            for (FlowComponent<?> child : children) {
-                child.render(mouseX, mouseY, particleTicks);
             }
 
             // If this is put into the rendering logic of the nodes, the connection line will be above of of the flow components if
@@ -138,10 +136,14 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
                 }
             }
 
+            int translatedX = mouseX - xOffset.get();
+            int translatedY = mouseY - yOffset.get();
             // Iterate in ascending order for rendering as a special case
             for (FlowComponent<?> child : children) {
-                child.render(mouseX, mouseY, particleTicks);
+                child.render(translatedX, translatedY, particleTicks);
             }
+
+            RenderingHelper.clearTranslation();
         }
         GlStateManager.popMatrix();
         test.destroy();
@@ -154,8 +156,8 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        double translatedX = mouseX + xOffset.get();
-        double translatedY = mouseY + yOffset.get();
+        double translatedX = mouseX - xOffset.get();
+        double translatedY = mouseY - yOffset.get();
 
         // Cancel node selection
         if (selectedNode != null && button == GLFW_MOUSE_BUTTON_RIGHT) {
@@ -199,14 +201,14 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
             return yOffset.mouseReleased(mouseX, mouseY, button);
         }
         getWindow().setFocusedWidget(null);
-        return super.mouseReleased(mouseX + xOffset.get(), mouseY + yOffset.get(), button);
+        return super.mouseReleased(mouseX - xOffset.get(), mouseY - yOffset.get(), button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (isFocused()) {
-            xOffset.add((float) deltaX);
-            yOffset.add((float) deltaY);
+            xOffset.add((int) Math.round(deltaX));
+            yOffset.add((int) Math.round(deltaY));
         }
         if (xOffset.isInside(mouseX, mouseY)) {
             return xOffset.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -214,7 +216,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
         if (yOffset.isInside(mouseX, mouseY)) {
             return yOffset.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
-        return super.mouseDragged(mouseX + xOffset.get(), mouseY + yOffset.get(), button, deltaX, deltaY);
+        return super.mouseDragged(mouseX - xOffset.get(), mouseY - yOffset.get(), button, deltaX, deltaY);
     }
 
     @Override
@@ -225,7 +227,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
         if (yOffset.isInside(mouseX, mouseY)) {
             return yOffset.mouseScrolled(mouseX, mouseY, scroll);
         }
-        return super.mouseScrolled(mouseX + xOffset.get(), mouseY + yOffset.get(), scroll);
+        return super.mouseScrolled(mouseX - xOffset.get(), mouseY - yOffset.get(), scroll);
     }
 
     @Override
@@ -236,7 +238,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> impl
         if (yOffset.isInside(mouseX, mouseY)) {
             yOffset.mouseMoved(mouseX, mouseY);
         }
-        super.mouseMoved(mouseX + xOffset.get(), mouseY + yOffset.get());
+        super.mouseMoved(mouseX - xOffset.get(), mouseY - yOffset.get());
     }
 
     @Override

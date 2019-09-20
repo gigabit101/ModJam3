@@ -14,6 +14,7 @@ import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.Inspections;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.window.IPopupWindow;
+import vswe.stevesfactory.utils.RenderingHelper;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -227,8 +228,8 @@ public abstract class WidgetScreen extends Screen implements IGuiEventListener {
 
     public void setHoveringText(List<String> hoveringText, int x, int y) {
         this.hoveringText = hoveringText;
-        this.hoveringTextX = x;
-        this.hoveringTextY = y;
+        this.hoveringTextX = x + RenderingHelper.translationX;
+        this.hoveringTextY = y + RenderingHelper.translationY;
     }
 
     public void setHoveringText(ItemStack stack, int x, int y) {

@@ -6,7 +6,9 @@ import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +23,8 @@ import static org.lwjgl.opengl.GL11.*;
 public final class RenderingHelper {
 
     public static final Dimension UNBOUNDED = new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    public static int translationX = 0;
+    public static int translationY = 0;
 
     private RenderingHelper() {
     }
@@ -462,5 +466,15 @@ public final class RenderingHelper {
         buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
         buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
         buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
+    }
+
+    public static void translate(int x, int y) {
+        translationX = x;
+        translationY = y;
+    }
+
+    public static void clearTranslation() {
+        translationX = 0;
+        translationY = 0;
     }
 }
