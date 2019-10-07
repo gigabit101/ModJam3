@@ -8,20 +8,14 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import vswe.stevesfactory.Config;
 import vswe.stevesfactory.StevesFactoryManager;
-import vswe.stevesfactory.api.logic.CommandGraph;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IProcedureType;
-import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.logic.procedure.IntervalTriggerProcedure;
-import vswe.stevesfactory.logic.procedure.ItemExportProcedure;
-import vswe.stevesfactory.logic.procedure.ItemImportProcedure;
-import vswe.stevesfactory.logic.procedure.ItemTransferProcedure;
+import vswe.stevesfactory.logic.procedure.*;
 import vswe.stevesfactory.utils.NetworkHelper;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = StevesFactoryManager.MODID, bus = Bus.MOD)
@@ -31,6 +25,7 @@ public final class Procedures<P extends IProcedure> {
     public static final Procedures<ItemTransferProcedure> ITEM_TRANSFER = new Procedures<>("item_transfer", ItemTransferProcedure::new, Config.COMMON.enableItemTransfer);
     public static final Procedures<ItemImportProcedure> ITEM_IMPORT = new Procedures<>("item_import", ItemImportProcedure::new, Config.COMMON.enableItemImport);
     public static final Procedures<ItemExportProcedure> ITEM_EXPORT = new Procedures<>("item_export", ItemExportProcedure::new, Config.COMMON.enableItemExport);
+    public static final Procedures<CraftingProcedure> CRAFTING = new Procedures<>("crafting", CraftingProcedure::new, Config.COMMON.enableCrafting);
 
 //    ITEM_CONDITION("item_condition", DummyProcedure::new),
 //    FLOW_CONTROL("flow_control", DummyProcedure::new),
@@ -54,6 +49,7 @@ public final class Procedures<P extends IProcedure> {
         map.put(ITEM_TRANSFER.getRegistryName(), ITEM_TRANSFER);
         map.put(ITEM_IMPORT.getRegistryName(), ITEM_IMPORT);
         map.put(ITEM_EXPORT.getRegistryName(), ITEM_EXPORT);
+        map.put(CRAFTING.getRegistryName(), CRAFTING);
     }
 
     public final String id;

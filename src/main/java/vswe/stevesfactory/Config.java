@@ -22,6 +22,7 @@ public final class Config {
         public final BooleanValue enableItemTransfer;
         public final BooleanValue enableItemImport;
         public final BooleanValue enableItemExport;
+        public final BooleanValue enableCrafting;
 
         private CommonCategory(Builder builder) {
             builder.comment("Factory manager config options").push("factoryManager");
@@ -38,6 +39,7 @@ public final class Config {
             enableItemTransfer = builder.define("EnableItemTransfer", true);
             enableItemImport = builder.define("EnableItemImport", true);
             enableItemExport = builder.define("EnableItemExport", true);
+            enableCrafting = builder.define("EnableCrafting", true);
             builder.pop();
         }
     }

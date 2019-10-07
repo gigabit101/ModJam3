@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import vswe.stevesfactory.api.item.DirectBufferElement;
 import vswe.stevesfactory.api.item.IItemBufferElement;
 import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.logic.AbstractProcedure;
@@ -64,11 +65,11 @@ public class ItemImportProcedure extends AbstractProcedure implements IInventory
                         Item item = stack.getItem();
                         IItemBufferElement element = buffers.get(item);
                         if (buffers.containsKey(item)) {
-                            ItemBufferElement buffer = (ItemBufferElement) element;
+                            DirectBufferElement buffer = (DirectBufferElement) element;
                             buffer.stack.grow(stack.getCount());
                             buffer.addInventory(handler, slot);
                         } else {
-                            IItemBufferElement buffer = new ItemBufferElement(stack).addInventory(handler, slot);
+                            IItemBufferElement buffer = new DirectBufferElement(stack).addInventory(handler, slot);
                             buffers.put(item, buffer);
                         }
                     }, handler);

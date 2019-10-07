@@ -1,7 +1,7 @@
 package vswe.stevesfactory.api.network;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.capabilities.Capability;
 import vswe.stevesfactory.api.logic.CommandGraph;
@@ -15,7 +15,7 @@ public interface INetworkController {
 
     BlockPos getPosition();
 
-    IWorld getWorld();
+    World getWorld();
 
     boolean isValid();
 

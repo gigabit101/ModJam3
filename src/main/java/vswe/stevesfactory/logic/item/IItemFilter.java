@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.item;
 
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
@@ -8,7 +9,7 @@ import net.minecraftforge.items.IItemHandler;
 import vswe.stevesfactory.logic.FilterType;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -41,24 +42,22 @@ public interface IItemFilter {
 
     int limitFlowRate(ItemStack buffered, int existingCount);
 
-    int getTypeID();
+    String getTypeID();
 
     final class ItemFilters {
 
         private ItemFilters() {
         }
 
-        private static final Int2ObjectMap<Function<CompoundNBT, IItemFilter>> deserializers = new Int2ObjectOpenHashMap<>();
-        private static int nextID = 0;
+        private static final Map<String, Function<CompoundNBT, IItemFilter>> deserializers = new HashMap<>();
 
-        public static int allocateID(Function<CompoundNBT, IItemFilter> deserializer) {
-            int id = nextID++;
-            deserializers.put(id, deserializer);
-            return id;
+        public static void register(String typeID, Function<CompoundNBT, IItemFilter> deserializer) {
+            Preconditions.checkState(!deserializers.containsKey(typeID), "Filter type name already in use: " + typeID);
+            deserializers.put(typeID, deserializer);
         }
 
         @Nullable
-        public static Function<CompoundNBT, IItemFilter> getDeserializerFor(int typeID) {
+        public static Function<CompoundNBT, IItemFilter> getDeserializerFor(String typeID) {
             return deserializers.get(typeID);
         }
     }

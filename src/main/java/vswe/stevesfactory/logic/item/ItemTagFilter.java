@@ -15,7 +15,11 @@ import java.util.function.BiConsumer;
 
 public class ItemTagFilter implements IItemFilter {
 
-    private static int TYPE_ID = ItemFilters.allocateID(ItemTagFilter::recover);
+    public static final String TYPE_NAME = "sfm:tag_filter";
+
+    static {
+        ItemFilters.register(TYPE_NAME, ItemTagFilter::recover);
+    }
 
     public FilterType type = FilterType.WHITELIST;
     public int stackLimit;
@@ -141,8 +145,8 @@ public class ItemTagFilter implements IItemFilter {
     }
 
     @Override
-    public int getTypeID() {
-        return TYPE_ID;
+    public String getTypeID() {
+        return TYPE_NAME;
     }
 
     @Override

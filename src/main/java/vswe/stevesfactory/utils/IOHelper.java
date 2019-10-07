@@ -3,10 +3,7 @@ package vswe.stevesfactory.utils;
 import com.google.common.base.Preconditions;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
@@ -16,9 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import vswe.stevesfactory.logic.item.IItemFilter;
 import vswe.stevesfactory.logic.item.IItemFilter.ItemFilters;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
@@ -92,13 +87,13 @@ public final class IOHelper {
 
     public static CompoundNBT writeItemFilter(IItemFilter filter) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt("TypeID", filter.getTypeID());
+        tag.putString("TypeID", filter.getTypeID());
         filter.write(tag);
         return tag;
     }
 
     public static IItemFilter readItemFilter(CompoundNBT tag) {
-        int typeID = tag.getInt("TypeID");
+        String typeID = tag.getString("TypeID");
         Function<CompoundNBT, IItemFilter> deserializer = ItemFilters.getDeserializerFor(typeID);
         Preconditions.checkArgument(deserializer != null);
         return deserializer.apply(tag);

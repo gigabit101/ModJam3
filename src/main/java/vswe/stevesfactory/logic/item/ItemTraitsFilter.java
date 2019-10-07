@@ -17,7 +17,11 @@ import java.util.function.BiConsumer;
 
 public class ItemTraitsFilter implements IItemFilter {
 
-    private static int TYPE_ID = ItemFilters.allocateID(ItemTraitsFilter::recover);
+    public static final String TYPE_NAME = "sfm:traits_filter";
+
+    static {
+        ItemFilters.register(TYPE_NAME, ItemTraitsFilter::recover);
+    }
 
     private List<ItemStack> items = new ArrayList<>();
 
@@ -212,8 +216,8 @@ public class ItemTraitsFilter implements IItemFilter {
     }
 
     @Override
-    public int getTypeID() {
-        return TYPE_ID;
+    public String getTypeID() {
+        return TYPE_NAME;
     }
 
     @Override

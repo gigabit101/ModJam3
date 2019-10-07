@@ -1,8 +1,10 @@
 package vswe.stevesfactory.api.logic;
 
 import net.minecraft.item.Item;
-import net.minecraft.world.IWorld;
-import vswe.stevesfactory.api.item.IItemBufferElement;
+import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.MutablePair;
+import vswe.stevesfactory.api.item.CraftingBufferElement;
+import vswe.stevesfactory.api.item.DirectBufferElement;
 import vswe.stevesfactory.api.network.INetworkController;
 
 import javax.annotation.Nullable;
@@ -11,14 +13,14 @@ import java.util.Map;
 /**
  * A one-use only context object for program execution data storage.
  */
-// TODO variables, heads, tails, subsequences (functions), pid, forking
 public interface IExecutionContext {
 
     INetworkController getController();
 
-    IWorld getControllerWorld();
+    World getControllerWorld();
 
     void push(@Nullable IProcedure frame);
 
-    Map<Item, IItemBufferElement> getItemBufferElements();
+    // TODO distinguish between direct buffers and crafting buffers
+    Map<Item, MutablePair<DirectBufferElement, CraftingBufferElement>> getItemBufferElements();
 }

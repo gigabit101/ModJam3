@@ -1,15 +1,11 @@
 package vswe.stevesfactory.logic.execution;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.IWorld;
-import net.minecraftforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.world.World;
 import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.api.item.IItemBufferElement;
-import vswe.stevesfactory.logic.item.ItemBufferElement;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -22,12 +18,12 @@ import java.util.*;
 public class ProcedureExecutor implements IExecutionContext {
 
     private final INetworkController controller;
-    private final IWorld world;
+    private final World world;
 
     private Deque<IProcedure> executionStack = new ArrayDeque<>();
     private Map<Item, IItemBufferElement> itemBufferElements = new IdentityHashMap<>();
 
-    public ProcedureExecutor(INetworkController controller, IWorld world) {
+    public ProcedureExecutor(INetworkController controller, World world) {
         this.controller = controller;
         this.world = world;
     }
@@ -38,7 +34,7 @@ public class ProcedureExecutor implements IExecutionContext {
     }
 
     @Override
-    public IWorld getControllerWorld() {
+    public World getControllerWorld() {
         return world;
     }
 
@@ -52,7 +48,7 @@ public class ProcedureExecutor implements IExecutionContext {
     public void start(IProcedure hat) {
         executionStack.push(hat);
         while (!executionStack.isEmpty()) {
-            executionStack.poll().execute(this);
+            executionStack.pop().execute(this);
         }
         cleanup();
     }
@@ -63,23 +59,8 @@ public class ProcedureExecutor implements IExecutionContext {
     }
 
     private void cleanup() {
-        handleExtractedItems();
-    }
-
-    private void handleExtractedItems() {
         for (Map.Entry<Item, IItemBufferElement> entry : itemBufferElements.entrySet()) {
-            IItemBufferElement element = entry.getValue();
-            if (element instanceof ItemBufferElement) {
-                ItemBufferElement buffer = (ItemBufferElement) element;
-                if (buffer.used > 0) {
-                    for (Pair<IItemHandler, Integer> pair : buffer.inventories) {
-                        IItemHandler handler = pair.getLeft();
-                        int slot = pair.getRight();
-                        ItemStack extracted = handler.extractItem(slot, buffer.used, false);
-                        buffer.used -= extracted.getCount();
-                    }
-                }
-            }
+            entry.getValue().cleanup();
         }
     }
 }

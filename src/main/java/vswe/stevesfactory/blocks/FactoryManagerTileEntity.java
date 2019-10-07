@@ -297,7 +297,6 @@ public class FactoryManagerTileEntity extends BaseTileEntity implements ITickabl
     private static final Map<String, Capability<?>> caps;
 
     static {
-        // TODO use proper private field accessing via accesstransformer.cfg
         try {
             Field field = CapabilityManager.class.getDeclaredField("providers");
             field.setAccessible(true);
@@ -325,6 +324,7 @@ public class FactoryManagerTileEntity extends BaseTileEntity implements ITickabl
             // Constructed (heap) string and interned string behave differently in an IdentityHashMap
             // (CapabilityManager interns the capability name before putting them in the map)
             String capName = element.getString("Name").intern();
+            // TODO use accesstransformer
 //            Capability<?> cap = CapabilityManager.INSTANCE.providers.get(capName);
             Capability<?> cap = caps.get(capName);
 
