@@ -5,8 +5,8 @@
   "block.sfm.cable": "工厂线缆",
 
   "message.sfm.reload.componentGroups.success": "成功加载命令类别定义",
-  "message.sfm.settings.query": "Entry %s is currently set to %b",
-  "message.sfm.settings.set": "Entry %s is now set to %b",
+  "message.sfm.settings.query": "设置项%s目前为：%s",
+  "message.sfm.settings.set": "设置%s已被设为：%s",
 
   "logic.sfm.interval_trigger": "计时触发器",
   "logic.sfm.item_transfer": "物品传输",
@@ -49,7 +49,7 @@
   "gui.sfm.Editor.XOff": "X: ",
   "gui.sfm.Editor.YOff": "Y: ",
   "gui.sfm.Editor.EditOffset": "输入偏移量: ",
-  "gui.sfm.Editor.InvalidNumberFormat": "非法数字格式: %s!",
+  "gui.sfm.Editor.InvalidNumberFormat": "无效数字格式: %s!",
   "gui.sfm.Selection.NoComponentGroupsPresent": "无成员定义",
   "gui.sfm.ContextMenu.Delete": "删除",
   "gui.sfm.ContextMenu.DeleteAll": "全部删除",
@@ -58,7 +58,7 @@
   "gui.sfm.ContextMenu.Copy": "复制",
   "gui.sfm.ContextMenu.Paste": "粘贴",
   "gui.sfm.ContextMenu.CleanupProcedures": "整理",
-  "gui.sfm.ContextMenu.Paste.Procedure.Fail": "复发粘贴命令：非法数据格式。请检查数据来源并确保来源是从复制／剪切一个合法的命令。",
+  "gui.sfm.ContextMenu.Paste.Procedure.Fail": "复发粘贴命令：无效数据格式。请检查数据来源并确保来源是从复制／剪切一个合法的命令。",
   "gui.sfm.ContextMenu.UserPreferences": "设置",
   "gui.sfm.ContextMenu.ToggleFullscreen": "切换全屏模式",
   "gui.sfm.ContextMenu.Menus.CollapseAll": "关闭所有菜单",
