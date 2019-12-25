@@ -1,0 +1,9 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "sfm:helvetica.ttf",
+      "size": 24
+    }
+  ]
+}

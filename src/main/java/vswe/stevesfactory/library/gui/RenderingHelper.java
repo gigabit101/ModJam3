@@ -35,8 +35,13 @@ public final class RenderingHelper {
         Minecraft.getInstance().getTextureManager().bindTexture(texture);
     }
 
+    private static FontRenderer ttfRenderer;
+
     public static FontRenderer fontRenderer() {
-        return Minecraft.getInstance().fontRenderer;
+        if (ttfRenderer == null) {
+            ttfRenderer = Minecraft.getInstance().getFontResourceManager().getFontRenderer(new ResourceLocation(StevesFactoryManager.MODID, "helvetica"));
+        }
+        return ttfRenderer;
     }
 
     public static int fontHeight() {
