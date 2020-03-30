@@ -3,6 +3,7 @@ package vswe.stevesfactory.ui.manager.editor;
 import net.minecraft.client.gui.screen.Screen;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
+import vswe.stevesfactory.library.gui.widget.NumberField;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 import vswe.stevesfactory.library.gui.window.Dialog;
 
@@ -65,13 +66,17 @@ class OffsetText extends AbstractWidget implements LeafWidgetMixin {
             if (Screen.hasControlDown()) {
                 set(0);
             } else {
-                Dialog.createPrompt("gui.sfm.FactoryManager.Editor.EditOffset", (b, s) -> {
-                    try {
-                        set(Integer.parseInt(s));
-                    } catch (NumberFormatException e) {
-                        Dialog.createDialog("gui.sfm.FactoryManager.Editor.InvalidNumberFormat").tryAddSelfToActiveGUI();
-                    }
-                }).tryAddSelfToActiveGUI();
+                NumberField<Integer> field = NumberField.integerField(0, 16);
+                field.setValue(value);
+
+                Dialog prompt = Dialog.createPrompt(
+                        "gui.sfm.FactoryManager.Editor.PopupMsg.EditOffset",
+                        () -> field,
+                        "gui.sfm.ok", "gui.sfm.cancel",
+                        (b, s) -> {
+                        },
+                        (b, s) -> set(field.getValue()));
+                prompt.tryAddSelfToActiveGUI();
             }
             return true;
         }

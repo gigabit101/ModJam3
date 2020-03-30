@@ -12,7 +12,6 @@ import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
-import vswe.stevesfactory.ui.manager.tool.ToolPanel;
 
 import java.util.function.Supplier;
 
@@ -20,7 +19,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static vswe.stevesfactory.library.gui.RenderingHelper.rectVertices;
 import static vswe.stevesfactory.library.gui.RenderingHelper.textWidth;
 
-public class IconToolType<T extends IWidget> extends AbstractWidget implements IToolType, LeafWidgetMixin {
+public class ToolboxEntry<T extends IWidget> extends AbstractWidget implements IToolType, LeafWidgetMixin {
 
     public static final int NORMAL_BORDER_COLOR = 0xff8c8c8c;
     public static final int HOVERED_BORDER_COLOR = 0xff8c8c8c;
@@ -36,8 +35,8 @@ public class IconToolType<T extends IWidget> extends AbstractWidget implements I
     private Supplier<T> toolWindowConstructor;
     private T cachedToolWindow;
 
-    public IconToolType(TextureWrapper tex, Supplier<T> toolWindowConstructor) {
-        super(0, 0, tex.getPortionWidth() / 2, tex.getPortionHeight() / 2);
+    public ToolboxEntry(TextureWrapper tex, Supplier<T> toolWindowConstructor) {
+        super(0, 0, Math.max(tex.getPortionWidth() / 2, 8), tex.getPortionHeight() / 2);
         this.tex = tex;
         this.toolWindowConstructor = toolWindowConstructor;
     }
@@ -73,7 +72,7 @@ public class IconToolType<T extends IWidget> extends AbstractWidget implements I
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        FactoryManagerGUI.get().getTopLevel().toolPanel.setActivePanel(getToolWindow());
+        FactoryManagerGUI.get().getTopLevel().toolHolderPanel.setActivePanel(getToolWindow());
         return true;
     }
 
@@ -89,7 +88,7 @@ public class IconToolType<T extends IWidget> extends AbstractWidget implements I
         return name;
     }
 
-    public IconToolType<T> setName(String name) {
+    public ToolboxEntry<T> setName(String name) {
         this.name = name;
         this.setHeight(getHeight() + LABEL_VERTICAL_GAP + textWidth(name, FONT_HEIGHT) + LABEL_VERTICAL_GAP);
         return this;

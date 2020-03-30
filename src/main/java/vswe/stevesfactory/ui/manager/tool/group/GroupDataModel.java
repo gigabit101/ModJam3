@@ -51,8 +51,8 @@ public final class GroupDataModel {
     }
 
     /**
-     * Add a listener for when the user reselects current group. Note that this will <b>not</b> be fired for the default
-     * selection {@link GroupDataModel#DEFAULT_GROUP}.
+     * Add a listener for when the user re-selects current group. Note that this will <b>not</b> be fired for the
+     * default selection {@link GroupDataModel#DEFAULT_GROUP}.
      */
     public int addListenerSelect(Consumer<String> listener) {
         selectListeners.add(listener);

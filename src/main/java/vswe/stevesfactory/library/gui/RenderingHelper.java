@@ -139,6 +139,13 @@ public final class RenderingHelper {
         RenderSystem.enableTexture();
     }
 
+    public static void drawBorderedBox(int x1, int y1, int x2, int y2) {
+        GlStateManager.disableTexture();
+        drawRect(x1, y1, x2, y2, 0xff404040);
+        drawRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0xff5e5e5e);
+        GlStateManager.enableTexture();
+    }
+
     public static void drawThickBeveledBox(int x1, int y1, int x2, int y2, int thickness, int topLeftColor, int bottomRightColor, int fillColor) {
         RenderSystem.disableTexture();
         drawRect(x1, y1, x2, y2, bottomRightColor);

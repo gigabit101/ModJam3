@@ -301,9 +301,9 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     private void openActionMenu() {
         ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(FactoryManagerGUI.PASTE_ICON, "gui.sfm.FactoryManager.Editor.CtxMenu.Paste", b -> actionPaste()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CtxMenu.CleanupProcedures", b -> actionCleanup()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.CtxMenu.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
+                new CallbackEntry(FactoryManagerGUI.PASTE_ICON, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()),
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()),
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
         ));
         WidgetScreen.getCurrent().addPopupWindow(contextMenu);
     }
@@ -314,7 +314,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
         try {
             tag = JsonToNBT.getTagFromJson(json);
         } catch (CommandSyntaxException e) {
-            Dialog.createDialog("gui.sfm.FactoryManager.Editor.Dialog.PasteProcedure.Fail").tryAddSelfToActiveGUI();
+            Dialog.createDialog("gui.sfm.FactoryManager.Editor.Paste.Fail").tryAddSelfToActiveGUI();
             return;
         }
 
