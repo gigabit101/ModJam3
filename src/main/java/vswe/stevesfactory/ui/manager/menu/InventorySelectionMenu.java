@@ -73,7 +73,7 @@ public class InventorySelectionMenu<P extends IInventoryTarget & IProcedure & IC
     }
 
     @Override
-    protected void updateData() {
+    protected void saveData() {
         P procedure = getLinkedProcedure();
         List<BlockPos> inventories = procedure.getInventories(id);
         inventories.clear();

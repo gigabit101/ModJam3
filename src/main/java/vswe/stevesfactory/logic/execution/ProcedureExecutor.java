@@ -17,10 +17,7 @@ import vswe.stevesfactory.logic.item.CraftingBufferElement;
 import vswe.stevesfactory.logic.item.DirectBufferElement;
 
 import javax.annotation.Nullable;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
@@ -58,11 +55,19 @@ public class ProcedureExecutor implements IExecutionContext {
     private Map<Item, IItemBuffer>[] itemBufferElements = new IdentityHashMap[itemOrderAssociation.size()];
     @SuppressWarnings("unchecked")
     private Map<Fluid, IFluidBuffer>[] fluidBufferElements = new IdentityHashMap[fluidOrderAssociation.size()];
+    private List<Variable<?>> variables = new ArrayList<>();
     private ClassToInstanceMap<Object> customData = MutableClassToInstanceMap.create();
 
     public ProcedureExecutor(INetworkController controller, World world) {
         this.controller = controller;
         this.world = world;
+        this.populateVariables();
+    }
+
+    private void populateVariables() {
+        for (VariableDefinition<?> def : controller.getVariableDefinitions()) {
+            variables.add(def.instantiate());
+        }
     }
 
     @Override
@@ -125,6 +130,11 @@ public class ProcedureExecutor implements IExecutionContext {
         // Returns checked type -> entry put is checked too
         @SuppressWarnings("unchecked") Map<Fluid, T> map = (Map<Fluid, T>) getOrCreateFluidBuffers(index);
         return map;
+    }
+
+    @Override
+    public List<Variable<?>> getVariables() {
+        return variables;
     }
 
     @Override

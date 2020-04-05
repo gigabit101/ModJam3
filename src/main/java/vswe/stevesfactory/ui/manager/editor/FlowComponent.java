@@ -622,7 +622,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
 
     public void save() {
         for (Menu<?> menu : menus.getChildren()) {
-            menu.updateData();
+            menu.saveData();
         }
         P proc = getProcedure();
         for (int i = 0; i < proc.successors().length; i++) {

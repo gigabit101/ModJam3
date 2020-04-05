@@ -267,7 +267,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     protected void addContextMenuEntries(ImmutableList.Builder<IEntry> builder) {
     }
 
-    protected void updateData() {
+    protected void saveData() {
     }
 
     @SuppressWarnings("unchecked")

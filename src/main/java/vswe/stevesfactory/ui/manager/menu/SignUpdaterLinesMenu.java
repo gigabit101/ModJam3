@@ -31,7 +31,7 @@ public class SignUpdaterLinesMenu extends Menu<SignUpdaterProcedure> {
     }
 
     @Override
-    protected void updateData() {
+    protected void saveData() {
         SignUpdaterProcedure procedure = getLinkedProcedure();
         for (int i = 0; i < textFields.length; i++) {
             procedure.getTexts()[i] = textFields[i].getText();

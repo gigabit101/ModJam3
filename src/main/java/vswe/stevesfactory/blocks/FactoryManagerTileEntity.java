@@ -37,6 +37,7 @@ import vswe.stevesfactory.api.logic.IProcedureType;
 import vswe.stevesfactory.api.logic.ProcedureGraph;
 import vswe.stevesfactory.api.network.ICable;
 import vswe.stevesfactory.api.network.INetworkController;
+import vswe.stevesfactory.logic.execution.VariableDefinition;
 import vswe.stevesfactory.network.NetworkHandler;
 import vswe.stevesfactory.network.PacketSyncProcedureGraph;
 import vswe.stevesfactory.network.PacketSyncProcedureGroups;
@@ -55,6 +56,7 @@ public class FactoryManagerTileEntity extends TileEntity implements ITickableTil
     private Map<String, Multiset<BlockPos>> linkedInventories = new HashMap<>();
 
     private ProcedureGraph graph = ProcedureGraph.create();
+    private Set<VariableDefinition<?>> variableDefinitions = new HashSet<>();
     private Set<String> groups = new HashSet<>();
 
     private int ticks;
@@ -222,6 +224,11 @@ public class FactoryManagerTileEntity extends TileEntity implements ITickableTil
     }
 
     @Override
+    public Collection<VariableDefinition<?>> getVariableDefinitions() {
+        return variableDefinitions;
+    }
+
+    @Override
     public ProcedureGraph getPGraph() {
         return graph;
     }
@@ -359,6 +366,12 @@ public class FactoryManagerTileEntity extends TileEntity implements ITickableTil
 
         graph.deserialize(compound.getCompound("Procedures"));
 
+        ListNBT serializedVarDefs = compound.getList("VarDefinitions", Constants.NBT.TAG_COMPOUND);
+        variableDefinitions.clear();
+        for (int i = 0; i < serializedVarDefs.size(); i++) {
+            variableDefinitions.add(VariableDefinition.read(serializedVarDefs.getCompound(i)));
+        }
+
         ListNBT serializedGroups = compound.getList("Groups", Constants.NBT.TAG_STRING);
         groups.clear();
         for (int i = 0; i < serializedGroups.size(); i++) {
@@ -397,6 +410,12 @@ public class FactoryManagerTileEntity extends TileEntity implements ITickableTil
         }
         compound.put("LinkedInventories", serializedInventories);
         compound.put("Procedures", graph.serialize());
+
+        ListNBT serializedVarDefs = new ListNBT();
+        for (VariableDefinition<?> def : variableDefinitions) {
+            serializedVarDefs.add(def.write());
+        }
+        compound.put("VarDefinitions", serializedVarDefs);
 
         ListNBT serializedGroups = new ListNBT();
         for (String group : groups) {

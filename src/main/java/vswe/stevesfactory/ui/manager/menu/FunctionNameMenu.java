@@ -40,7 +40,7 @@ public class FunctionNameMenu extends Menu<FunctionHatProcedure> {
     }
 
     @Override
-    protected void updateData() {
+    protected void saveData() {
         FunctionHatProcedure p = getLinkedProcedure();
         p.setFunctionName(field.getText());
     }

@@ -138,8 +138,8 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
     }
 
     @Override
-    protected void updateData() {
-        super.updateData();
+    protected void saveData() {
+        super.saveData();
         ItemTagFilter filter = getLinkedFilter();
         filter.getTags().clear();
         for (Entry entry : fields.getChildren()) {

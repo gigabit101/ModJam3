@@ -5,6 +5,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.capabilities.Capability;
 import vswe.stevesfactory.api.logic.ProcedureGraph;
+import vswe.stevesfactory.logic.execution.VariableDefinition;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -62,6 +63,8 @@ public interface INetworkController {
     <T> boolean removeLink(Capability<T> cap, BlockPos pos);
 
     void removeAllLinks();
+
+    Collection<VariableDefinition<?>> getVariableDefinitions();
 
     ProcedureGraph getPGraph();
 
