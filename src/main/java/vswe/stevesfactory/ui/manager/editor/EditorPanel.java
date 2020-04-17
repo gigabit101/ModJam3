@@ -253,22 +253,6 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
                 return true;
             }
         }
-
-        int offset = Screen.hasShiftDown() ? Config.CLIENT.acceleratedEditorMoveSpeed.get() : Config.CLIENT.defaultEditorMoveSpeed.get();
-        switch (keyCode) {
-            case GLFW_KEY_UP:
-                yOffset.add(offset);
-                break;
-            case GLFW_KEY_DOWN:
-                yOffset.subtract(offset);
-                break;
-            case GLFW_KEY_LEFT:
-                xOffset.add(offset);
-                break;
-            case GLFW_KEY_RIGHT:
-                xOffset.subtract(offset);
-                break;
-        }
         return false;
     }
 

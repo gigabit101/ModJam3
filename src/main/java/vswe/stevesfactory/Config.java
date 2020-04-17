@@ -138,8 +138,6 @@ public final class Config {
         // Factory manager GUI options
         public final BooleanValue useFixedSizeScreen;
         public final BooleanValue useBackgroundOnFullscreen;
-        public final IntValue defaultEditorMoveSpeed;
-        public final IntValue acceleratedEditorMoveSpeed;
 
         private ClientCategory(Builder builder) {
             builder.comment("General client config options").push("general");
@@ -165,12 +163,6 @@ public final class Config {
             useBackgroundOnFullscreen = builder
                     .comment("Enable to use vanilla background instead of a plain rectangle")
                     .define("useBackgroundOnFullscreen", false);
-            defaultEditorMoveSpeed = builder
-                    .comment("Determines how fast arrow keys moving is (for editor panel)")
-                    .defineInRange("defaultEditorMoveSpeed", 2, 0, Integer.MAX_VALUE);
-            acceleratedEditorMoveSpeed = builder
-                    .comment("Determines how fast arrow keys moving is, while Shift is pressed")
-                    .defineInRange("acceleratedEditorMoveSpeed", 20, 0, Integer.MAX_VALUE);
             builder.pop();
         }
     }

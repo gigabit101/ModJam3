@@ -60,7 +60,7 @@
   "gui.sfm.FactoryManager.Tool.Group.MoveContent.Failed": "Unable to move contents: no group with the name %s exists.",
   "gui.sfm.FactoryManager.Tool.Group.SelectGroup": "Select a group from the following list:",
   "gui.sfm.FactoryManager.Tool.Inspector.Name": "Inspector",
-  "gui.sfm.FactoryManager.Tool.Inspector.NoTarget": "None selected",
+  "gui.sfm.FactoryManager.Tool.Inspector.NoTarget": "<None selected>",
   "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll": "Collapse All",
   "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll": "Expand All",
   "gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty": "Cycle to next property",

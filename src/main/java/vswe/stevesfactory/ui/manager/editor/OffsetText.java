@@ -70,7 +70,7 @@ class OffsetText extends AbstractWidget implements LeafWidgetMixin {
                 field.setValue(value);
 
                 Dialog prompt = Dialog.createPrompt(
-                        "gui.sfm.FactoryManager.Editor.PopupMsg.EditOffset",
+                        "gui.sfm.FactoryManager.Editor.EditOffset",
                         () -> field,
                         "gui.sfm.ok", "gui.sfm.cancel",
                         (b, s) -> {

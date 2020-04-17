@@ -39,170 +39,6 @@ import static vswe.stevesfactory.ui.manager.FactoryManagerGUI.*;
 
 public class FlowComponent<P extends IProcedure & IClientDataStorage> extends AbstractContainer<IWidget> implements Comparable<FlowComponent<?>> {
 
-    public static class RenameButton extends AbstractIconButton {
-
-        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 124, 9, 9);
-        public static final TextureWrapper HOVERING = NORMAL.toRight(1);
-
-        public RenameButton(FlowComponent<?> parent) {
-            super(-1, -1, 9, 9);
-            setParentWidget(parent);
-        }
-
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (isEnabled() && button == GLFW_MOUSE_BUTTON_LEFT) {
-                setEnabled(false);
-                FlowComponent<?> parent = getParentWidget();
-                parent.submitButton.setEnabled(true);
-                parent.cancelButton.setEnabled(true);
-                parent.nameBox.setEditable(true);
-                getWindow().setFocusedWidget(parent.nameBox);
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public TextureWrapper getTextureNormal() {
-            return NORMAL;
-        }
-
-        @Override
-        public TextureWrapper getTextureHovered() {
-            return HOVERING;
-        }
-
-        @Nonnull
-        @Override
-        public FlowComponent<?> getParentWidget() {
-            return Objects.requireNonNull((FlowComponent<?>) super.getParentWidget());
-        }
-
-        @Override
-        public BoxSizing getBoxSizing() {
-            return BoxSizing.PHANTOM;
-        }
-    }
-
-    public static class SubmitButton extends AbstractIconButton {
-
-        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 133, 7, 7);
-        public static final TextureWrapper HOVERING = NORMAL.toRight(1);
-
-        public SubmitButton(FlowComponent<?> parent) {
-            super(-1, -1, 7, 7);
-            setParentWidget(parent);
-            setEnabled(false);
-        }
-
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (isEnabled() && button == GLFW_MOUSE_BUTTON_LEFT) {
-                submit();
-                return true;
-            }
-            return false;
-        }
-
-        public void submit() {
-            setEnabled(false);
-            FlowComponent<?> parent = getParentWidget();
-            parent.cancelButton.setEnabled(false);
-            parent.renameButton.setEnabled(true);
-            parent.nameBox.scrollToFront();
-            parent.nameBox.setEditable(false);
-            parent.getDataHandler().setName(parent.getName());
-            getWindow().changeFocus(parent.nameBox, false);
-        }
-
-        @Override
-        public TextureWrapper getTextureNormal() {
-            return NORMAL;
-        }
-
-        @Override
-        public TextureWrapper getTextureHovered() {
-            return HOVERING;
-        }
-
-        @Nonnull
-        @Override
-        public FlowComponent<?> getParentWidget() {
-            return Objects.requireNonNull((FlowComponent<?>) super.getParentWidget());
-        }
-
-        @Override
-        public BoxSizing getBoxSizing() {
-            return BoxSizing.PHANTOM;
-        }
-    }
-
-    public static class CancelButton extends AbstractIconButton {
-
-        public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 140, 7, 7);
-        public static final TextureWrapper HOVERING = NORMAL.toRight(1);
-
-        private String previousName;
-
-        public CancelButton(FlowComponent<?> parent, String previousName) {
-            super(-1, -1, 7, 7);
-            setParentWidget(parent);
-            setEnabled(false);
-            this.previousName = previousName;
-        }
-
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (isEnabled() && button == GLFW_MOUSE_BUTTON_LEFT) {
-                cancel();
-                return true;
-            }
-            return false;
-        }
-
-        public void cancel() {
-            setEnabled(false);
-            FlowComponent<?> parent = getParentWidget();
-            parent.submitButton.setEnabled(false);
-            parent.renameButton.setEnabled(true);
-            parent.setName(previousName);
-            parent.nameBox.scrollToFront();
-            parent.nameBox.setEditable(false);
-            getWindow().changeFocus(parent.nameBox, false);
-            previousName = "";
-        }
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            super.setEnabled(enabled);
-            if (enabled) {
-                this.previousName = getParentWidget().getName();
-            }
-        }
-
-        @Override
-        public TextureWrapper getTextureNormal() {
-            return NORMAL;
-        }
-
-        @Override
-        public TextureWrapper getTextureHovered() {
-            return HOVERING;
-        }
-
-        @Nonnull
-        @Override
-        public FlowComponent<?> getParentWidget() {
-            return Objects.requireNonNull((FlowComponent<?>) super.getParentWidget());
-        }
-
-        @Override
-        public BoxSizing getBoxSizing() {
-            return BoxSizing.PHANTOM;
-        }
-    }
-
     public static <P extends IProcedure & IClientDataStorage> FlowComponent<P> of(P procedure) {
         return new FlowComponent<>(procedure, procedure.predecessors().length, procedure.successors().length);
     }
@@ -210,9 +46,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     private P procedure;
     private final MinimumLinearList<Menu<P>> menus;
 
-    private final RenameButton renameButton;
-    private final SubmitButton submitButton;
-    private final CancelButton cancelButton;
+
     private final TextField nameBox;
     private final ConnectionNodes<EndNode> inputNodes;
     private final ConnectionNodes<StartNode> outputNodes;
@@ -229,12 +63,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     public FlowComponent(P procedure, int amountInputs, int amountOutputs) {
         super(0, 0, 64, 20);
         String name = procedure.getName();
-        this.renameButton = new RenameButton(this);
-        this.renameButton.setLocation(52, 6);
-        this.submitButton = new SubmitButton(this);
-        this.submitButton.setLocation(54, 3);
-        this.cancelButton = new CancelButton(this, name);
-        this.cancelButton.setLocation(54, 11);
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
         this.nameBox = new TextField(6, 8, 45, 10);
         this.nameBox.setBackgroundStyle(TextField.BackgroundStyle.NONE);
@@ -246,14 +74,10 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         this.outputNodes = ConnectionNodes.outputNodes(amountOutputs);
         this.errorIndicator = ErrorIndicator.error();
         this.menus = new MinimumLinearList<>(0, 0);
-        this.children = ImmutableList.of(renameButton, submitButton, cancelButton, nameBox, inputNodes, outputNodes, errorIndicator);
+        this.children = ImmutableList.of(nameBox, inputNodes, outputNodes, errorIndicator);
         this.setLinkedProcedure(procedure);
 
         errorIndicator.setLocation(2, 8);
-    }
-
-    public boolean isEditing() {
-        return submitButton.isEnabled();
     }
 
     public String getName() {
@@ -262,7 +86,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
 
     public void setName(String name) {
         this.nameBox.setText(name);
-        this.cancelButton.previousName = getName();
         this.procedure.setName(name);
     }
 
@@ -333,10 +156,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         int y = getAbsoluteY();
         RenderingHelper.drawBorderedBox(x, y, x + getWidth(), y + getHeight());
 
-        // Renaming state (showing different buttons at different times) is handled inside the widgets' render method
-        renameButton.render(mouseX, mouseY, particleTicks);
-        submitButton.render(mouseX, mouseY, particleTicks);
-        cancelButton.render(mouseX, mouseY, particleTicks);
         nameBox.render(mouseX, mouseY, particleTicks);
         RenderSystem.enableAlphaTest();
         inputNodes.render(mouseX, mouseY, particleTicks);

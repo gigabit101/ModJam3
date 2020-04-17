@@ -99,7 +99,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     private static final List<Supplier<IEntry>> EMPTY_LIST = ImmutableList.of();
 
-    public static final TextureWrapper HEADING_BOX = TextureWrapper.ofFlowComponent(66, 152, 120, 13);
+    public static final TextureWrapper HEADING_BOX = TextureWrapper.ofFlowComponent(0, 0, 120, 13);
     public static final int DEFAULT_CONTENT_HEIGHT = 65;
 
     private FlowComponent<P> flowComponent;
@@ -254,6 +254,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
                 ImmutableList.Builder<IEntry> list = ImmutableList.<IEntry>builder()
                         .add(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()))
                         .add(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
+                addContextMenuEntries(list);
                 for (Supplier<IEntry> entry : actionMenuEntries) {
                     list.add(entry.get());
                 }
