@@ -1,23 +1,20 @@
 package vswe.stevesfactory.ui.manager.editor;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.nbt.CompoundNBT;
 import vswe.stevesfactory.api.logic.Connection;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
-import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.box.LinearList;
@@ -64,7 +61,8 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         super(0, 0, 64, 20);
         String name = procedure.getName();
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
-        this.nameBox = new TextField(6, 8, 45, 10);
+        this.nameBox = new TextField(6, 8, 0, 10);
+        this.nameBox.setWidth(this.getWidth() - nameBox.getX() - 2);
         this.nameBox.setBackgroundStyle(TextField.BackgroundStyle.NONE);
         this.nameBox.setText(name);
         this.nameBox.setTextColor(0xff303030, 0xff303030);
@@ -157,7 +155,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         RenderingHelper.drawBorderedBox(x, y, x + getWidth(), y + getHeight());
 
         nameBox.render(mouseX, mouseY, particleTicks);
-        RenderSystem.enableAlphaTest();
         inputNodes.render(mouseX, mouseY, particleTicks);
         outputNodes.render(mouseX, mouseY, particleTicks);
         errorIndicator.render(mouseX, mouseY, particleTicks);

@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.tool.inspector;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.RenderingHelper;
 import vswe.stevesfactory.library.gui.TextureWrapper;

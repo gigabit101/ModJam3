@@ -1,7 +1,7 @@
 package vswe.stevesfactory.ui.manager.tool.inspector;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
@@ -50,15 +50,15 @@ public class Inspector extends AbstractContainer<IWidget> {
     public void render(int mouseX, int mouseY, float particleTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
-        GlStateManager.disableTexture();
-        GlStateManager.lineWidth(1F);
-        GlStateManager.color3f(64F / 255F, 64F / 255F, 64F / 255F);
+        RenderSystem.disableTexture();
+        RenderSystem.lineWidth(1F);
+        RenderSystem.color3f(64F / 255F, 64F / 255F, 64F / 255F);
         int y = status.getAbsoluteYBottom() + 1;
         glBegin(GL_LINES);
         glVertex3f(status.getAbsoluteX(), y, 0F);
         glVertex3f(status.getAbsoluteXRight(), y, 0F);
         glEnd();
-        GlStateManager.enableTexture();
+        RenderSystem.enableTexture();
 
         super.render(mouseX, mouseY, particleTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
