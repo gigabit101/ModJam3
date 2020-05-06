@@ -31,12 +31,11 @@ public class Inspector extends AbstractContainer<IWidget> {
     private final PropertiesPanel props;
 
     public Inspector() {
-        super(0, 0, 120, 0);
-
+        this.setWidth(120);
         status = new StatusPanel(); // with fixed size
-        status.setParentWidget(this);
+        status.attach(this);
         props = new PropertiesPanel();
-        props.setParentWidget(this);
+        props.attach(this);
         children = ImmutableList.of(status, props);
         reflow();
     }
@@ -47,7 +46,7 @@ public class Inspector extends AbstractContainer<IWidget> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
         RenderSystem.disableTexture();
@@ -60,7 +59,7 @@ public class Inspector extends AbstractContainer<IWidget> {
         glEnd();
         RenderSystem.enableTexture();
 
-        super.render(mouseX, mouseY, particleTicks);
+        super.renderChildren(mouseX, mouseY, partialTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 

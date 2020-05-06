@@ -22,7 +22,7 @@ public abstract class ValueField<V> extends TextField {
         @Override
         protected boolean updateText(String text) {
             try {
-                value = getParser().apply(text);
+                number = getParser().apply(text);
                 setInternalText(text);
                 return true;
             } catch (RuntimeException ignored) {
@@ -31,11 +31,23 @@ public abstract class ValueField<V> extends TextField {
         }
 
         @Override
+        public ExceptionBasedValueField<V> setValueFormat(Function<String, V> parser, Function<V, String> stringifier) {
+            super.setValueFormat(parser, stringifier);
+            return this;
+        }
+
+        @Override
+        public ExceptionBasedValueField<V> setValue(V number) {
+            super.setValue(number);
+            return this;
+        }
+
+        @Override
         public void onFocusChanged(boolean focus) {
             // On loss focus, we override the text with number
             // This is for special format limiting that does not throw an exception
             if (!focus) {
-                setText(getStringifier().apply(value));
+                setText(getStringifier().apply(number));
             }
         }
     }
@@ -60,7 +72,7 @@ public abstract class ValueField<V> extends TextField {
         protected boolean updateText(String text) {
             if (formatValidator.test(text)) {
                 setInternalText(text);
-                this.value = getParser().apply(getText());
+                this.number = getParser().apply(getText());
                 return true;
             }
             return false;
@@ -68,27 +80,37 @@ public abstract class ValueField<V> extends TextField {
 
         @Deprecated
         @Override
-        public void setValueFormat(Function<String, V> parser, Function<V, String> stringifier) {
+        public ValidatorBasedValueField<V> setValueFormat(Function<String, V> parser, Function<V, String> stringifier) {
             throw new UnsupportedOperationException();
         }
 
-        public void setValueFormat(Predicate<String> formatValidator, Function<String, V> parser, Function<V, String> stringifier) {
+        @SuppressWarnings("UnusedReturnValue")
+        public ValidatorBasedValueField<V> setValueFormat(Predicate<String> formatValidator, Function<String, V> parser, Function<V, String> stringifier) {
             this.formatValidator = formatValidator;
             super.setValueFormat(parser, stringifier);
+            return this;
+        }
+
+        @Override
+        public ValidatorBasedValueField<V> setValue(V value) {
+            super.setValue(value);
+            return this;
         }
     }
 
     private Function<String, V> parser;
     private Function<V, String> stringifier;
-    protected V value;
+    protected V number;
 
     protected ValueField(int x, int y, int width, int height) {
-        super(x, y, width, height);
+        super(width, height);
     }
 
-    public void setValueFormat(Function<String, V> parser, Function<V, String> stringifier) {
+    @SuppressWarnings("UnusedReturnValue")
+    public ValueField<V> setValueFormat(Function<String, V> parser, Function<V, String> stringifier) {
         this.parser = parser;
         this.stringifier = stringifier;
+        return this;
     }
 
     @Override
@@ -99,12 +121,14 @@ public abstract class ValueField<V> extends TextField {
     }
 
     public V getValue() {
-        return value;
+        return number;
     }
 
-    public void setValue(V number) {
-        this.value = number;
+    @SuppressWarnings("UnusedReturnValue")
+    public ValueField<V> setValue(V number) {
+        this.number = number;
         super.updateText(stringifier.apply(number));
+        return this;
     }
 
     public Function<String, V> getParser() {

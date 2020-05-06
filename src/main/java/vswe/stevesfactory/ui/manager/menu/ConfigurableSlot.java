@@ -1,21 +1,23 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import com.google.common.base.Preconditions;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import net.minecraft.util.IStringSerializable;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.library.gui.widget.AbstractWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 import vswe.stevesfactory.library.gui.widget.slot.AbstractItemSlot;
 import vswe.stevesfactory.library.gui.window.PlayerInventoryWindow;
+import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import javax.annotation.Nonnull;
 import javax.xml.ws.Holder;
@@ -23,12 +25,12 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
-public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget implements INamedElement, LeafWidgetMixin {
+public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget implements IStringSerializable, LeafWidgetMixin {
 
-    public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(36, 20, 16, 16);
-    public static final TextureWrapper HOVERED = NORMAL.toDown(1);
+    public static final Texture NORMAL = Render2D.ofFlowComponent(36, 20, 16, 16);
+    public static final Texture HOVERED = NORMAL.down(1);
 
     protected ItemStack stack;
     protected E editor;
@@ -48,18 +50,18 @@ public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         RenderSystem.color3f(1F, 1F, 1F);
         int x = getAbsoluteX();
         int y = getAbsoluteY();
         if (isInside(mouseX, mouseY)) {
-            HOVERED.draw(x, y);
+            HOVERED.render(x, y);
             if (!stack.isEmpty()) {
-                WidgetScreen.getCurrent().setHoveringText(stack, mouseX, mouseY);
+                FactoryManagerGUI.get().scheduleTooltip(stack, mouseX, mouseY);
             }
         } else {
-            NORMAL.draw(x, y);
+            NORMAL.render(x, y);
         }
 
         RenderSystem.disableDepthTest();
@@ -116,54 +118,58 @@ public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget
 
     public void openInventoryPopup() {
         Holder<AbstractItemSlot> selected = new Holder<>();
-        PlayerInventoryWindow popup = PlayerInventoryWindow.atCursor(in -> new AbstractItemSlot() {
-            private ItemStack representative;
+        PlayerInventoryWindow popup = new PlayerInventoryWindow(
+                Render2D.mouseX(), Render2D.mouseY(),
+                in -> new AbstractItemSlot() {
+                    private ItemStack representative;
 
-            @Override
-            public ItemStack getRenderedStack() {
-                return in;
-            }
+                    @Override
+                    public ItemStack getRenderedStack() {
+                        return in;
+                    }
 
-            @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                if (isSelected() || in.isEmpty()) {
-                    // Unselect slot
-                    selected.value = null;
-                    stack = ItemStack.EMPTY;
-                    onSetStack();
-                } else {
-                    // Select and set slot content
-                    selected.value = this;
-                    stack = getRepresentative();
-                    onSetStack();
-                }
-                return true;
-            }
+                    @Override
+                    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                        if (isSelected() || in.isEmpty()) {
+                            // Unselect slot
+                            selected.value = null;
+                            stack = ItemStack.EMPTY;
+                            onSetStack();
+                        } else {
+                            // Select and set slot content
+                            selected.value = this;
+                            stack = getRepresentative();
+                            onSetStack();
+                        }
+                        return true;
+                    }
 
-            @Override
-            protected void renderBase() {
-                super.renderBase();
-                if (isSelected() && !in.isEmpty()) {
-                    RenderingHelper.useBlendingGLStates();
-                    RenderingHelper.drawRect(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), 0x66ffff00);
-                    RenderSystem.disableBlend();
-                    RenderSystem.enableTexture();
-                }
-            }
+                    @Override
+                    public void renderBase() {
+                        super.renderBase();
+                        if (isSelected() && !in.isEmpty()) {
+                            Render2D.useBlendingGLStates();
+                            Render2D.beginColoredQuad();
+                            Render2D.coloredRect(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), 0x66ffff00);
+                            Render2D.draw();
+                            RenderSystem.disableBlend();
+                            RenderSystem.enableTexture();
+                        }
+                    }
 
-            private boolean isSelected() {
-                return selected.value == this;
-            }
+                    private boolean isSelected() {
+                        return selected.value == this;
+                    }
 
-            private ItemStack getRepresentative() {
-                if (representative == null) {
-                    representative = in.copy();
-                    representative.setCount(1);
-                }
-                return representative;
-            }
-        });
-        WidgetScreen.getCurrent().addPopupWindow(popup);
+                    private ItemStack getRepresentative() {
+                        if (representative == null) {
+                            representative = in.copy();
+                            representative.setCount(1);
+                        }
+                        return representative;
+                    }
+                });
+        WidgetScreen.assertActive().addPopupWindow(popup);
     }
 
     protected void onSetStack() {
@@ -171,8 +177,8 @@ public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget
 
     @Nonnull
     public MultiLayerMenu<?> getMenu() {
-        IWidget parentWidget = Objects.requireNonNull(super.getParentWidget());
-        return (MultiLayerMenu<?>) Objects.requireNonNull(parentWidget.getParentWidget());
+        IWidget parentWidget = Objects.requireNonNull(super.getParent());
+        return (MultiLayerMenu<?>) Objects.requireNonNull(parentWidget.getParent());
     }
 
     @Override

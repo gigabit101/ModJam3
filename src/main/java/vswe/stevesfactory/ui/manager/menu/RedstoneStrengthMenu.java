@@ -1,10 +1,12 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.api.logic.IProcedure;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.widget.Checkbox;
+import vswe.stevesfactory.library.gui.widget.NumberField;
+import vswe.stevesfactory.library.gui.widget.Paragraph;
 import vswe.stevesfactory.library.gui.widget.TextField.BackgroundStyle;
 import vswe.stevesfactory.logic.procedure.IAnalogTarget;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
@@ -24,10 +26,10 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
         begin.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
         end = NumberField.integerFieldRanged(33, 12, 1, 1, 15);
         end.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
-        invertCondition = new Checkbox(0, 0, 8, 8);
-        invertCondition.translateLabel("menu.sfm.InvertCondition");
-        TextList info = new TextList(getWidth() - 10 * 2, 16, new ArrayList<>());
-        info.setFontHeight(6);
+        invertCondition = new Checkbox();
+        invertCondition.setDimensions(8, 8);
+        Paragraph info = new Paragraph(getWidth() - 10 * 2, 16, new ArrayList<>());
+        info.getTextRenderer().setFontHeight(6);
         info.addLineSplit(I18n.format("menu.sfm.RedstoneTrigger.Strength.Info"));
         info.setLocation(4, HEADING_BOX.getPortionHeight() + 2);
 
@@ -35,6 +37,8 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
         addChildren(end);
         addChildren(invertCondition);
         addChildren(info);
+        // TODO label pos
+        addChildren(invertCondition.makeLabel().translate("menu.sfm.InvertCondition"));
         reflow();
     }
 
@@ -63,10 +67,10 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
     }
 
     @Override
-    public void renderContents(int mouseX, int mouseY, float particleTicks) {
-        super.renderContents(mouseX, mouseY, particleTicks);
+    public void renderContents(int mouseX, int mouseY, float partialTicks) {
+        super.renderContents(mouseX, mouseY, partialTicks);
         String text = I18n.format("menu.sfm.NumberRange");
-        RenderingHelper.drawTextCenteredVertically(text, begin.getAbsoluteXRight() + 2, begin.getAbsoluteY(), begin.getAbsoluteYBottom(), 0xff404040);
+        Render2D.renderVerticallyCenteredText(text, begin.getAbsoluteXRight() + 2, begin.getAbsoluteY(), begin.getAbsoluteYBottom(), getZLevel(), 0xff404040);
     }
 
     @Override

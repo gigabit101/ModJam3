@@ -1,6 +1,5 @@
 package vswe.stevesfactory.library.gui;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import vswe.stevesfactory.StevesFactoryManager;
@@ -14,9 +13,7 @@ public final class ScissorTest {
     private static ScissorTest[] objects = new ScissorTest[max];
     private static int lastObject = -1;
 
-    private boolean destroyed = false;
     private int index;
-
     private int left;
     private int right;
     private int top;
@@ -43,10 +40,18 @@ public final class ScissorTest {
             if (index > 0) {
                 ScissorTest parent = objects[index - 1];
 
-                if (left < parent.left) left = parent.left;
-                if (right > parent.right) right = parent.right;
-                if (top < parent.top) top = parent.top;
-                if (bottom > parent.bottom) bottom = parent.bottom;
+                if (left < parent.left) {
+                    left = parent.left;
+                }
+                if (right > parent.right) {
+                    right = parent.right;
+                }
+                if (top < parent.top) {
+                    top = parent.top;
+                }
+                if (bottom > parent.bottom) {
+                    bottom = parent.bottom;
+                }
             }
 
             resume();
@@ -61,8 +66,6 @@ public final class ScissorTest {
     }
 
     public void destroy() {
-        Preconditions.checkState(!destroyed);
-
         if (index < lastObject) {
             StevesFactoryManager.logger.error("There are scissors below this one");
         }
@@ -72,16 +75,18 @@ public final class ScissorTest {
         objects[index] = null;
         lastObject--;
 
-        if (lastObject > -1)
+        if (lastObject > -1) {
             objects[lastObject].resume(); // Resuming previous scissor
-
-        destroyed = true;
+        }
     }
 
     private static void scissor(int x, int y, int width, int height) {
-        if (width < 0) width = 0;
-        if (height < 0) height = 0;
-
+        if (width < 0) {
+            width = 0;
+        }
+        if (height < 0) {
+            height = 0;
+        }
         glScissor(x, y, width, height);
     }
 }

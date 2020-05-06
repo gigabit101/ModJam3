@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.fml.config.ModConfig;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 
 public final class Config {
 
@@ -133,6 +134,8 @@ public final class Config {
 
         // Widgets options
         public final IntValue scrollSpeed;
+        public final IntValue minBorderDistance;
+        public final IntValue dialogMessageMaxWidth;
         public final BooleanValue enableInspections;
 
         // Factory manager GUI options
@@ -150,6 +153,15 @@ public final class Config {
             scrollSpeed = builder
                     .comment("How long one move wheel movement for scrolling lists")
                     .defineInRange("scrollSpeed", 20, 1, 256);
+            dialogMessageMaxWidth = builder
+                    .comment("Maximum text width before splitting into a new line for dialog messages")
+                    .translation("config.harmonics.client.dialogMsgMaxWidth")
+                    .defineInRange("DialogMessageMaxWidth", 160, 0, Integer.MAX_VALUE);
+            minBorderDistance = builder
+                    .comment("Minimum distance from the border of a context menu to the border of the screen",
+                            "If the context menu is created too close to the screen border, it will shift towards the center")
+                    .translation("config.harmonics.client.ctxMenuMinBorderDistance")
+                    .defineInRange("minBorderDistance", 4, 0, Integer.MAX_VALUE);
             enableInspections = builder
                     .comment("Set to true to enable debug highlighting for GUIs")
                     .define("enableInspections", false);
@@ -184,6 +196,6 @@ public final class Config {
     }
 
     static void onLoad(ModConfig.Loading event) {
-        StevesFactoryManager.logger.debug("Loaded {} config file {}", StevesFactoryManager.MODID, event.getConfig().getFileName());
+        StevesFactoryManager.logger.debug("Loaded {} config file {}", StevesFactoryManagerAPI.MODID, event.getConfig().getFileName());
     }
 }

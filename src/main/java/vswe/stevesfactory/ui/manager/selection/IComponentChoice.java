@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import vswe.stevesfactory.api.logic.IProcedureType;
 import vswe.stevesfactory.api.network.INetworkController;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
@@ -21,15 +21,17 @@ public interface IComponentChoice extends IWidget {
         int y1 = getAbsoluteY();
         int x2 = getAbsoluteX() + getWidth();
         int y2 = getAbsoluteY() + getHeight();
-        if (isInside(mouseX, mouseY)) {
-            RenderingHelper.drawCompleteTexture(x1, y1, x2, y2, SelectionPanel.BACKGROUND_HOVERED);
-        } else {
-            RenderingHelper.drawCompleteTexture(x1, y1, x2, y2, SelectionPanel.BACKGROUND_NORMAL);
-        }
+        Render2D.bindTexture(isInside(mouseX, mouseY) ? SelectionPanel.BACKGROUND_HOVERED : SelectionPanel.BACKGROUND_NORMAL);
+        Render2D.beginTexturedQuad();
+        Render2D.textureVertices(
+                x1, y1, x2, y2, getZLevel(),
+                0F, 0F, 1F, 1F
+        );
+        Render2D.draw();
     }
 
     default void createFlowComponent(IProcedureType<?> type) {
-        BlockPos controllerPos = ((FactoryManagerGUI) WidgetScreen.getCurrent()).getController().getPosition();
+        BlockPos controllerPos = ((FactoryManagerGUI) WidgetScreen.assertActive()).getController().getPosition();
         INetworkController controller = (INetworkController) Objects.requireNonNull(Minecraft.getInstance().world.getTileEntity(controllerPos));
         EditorPanel editor = getEditorPanel();
 

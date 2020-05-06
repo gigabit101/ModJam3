@@ -9,13 +9,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.IForgeRegistry;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.ui.intake.ItemIntakeContainer;
 import vswe.stevesfactory.ui.intake.ItemIntakeGUI;
 import vswe.stevesfactory.ui.manager.FactoryManagerContainer;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
-@EventBusSubscriber(modid = StevesFactoryManager.MODID, bus = Bus.MOD)
+@EventBusSubscriber(modid = StevesFactoryManagerAPI.MODID, bus = Bus.MOD)
 public final class ModContainers {
 
     private ModContainers() {
@@ -27,8 +27,8 @@ public final class ModContainers {
     @SubscribeEvent
     public static void registerContainers(RegistryEvent.Register<ContainerType<?>> event) {
         IForgeRegistry<ContainerType<?>> r = event.getRegistry();
-        r.register(factoryManagerContainer.setRegistryName(new ResourceLocation(StevesFactoryManager.MODID, "factory_manager")));
-        r.register(itemIntakeContainer.setRegistryName(new ResourceLocation(StevesFactoryManager.MODID, "item_intake")));
+        r.register(factoryManagerContainer.setRegistryName(new ResourceLocation(StevesFactoryManagerAPI.MODID, "factory_manager")));
+        r.register(itemIntakeContainer.setRegistryName(new ResourceLocation(StevesFactoryManagerAPI.MODID, "item_intake")));
     }
 
     public static void registerFactories() {

@@ -1,27 +1,31 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.library.gui.widget.AbstractContainer;
+import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.NumberField;
+import vswe.stevesfactory.library.gui.widget.TextField;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
+import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.logic.item.ItemTraitsFilter;
-import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
 
@@ -67,32 +71,37 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
             MultiLayerMenu<?> menu = getMenu();
             setDimensions(menu.getWidth(), menu.getContentHeight());
 
-            TextButton delete = new DeleteFilterButton();
+            ColoredTextButton delete = new DeleteFilterButton();
             delete.setText(I18n.format("menu.sfm.Delete"));
             delete.setDimensions(32, 11);
             delete.setLocation(getWidth() - delete.getWidth() - 2, 2);
-            delete.onClick = b -> {
+            delete.setClickAction(b -> {
                 closeEditor();
                 stack = ItemStack.EMPTY;
                 onSetStack();
-            };
-            AbstractIconButton close = new AbstractIconButton(getWidth() - 8 - 1, getHeight() - 8 - 1, 8, 8) {
+            });
+            AbstractIconButton close = new AbstractIconButton() {
+                {
+                    this.setLocation(getWidth() - 8 - 1, getHeight() - 8 - 1);
+                    this.setDimensions(8, 8);
+                }
+
                 @Override
-                public void render(int mouseX, int mouseY, float particleTicks) {
-                    super.render(mouseX, mouseY, particleTicks);
+                public void render(int mouseX, int mouseY, float partialTicks) {
+                    super.render(mouseX, mouseY, partialTicks);
                     if (isHovered()) {
-                        WidgetScreen.getCurrent().setHoveringText(I18n.format("menu.sfm.CloseEditor.Info"), mouseX, mouseY);
+                        WidgetScreen.assertActive().scheduleTooltip(I18n.format("menu.sfm.CloseEditor.Info"), mouseX, mouseY);
                     }
                 }
 
                 @Override
-                public TextureWrapper getTextureNormal() {
-                    return FactoryManagerGUI.CLOSE_ICON;
+                public Texture getTextureNormal() {
+                    return Render2D.CLOSE_ICON;
                 }
 
                 @Override
-                public TextureWrapper getTextureHovered() {
-                    return FactoryManagerGUI.CLOSE_ICON_HOVERED;
+                public Texture getTextureHovered() {
+                    return Render2D.CLOSE_ICON_HOVERED;
                 }
 
                 @Override
@@ -110,15 +119,18 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
             count = NumberField.integerFieldRanged(33, 12, 1, 1, Integer.MAX_VALUE);
             count.setValue(stack.getCount());
             count.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
-            count.setLabel(I18n.format("menu.sfm.ItemFilter.Traits.Amount"));
             count.onValueUpdated = stack::setCount;
             damage = NumberField.integerField(33, 12);
             damage.setValue(stack.getDamage());
             damage.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
-            damage.setLabel(I18n.format("menu.sfm.ItemFilter.Traits.Damage"));
             damage.onValueUpdated = stack::setDamage;
 
-            children = ImmutableList.of(close, delete, count, damage);
+            children = ImmutableList.of(
+                    close, delete, count, damage,
+                    // TODO label pos
+                    count.makeLabel().translate("menu.sfm.ItemFilter.Traits.Amount"),
+                    damage.makeLabel().translate("menu.sfm.ItemFilter.Traits.Damage")
+            );
             reflow();
         }
 
@@ -128,9 +140,9 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-            super.render(mouseX, mouseY, particleTicks);
+            super.renderChildren(mouseX, mouseY, partialTicks);
             renderItem();
             RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
         }
@@ -159,13 +171,13 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
         }
     }
 
-    private static class DeleteFilterButton extends TextButton {
+    private static class DeleteFilterButton extends ColoredTextButton {
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
-            super.render(mouseX, mouseY, particleTicks);
+        public void render(int mouseX, int mouseY, float partialTicks) {
+            super.render(mouseX, mouseY, partialTicks);
             if (isHovered()) {
-                WidgetScreen.getCurrent().setHoveringText(I18n.format("menu.sfm.Delete.Info"), mouseX, mouseY);
+                WidgetScreen.assertActive().scheduleTooltip(I18n.format("menu.sfm.Delete.Info"), mouseX, mouseY);
             }
         }
 

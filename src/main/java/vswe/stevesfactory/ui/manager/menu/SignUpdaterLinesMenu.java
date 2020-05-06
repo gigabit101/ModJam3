@@ -21,7 +21,7 @@ public class SignUpdaterLinesMenu extends Menu<SignUpdaterProcedure> {
         super.onLinkFlowComponent(flowComponent);
         SignUpdaterProcedure procedure = getLinkedProcedure();
         for (int i = 0; i < textFields.length; i++) {
-            TextField field = new TextField(0, 0, 80, 13);
+            TextField field = new TextField(80, 13);
             field.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
             field.setText(procedure.getTexts()[i]);
             textFields[i] = field;

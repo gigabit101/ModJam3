@@ -1,10 +1,9 @@
 package vswe.stevesfactory.ui.manager.editor;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import vswe.stevesfactory.api.logic.Connection;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
@@ -93,8 +92,8 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
 
     public static void drawConnectionLine(INode first, INode second) {
         drawConnectionLine(
-                RenderingHelper.getCenterXFor(first), RenderingHelper.getCenterYFor(first),
-                RenderingHelper.getCenterXFor(second), RenderingHelper.getCenterYFor(second)
+                Render2D.computeCenterX(first), Render2D.computeCenterY(first),
+                Render2D.computeCenterX(second), Render2D.computeCenterY(second)
         );
     }
 
@@ -152,7 +151,7 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         EditorPanel editor = FactoryManagerGUI.get().getTopLevel().editorPanel;
 
@@ -174,7 +173,7 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
                 }
             }
             for (INode child : children) {
-                child.render(mouseX - editor.getXOffset(), mouseY - editor.getYOffset(), particleTicks);
+                child.render(mouseX - editor.getXOffset(), mouseY - editor.getYOffset(), partialTicks);
             }
         }
         RenderSystem.popMatrix();
@@ -184,7 +183,7 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
             INode node = selectedNode.map(Function.identity(), Function.identity());
             // Manual translation due to the other end point needs to be at the mouse position
             ConnectionsPanel.drawConnectionLine(
-                    RenderingHelper.getCenterXFor(node) + editor.getXOffset(), RenderingHelper.getCenterYFor(node) + editor.getYOffset(),
+                    Render2D.computeCenterX(node) + editor.getXOffset(), Render2D.computeCenterY(node) + editor.getYOffset(),
                     mouseX, mouseY);
         }
 
@@ -286,7 +285,7 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
     public ConnectionsPanel addChildren(INode node) {
         if (!disabledModification) {
             children.add(node);
-            node.setParentWidget(this);
+            node.attach(this);
         }
         return this;
     }
@@ -307,7 +306,7 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
     public void addChildren(String group, INode node) {
         if (!disabledModification) {
             groupMappedChildren.computeIfAbsent(group, __ -> new HashSet<>()).add(node);
-            node.setParentWidget(this);
+            node.attach(this);
         }
     }
 

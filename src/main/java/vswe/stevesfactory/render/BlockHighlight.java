@@ -13,12 +13,12 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = StevesFactoryManager.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
+@EventBusSubscriber(modid = StevesFactoryManagerAPI.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
 public final class BlockHighlight {
 
     private static List<BlockHighlight> highlights = new ArrayList<>();

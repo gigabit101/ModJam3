@@ -1,23 +1,22 @@
 package vswe.stevesfactory.ui.intake;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import vswe.stevesfactory.blocks.ItemIntakeTileEntity;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.screen.DisplayListCaches;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.library.gui.window.AbstractWindow;
 import vswe.stevesfactory.network.NetworkHandler;
 import vswe.stevesfactory.network.PacketSyncIntakeData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.glCallList;
 
@@ -30,7 +29,7 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
     @Override
     protected void init() {
         super.init();
-        initializePrimaryWindow(new PrimaryWindow());
+        setPrimaryWindow(new PrimaryWindow());
     }
 
     @Override
@@ -44,11 +43,6 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
         super.removed();
     }
 
-    @Override
-    public PrimaryWindow getPrimaryWindow() {
-        return (PrimaryWindow) super.getPrimaryWindow();
-    }
-
     public class PrimaryWindow extends AbstractWindow {
 
         public static final int WIDTH = 180;
@@ -57,7 +51,7 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
         private int backgroundDL;
 
         private NumberField<Integer> radius;
-        private TextButton mode;
+        private ColoredTextButton mode;
         private Checkbox rendering;
         private List<IWidget> children = new ArrayList<>();
 
@@ -66,30 +60,33 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
             updatePosAndDL();
 
             radius = NumberField.integerFieldRanged(33, 12, 1, 0, container.intake.getMaximumRadius());
-            radius.setWindow(this);
+            radius.attachWindow(this);
             radius.setValue(container.intake.getRadius());
             radius.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
             radius.onValueUpdated = container.intake::setRadius;
-            mode = TextButton.of(container.intake.getMode().statusTranslationKey);
-            mode.setWindow(this);
-            mode.onClick = b -> {
+            mode = ColoredTextButton.of(container.intake.getMode().statusTranslationKey);
+            mode.attachWindow(this);
+            mode.setClickAction(b -> {
                 container.intake.cycleMode();
                 mode.setText(I18n.format(container.intake.getMode().statusTranslationKey));
-            };
-            rendering = new Checkbox(0, 0, 8, 8);
-            rendering.setWindow(this);
-            rendering.setLabel(I18n.format("gui.sfm.ItemIntake.RenderWorkingArea"));
+            });
+            rendering = new Checkbox();
+            rendering.setDimensions(8, 8);
+            rendering.attachWindow(this);
             rendering.setChecked(container.intake.isRendering());
             rendering.onStateChange = container.intake::setRendering;
+            Label renderingLabel = new Label(rendering).translate("gui.sfm.ItemIntake.RenderWorkingArea");
 
-            TextButton btnSaveData = TextButton.of("gui.sfm.ItemIntake.SaveData", b -> onClose());
-            btnSaveData.setWindow(this);
+            ColoredTextButton btnSaveData = ColoredTextButton.of("gui.sfm.ItemIntake.SaveData");
+            btnSaveData.attachWindow(this);
+            btnSaveData.setClickAction(b -> onClose());
             btnSaveData.setWidth(getContentWidth());
 
             children.add(radius);
             children.add(mode);
             children.add(rendering);
             children.add(btnSaveData);
+            children.add(renderingLabel);
             FlowLayout.vertical(children, 0, 0, 2);
 
             btnSaveData.alignBottom(getContentHeight());
@@ -111,11 +108,16 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
             glCallList(backgroundDL);
-            renderChildren(mouseX, mouseY, particleTicks);
-            RenderingHelper.drawTextCenteredVertically(I18n.format("gui.sfm.ItemIntake.Radius"), radius.getAbsoluteXRight() + 2, radius.getAbsoluteY(), radius.getAbsoluteYBottom(), 0xff404040);
+            renderChildren(mouseX, mouseY, partialTicks);
+            Render2D.renderVerticallyCenteredText(
+                    I18n.format("gui.sfm.ItemIntake.Radius"),
+                    radius.getAbsoluteXRight() + 2,
+                    radius.getAbsoluteY(), radius.getAbsoluteYBottom(),
+                    0F,
+                    0xff404040);
             RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
         }
     }

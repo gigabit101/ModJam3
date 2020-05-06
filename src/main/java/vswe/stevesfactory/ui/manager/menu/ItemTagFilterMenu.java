@@ -8,29 +8,33 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.*;
 import vswe.stevesfactory.library.gui.widget.TextField.BackgroundStyle;
-import vswe.stevesfactory.library.gui.widget.box.LinearList;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
+import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 import vswe.stevesfactory.logic.FilterType;
 import vswe.stevesfactory.logic.item.ItemTagFilter;
 import vswe.stevesfactory.logic.procedure.IItemFilterTarget;
-import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItemFilterTarget> extends MultiLayerMenu<P> {
 
     private final int id;
     private final String name;
 
-    private final RadioButton whitelist, blacklist;
-    private final LinearList<Entry> fields;
+    private final RadioInput whitelist, blacklist;
+    private final VerticalList<Entry> fields;
     private SettingsEditor settings;
 
     public ItemTagFilterMenu(int id) {
@@ -42,33 +46,38 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         this.name = name;
 
         RadioController filterTypeController = new RadioController();
-        whitelist = new RadioButton(filterTypeController);
-        blacklist = new RadioButton(filterTypeController);
+        whitelist = new RadioInput(filterTypeController);
+        blacklist = new RadioInput(filterTypeController);
         int y = HEADING_BOX.getPortionHeight() + 4;
         whitelist.setLocation(4, y);
-        whitelist.setLabel(I18n.format("gui.sfm.whitelist"));
         blacklist.setLocation(getWidth() / 2, y);
-        blacklist.setLabel(I18n.format("gui.sfm.blacklist"));
 
         int contentY = whitelist.getYBottom() + 4;
 
-        OpenSettingsButton openSettings = new OpenSettingsButton(getWidth() - 2 - 12, getHeight() + getContentHeight() - 2 - 12);
-        AbstractIconButton addEntryButton = new AbstractIconButton(getWidth() - 4 - 8, contentY, 8, 8) {
-            @Override
-            public TextureWrapper getTextureNormal() {
-                return FactoryManagerGUI.ADD_ENTRY_ICON;
+        OpenSettingsButton openSettings = new OpenSettingsButton();
+        openSettings.setLocation(getWidth() - 2 - 12, getHeight() + getContentHeight() - 2 - 12);
+
+        AbstractIconButton addEntryButton = new AbstractIconButton() {
+            {
+                this.setLocation(getWidth() - 4 - 8, contentY);
+                this.setDimensions(8, 8);
             }
 
             @Override
-            public TextureWrapper getTextureHovered() {
-                return FactoryManagerGUI.ADD_ENTRY_HOVERED_ICON;
+            public Texture getTextureNormal() {
+                return Render2D.ADD_ENTRY_ICON;
             }
 
             @Override
-            public void render(int mouseX, int mouseY, float particleTicks) {
-                super.render(mouseX, mouseY, particleTicks);
+            public Texture getTextureHovered() {
+                return Render2D.ADD_ENTRY_HOVERED_ICON;
+            }
+
+            @Override
+            public void render(int mouseX, int mouseY, float partialTicks) {
+                super.render(mouseX, mouseY, partialTicks);
                 if (isHovered()) {
-                    WidgetScreen.getCurrent().setHoveringText(I18n.format("menu.sfm.ItemFilter.Tags.AddEntry"), mouseX, mouseY);
+                    WidgetScreen.assertActive().scheduleTooltip(I18n.format("menu.sfm.ItemFilter.Tags.AddEntry"), mouseX, mouseY);
                 }
             }
 
@@ -80,14 +89,18 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
             }
         };
 
-        fields = new LinearList<>(addEntryButton.getX() - 4 * 2, getContentHeight() - whitelist.getHeight() - 4 * 2);
+        fields = new VerticalList<>();
         fields.setLocation(4, contentY);
+        fields.setDimensions(addEntryButton.getX() - 4 * 2, getContentHeight() - whitelist.getHeight() - 4 * 2);
 
         addChildren(whitelist);
         addChildren(blacklist);
         addChildren(fields);
         addChildren(addEntryButton);
         addChildren(openSettings);
+        // TODO label pos
+        addChildren(whitelist.makeLabel().translate("gui.sfm.whitelist"));
+        addChildren(blacklist.makeLabel().translate("gui.sfm.blacklist"));
     }
 
     @Override
@@ -121,14 +134,13 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
                 blacklist.check(true);
                 break;
         }
-        whitelist.onChecked = () -> filter.type = FilterType.WHITELIST;
-        blacklist.onChecked = () -> filter.type = FilterType.BLACKLIST;
+        whitelist.setCheckAction(() -> filter.type = FilterType.WHITELIST);
+        blacklist.setCheckAction(() -> filter.type = FilterType.BLACKLIST);
 
         settings = new SettingsEditor(this);
-        NumberField<Integer> stackLimitInput = settings.addIntegerInput(1, 0, Integer.MAX_VALUE);
+        NumberField<Integer> stackLimitInput = settings.addIntegerInput(1, 0, Integer.MAX_VALUE, "menu.sfm.ItemFilter.Traits.Amount");
         stackLimitInput.setValue(filter.stackLimit);
         stackLimitInput.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
-        stackLimitInput.setLabel(I18n.format("menu.sfm.ItemFilter.Traits.Amount"));
         stackLimitInput.onValueUpdated = i -> filter.stackLimit = i;
         Checkbox checkbox = settings.addOption(filter.isMatchingAmount(), "menu.sfm.ItemFilter.Traits.MatchAmount");
         checkbox.onStateChange = b -> {
@@ -172,27 +184,31 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         public Entry() {
             setDimensions(90, 14);
 
-            tag = new TextField(0, 0, 75, getHeight());
+            tag = new TextField();
+            tag.setDimensions(75, getHeight());
             tag.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
-            tag.setFontHeight(7);
+            tag.getTextRenderer().setFontHeight(7);
             int buttonSize = 9;
-            AbstractIconButton removeEntry = new AbstractIconButton(
-                    tag.getXRight() + 4, getHeight() / 2 - buttonSize / 2 - 1 /* Exclusive position, just to make it look nice */,
-                    buttonSize, buttonSize) {
-                @Override
-                public TextureWrapper getTextureNormal() {
-                    return FactoryManagerGUI.CLOSE_ICON;
+            AbstractIconButton removeEntry = new AbstractIconButton() {
+                {
+                    this.setLocation(tag.getXRight() + 4, getHeight() / 2 - buttonSize / 2 - 1 /* Exclusive position, just to make it look nice */);
+                    this.setDimensions(buttonSize, buttonSize);
                 }
 
                 @Override
-                public TextureWrapper getTextureHovered() {
-                    return FactoryManagerGUI.CLOSE_ICON_HOVERED;
+                public Texture getTextureNormal() {
+                    return Render2D.CLOSE_ICON;
+                }
+
+                @Override
+                public Texture getTextureHovered() {
+                    return Render2D.CLOSE_ICON_HOVERED;
                 }
 
                 @Override
                 public boolean mouseClicked(double mouseX, double mouseY, int button) {
                     Entry entry = Entry.this;
-                    LinearList<Entry> list = entry.getParentWidget();
+                    VerticalList<Entry> list = entry.getParent();
                     list.getChildren().remove(entry);
                     list.reflow();
                     return true;
@@ -203,9 +219,9 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-            super.render(mouseX, mouseY, particleTicks);
+            super.renderChildren(mouseX, mouseY, partialTicks);
             RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
         }
 
@@ -234,8 +250,8 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         @Nonnull
         @Override
         @SuppressWarnings("unchecked")
-        public LinearList<Entry> getParentWidget() {
-            return (LinearList<Entry>) Objects.requireNonNull(super.getParentWidget());
+        public VerticalList<Entry> getParent() {
+            return (VerticalList<Entry>) Objects.requireNonNull(super.getParent());
         }
     }
 }

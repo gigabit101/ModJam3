@@ -8,20 +8,23 @@ import vswe.stevesfactory.logic.procedure.RedstoneEmitterProcedure.OperationType
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
 
-    private final TextList paragraph;
+    private final Paragraph paragraph;
     private final NumberField<Integer> valueInput;
-    private final Map<OperationType, RadioButton> type;
+    private final Map<OperationType, RadioInput> type;
 
     public EmitterTypeMenu() {
         int y = HEADING_BOX.getPortionHeight() + 2;
 
-        paragraph = new TextList(0, 20, new ArrayList<>());
+        paragraph = new Paragraph(0, 20, new ArrayList<>());
         paragraph.setLocation(4, y);
-        paragraph.setFontHeight(7);
+        paragraph.getTextRenderer().setFontHeight(7);
         addChildren(paragraph);
 
         valueInput = NumberField.integerFieldRanged(33, 12, 15, 1, 15);
@@ -34,26 +37,27 @@ public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
         RadioController controller = new RadioController();
         type = new EnumMap<>(OperationType.class);
         for (OperationType type : OperationType.VALUES) {
-            RadioButton box = new RadioButton(controller);
-            box.setLabel(I18n.format(type.nameKey));
+            RadioInput box = new RadioInput(controller);
             addChildren(box);
+            // TODO label pos
+            addChildren(box.makeLabel().translate(type.nameKey));
             this.type.put(type, box);
         }
-        FlowLayout.reflow(4, 25, getWidth(), type);
+        FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 25, getWidth(), type);
     }
 
     @Override
     public void onLinkFlowComponent(FlowComponent<RedstoneEmitterProcedure> flowComponent) {
         super.onLinkFlowComponent(flowComponent);
         RedstoneEmitterProcedure procedure = getLinkedProcedure();
-        for (Map.Entry<OperationType, RadioButton> entry : type.entrySet()) {
-            RadioButton box = entry.getValue();
+        for (Map.Entry<OperationType, RadioInput> entry : type.entrySet()) {
+            RadioInput box = entry.getValue();
             OperationType type = entry.getKey();
-            box.onChecked = () -> {
+            box.setCheckAction(() -> {
                 procedure.setOperationType(type);
                 paragraph.getTexts().clear();
                 paragraph.addLineSplit(I18n.format("menu.sfm.RedstoneEmitter.Type.Info"));
-            };
+            });
         }
         type.get(procedure.getOperationType()).check(true);
         valueInput.setValue(procedure.getValue());

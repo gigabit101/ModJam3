@@ -1,5 +1,7 @@
 package vswe.stevesfactory.library.gui.screen;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -9,27 +11,43 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.library.collections.CompositeCollection;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
 import vswe.stevesfactory.library.gui.debug.Inspections;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.window.IPopupWindow;
 import vswe.stevesfactory.library.gui.window.IWindow;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.opengl.GL11.*;
+import static vswe.stevesfactory.library.gui.Render2D.*;
 
 public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerScreen<C> implements IGuiEventListener {
 
-    public static final TextureWrapper ITEM_SLOT = TextureWrapper.ofFlowComponent(0, 106, 18, 18);
-
-    public static WidgetScreen getCurrent() {
+    /**
+     * @throws ClassCastException If the current open screen is not a WidgetScreen
+     */
+    public static WidgetScreen assertActive() {
         return (WidgetScreen) Minecraft.getInstance().currentScreen;
+    }
+
+    @Nullable
+    public static WidgetScreen activeNullable() {
+        Screen screen = Minecraft.getInstance().currentScreen;
+        if (screen instanceof WidgetScreen) {
+            return (WidgetScreen) screen;
+        }
+        return null;
+    }
+
+    @Nonnull
+    public static Optional<WidgetScreen> active() {
+        Screen screen = Minecraft.getInstance().currentScreen;
+        return Optional.ofNullable(screen instanceof WidgetScreen ? (WidgetScreen) screen : null);
     }
 
     public static int screenWidth() {
@@ -53,19 +71,15 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
     private TreeSet<IPopupWindow> popupWindows = new TreeSet<>();
     private Collection<IWindow> windows;
 
-    private final Queue<Consumer<WidgetScreen<?>>> tasks = new ArrayDeque<>();
-
     private final WidgetTreeInspections inspectionHandler = new WidgetTreeInspections();
-
-    private final ArrayList<String> cachedHoveringTextList = new ArrayList<>();
-    private List<String> hoveringText;
-    private int hoveringTextX, hoveringTextY;
+    private final Queue<Triple<List<String>, Integer, Integer>> tooltipRenderQueue = new ArrayDeque<>();
+    private final Queue<Runnable> taskQueue = new ArrayDeque<>();
 
     protected WidgetScreen(C container, PlayerInventory inv, ITextComponent title) {
         super(container, inv, title);
         // Safe downwards erasure cast
-        @SuppressWarnings("unchecked") Collection<IWindow> popupWindows = (Collection<IWindow>) (Collection<? extends IWindow>) this.popupWindows.descendingSet();
-        windows = new CompositeCollection<>(regularWindows, popupWindows);
+        @SuppressWarnings("unchecked") Collection<IWindow> popupWindowsView = (Collection<IWindow>) (Collection<? extends IWindow>) new DescendingTreeSetBackedUnmodifiableCollection<>(popupWindows);
+        windows = new CompositeCollection<>(regularWindows, popupWindowsView);
     }
 
     @Override
@@ -79,8 +93,8 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
 
     @Override
     public void tick() {
-        while (!tasks.isEmpty()) {
-            tasks.remove().accept(this);
+        while (!taskQueue.isEmpty()) {
+            taskQueue.remove().run();
         }
 
         popupWindows.removeIf(popup -> {
@@ -91,21 +105,16 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
             return false;
         });
 
-        float particleTicks = Minecraft.getInstance().getRenderPartialTicks();
+        float partialTicks = Minecraft.getInstance().getRenderPartialTicks();
         for (IWindow window : windows) {
-            window.update(particleTicks);
+            window.update(partialTicks);
         }
-        primaryWindow.update(particleTicks);
+        primaryWindow.update(partialTicks);
     }
 
-    protected void initializePrimaryWindow(IWindow primaryWindow) {
-        if (this.primaryWindow == null) {
-            this.primaryWindow = primaryWindow;
-            xSize = primaryWindow.getWidth();
-            ySize = primaryWindow.getHeight();
-        } else {
-            throw new IllegalStateException("Already initialized the primary window " + this.primaryWindow);
-        }
+    protected final void setPrimaryWindow(IWindow primaryWindow) {
+        Preconditions.checkState(this.primaryWindow == null, "Already initialized the primary window " + this.primaryWindow);
+        this.primaryWindow = primaryWindow;
     }
 
     public IWindow getPrimaryWindow() {
@@ -117,22 +126,30 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
         // Dark transparent overlay
         renderBackground();
 
-        RenderSystem.texParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        RenderSystem.enableAlphaTest();
-
         inspectionHandler.startCycle();
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableAlphaTest();
         primaryWindow.render(mouseX, mouseY, partialTicks);
         for (IWindow window : regularWindows) {
             window.render(mouseX, mouseY, partialTicks);
         }
+        // We want to render things away from the screen first (painter's algorithm)
+        RenderSystem.pushMatrix();
+        float zOff = CONTEXT_MENU_Z - POPUP_WINDOW_Z;
         for (IPopupWindow window : popupWindows) {
             window.render(mouseX, mouseY, partialTicks);
+            RenderSystem.translatef(0F, 0F, zOff);
         }
+        RenderSystem.popMatrix();
+        RenderSystem.disableDepthTest();
         inspectionHandler.endCycle();
 
-        if (hoveringText != null) {
-            GuiUtils.drawHoveringText(hoveringText, hoveringTextX, hoveringTextY, screenWidth(), screenHeight(), Integer.MAX_VALUE, font);
-            hoveringText = null;
+        // This should do nothing because we are not adding vanilla buttons
+        super.render(mouseX, mouseY, partialTicks);
+
+        while (!tooltipRenderQueue.isEmpty()) {
+            Triple<List<String>, Integer, Integer> entry = tooltipRenderQueue.remove();
+            GuiUtils.drawHoveringText(entry.getLeft(), entry.getMiddle(), entry.getRight(), windowWidth(), windowHeight(), Integer.MAX_VALUE, fontRenderer());
         }
     }
 
@@ -148,6 +165,7 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean captured = false;
+        IPopupWindow capturedWindow = null;
         passEvents:
         {
             for (IWindow window : regularWindows) {
@@ -156,15 +174,18 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
                     break passEvents;
                 }
             }
-            for (IPopupWindow window : popupWindows.descendingSet()) {
+            for (IPopupWindow window : popupWindows) {
                 if (window.mouseClicked(mouseX, mouseY, button)) {
-                    raiseWindowToTop(window);
+                    capturedWindow = window;
                     captured = true;
                     break passEvents;
                 }
             }
         }
 
+        if (capturedWindow != null) {
+            raiseWindowToTop(capturedWindow);
+        }
         if (captured) {
             return true;
         } else {
@@ -219,6 +240,7 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
             return true;
         }
         if (keyCode == GLFW_KEY_E) {
+            this.onClose();
             Minecraft.getInstance().player.closeScreen();
             return true;
         }
@@ -249,11 +271,6 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
             window.onRemoved();
         }
         primaryWindow.onRemoved();
-        super.removed();
-    }
-
-    public void scheduleTask(Consumer<WidgetScreen<?>> task) {
-        tasks.add(task);
     }
 
     @Override
@@ -261,34 +278,32 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
         return false;
     }
 
-    public void setHoveringText(List<String> hoveringText, int x, int y) {
-        this.hoveringText = hoveringText;
-        this.hoveringTextX = x + RenderingHelper.getTranslationX();
-        this.hoveringTextY = y + RenderingHelper.getTranslationY();
-    }
-
-    public void setHoveringText(ItemStack stack, int x, int y) {
-        setHoveringText(getTooltipFromItem(stack), x, y);
-    }
-
-    public void setHoveringText(String hoveringText, int x, int y) {
-        cachedHoveringTextList.clear();
-        cachedHoveringTextList.add(hoveringText);
-        setHoveringText(cachedHoveringTextList, x, y);
-    }
-
     public void addPopupWindow(IPopupWindow popup) {
-        // TODO proper solution to button in popup that creates a popup
-        scheduleTask(__ -> {
-            popup.setOrder(nextOrderIndex());
-            popupWindows.add(popup);
-            popup.onAdded(this);
-        });
+        popup.setOrder(nextOrderIndex());
+        popupWindows.add(popup);
+        popup.onAdded(this);
     }
 
     public void removePopupWindow(IPopupWindow popup) {
         popupWindows.remove(popup);
         popup.onRemoved();
+    }
+
+    public void defer(Runnable task) {
+        taskQueue.add(task);
+    }
+
+    @SuppressWarnings("SuspiciousNameCombination") // Tuple3 is acting weird
+    public void scheduleTooltip(List<String> lines, int x, int y) {
+        tooltipRenderQueue.add(Triple.of(lines, x, y));
+    }
+
+    public void scheduleTooltip(String line, int x, int y) {
+        scheduleTooltip(ImmutableList.of(line), x, y);
+    }
+
+    public void scheduleTooltip(ItemStack stack, int x, int y) {
+        scheduleTooltip(getTooltipFromItem(stack), x, y);
     }
 
     private int nextOrderIndex = 0;

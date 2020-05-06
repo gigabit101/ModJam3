@@ -1,20 +1,27 @@
 package vswe.stevesfactory.library.gui.widget;
 
+import com.google.common.base.Preconditions;
+import com.mojang.datafixers.util.Either;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.Inspections;
-import vswe.stevesfactory.library.gui.layout.ILayoutDataProvider;
 import vswe.stevesfactory.library.gui.layout.properties.*;
+import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
 import vswe.stevesfactory.library.gui.window.IWindow;
+import vswe.stevesfactory.utils.Utils;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 
-public abstract class AbstractWidget implements IWidget, Inspections.IInspectionInfoProvider, ILayoutDataProvider {
+public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvider, Inspections.IHighlightRenderer, ISizedBox, ResizableWidgetMixin {
 
     private Point location;
     private Dimension dimensions;
-    private boolean enabled = true;
+    private Insets border = new Insets(0, 0, 0, 0);
+    private float z = 0F;
 
+    private boolean enabled = true;
     private IWindow window;
     private IWidget parent;
 
@@ -22,95 +29,98 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     private int absX;
     private int absY;
 
-    public AbstractWidget(IWindow window) {
-        this(0, 0, window.getContentDimensions().width, window.getContentDimensions().height);
-        this.window = window;
-    }
-
     public AbstractWidget() {
-        this(0, 0, 0, 0);
-    }
-
-    public AbstractWidget(int x, int y, int width, int height) {
-        this(new Point(x, y), new Dimension(width, height));
-    }
-
-    public AbstractWidget(Point location, Dimension dimensions) {
-        this.location = location;
-        this.dimensions = dimensions;
+        this.location = new Point();
+        this.dimensions = new Dimension();
     }
 
     @Override
-    public void setParentWidget(IWidget newParent) {
+    public void attach(IWidget newParent) {
+        IWidget oldParent = parent;
         this.parent = newParent;
         this.window = newParent.getWindow();
         onParentPositionChanged();
+        onAttach(oldParent, newParent);
+        if (oldParent == null) {
+            onInitialAttach();
+        }
+        z = newParent.getZLevel() + 1F;
     }
 
-    public void setWindow(IWindow window) {
+    public void onAttach(@Nullable IWidget oldParent, IWidget newParent) {
+    }
+
+    public void onInitialAttach() {
+    }
+
+    @Override
+    public boolean isValid() {
+        return parent != null || window != null;
+    }
+
+    public void attachWindow(IWindow window) {
+        IWindow oldWindow = this.window;
         this.window = window;
+        this.z = window.getZLevel() + 1F;
+        if (oldWindow == null) {
+            onInitialAttach();
+        }
         onParentPositionChanged();
     }
 
     @Override
     public void onParentPositionChanged() {
+        Preconditions.checkState(isValid());
         updateAbsolutePosition();
     }
 
     @Override
     public void onRelativePositionChanged() {
-        updateAbsolutePosition();
+        if (isValid()) {
+            updateAbsolutePosition();
+        }
     }
 
     private void updateAbsolutePosition() {
-        absX = getParentAbsXSafe() + getX();
-        absY = getParentAbsYSafe() + getY();
+        absX = getParentAbsXSafe() + getX() + getBorderLeft();
+        absY = getParentAbsYSafe() + getY() + getBorderTop();
     }
 
     private int getParentAbsXSafe() {
         if (parent != null) {
             return parent.getAbsoluteX();
         }
-        if (window != null) {
-            return window.getContentX();
-        }
-        return 0;
+        return window.getContentX();
     }
 
     private int getParentAbsYSafe() {
         if (parent != null) {
             return parent.getAbsoluteY();
         }
-        if (window != null) {
-            return window.getContentY();
-        }
-        return 0;
+        return window.getContentY();
     }
 
-    /**
-     * A safe version of {@code getParentWidget().getHeight()} that prevents NPE.
-     */
     public int getParentHeight() {
         if (parent != null) {
-            return parent.getHeight();
+            return parent.getFullHeight();
         }
-        if (window != null) {
-            return window.getContentHeight();
+        return window.getContentHeight();
+    }
+
+    public int getParentWidth() {
+        if (parent != null) {
+            return parent.getFullWidth();
         }
-        return 0;
+        return window.getContentWidth();
     }
 
     /**
-     * A safe version of {@code getParentWidget().getWidth()} that prevents NPE.
+     * Helper method to set focus of a specific element. Notice this would cancel the originally focus element.
      */
-    public int getParentWidth() {
-        if (parent != null) {
-            return parent.getWidth();
+    public void setFocused(boolean focused) {
+        if (isValid()) {
+            getWindow().setFocusedWidget(focused ? this : null);
         }
-        if (window != null) {
-            return window.getContentWidth();
-        }
-        return 0;
     }
 
     public void fillParentContainer() {
@@ -119,66 +129,52 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     public void expandHorizontally() {
-        setWidth(Math.max(getWidth(), getParentWidth()));
+        setWidth(Math.max(getFullWidth(), getParentWidth()));
     }
 
     public void expandVertically() {
-        setHeight(Math.max(getHeight(), getParentHeight()));
+        setHeight(Math.max(getFullHeight(), getParentHeight()));
     }
 
     @Override
     public boolean isFocused() {
-        return getWindow().getFocusedWidget() == this;
+        return isValid() && getWindow().getFocusedWidget() == this;
     }
 
-    @Override
-    public Point getPosition() {
-        return location;
+    public Label makeLabel() {
+        return new Label(this);
     }
 
-    @Override
-    public int getAbsoluteX() {
-        return absX;
-    }
+    public void alignTo(IWidget other, Side side, Either<HorizontalAlignment, VerticalAlignment> alignment) {
+        if (this.getParent() != other.getParent()) {
+            return;
+        }
 
-    @Override
-    public int getAbsoluteY() {
-        return absY;
-    }
-
-    public int getAbsoluteXRight() {
-        return getAbsoluteX() + getWidth();
-    }
-
-    public int getAbsoluteYBottom() {
-        return getAbsoluteY() + getHeight();
-    }
-
-    public void alignTo(IWidget other, Side side, HorizontalAlignment alignment) {
         int otherLeft = other.getX();
         int otherTop = other.getY();
-        int otherRight = otherLeft + other.getWidth();
-        int otherBottom = otherTop + other.getHeight();
+        int otherRight = otherLeft + other.getFullWidth();
+        int otherBottom = otherTop + other.getFullHeight();
+
         alignTo(otherLeft, otherTop, otherRight, otherBottom, side, alignment);
     }
 
-    public void alignTo(int otherLeft, int otherTop, int otherRight, int otherBottom, Side side, HorizontalAlignment alignment) {
+    public void alignTo(int otherLeft, int otherTop, int otherRight, int otherBottom, Side side, Either<HorizontalAlignment, VerticalAlignment> alignment) {
         switch (side) {
             case TOP:
                 alignBottom(otherTop);
-                alignHorizontally(alignment, otherLeft, otherRight);
+                alignHorizontally(Utils.leftOrThrow(alignment), otherLeft, otherRight);
                 break;
             case BOTTOM:
                 alignTop(otherBottom);
-                alignHorizontally(alignment, otherLeft, otherRight);
+                alignHorizontally(Utils.leftOrThrow(alignment), otherLeft, otherRight);
                 break;
             case LEFT:
                 alignRight(otherLeft);
-                alignVertically(alignment, otherTop, otherBottom);
+                alignVertically(Utils.rightOrThrow(alignment), otherTop, otherBottom);
                 break;
             case RIGHT:
                 alignLeft(otherRight);
-                alignVertically(alignment, otherTop, otherBottom);
+                alignVertically(Utils.rightOrThrow(alignment), otherTop, otherBottom);
                 break;
         }
     }
@@ -197,15 +193,15 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
         }
     }
 
-    private void alignVertically(HorizontalAlignment alignment, int top, int bottom) {
+    private void alignVertically(VerticalAlignment alignment, int top, int bottom) {
         switch (alignment) {
-            case LEFT:
+            case TOP:
                 alignTop(top);
                 break;
             case CENTER:
                 alignCenterY(top, bottom);
                 break;
-            case RIGHT:
+            case BOTTOM:
                 alignBottom(bottom);
                 break;
         }
@@ -216,11 +212,11 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     public void alignCenterX(int left, int right) {
-        setX(left + (right - left) / 2 - getWidth() / 2);
+        setX(Render2D.computeCenterX(left, right, getFullWidth()));
     }
 
     public void alignRight(int right) {
-        setX(right - getWidth());
+        setX(Render2D.computeRightX(right, getFullWidth()));
     }
 
     public void alignTop(int top) {
@@ -228,11 +224,21 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     public void alignCenterY(int top, int bottom) {
-        setY(top + (bottom - top) / 2 - getHeight() / 2);
+        setY(Render2D.computeCenterY(top, bottom, getFullHeight()));
     }
 
     public void alignBottom(int bottom) {
-        setY(bottom - getHeight());
+        setY(Render2D.computeBottomY(bottom, getFullHeight()));
+    }
+
+    @Override
+    public float getZLevel() {
+        return z;
+    }
+
+    @Override
+    public Point getPosition() {
+        return location;
     }
 
     @Override
@@ -240,9 +246,143 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
         return dimensions;
     }
 
+    @Override
+    public Insets getBorders() {
+        return border;
+    }
+
+    @Override
+    public void setLocation(Point point) {
+        setLocation(point.x, point.y);
+    }
+
+    @Override
+    public void setLocation(int x, int y) {
+        getPosition().x = x;
+        getPosition().y = y;
+        onRelativePositionChanged();
+    }
+
+    @Override
+    public void setX(int x) {
+        getPosition().x = x;
+        onRelativePositionChanged();
+    }
+
+    @Override
+    public void setY(int y) {
+        getPosition().y = y;
+        onRelativePositionChanged();
+    }
+
+    @Override
+    public int getX() {
+        return location.x;
+    }
+
+    @Override
+    public int getY() {
+        return location.y;
+    }
+
+    public int getXRight() {
+        return location.x + getFullWidth();
+    }
+
+    public int getYBottom() {
+        return location.y + getFullHeight();
+    }
+
+    @Override
+    public int getInnerX() {
+        return location.x + border.left;
+    }
+
+    @Override
+    public int getInnerY() {
+        return location.y + border.top;
+    }
+
+    public int getInnerXRight() {
+        return location.x + border.left + dimensions.width;
+    }
+
+    public int getInnerYBottom() {
+        return location.y + border.top + dimensions.height;
+    }
+
+    @Override
+    public int getAbsoluteX() {
+        return absX;
+    }
+
+    @Override
+    public int getAbsoluteY() {
+        return absY;
+    }
+
+    public int getAbsoluteXRight() {
+        return absX + dimensions.width;
+    }
+
+    public int getAbsoluteYBottom() {
+        return absY + dimensions.height;
+    }
+
+    @Override
+    public int getOuterAbsoluteX() {
+        return absX - border.left;
+    }
+
+    @Override
+    public int getOuterAbsoluteY() {
+        return absY - border.top;
+    }
+
+    public int getOuterAbsoluteXRight() {
+        return absX + getFullWidth();
+    }
+
+    public int getOuterAbsoluteYBottom() {
+        return absY + getFullHeight();
+    }
+
+    @Override
+    public int getWidth() {
+        return dimensions.width;
+    }
+
+    @Override
+    public int getHeight() {
+        return dimensions.height;
+    }
+
+    @Override
+    public int getFullWidth() {
+        return border.left + dimensions.width + border.right;
+    }
+
+    @Override
+    public int getFullHeight() {
+        return border.top + dimensions.height + border.bottom;
+    }
+
+    public void moveX(int dx) {
+        setX(getX() + dx);
+    }
+
+    public void moveY(int dy) {
+        setY(getY() + dy);
+    }
+
+    public void move(int dx, int dy) {
+        moveX(dx);
+        moveY(dy);
+    }
+
     @Nullable
     @Override
-    public IWidget getParentWidget() {
+    public IWidget getParent() {
         return parent;
     }
 
@@ -263,10 +403,10 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
 
     @Override
     public boolean isInside(double x, double y) {
-        return getAbsoluteX() <= x &&
-                getAbsoluteXRight() > x &&
-                getAbsoluteY() <= y &&
-                getAbsoluteYBottom() > y;
+        return getOuterAbsoluteX() <= x &&
+                getOuterAbsoluteXRight() > x &&
+                getOuterAbsoluteY() <= y &&
+                getOuterAbsoluteYBottom() > y;
     }
 
     @Override
@@ -275,42 +415,108 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInspection
     }
 
     @Override
-    public int getX() {
-        return getPosition().x;
-    }
-
-    public int getXRight() {
-        return getX() + getWidth();
-    }
-
-    @Override
-    public int getY() {
-        return getPosition().y;
-    }
-
-    public int getYBottom() {
-        return getY() + getHeight();
-    }
-
-    @Override
-    public int getWidth() {
-        return getDimensions().width;
-    }
-
-    @Override
-    public int getHeight() {
-        return getDimensions().height;
-    }
-
-    @Override
     public void provideInformation(ITextReceiver receiver) {
         receiver.line(this.toString());
-        receiver.line("X=" + this.getX());
-        receiver.line("Y=" + this.getY());
-        receiver.line("AbsX=" + this.getAbsoluteX());
-        receiver.line("AbsY=" + this.getAbsoluteY());
-        receiver.line("Width=" + this.getWidth());
-        receiver.line("Height=" + this.getHeight());
-        receiver.line("Enabled=" + this.isEnabled());
+        receiver.line("Position=(" + location.x + ", " + location.y + ")");
+        receiver.line("Dimensions=(" + dimensions.width + ", " + dimensions.height + ")");
+        receiver.line(String.format("Borders={top: %d, right: %d, bottom: %d, left: %d}", border.top, border.right, border.bottom, border.left));
+        receiver.line("Enabled=" + isEnabled());
+        receiver.line("Z=" + z);
+        receiver.line("AbsX=" + getAbsoluteX());
+        receiver.line("AbsY=" + getAbsoluteY());
+    }
+
+    @Override
+    public void renderHighlight() {
+        Inspections.renderBorderedHighlight(
+                getOuterAbsoluteX(), getOuterAbsoluteY(),
+                getAbsoluteX(), getAbsoluteY(),
+                getWidth(), getHeight(),
+                getFullWidth(), getFullHeight());
+    }
+
+    @Override
+    public int getBorderTop() {
+        return border.top;
+    }
+
+    @Override
+    public int getBorderRight() {
+        return border.right;
+    }
+
+    @Override
+    public int getBorderBottom() {
+        return border.bottom;
+    }
+
+    @Override
+    public int getBorderLeft() {
+        return border.left;
+    }
+
+    public int getVerticalBorder() {
+        return border.top + border.bottom;
+    }
+
+    public int getHorizontalBorder() {
+        return border.left + border.right;
+    }
+
+    @Override
+    public void setBorderTop(int top) {
+        border.top = top;
+        onBorderChanged();
+    }
+
+    @Override
+    public void setBorderRight(int right) {
+        border.right = right;
+        onBorderChanged();
+    }
+
+    @Override
+    public void setBorderBottom(int bottom) {
+        border.bottom = bottom;
+        onBorderChanged();
+    }
+
+    @Override
+    public void setBorderLeft(int left) {
+        border.left = left;
+        onBorderChanged();
+    }
+
+    @Override
+    public void setBorders(int top, int right, int bottom, int left) {
+        border.top = top;
+        border.right = right;
+        border.bottom = bottom;
+        border.left = left;
+        onBorderChanged();
+    }
+
+    @Override
+    public void setBorders(int borders) {
+        setBorders(borders, borders, borders, borders);
+    }
+
+    protected void onBorderChanged() {
+        if (isValid()) {
+            updateAbsolutePosition();
+        }
+    }
+
+    public final void createContextMenu(double x, double y) {
+        ContextMenuBuilder builder = new ContextMenuBuilder();
+        buildContextMenu(builder);
+        builder.buildAndAdd();
+    }
+
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+    }
+
+    public enum Alignment {
+        TOP_LEFT, CENTER, BOTTOM_RIGHT
     }
 }

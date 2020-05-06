@@ -1,9 +1,9 @@
 package vswe.stevesfactory.ui.manager.tool.inspector;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.TextRenderer;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.CallbackIconButton;
@@ -19,12 +19,12 @@ import java.util.List;
 
 public class StatusPanel extends AbstractContainer<IWidget> {
 
-    public static final TextureWrapper RENAME_NORMAL = TextureWrapper.ofFlowComponent(0, 124, 9, 9);
-    public static final TextureWrapper RENAME_HOVERING = RENAME_NORMAL.toRight(1);
-    public static final TextureWrapper SUBMIT_NORMAL = TextureWrapper.ofFlowComponent(0, 133, 7, 7);
-    public static final TextureWrapper SUBMIT_HOVERING = SUBMIT_NORMAL.toRight(1);
-    public static final TextureWrapper CANCEL_NORMAL = TextureWrapper.ofFlowComponent(0, 140, 7, 7);
-    public static final TextureWrapper CANCEL_HOVERING = CANCEL_NORMAL.toRight(1);
+    public static final Texture RENAME_NORMAL = Render2D.ofFlowComponent(0, 124, 9, 9);
+    public static final Texture RENAME_HOVERING = RENAME_NORMAL.right(1);
+    public static final Texture SUBMIT_NORMAL = Render2D.ofFlowComponent(0, 133, 7, 7);
+    public static final Texture SUBMIT_HOVERING = SUBMIT_NORMAL.right(1);
+    public static final Texture CANCEL_NORMAL = Render2D.ofFlowComponent(0, 140, 7, 7);
+    public static final Texture CANCEL_HOVERING = CANCEL_NORMAL.right(1);
 
     private FlowComponent<?> opened = null;
     private List<IWidget> children = new ArrayList<>();
@@ -36,10 +36,11 @@ public class StatusPanel extends AbstractContainer<IWidget> {
     private String previousName;
 
     public StatusPanel() {
-        super(0, 0, 120, 64);
+        this.setDimensions(120, 64);
 
-        nameBox = new TextField(2, 6, 100, 16);
-        nameBox.setParentWidget(this);
+        nameBox = new TextField(100, 16);
+        nameBox.setLocation(2, 6);
+        nameBox.attach(this);
         nameBox.setBackgroundStyle(TextField.BackgroundStyle.NONE);
         nameBox.setTextColor(0xff303030, 0xff303030);
         nameBox.setEditable(false);
@@ -48,7 +49,7 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         int baseX = getXRight() - 10;
         int baseY = 2;
         renameButton = new CallbackIconButton(RENAME_NORMAL, RENAME_HOVERING);
-        renameButton.setParentWidget(this);
+        renameButton.attach(this);
         renameButton.setLocation(baseX, baseY + 6);
         renameButton.setEnabled(false);
         renameButton.onClick = b -> {
@@ -60,7 +61,7 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         };
         children.add(renameButton);
         submitButton = new CallbackIconButton(SUBMIT_NORMAL, SUBMIT_HOVERING);
-        submitButton.setParentWidget(this);
+        submitButton.attach(this);
         submitButton.setLocation(baseX + 2, baseY + 3);
         submitButton.setEnabled(false);
         submitButton.onClick = b -> {
@@ -74,7 +75,7 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         };
         children.add(submitButton);
         cancelButton = new CallbackIconButton(CANCEL_NORMAL, CANCEL_HOVERING);
-        cancelButton.setParentWidget(this);
+        cancelButton.attach(this);
         cancelButton.setLocation(baseX + 2, baseY + 11);
         cancelButton.setEnabled(false);
         cancelButton.onClick = b -> {
@@ -107,24 +108,30 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         nameBox.setEditable(false);
         nameBox.scrollToFront();
         previousName = "";
-        getWindow().changeFocus(nameBox, false);
+        getWindow().setFocusedWidget(null);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
         int x = getAbsoluteX();
         int y = getAbsoluteY();
         if (opened != null) {
             int y2 = y + 2 + 16 /* height of name */ + 2 /* margin */;
-            ToolboxPanel.GROUP_LIST_ICON.draw(x + 2, y2, 8, 8);
-            RenderingHelper.drawText(GroupButton.formatGroupName(opened.getGroup()), x + 2 + 8 + 2, y2, 7, 0xff404040);
+            ToolboxPanel.GROUP_LIST_ICON.render(x + 2, y2, 8, 8);
+            TextRenderer tr = TextRenderer.vanilla();
+            tr.setFontHeight(7);
+            tr.setTextColor(0xff404040);
+            tr.renderText(GroupButton.formatGroupName(opened.getGroup()), x + 2 + 8 + 2, y2, getZLevel());
         } else {
-            RenderingHelper.drawText(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.NoTarget"), x + 2, y + 2, 9, 0xff404040);
+            TextRenderer tr = TextRenderer.vanilla();
+            tr.setFontHeight(9);
+            tr.setTextColor(0xff404040);
+            tr.renderText(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.NoTarget"), x + 2, y + 2, getZLevel());
         }
 
-        super.render(mouseX, mouseY, particleTicks);
+        super.renderChildren(mouseX, mouseY, partialTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 

@@ -8,17 +8,16 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.IForgeRegistry;
 import vswe.stevesfactory.Config;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IProcedureType;
 import vswe.stevesfactory.api.visibility.GUIVisibility;
-import vswe.stevesfactory.library.gui.RenderingHelper;
 import vswe.stevesfactory.logic.SimpleProcedureType;
 import vswe.stevesfactory.logic.procedure.*;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = StevesFactoryManager.MODID, bus = Bus.MOD)
+@EventBusSubscriber(modid = StevesFactoryManagerAPI.MODID, bus = Bus.MOD)
 public final class ModProcedures {
 
     private ModProcedures() {
@@ -59,8 +58,8 @@ public final class ModProcedures {
     }
 
     private static <P extends IProcedure> IProcedureType<P> create(String id, Supplier<P> constructor, ForgeConfigSpec.BooleanValue enabledGetter) {
-        IProcedureType<P> p = new SimpleProcedureType<>(constructor, RenderingHelper.linkTexture("gui/procedure_icon", id + ".png"));
-        ResourceLocation rl = new ResourceLocation(StevesFactoryManager.MODID, id);
+        IProcedureType<P> p = new SimpleProcedureType<>(constructor, new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/procedure_icon/" + id + ".png"));
+        ResourceLocation rl = new ResourceLocation(StevesFactoryManagerAPI.MODID, id);
         p.setRegistryName(rl);
         GUIVisibility.registerEnableState(rl, enabledGetter::get);
         return p;

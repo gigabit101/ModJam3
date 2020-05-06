@@ -2,29 +2,32 @@ package vswe.stevesfactory.ui.manager.selection;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.api.logic.IProcedureType;
 import vswe.stevesfactory.library.collections.CompositeUnmodifiableList;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI.TopLevelWidget;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
-import static vswe.stevesfactory.ui.manager.FactoryManagerGUI.DOWN_RIGHT_4_STRICT_TABLE;
+import static vswe.stevesfactory.library.gui.Render2D.DOWN_RIGHT_4_STRICT_TABLE;
 
 public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
 
-    public static final ResourceLocation BACKGROUND_NORMAL = new ResourceLocation(StevesFactoryManager.MODID, "textures/gui/component_background/background_normal.png");
-    public static final ResourceLocation BACKGROUND_HOVERED = new ResourceLocation(StevesFactoryManager.MODID, "textures/gui/component_background/background_hovered.png");
+    public static final ResourceLocation BACKGROUND_NORMAL = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/component_background/background_normal.png");
+    public static final ResourceLocation BACKGROUND_HOVERED = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/component_background/background_hovered.png");
 
     private final ImmutableList<IComponentChoice> staticIcons;
     private final List<IComponentChoice> addendumIcons;
@@ -50,10 +53,10 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         for (IComponentChoice icon : staticIcons) {
-            icon.render(mouseX, mouseY, particleTicks);
+            icon.render(mouseX, mouseY, partialTicks);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
@@ -70,14 +73,14 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
         int w = getChildren().stream()
                 .max(Comparator.comparingInt(IWidget::getX))
                 .map(furthest -> furthest.getX() + furthest.getWidth())
-                .orElse(0) + DOWN_RIGHT_4_STRICT_TABLE.componentMargin;
+                .orElse(0) + DOWN_RIGHT_4_STRICT_TABLE.tableGap;
         setWidth(w);
     }
 
     @Nonnull
     @Override
-    public TopLevelWidget getParentWidget() {
-        return Objects.requireNonNull((TopLevelWidget) super.getParentWidget());
+    public TopLevelWidget getParent() {
+        return Objects.requireNonNull((TopLevelWidget) super.getParent());
     }
 
     @Override
@@ -88,18 +91,18 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
         if (isInside(mouseX, mouseY)) {
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 getWindow().setFocusedWidget(this);
+                return true;
             } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                openActionMenu();
+                return false;
             }
-            return true;
         }
         return false;
     }
 
-    private void openActionMenu() {
-        ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
-        ));
-        WidgetScreen.getCurrent().addPopupWindow(contextMenu);
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        super.buildContextMenu(builder);
     }
 }

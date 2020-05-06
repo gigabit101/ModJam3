@@ -65,7 +65,7 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
         // 0 1 2
         // 3 4 5 P
         // 6 7 8
-        product.alignTo(ingredients[5], Side.RIGHT, HorizontalAlignment.CENTER);
+        product.alignTo(ingredients[5], Side.RIGHT, HorizontalAlignment.CENTER.asUnion());
         product.moveX(4);
     }
 

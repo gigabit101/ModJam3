@@ -1,19 +1,19 @@
 package vswe.stevesfactory.ui.manager.tool.group;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.resources.I18n;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.TextButton;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.widget.TextField;
+import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
-public class GroupButton extends TextButton {
+public class GroupButton extends ColoredTextButton {
 
     public static String formatGroupName(String group) {
         return group.isEmpty() ? I18n.format("gui.sfm.FactoryManager.Tool.Group.DefaultGroup") : group;
@@ -33,19 +33,19 @@ public class GroupButton extends TextButton {
                 actionSwitchGroup();
                 return true;
             case GLFW_MOUSE_BUTTON_RIGHT:
-                openContextMenu();
+                createContextMenu(mouseX, mouseY);
                 return true;
         }
         return false;
     }
 
-    private void openContextMenu() {
-        ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(FactoryManagerGUI.DELETE_ICON, "gui.sfm.FactoryManager.Tool.Group.Delete", b -> actionDelete()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.RenameGroup", b -> actionRename()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.MoveContent", b -> actionMoveContent())
-        ));
-        WidgetScreen.getCurrent().addPopupWindow(contextMenu);
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(Render2D.DELETE, "gui.sfm.FactoryManager.Tool.Group.Delete", b -> actionDelete()));
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.RenameGroup", b -> actionRename()));
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.MoveContent", b -> actionMoveContent()));
+        super.buildContextMenu(builder);
     }
 
     private void actionSwitchGroup() {
@@ -59,7 +59,11 @@ public class GroupButton extends TextButton {
     private void actionRename() {
         Dialog.createPrompt(
                 "gui.sfm.FactoryManager.Tool.Group.RenameGroup.Prompt",
-                () -> new TextField(0, 0, 0, 16),
+                () -> {
+                    TextField result = new TextField();
+                    result.setHeight(16);
+                    return result;
+                },
                 "gui.sfm.ok", "gui.sfm.cancel",
                 (b, newName) -> {
                     for (String group : FactoryManagerGUI.get().groupModel.getGroups()) {
@@ -70,7 +74,8 @@ public class GroupButton extends TextButton {
                     }
                     FactoryManagerGUI.get().groupModel.updateGroup(group, newName);
                 },
-                (b, newName) -> {}).tryAddSelfToActiveGUI();
+                (b, newName) -> {
+                }).tryAddSelfToActiveGUI();
     }
 
     private void actionMoveContent() {
@@ -81,7 +86,8 @@ public class GroupButton extends TextButton {
                         FactoryManagerGUI.get().getTopLevel().connectionsPanel.moveGroup(this.group, toGroup);
                     }
                 },
-                () -> {}).tryAddSelfToActiveGUI();
+                () -> {
+                }).tryAddSelfToActiveGUI();
     }
 
     public String getGroup() {

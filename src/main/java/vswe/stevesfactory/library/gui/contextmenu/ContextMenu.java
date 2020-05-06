@@ -1,114 +1,141 @@
 package vswe.stevesfactory.library.gui.contextmenu;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.Config;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.IWidget;
-import vswe.stevesfactory.library.gui.window.AbstractPopupWindow;
+import vswe.stevesfactory.library.gui.window.IPopupWindow;
+import vswe.stevesfactory.library.gui.window.mixin.WindowEventHandlerMixin;
+import vswe.stevesfactory.library.gui.window.mixin.WindowOverlayInfoMixin;
+import vswe.stevesfactory.library.gui.window.mixin.WindowPropertiesMixin;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static vswe.stevesfactory.library.gui.screen.WidgetScreen.screenHeight;
-import static vswe.stevesfactory.library.gui.screen.WidgetScreen.screenWidth;
+import static vswe.stevesfactory.library.gui.Render2D.*;
 
-public class ContextMenu extends AbstractPopupWindow {
+public class ContextMenu implements IPopupWindow, WindowEventHandlerMixin, WindowOverlayInfoMixin, WindowPropertiesMixin {
 
-    public static final int MIN_DISTANCE = 4;
-
-    public static ContextMenu atCursor(List<? extends IEntry> entries) {
+    public static ContextMenu atCursor() {
         MouseHelper m = Minecraft.getInstance().mouseHelper;
         double scale = Minecraft.getInstance().getMainWindow().getGuiScaleFactor();
         double mouseX = m.getMouseX() / scale;
         double mouseY = m.getMouseY() / scale;
-        return atCursor(mouseX + RenderingHelper.getTranslationX(), mouseY + RenderingHelper.getTranslationY(), entries);
+        return new ContextMenu((int) mouseX, (int) mouseY);
     }
 
-    public static ContextMenu atCursor(double mouseX, double mouseY, List<? extends IEntry> entries) {
-        return new ContextMenu((int) mouseX + RenderingHelper.getTranslationX(), (int) mouseY + RenderingHelper.getTranslationY(), entries);
-    }
-
-    private final List<? extends IEntry> entries;
+    private final Point position;
+    private final Dimension border;
+    private final List<Section> sections;
     private IEntry focusedEntry;
 
-    public ContextMenu(int x, int y, List<? extends IEntry> entries) {
-        Preconditions.checkArgument(!entries.isEmpty());
+    protected boolean alive = true;
+    private int order = -1;
 
-        this.entries = entries;
-        setPosition(x, y);
+    public ContextMenu(int x, int y) {
+        this(new Point(x, y));
+    }
 
-        for (IEntry entry : entries) {
-            entry.attach(this);
-        }
-        reflow();
+    public ContextMenu(Point position) {
+        this.position = position;
+        this.sections = new ArrayList<>();
+        this.border = new Dimension();
     }
 
     public void reflow() {
-        int width = entries.stream()
-                .max(Comparator.comparingInt(IEntry::getWidth))
-                .orElseThrow(IllegalArgumentException::new)
-                .getWidth();
-        int height = entries.stream()
-                .mapToInt(IEntry::getHeight)
-                .sum();
-        setContents(width, height);
+        int width = 0;
+        int height = 0;
+        int y = 0;
+        for (Section section : sections) {
+            section.setLocation(0, y);
+            section.reflow();
+            y += section.getFullHeight();
 
-        int ey = 0;
-        for (IEntry e : entries) {
-            e.setLocation(0, ey);
-            e.setWidth(contents.width);
-            ey += e.getHeight();
+            width = Math.max(width, section.getFullWidth());
+            height += section.getFullHeight();
+        }
+        int border = getBorderSize();
+        this.border.width = border + width + border;
+        this.border.height = border + height + border;
+
+        for (Section section : sections) {
+            section.setWidth(width);
         }
 
+        adjustForBorders(Config.CLIENT.minBorderDistance.get());
+    }
+
+    public void adjustForBorders(int minDistance) {
         int xOff = 0, yOff = 0;
+
         // Prefer to have the top left corner inside (if the context menu is too large to fit in the whole screen)
-        int left = getX() - MIN_DISTANCE;
+        int left = getX() - minDistance;
         if (left < 0) {
             xOff = left;
         } else {
-            int right = getX() + getWidth() + MIN_DISTANCE;
-            if (right > screenWidth()) {
-                xOff = right - screenWidth();
+            int right = getX() + getWidth() + minDistance;
+            if (right > windowWidth()) {
+                xOff = right - windowWidth();
             }
         }
-        int top = getY() - MIN_DISTANCE;
+
+        int top = getY() - minDistance;
         if (top < 0) {
             yOff = top;
         } else {
-            int bottom = getY() + getHeight() + MIN_DISTANCE;
-            if (bottom > screenHeight()) {
-                yOff = bottom - screenHeight();
+            int bottom = getY() + getHeight() + minDistance;
+            if (bottom > windowHeight()) {
+                yOff = bottom - windowHeight();
             }
         }
-        move(-xOff, -yOff);
+
+        position.x -= xOff;
+        position.y -= yOff;
+        for (Section section : sections) {
+            section.onParentPositionChanged();
+        }
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        RenderingHelper.drawRect(position, border, 75, 75, 75, 255);
-        RenderingHelper.drawRect(getContentX(), getContentY(), contents, 61, 61, 61, 255);
-        for (IEntry entry : entries) {
-            entry.render(mouseX, mouseY, particleTicks);
+
+        GlStateManager.disableTexture();
+        beginColoredQuad();
+        int x = getX();
+        int y = getY();
+        coloredRect(x, y, x + getWidth(), y + getHeight(), getZLevel(), 0xff4b4b4b);
+        int cx = getContentX();
+        int cy = getContentY();
+        coloredRect(cx, cy, cx + getContentWidth(), cy + getContentHeight(), getZLevel(), 0xff3d3d3d);
+        draw();
+        GlStateManager.enableTexture();
+
+        for (Section section : sections) {
+            section.render(mouseX, mouseY, partialTicks);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!isInside(mouseX, mouseY)) {
-            alive = false;
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Nullable
     @Override
     public IWidget getFocusedWidget() {
         return focusedEntry;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!isInside(mouseX, mouseY)) {
+            discard();
+        }
+        WindowEventHandlerMixin.super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
     @Override
@@ -124,18 +151,63 @@ public class ContextMenu extends AbstractPopupWindow {
         }
     }
 
-    @Override
-    public List<? extends IEntry> getChildren() {
-        return entries;
+    public boolean isLastSection(Section section) {
+        return Iterables.getLast(sections) == section;
     }
 
     @Override
-    public boolean shouldDrag() {
-        return false;
+    public Dimension getBorder() {
+        return border;
+    }
+
+    @Override
+    public List<? extends Section> getChildren() {
+        return sections;
+    }
+
+    @Override
+    public Point getPosition() {
+        return position;
+    }
+
+    @Override
+    public float getZLevel() {
+        return Render2D.CONTEXT_MENU_Z;
     }
 
     @Override
     public int getBorderSize() {
         return 1;
+    }
+
+    public void discard() {
+        alive = false;
+    }
+
+    @Override
+    public boolean shouldDiscard() {
+        return !alive;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        // Ensure high order by setting the 31th bit (highest in i32) to 1
+        this.order = order | (0b1 << 30);
+    }
+
+    public void addSection(Section section) {
+        sections.add(section);
+        section.attach(this);
+        reflow();
+    }
+
+    void addSectionNoReflow(Section section) {
+        sections.add(section);
+        section.attach(this);
     }
 }

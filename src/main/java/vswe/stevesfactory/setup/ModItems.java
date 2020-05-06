@@ -8,14 +8,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 
 public final class ModItems {
 
     private ModItems() {
     }
 
-    public static final ItemGroup creativeTab = new ItemGroup(StevesFactoryManager.MODID) {
+    public static final ItemGroup creativeTab = new ItemGroup(StevesFactoryManagerAPI.MODID) {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ModBlocks.factoryManagerBlock.get());
@@ -26,7 +26,7 @@ public final class ModItems {
         return new Properties().group(creativeTab);
     }
 
-    public static DeferredRegister<Item> items = new DeferredRegister<>(ForgeRegistries.ITEMS, StevesFactoryManager.MODID);
+    public static DeferredRegister<Item> items = new DeferredRegister<>(ForgeRegistries.ITEMS, StevesFactoryManagerAPI.MODID);
 
     public static RegistryObject<BlockItem> factoryManagerItem = items.register("factory_manager", () -> new BlockItem(ModBlocks.factoryManagerBlock.get(), defaultItemProperties()));
     public static RegistryObject<BlockItem> cableItem = items.register("cable", () -> new BlockItem(ModBlocks.cableBlock.get(), defaultItemProperties()));

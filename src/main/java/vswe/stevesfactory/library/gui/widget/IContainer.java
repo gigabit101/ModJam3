@@ -9,6 +9,12 @@ public interface IContainer<T extends IWidget> extends IWidget {
 
     void reflow();
 
+    /**
+     * Add the given children to the collection returned by {@link #getChildren()}. This should also immediately attach the widget to this
+     * container widget.
+     *
+     * @throws UnsupportedOperationException If this container implementation does not support adding child widgets.
+     */
     @SuppressWarnings("UnusedReturnValue")
     IContainer<T> addChildren(T widget);
 

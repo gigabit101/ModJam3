@@ -6,23 +6,23 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RadioController {
+public final class RadioController {
 
-    private final List<RadioButton> radioButtons = new ArrayList<>();
+    private final List<IRadioInput> radioButtons = new ArrayList<>();
     private int checkedIndex = -1;
 
-    public List<RadioButton> getRadioButtons() {
+    public List<IRadioInput> getRadioButtons() {
         return radioButtons;
     }
 
-    public int add(RadioButton button) {
+    public int add(RadioInput button) {
         radioButtons.add(button);
         return radioButtons.size() - 1;
     }
 
     public void checkRadioButton(int index) {
         Preconditions.checkArgument(index < radioButtons.size());
-        RadioButton checkedButton = getCurrentCheckedButton();
+        IRadioInput checkedButton = getCurrentCheckedButton();
         if (checkedButton != null) {
             checkedButton.setChecked(false);
         }
@@ -30,7 +30,7 @@ public class RadioController {
     }
 
     @Nullable
-    public RadioButton getCurrentCheckedButton() {
+    public IRadioInput getCurrentCheckedButton() {
         if (checkedIndex == -1) {
             return null;
         }

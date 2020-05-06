@@ -8,17 +8,18 @@ import net.minecraft.nbt.CompoundNBT;
 import vswe.stevesfactory.api.logic.Connection;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.MinimumVerticalList;
 import vswe.stevesfactory.library.gui.widget.TextField;
-import vswe.stevesfactory.library.gui.widget.box.LinearList;
-import vswe.stevesfactory.library.gui.widget.box.MinimumLinearList;
+import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.tool.group.Grouplist;
 import vswe.stevesfactory.ui.manager.tool.inspector.Inspector;
@@ -31,8 +32,6 @@ import java.util.Queue;
 import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
-import static vswe.stevesfactory.ui.manager.FactoryManagerGUI.*;
 
 public class FlowComponent<P extends IProcedure & IClientDataStorage> extends AbstractContainer<IWidget> implements Comparable<FlowComponent<?>> {
 
@@ -41,13 +40,12 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     }
 
     private P procedure;
-    private final MinimumLinearList<Menu<P>> menus;
-
 
     private final TextField nameBox;
     private final ConnectionNodes<EndNode> inputNodes;
     private final ConnectionNodes<StartNode> outputNodes;
     private final ErrorIndicator errorIndicator;
+    private final MinimumVerticalList<Menu<P>> menus;
     // A list that refers to all the widgets above
     private final List<IWidget> children;
 
@@ -58,20 +56,21 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     private int initialDragLocalY;
 
     public FlowComponent(P procedure, int amountInputs, int amountOutputs) {
-        super(0, 0, 64, 20);
+        this.setDimensions(64, 20);
         String name = procedure.getName();
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
-        this.nameBox = new TextField(6, 8, 0, 10);
+        this.nameBox = new TextField();
+        this.nameBox.setLocation(6, 8);
         this.nameBox.setWidth(this.getWidth() - nameBox.getX() - 2);
         this.nameBox.setBackgroundStyle(TextField.BackgroundStyle.NONE);
         this.nameBox.setText(name);
         this.nameBox.setTextColor(0xff303030, 0xff303030);
         this.nameBox.setEditable(false);
-        this.nameBox.setFontHeight(6);
+        this.nameBox.getTextRenderer().setFontHeight(6);
         this.inputNodes = ConnectionNodes.inputNodes(amountInputs);
         this.outputNodes = ConnectionNodes.outputNodes(amountOutputs);
         this.errorIndicator = ErrorIndicator.error();
-        this.menus = new MinimumLinearList<>(0, 0);
+        this.menus = new MinimumVerticalList<>();
         this.children = ImmutableList.of(nameBox, inputNodes, outputNodes, errorIndicator);
         this.setLinkedProcedure(procedure);
 
@@ -92,7 +91,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         return children;
     }
 
-    public LinearList<Menu<P>> getMenusBox() {
+    public VerticalList<Menu<P>> getMenusBox() {
         return menus;
     }
 
@@ -146,21 +145,23 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
         RenderSystem.color3f(1F, 1F, 1F);
         int x = getAbsoluteX();
         int y = getAbsoluteY();
-        RenderingHelper.drawBorderedBox(x, y, x + getWidth(), y + getHeight());
+        Render2D.beginColoredQuad();
+        Render2D.borderedRect(x, y, x + getWidth(), y + getHeight());
+        Render2D.draw();
 
-        nameBox.render(mouseX, mouseY, particleTicks);
-        inputNodes.render(mouseX, mouseY, particleTicks);
-        outputNodes.render(mouseX, mouseY, particleTicks);
-        errorIndicator.render(mouseX, mouseY, particleTicks);
+        nameBox.render(mouseX, mouseY, partialTicks);
+        inputNodes.render(mouseX, mouseY, partialTicks);
+        outputNodes.render(mouseX, mouseY, partialTicks);
+        errorIndicator.render(mouseX, mouseY, partialTicks);
 
         if (nameBox.isInside(mouseX, mouseY)) {
-            WidgetScreen.getCurrent().setHoveringText(getName(), mouseX, mouseY);
+            WidgetScreen.assertActive().scheduleTooltip(getName(), mouseX, mouseY);
         }
 
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
@@ -188,9 +189,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         } else {
             clearDrag();
         }
-        if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-            openContextMenu();
-        }
         return true;
     }
 
@@ -203,7 +201,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
             return true;
         }
         if (isDragging()) {
-            EditorPanel parent = getParentWidget();
+            EditorPanel parent = getParent();
             int x = (int) mouseX - parent.getAbsoluteX() - initialDragLocalX;
             int y = (int) mouseY - parent.getAbsoluteY() - initialDragLocalY;
             setLocation(x, y);
@@ -253,8 +251,8 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     }
 
     @Override
-    public void update(float particleTicks) {
-        super.update(particleTicks);
+    public void update(float partialTicks) {
+        super.update(partialTicks);
         // TODO don't do it the brutal force way: use data modification events
         if (Minecraft.getInstance().world.getGameTime() % 10 == 0) {
             repopulateErrors();
@@ -270,19 +268,19 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         return initialDragLocalX != -1 && initialDragLocalY != -1;
     }
 
-    public void setParentWidget(EditorPanel parent) {
-        this.setParentWidget((IWidget) parent);
+    public void attach(EditorPanel parent) {
+        this.attach((IWidget) parent);
         reflow();
     }
 
-    private void openContextMenu() {
-        ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(DELETE_ICON, "gui.sfm.FactoryManager.Editor.Delete", b -> actionDelete()),
-                new CallbackEntry(CUT_ICON, "gui.sfm.FactoryManager.Editor.Cut", b -> actionCut()),
-                new CallbackEntry(COPY_ICON, "gui.sfm.FactoryManager.Editor.Copy", b -> actionCopy()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.ChangeGroup", b -> actionChangeGroup())
-        ));
-        WidgetScreen.getCurrent().addPopupWindow(contextMenu);
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(Render2D.DELETE, "gui.sfm.FactoryManager.Editor.Delete", b -> actionDelete()));
+        section.addChildren(new CallbackEntry(Render2D.CUT, "gui.sfm.FactoryManager.Editor.Cut", b -> actionCut()));
+        section.addChildren(new CallbackEntry(Render2D.COPY, "gui.sfm.FactoryManager.Editor.Copy", b -> actionCopy()));
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.ChangeGroup", b -> actionChangeGroup()));
+        super.buildContextMenu(builder);
     }
 
     private void actionDelete() {
@@ -315,7 +313,8 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
                     disconnect();
                     setGroup(newGroup);
                 },
-                () -> {}).tryAddSelfToActiveGUI();
+                () -> {
+                }).tryAddSelfToActiveGUI();
     }
 
     public void save() {
@@ -387,7 +386,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     public void remove() {
         disconnect();
         procedure.invalidate();
-        getParentWidget().removeFlowComponent(this);
+        getParent().removeFlowComponent(this);
     }
 
     public ConnectionNodes<EndNode> getInputNodes() {
@@ -400,8 +399,8 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
 
     @Nonnull
     @Override
-    public EditorPanel getParentWidget() {
-        return Objects.requireNonNull((EditorPanel) super.getParentWidget());
+    public EditorPanel getParent() {
+        return Objects.requireNonNull((EditorPanel) super.getParent());
     }
 
     public int getZIndex() {

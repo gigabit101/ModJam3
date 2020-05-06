@@ -1,37 +1,27 @@
 package vswe.stevesfactory.library.gui.window;
 
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-
+/**
+ * Simple base class for a draggable popup. For more complicated usages see {@link AbstractDockableWindow}.
+ */
 public abstract class AbstractPopupWindow extends AbstractWindow implements IPopupWindow {
 
-    private int initialDragLocalX = -1, initialDragLocalY = -1;
-    public boolean alive = true;
+    private int initialDragX = -1;
+    private int initialDragY = -1;
+    private boolean alive = true;
     private int order;
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return true;
-        }
-        if (isInside(mouseX, mouseY) && shouldDrag()) {
-            setFocusedWidget(null);
-            initialDragLocalX = (int) mouseX - position.x;
-            initialDragLocalY = (int) mouseY - position.y;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (super.mouseReleased(mouseX, mouseY, button)) {
+        if (super.mouseClickSubtree(mouseX, mouseY, button)) {
             return true;
         }
         if (isInside(mouseX, mouseY)) {
-            initialDragLocalX = -1;
-            initialDragLocalY = -1;
+            setFocusedWidget(null);
+            initialDragX = (int) mouseX - getX();
+            initialDragY = (int) mouseY - getY();
             return true;
         }
         return false;
@@ -39,12 +29,12 @@ public abstract class AbstractPopupWindow extends AbstractWindow implements IPop
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+        if (super.mouseDraggedSubtree(mouseX, mouseY, button, deltaX, deltaY)) {
             return true;
         }
-        if (isInside(mouseX, mouseY) && isDragging()) {
-            int x = (int) mouseX - initialDragLocalX;
-            int y = (int) mouseY - initialDragLocalY;
+        if (isDragging()) {
+            int x = (int) mouseX - initialDragX;
+            int y = (int) mouseY - initialDragY;
             setPosition(x, y);
             return true;
         }
@@ -52,28 +42,34 @@ public abstract class AbstractPopupWindow extends AbstractWindow implements IPop
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (super.mouseReleasedSubtree(mouseX, mouseY, button)) {
             return true;
         }
-        if (keyCode == GLFW_KEY_ESCAPE) {
-            alive = false;
+        if (isInside(mouseX, mouseY)) {
+            initialDragX = -1;
+            initialDragY = -1;
             return true;
         }
         return false;
     }
 
     private boolean isDragging() {
-        return initialDragLocalX != -1 && initialDragLocalY != -1;
+        return initialDragX != -1 && initialDragY != -1;
     }
 
-    public boolean shouldDrag() {
-        return true;
+    public void discard() {
+        alive = false;
     }
 
     @Override
     public boolean shouldDiscard() {
         return !alive;
+    }
+
+    @Override
+    public float getZLevel() {
+        return Render2D.POPUP_WINDOW_Z;
     }
 
     @Override

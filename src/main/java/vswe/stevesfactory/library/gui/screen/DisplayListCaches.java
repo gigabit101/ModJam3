@@ -2,9 +2,6 @@ package vswe.stevesfactory.library.gui.screen;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import vswe.stevesfactory.StevesFactoryManager;
 
 import java.awt.*;
@@ -13,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.opengl.GL11.*;
 
-@OnlyIn(Dist.CLIENT)
 public final class DisplayListCaches {
 
     private DisplayListCaches() {
@@ -39,7 +35,7 @@ public final class DisplayListCaches {
                 int id = glGenLists(1);
                 glNewList(id, GL_COMPILE);
                 {
-                    BackgroundRenderers.drawVanillaStyle(rectangle.x, rectangle.y, rectangle.width, rectangle.height, z);
+                    BackgroundRenderers.drawVanillaStyle4x4(rectangle.x, rectangle.y, rectangle.width, rectangle.height, z);
                 }
                 glEndList();
                 return id;
@@ -52,5 +48,9 @@ public final class DisplayListCaches {
 
     public static int createVanillaStyleBackground(int x, int y, int width, int height) {
         return createVanillaStyleBackground(new Rectangle(x, y, width, height));
+    }
+
+    public static int createVanillaStyleBackground(int x, int y, int width, int height, float z) {
+        return createVanillaStyleBackground(new Rectangle(x, y, width, height), z);
     }
 }

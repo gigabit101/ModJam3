@@ -104,7 +104,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
 
         menu = caseElement.menuFactory.get();
         flowComponent.addMenu(menu);
-        menu.setParentWidget(flowComponent.getMenusBox());
+        menu.attach(flowComponent.getMenusBox());
         flowComponent.getMenusBox().reflow();
         menu.useActionList(actions);
     }
@@ -140,7 +140,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
             public boolean mouseClicked(double mouseX, double mouseY, int button) {
                 int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
                 setProperty(nextIndex);
-                getWindow().alive = false;
+                getContextMenu().discard();
                 return true;
             }
 
@@ -158,8 +158,8 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
             }
 
             private void reflowSafe() {
-                if (getWindow() != null) {
-                    getWindow().reflow();
+                if (getContextMenu() != null) {
+                    getContextMenu().reflow();
                 }
             }
         });

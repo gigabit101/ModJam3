@@ -1,35 +1,28 @@
-package vswe.stevesfactory.library.gui.widget;
+package vswe.stevesfactory.library.gui.widget.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
+import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
-import java.awt.*;
+import java.util.function.IntConsumer;
 
 public abstract class AbstractIconButton extends AbstractWidget implements IButton, LeafWidgetMixin {
 
     private boolean hovered = false;
     private boolean clicked = false;
 
-    public AbstractIconButton(int x, int y, int width, int height) {
-        super(x, y, width, height);
-    }
-
-    public AbstractIconButton(Point location, Dimension dimensions) {
-        super(location, dimensions);
-    }
-
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         preRenderEvent(mouseX, mouseY);
         RenderSystem.color3f(1F, 1F, 1F);
-        TextureWrapper tex = isDisabled() ? getTextureDisabled()
+        Texture tex = isDisabled() ? getTextureDisabled()
                 : isClicked() ? getTextureClicked()
                 : isHovered() ? getTextureHovered()
                 : getTextureNormal();
-        tex.draw(getAbsoluteX(), getAbsoluteY(), getWidth(), getHeight());
+        tex.render(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), getZLevel());
         postRenderEvent(mouseX, mouseY);
     }
 
@@ -45,17 +38,31 @@ public abstract class AbstractIconButton extends AbstractWidget implements IButt
         }
     }
 
-    public abstract TextureWrapper getTextureNormal();
+    public abstract Texture getTextureNormal();
 
-    public abstract TextureWrapper getTextureHovered();
+    public abstract Texture getTextureHovered();
 
     // Optional
-    public TextureWrapper getTextureClicked() {
+    public Texture getTextureClicked() {
         return getTextureHovered();
     }
 
-    public TextureWrapper getTextureDisabled() {
-        return TextureWrapper.NONE;
+    public Texture getTextureDisabled() {
+        return Texture.NONE;
+    }
+
+    @Override
+    public boolean hasClickAction() {
+        return false;
+    }
+
+    @Override
+    public IntConsumer getClickAction() {
+        return DUMMY;
+    }
+
+    @Override
+    public void setClickAction(IntConsumer action) {
     }
 
     @Override
@@ -73,13 +80,13 @@ public abstract class AbstractIconButton extends AbstractWidget implements IButt
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         clicked = true;
         return true;
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
         clicked = false;
         return true;
     }
@@ -87,9 +94,6 @@ public abstract class AbstractIconButton extends AbstractWidget implements IButt
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
         hovered = isInside(mouseX, mouseY);
-        if (!hovered) {
-            clicked = false;
-        }
     }
 
     @Override

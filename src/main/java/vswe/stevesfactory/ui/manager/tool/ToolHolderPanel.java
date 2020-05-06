@@ -1,13 +1,16 @@
 package vswe.stevesfactory.ui.manager.tool;
 
 import com.google.common.collect.ImmutableList;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
@@ -25,13 +28,13 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
         super(WidthOccupierType.MIN_WIDTH);
     }
 
-    public <T extends IWidget> void setActivePanel(@Nullable T panel) {
+    public <T extends IWidget & ResizableWidgetMixin> void setActivePanel(@Nullable T panel) {
         if (panel == null) {
             children = ImmutableList.of();
         } else {
             children = ImmutableList.of(panel);
-            panel.setParentWidget(this);
-            panel.setX(RenderingHelper.LEFT_BORDER + 1);
+            panel.attach(this);
+            panel.setX(Render2D.LEFT_BORDER + 1);
             panel.setHeight(getHeight());
             getWindow().setFocusedWidget(panel);
             if (panel instanceof AbstractContainer) {
@@ -49,7 +52,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
     @Override
     public void reflow() {
         IWidget widget = getContainedWidget();
-        setWidth(widget == null ? 0 : widget.getWidth() + 2 + RenderingHelper.LEFT_BORDER);
+        setWidth(widget == null ? 0 : widget.getWidth() + 2 + Render2D.LEFT_BORDER);
     }
 
     public IWidget getContainedWidget() {
@@ -57,10 +60,10 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        RenderingHelper.renderSideLine(this);
-        super.render(mouseX, mouseY, particleTicks);
+        Render2D.renderSideLine(this);
+        super.renderChildren(mouseX, mouseY, partialTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
@@ -75,7 +78,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
                     getWindow().setFocusedWidget(this);
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
-                    openContextMenu();
+                    createContextMenu(mouseX, mouseY);
                     break;
             }
             return true;
@@ -83,10 +86,10 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
         return false;
     }
 
-    private void openContextMenu() {
-        ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
-        ));
-        WidgetScreen.getCurrent().addPopupWindow(contextMenu);
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        super.buildContextMenu(builder);
     }
 }

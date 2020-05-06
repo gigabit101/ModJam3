@@ -1,20 +1,23 @@
 package vswe.stevesfactory.ui.manager.menu;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import vswe.stevesfactory.api.logic.IProcedure;
+import org.apache.commons.lang3.tuple.Pair;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
-import vswe.stevesfactory.api.network.INetworkController;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.box.WrappingList;
+import vswe.stevesfactory.api.logic.IProcedure;
+import vswe.stevesfactory.library.gui.widget.TextField;
+import vswe.stevesfactory.library.gui.widget.panel.FilteredList;
+import vswe.stevesfactory.library.gui.widget.panel.WrappingList;
 import vswe.stevesfactory.logic.procedure.IInventoryTarget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class InventorySelectionMenu<P extends IInventoryTarget & IProcedure & IClientDataStorage> extends Menu<P> {
 
@@ -22,6 +25,7 @@ public class InventorySelectionMenu<P extends IInventoryTarget & IProcedure & IC
     private final String name;
     private final String errorMessage;
 
+    private TextField searchBox;
     private WrappingList<BlockTarget> list;
 
     public InventorySelectionMenu(int id, Capability<?> cap) {
@@ -33,21 +37,22 @@ public class InventorySelectionMenu<P extends IInventoryTarget & IProcedure & IC
         this.name = name;
         this.errorMessage = errorMessage;
 
-        list = new WrappingList<>("");
-        list.setLocation(4, HEADING_BOX.getPortionHeight() + 4);
+        Pair<WrappingList<BlockTarget>, TextField> constructionResult = FilteredList.createSearchableList(new ArrayList<>(), "");
+        searchBox = constructionResult.getRight();
+        searchBox.setLocation(4, 4);
+
+        list = constructionResult.getLeft();
+        list.setLocation(4, HEADING_BOX.getPortionHeight() + 4 + searchBox.getHeight() + 2);
         list.setItemsPerRow(5);
         list.setVisibleRows(2);
-        list.getContentArea().y += list.getSearchBoxHeight() + 2;
-        list.setDimensions(list.getContentArea().width, getContentHeight() - 4 * 2);
         list.getScrollUpArrow().setLocation(100, 24);
         list.alignArrows();
-        FactoryManagerGUI gui = (FactoryManagerGUI) WidgetScreen.getCurrent();
-        INetworkController controller = Objects.requireNonNull((INetworkController) Minecraft.getInstance().world.getTileEntity(gui.getController().getPosition()));
-        for (BlockPos pos : controller.getLinkedInventories(cap)) {
+        for (BlockPos pos : FactoryManagerGUI.get().getController().getLinkedInventories(cap)) {
             list.addElement(new BlockTarget(pos));
         }
 
         // TODO add selection buttons
+        addChildren(searchBox);
         addChildren(list);
     }
 

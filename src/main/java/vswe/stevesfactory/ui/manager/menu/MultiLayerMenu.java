@@ -1,15 +1,14 @@
 package vswe.stevesfactory.ui.manager.menu;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.api.logic.IProcedure;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
-import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 import vswe.stevesfactory.ui.manager.editor.Menu;
 
 import javax.annotation.Nonnull;
@@ -21,13 +20,13 @@ public abstract class MultiLayerMenu<P extends IProcedure & IClientDataStorage> 
     private IWidget openEditor;
 
     @Override
-    public void renderContents(int mouseX, int mouseY, float particleTicks) {
+    public void renderContents(int mouseX, int mouseY, float partialTicks) {
         RenderSystem.color3f(1F, 1F, 1F);
         if (openEditor != null) {
-            getToggleStateButton().render(mouseX, mouseY, particleTicks);
-            openEditor.render(mouseX, mouseY, particleTicks);
+            getToggleStateButton().render(mouseX, mouseY, partialTicks);
+            openEditor.render(mouseX, mouseY, partialTicks);
         } else {
-            super.renderContents(mouseX, mouseY, particleTicks);
+            super.renderContents(mouseX, mouseY, partialTicks);
         }
     }
 
@@ -103,11 +102,11 @@ public abstract class MultiLayerMenu<P extends IProcedure & IClientDataStorage> 
     }
 
     @Override
-    public void update(float particleTicks) {
+    public void update(float partialTicks) {
         if (openEditor != null) {
-            openEditor.update(particleTicks);
+            openEditor.update(partialTicks);
         } else {
-            super.update(particleTicks);
+            super.update(partialTicks);
         }
     }
 
@@ -126,7 +125,7 @@ public abstract class MultiLayerMenu<P extends IProcedure & IClientDataStorage> 
     public void openEditor(@Nullable IWidget editor) {
         this.openEditor = editor;
         if (editor != null) {
-            editor.setParentWidget(this);
+            editor.attach(this);
             editor.setLocation(0, HEADING_BOX.getPortionHeight());
         }
     }
@@ -135,39 +134,39 @@ public abstract class MultiLayerMenu<P extends IProcedure & IClientDataStorage> 
 
     public static class OpenSettingsButton extends AbstractIconButton {
 
-        public OpenSettingsButton(int x, int y) {
-            super(x, y, 12, 12);
+        public OpenSettingsButton() {
+            this.setDimensions(8, 8);
         }
 
         @Override
-        public TextureWrapper getTextureNormal() {
-            return FactoryManagerGUI.SETTINGS_ICON;
+        public Texture getTextureNormal() {
+            return Render2D.SETTINGS_ICON;
         }
 
         @Override
-        public TextureWrapper getTextureHovered() {
-            return FactoryManagerGUI.SETTINGS_ICON_HOVERED;
+        public Texture getTextureHovered() {
+            return Render2D.SETTINGS_ICON_HOVERED;
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
-            super.render(mouseX, mouseY, particleTicks);
+        public void render(int mouseX, int mouseY, float partialTicks) {
+            super.render(mouseX, mouseY, partialTicks);
             if (isHovered()) {
-                WidgetScreen.getCurrent().setHoveringText(I18n.format("menu.sfm.ItemFilter.Traits.Settings"), mouseX, mouseY);
+                WidgetScreen.assertActive().scheduleTooltip(I18n.format("menu.sfm.ItemFilter.Traits.Settings"), mouseX, mouseY);
             }
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            MultiLayerMenu<?> parent = getParentWidget();
+            MultiLayerMenu<?> parent = getParent();
             parent.openEditor(parent.getEditor());
             return true;
         }
 
         @Nonnull
         @Override
-        public MultiLayerMenu<?> getParentWidget() {
-            return (MultiLayerMenu<?>) Objects.requireNonNull(super.getParentWidget());
+        public MultiLayerMenu<?> getParent() {
+            return (MultiLayerMenu<?>) Objects.requireNonNull(super.getParent());
         }
     }
 }

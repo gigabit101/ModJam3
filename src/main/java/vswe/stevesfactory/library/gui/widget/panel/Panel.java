@@ -1,101 +1,68 @@
-package vswe.stevesfactory.library.gui.widget.box;
+package vswe.stevesfactory.library.gui.widget.panel;
 
+import com.google.common.base.Preconditions;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
 
-import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * A ready-to-use box widget for grouping widgets.
  */
-public class Box<T extends IWidget> extends AbstractContainer<T> implements IWidget {
+public class Panel<T extends IWidget> extends AbstractContainer<T> implements ResizableWidgetMixin {
 
     private List<T> children = new ArrayList<>();
-    private List<T> childrenView = Collections.unmodifiableList(children);
 
     private Consumer<List<T>> layout = l -> {
     };
     private boolean paused = false;
 
-    public Box(int x, int y, int width, int height) {
-        super(x, y, width, height);
-    }
-
-    public Box(Point location, Dimension dimensions) {
-        super(location, dimensions);
-    }
-
-    @Override
-    public void onParentPositionChanged() {
-        int oldAbsX = getAbsoluteX();
-        int oldAbsY = getAbsoluteY();
-        super.onParentPositionChanged();
-        if (getAbsoluteX() != oldAbsX || getAbsoluteY() != oldAbsY) {
-            for (T child : children) {
-                child.onParentPositionChanged();
-            }
-        }
-    }
-
     @Override
     public List<T> getChildren() {
-        return childrenView;
+        return children;
     }
 
     @Override
-    public Box<T> addChildren(T widget) {
+    public Panel<T> addChildren(T widget) {
+        Preconditions.checkState(isValid());
         children.add(widget);
-        widget.setParentWidget(this);
+        widget.attach(this);
         reflow();
         return this;
     }
 
     @Override
-    public Box<T> addChildren(Collection<T> widgets) {
+    public Panel<T> addChildren(Collection<T> widgets) {
+        Preconditions.checkState(isValid());
         children.addAll(widgets);
-        widgets.forEach(widget -> widget.setParentWidget(this));
+        for (T widget : widgets) {
+            widget.attach(this);
+        }
         reflow();
         return this;
     }
 
     @Override
-    public Box<T> addChildren(Iterable<T> widgets) {
+    public Panel<T> addChildren(Iterable<T> widgets) {
         super.addChildren(widgets);
         return this;
     }
 
     @Override
-    public Box<T> addChildren(Iterator<T> widgets) {
+    public Panel<T> addChildren(Iterator<T> widgets) {
         super.addChildren(widgets);
         return this;
     }
 
-    // In most cases these are not necessary because widget's position rely on the layout
-
-    @SuppressWarnings("UnusedReturnValue")
-    public Box<T> updateChildLocation(T child, Point point) {
-        child.setLocation(point);
-        reflow();
-        return this;
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    public Box<T> updateChildLocation(T child, int x, int y) {
-        child.setLocation(x, y);
-        reflow();
-        return this;
-    }
-
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         if (isEnabled()) {
             RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
             for (T child : children) {
-                child.render(mouseX, mouseY, particleTicks);
+                child.render(mouseX, mouseY, partialTicks);
             }
             RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
         }
@@ -106,13 +73,13 @@ public class Box<T extends IWidget> extends AbstractContainer<T> implements IWid
      * updates) when changing widget properties in batch.
      */
     @SuppressWarnings("UnusedReturnValue")
-    public Box<T> pause() {
+    public Panel<T> pause() {
         paused = true;
         return this;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public Box<T> unpause() {
+    public Panel<T> unpause() {
         paused = false;
         reflow();
         return this;
@@ -123,7 +90,7 @@ public class Box<T extends IWidget> extends AbstractContainer<T> implements IWid
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public Box<T> setLayout(Consumer<List<T>> layout) {
+    public Panel<T> setLayout(Consumer<List<T>> layout) {
         this.layout = layout;
         return this;
     }
@@ -197,9 +164,9 @@ public class Box<T extends IWidget> extends AbstractContainer<T> implements IWid
     }
 
     @Override
-    public void update(float particleTicks) {
+    public void update(float partialTicks) {
         if (isEnabled()) {
-            super.update(particleTicks);
+            super.update(partialTicks);
         }
     }
 }

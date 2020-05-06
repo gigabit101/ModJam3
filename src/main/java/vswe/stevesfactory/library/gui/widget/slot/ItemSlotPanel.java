@@ -2,8 +2,8 @@ package vswe.stevesfactory.library.gui.widget.slot;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.item.ItemStack;
+import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
-import vswe.stevesfactory.library.gui.widget.IWidget;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -30,7 +30,7 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
         for (int i = 0; i < size; i++) {
             addChildren(factory.get());
         }
-        updateDimensions();
+        adjustMinContent();
         reflow();
     }
 
@@ -49,20 +49,8 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
         for (int i = 0; i < size; i++) {
             addChildren(factory.apply(stacks.get(i)));
         }
-        updateDimensions();
+        adjustMinContent();
         reflow();
-    }
-
-    private void updateDimensions() {
-        int pw = children.stream()
-                .limit(width)
-                .mapToInt(IWidget::getWidth)
-                .sum();
-        int ph = children.stream()
-                .limit(height)
-                .mapToInt(IWidget::getWidth)
-                .sum();
-        setDimensions(pw, ph);
     }
 
     @Override
@@ -72,13 +60,19 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
 
     @Override
     public ItemSlotPanel addChildren(AbstractItemSlot widget) {
+        Preconditions.checkState(isValid());
         children.add(widget);
+        widget.attach(this);
         return this;
     }
 
     @Override
     public ItemSlotPanel addChildren(Collection<AbstractItemSlot> widgets) {
+        Preconditions.checkState(isValid());
         children.addAll(widgets);
+        for (AbstractItemSlot widget : widgets) {
+            widget.attach(this);
+        }
         return this;
     }
 
@@ -88,12 +82,11 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
         int y = 0;
         int i = 0;
         for (int yi = 0; yi < height; yi++) {
-            x = 0;
             int maxHeight = 0;
             for (int xi = 0; xi < width; xi++) {
                 AbstractItemSlot slot = children.get(i);
                 slot.setLocation(x, y);
-                x += slot.getWidth();
+                y += slot.getWidth();
                 maxHeight = Math.max(maxHeight, slot.getHeight());
                 i++;
             }
@@ -101,7 +94,14 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
         }
     }
 
-    public static class DefaultSlot extends AbstractItemSlot {
+    @Override
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
+        renderChildren(mouseX, mouseY, partialTicks);
+        RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
+    }
+
+    static class DefaultSlot extends AbstractItemSlot {
 
         private ItemStack stack;
 
@@ -120,8 +120,8 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
 
         @Nonnull
         @Override
-        public ItemSlotPanel getParentWidget() {
-            return (ItemSlotPanel) Objects.requireNonNull(super.getParentWidget());
+        public ItemSlotPanel getParent() {
+            return (ItemSlotPanel) Objects.requireNonNull(super.getParent());
         }
     }
 }

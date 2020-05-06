@@ -8,15 +8,15 @@ import vswe.stevesfactory.ui.manager.editor.Menu;
 
 import java.util.List;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontHeight;
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static vswe.stevesfactory.library.gui.Render2D.fontHeight;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public class FunctionNameMenu extends Menu<FunctionHatProcedure> {
 
     private TextField field;
 
     public FunctionNameMenu() {
-        field = new TextField(0, 0, 80, 14);
+        field = new TextField(80, 14);
         field.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
         field.alignCenterX(0, getWidth());
         field.alignCenterY(HEADING_BOX.getPortionHeight(), HEADING_BOX.getPortionHeight() + getContentHeight());
@@ -24,8 +24,8 @@ public class FunctionNameMenu extends Menu<FunctionHatProcedure> {
     }
 
     @Override
-    public void renderContents(int mouseX, int mouseY, float particleTicks) {
-        super.renderContents(mouseX, mouseY, particleTicks);
+    public void renderContents(int mouseX, int mouseY, float partialTicks) {
+        super.renderContents(mouseX, mouseY, partialTicks);
         fontRenderer().drawString(
                 I18n.format("menu.sfm.FunctionHat.Name"),
                 field.getAbsoluteX(), field.getAbsoluteY() - 2 - fontHeight(),

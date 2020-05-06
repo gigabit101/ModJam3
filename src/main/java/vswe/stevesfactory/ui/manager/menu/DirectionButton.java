@@ -3,12 +3,12 @@ package vswe.stevesfactory.ui.manager.menu;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Direction;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -17,42 +17,43 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 class DirectionButton extends AbstractIconButton {
 
-    public static final TextureWrapper NORMAL = TextureWrapper.ofFlowComponent(0, 70, 31, 12);
-    public static final TextureWrapper HOVERED = NORMAL.toDown(1);
-    public static final TextureWrapper DISABLED = NORMAL.toDown(2);
-    public static final TextureWrapper SELECTED_NORMAL = NORMAL.toRight(1);
-    public static final TextureWrapper SELECTED_HOVERED = SELECTED_NORMAL.toDown(1);
-    public static final TextureWrapper SELECTED_DISABLED = SELECTED_NORMAL.toDown(2);
+    public static final Texture NORMAL = Render2D.ofFlowComponent(0, 70, 31, 12);
+    public static final Texture HOVERED = NORMAL.down(1);
+    public static final Texture DISABLED = NORMAL.down(2);
+    public static final Texture SELECTED_NORMAL = NORMAL.right(1);
+    public static final Texture SELECTED_HOVERED = SELECTED_NORMAL.down(1);
+    public static final Texture SELECTED_DISABLED = SELECTED_NORMAL.down(2);
 
     private boolean selected = false;
     private boolean editing = false;
 
-    public BooleanConsumer onStateChanged = b -> {};
+    public BooleanConsumer onStateChanged = b -> {
+    };
     private final String name;
 
     public DirectionButton(Direction direction) {
-        super(0, 0, 31, 12);
+        this.setDimensions(31, 12);
         this.name = I18n.format("gui.sfm." + direction.getName());
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
-        super.render(mouseX, mouseY, particleTicks);
-        RenderingHelper.drawTextCenteredVertically(name, getAbsoluteX() + 2, getAbsoluteY(), getAbsoluteYBottom(), 0xff4d4d4d);
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        super.render(mouseX, mouseY, partialTicks);
+        Render2D.renderVerticallyCenteredText(name, getAbsoluteX() + 2, getAbsoluteY(), getAbsoluteYBottom(), getZLevel(), 0xff4d4d4d);
     }
 
     @Override
-    public TextureWrapper getTextureNormal() {
+    public Texture getTextureNormal() {
         return selected ? SELECTED_NORMAL : NORMAL;
     }
 
     @Override
-    public TextureWrapper getTextureHovered() {
+    public Texture getTextureHovered() {
         return selected ? SELECTED_HOVERED : HOVERED;
     }
 
     @Override
-    public TextureWrapper getTextureDisabled() {
+    public Texture getTextureDisabled() {
         return selected ? SELECTED_DISABLED : DISABLED;
     }
 
@@ -81,16 +82,16 @@ class DirectionButton extends AbstractIconButton {
 
     public void setEditing(boolean editing) {
         this.editing = editing;
-        for (IWidget child : getParentWidget().getChildren()) {
+        for (IWidget child : getParent().getChildren()) {
             if (child instanceof DirectionButton && child != this) {
                 child.setEnabled(!editing);
             }
         }
         if (editing) {
             setEnabled(true);
-            getParentWidget().editDirection(this);
+            getParent().editDirection(this);
         } else {
-            getParentWidget().clearEditing();
+            getParent().clearEditing();
         }
     }
 
@@ -112,14 +113,14 @@ class DirectionButton extends AbstractIconButton {
         super.setEnabled(enabled);
         if (!enabled) {
             editing = false;
-            getParentWidget().clearEditing();
+            getParent().clearEditing();
         }
     }
 
     @Nonnull
     @Override
-    public DirectionSelectionMenu<?> getParentWidget() {
-        return Objects.requireNonNull((DirectionSelectionMenu<?>) super.getParentWidget());
+    public DirectionSelectionMenu<?> getParent() {
+        return Objects.requireNonNull((DirectionSelectionMenu<?>) super.getParent());
     }
 
     @Override

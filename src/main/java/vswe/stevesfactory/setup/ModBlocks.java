@@ -11,18 +11,18 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.blocks.*;
 import vswe.stevesfactory.render.WorkingAreaRenderer;
 
 @SuppressWarnings("ConstantConditions")
-@EventBusSubscriber(modid = StevesFactoryManager.MODID, bus = Bus.MOD)
+@EventBusSubscriber(modid = StevesFactoryManagerAPI.MODID, bus = Bus.MOD)
 public final class ModBlocks {
 
     private ModBlocks() {
     }
 
-    public static DeferredRegister<Block> blocks = new DeferredRegister<>(ForgeRegistries.BLOCKS, StevesFactoryManager.MODID);
+    public static DeferredRegister<Block> blocks = new DeferredRegister<>(ForgeRegistries.BLOCKS, StevesFactoryManagerAPI.MODID);
 
     public static final RegistryObject<FactoryManagerBlock> factoryManagerBlock = blocks.register(
             "factory_manager",
@@ -75,7 +75,7 @@ public final class ModBlocks {
                     .create(Material.IRON)
                     .hardnessAndResistance(1.8F, 10F)));
 
-    public static DeferredRegister<TileEntityType<?>> tiles = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, StevesFactoryManager.MODID);
+    public static DeferredRegister<TileEntityType<?>> tiles = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, StevesFactoryManagerAPI.MODID);
 
     public static final RegistryObject<TileEntityType<FactoryManagerTileEntity>> factoryManagerTileEntity = tiles.register(
             "factory_manager",

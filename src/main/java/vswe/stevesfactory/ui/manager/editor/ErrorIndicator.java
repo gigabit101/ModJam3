@@ -2,7 +2,8 @@ package vswe.stevesfactory.ui.manager.editor;
 
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.api.logic.IErrorPopulator;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
@@ -21,17 +22,17 @@ public class ErrorIndicator extends AbstractWidget implements LeafWidgetMixin {
         return new ErrorIndicator(I18n.format("error.sfm.Warning"), WARNING, WARNING_HOVERED);
     }
 
-    public static final TextureWrapper ERROR = TextureWrapper.ofFlowComponent(40, 52, 2, 10);
-    public static final TextureWrapper ERROR_HOVERED = ERROR.toRight(2);
-    public static final TextureWrapper WARNING = ERROR.toRight(1);
-    public static final TextureWrapper WARNING_HOVERED = WARNING.toRight(2);
+    public static final Texture ERROR = Render2D.ofFlowComponent(40, 52, 2, 10);
+    public static final Texture ERROR_HOVERED = ERROR.right(2);
+    public static final Texture WARNING = ERROR.right(1);
+    public static final Texture WARNING_HOVERED = WARNING.right(2);
 
-    private TextureWrapper background;
-    private TextureWrapper backgroundHovered;
+    private Texture background;
+    private Texture backgroundHovered;
     private final List<String> errors = new ArrayList<>();
     private final String heading;
 
-    private ErrorIndicator(String heading, TextureWrapper background, TextureWrapper backgroundHovered) {
+    private ErrorIndicator(String heading, Texture background, Texture backgroundHovered) {
         this.heading = heading;
         this.background = background;
         this.backgroundHovered = backgroundHovered;
@@ -53,15 +54,15 @@ public class ErrorIndicator extends AbstractWidget implements LeafWidgetMixin {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         // We will always have a heading in the list
         if (errors.size() > 1) {
             if (isInside(mouseX, mouseY)) {
-                backgroundHovered.draw(getAbsoluteX(), getAbsoluteY());
-                WidgetScreen.getCurrent().setHoveringText(errors, mouseX, mouseY);
+                backgroundHovered.render(getAbsoluteX(), getAbsoluteY());
+                WidgetScreen.assertActive().scheduleTooltip(errors, mouseX, mouseY);
             } else {
-                background.draw(getAbsoluteX(), getAbsoluteY());
+                background.render(getAbsoluteX(), getAbsoluteY());
             }
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);

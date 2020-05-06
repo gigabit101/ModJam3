@@ -1,7 +1,7 @@
 /* Code adapted from net.minecraftforge.client.gui.ScrollPanel
  */
 
-package vswe.stevesfactory.library.gui.widget.box;
+package vswe.stevesfactory.library.gui.widget.panel;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -12,9 +12,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 import vswe.stevesfactory.Config;
-import vswe.stevesfactory.library.gui.RenderingHelper;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -26,17 +24,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.rectVertices;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static vswe.stevesfactory.library.gui.Render2D.coloredRect;
 
-public class LinearList<T extends IWidget> extends AbstractContainer<T> implements IWidget {
+public class VerticalList<T extends IWidget> extends AbstractContainer<T> implements IWidget {
 
     private boolean scrolling;
     protected float scrollDistance;
 
     private final List<T> elements;
 
-    public LinearList(int width, int height) {
-        super(0, 0, width, height);
+    public VerticalList() {
         this.elements = new ArrayList<>();
     }
 
@@ -132,10 +130,10 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
 
                 RenderSystem.disableDepthTest();
                 RenderSystem.disableTexture();
-                renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-                rectVertices(barLeftX, top, barRightX, bottom, getShadowColor());
-                rectVertices(barLeftX, barTopY, barRightX, barBottomY, getBarBorderColor());
-                rectVertices(barLeftX, barTopY, barRightX - 1, barBottomY - 1, getBarBodyColor());
+                renderer.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+                coloredRect(barLeftX, top, barRightX, bottom, getShadowColor());
+                coloredRect(barLeftX, barTopY, barRightX, barBottomY, getBarBorderColor());
+                coloredRect(barLeftX, barTopY, barRightX - 1, barBottomY - 1, getBarBodyColor());
                 tess.draw();
                 RenderSystem.enableTexture();
             }
@@ -167,8 +165,8 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
     /**
      * Draw a vanilla style overlay.
      * <p>
-     * If there is no world loaded, it will draw a dirt background; if a world is loaded, it will simply draw a vertical
-     * gradient rectangle from {@code 0xc0101010} to {@code 0xd0101010}.
+     * If there is no world loaded, it will draw a dirt background; if a world is loaded, it will simply draw a vertical gradient rectangle
+     * from {@code 0xc0101010} to {@code 0xd0101010}.
      */
     protected final void drawDefaultOverlay() {
         int left = getAbsoluteX();
@@ -184,8 +182,8 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
             Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             float texScale = 32.0F;
-            BufferBuilder renderer = RenderingHelper.getRenderer();
-            renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+            BufferBuilder renderer = Tessellator.getInstance().getBuffer();
+            renderer.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
             renderer.pos(left, bottom, 0.0D).tex(left / texScale, (bottom + (int) scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
             renderer.pos(right, bottom, 0.0D).tex(right / texScale, (bottom + (int) scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
             renderer.pos(right, top, 0.0D).tex(right / texScale, (top + (int) scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
@@ -213,17 +211,17 @@ public class LinearList<T extends IWidget> extends AbstractContainer<T> implemen
     }
 
     @Override
-    public LinearList<T> addChildren(T widget) {
-        widget.setParentWidget(this);
+    public VerticalList<T> addChildren(T widget) {
+        widget.attach(this);
         elements.add(widget);
         return this;
     }
 
     @Override
-    public LinearList<T> addChildren(Collection<T> widgets) {
+    public VerticalList<T> addChildren(Collection<T> widgets) {
         elements.addAll(widgets);
         for (T widget : widgets) {
-            widget.setParentWidget(this);
+            widget.attach(this);
         }
         return this;
     }

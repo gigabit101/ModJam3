@@ -70,7 +70,7 @@ public abstract class ConnectionNodes<N extends INode> extends AbstractContainer
     private final ImmutableList<N> nodes;
 
     public ConnectionNodes(int amountNodes, Function<Integer, N> factory) {
-        super(0, 0, 0, ConnectionsPanel.REGULAR_HEIGHT);
+        this.setHeight(ConnectionsPanel.REGULAR_HEIGHT);
         ImmutableList.Builder<N> nodes = ImmutableList.builder();
         for (int i = 0; i < amountNodes; i++) {
             N node = factory.apply(i);
@@ -82,6 +82,11 @@ public abstract class ConnectionNodes<N extends INode> extends AbstractContainer
     private static void removeNode(INode node) {
         ConnectionsPanel panel = FactoryManagerGUI.get().getTopLevel().connectionsPanel;
         panel.removeChildren(node);
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        super.renderChildren(mouseX, mouseY, partialTicks);
     }
 
     @Override

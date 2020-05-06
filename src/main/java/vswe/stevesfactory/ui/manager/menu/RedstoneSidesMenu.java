@@ -1,16 +1,22 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import net.minecraft.util.Direction;
-import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
+import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
-import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.library.gui.widget.Checkbox;
+import vswe.stevesfactory.library.gui.widget.Paragraph;
+import vswe.stevesfactory.library.gui.widget.RadioController;
+import vswe.stevesfactory.library.gui.widget.RadioInput;
 import vswe.stevesfactory.logic.procedure.IDirectionTarget;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
 import vswe.stevesfactory.utils.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 
 public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDirectionTarget> extends Menu<P> {
@@ -25,31 +31,34 @@ public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDire
         this.menuName = menuName;
 
         RadioController filterTypeController = new RadioController();
-        RadioButton firstOption = new RadioButton(filterTypeController);
-        RadioButton secondOption = new RadioButton(filterTypeController);
+        RadioInput firstOption = new RadioInput(filterTypeController);
+        RadioInput secondOption = new RadioInput(filterTypeController);
         int y = HEADING_BOX.getPortionHeight() + 4;
         firstOption.setLocation(4, y);
-        firstOption.setLabel(firstOptionName);
         firstOption.check(firstOptionGetter.getAsBoolean());
-        firstOption.onChecked = firstOptionSetter;
+        firstOption.setCheckAction(firstOptionSetter);
         secondOption.setLocation(getWidth() / 2, y);
-        secondOption.setLabel(secondOptionName);
         secondOption.check(secondOptionGetter.getAsBoolean());
-        secondOption.onChecked = secondOptionSetter;
+        secondOption.setCheckAction(secondOptionSetter);
+
         addChildren(firstOption);
         addChildren(secondOption);
+        // TODO label pos
+        addChildren(firstOption.makeLabel().text(firstOptionName));
+        addChildren(secondOption.makeLabel().text(secondOptionName));
 
         sides = new EnumMap<>(Direction.class);
         for (Direction direction : Utils.DIRECTIONS) {
             Checkbox box = new Checkbox();
-            box.translateLabel("gui.sfm." + direction.getName());
             addChildren(box);
+            // TODO label pos
+            addChildren(box.makeLabel().translate("gui.sfm." + direction.getName()));
             sides.put(direction, box);
         }
-        FlowLayout.reflow(4, 30, getWidth(), sides);
+        FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 30, getWidth(), sides);
 
-        TextList info = new TextList(getWidth() - 4 * 2, 16, new ArrayList<>());
-        info.setFontHeight(6);
+        Paragraph info = new Paragraph(getWidth() - 4 * 2, 16, new ArrayList<>());
+        info.getTextRenderer().setFontHeight(6);
         info.addLineSplit(infoText);
         info.setLocation(4, firstOption.getYBottom() + 2);
         addChildren(info);

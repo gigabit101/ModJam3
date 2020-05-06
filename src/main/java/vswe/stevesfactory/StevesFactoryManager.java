@@ -18,6 +18,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.network.NetworkHandler;
 import vswe.stevesfactory.network.PacketReloadComponentGroups;
 import vswe.stevesfactory.setup.ModBlocks;
@@ -25,13 +26,10 @@ import vswe.stevesfactory.setup.ModContainers;
 import vswe.stevesfactory.setup.ModItems;
 import vswe.stevesfactory.ui.manager.selection.ComponentGroup;
 
-@Mod(StevesFactoryManager.MODID)
+@Mod(StevesFactoryManagerAPI.MODID)
 public class StevesFactoryManager {
 
-    public static final String MODID = "sfm";
-    public static final String NAME = "Steve's Factory Manager";
-
-    public static final Logger logger = LogManager.getLogger(MODID);
+    public static final Logger logger = LogManager.getLogger(StevesFactoryManagerAPI.MODID);
 
     public static StevesFactoryManager instance;
 
@@ -72,7 +70,7 @@ public class StevesFactoryManager {
     }
 
     private void serverStarting(final FMLServerStartingEvent event) {
-        LiteralArgumentBuilder<CommandSource> builder = Commands.literal(MODID)
+        LiteralArgumentBuilder<CommandSource> builder = Commands.literal(StevesFactoryManagerAPI.MODID)
                 .then(componentGroupsCommand());
         event.getCommandDispatcher().register(builder);
     }

@@ -1,12 +1,11 @@
 package vswe.stevesfactory.ui.manager.menu;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Direction;
-import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.api.logic.IProcedure;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.logic.procedure.IDirectionTarget;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
@@ -58,7 +57,8 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
 
         int leftMid = down.getX() + down.getWidth();
         int rightMid = up.getX();
-        activationButton.setLocation(RenderingHelper.getXForAlignedCenter(leftMid, rightMid, activationButton.getWidth()), y);
+        int x = Render2D.computeCenterX(leftMid, rightMid, activationButton.getFullWidth());
+        activationButton.setLocation(x, y);
         activationButton.setEditingState(false);
 
         addChildren(down);
@@ -107,10 +107,10 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderSystem.color3f(1F, 1F, 1F);
         RenderSystem.enableTexture();
-        super.render(mouseX, mouseY, particleTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     @Override

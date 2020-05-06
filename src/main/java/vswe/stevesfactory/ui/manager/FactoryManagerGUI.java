@@ -4,15 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import vswe.stevesfactory.Config;
 import vswe.stevesfactory.api.network.INetworkController;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.layout.StrictTableLayout;
-import vswe.stevesfactory.library.gui.layout.StrictTableLayout.GrowDirection;
 import vswe.stevesfactory.library.gui.screen.DisplayListCaches;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
@@ -36,26 +32,6 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         return (FactoryManagerGUI) Minecraft.getInstance().currentScreen;
     }
 
-    public static final StrictTableLayout DOWN_RIGHT_4_STRICT_TABLE = new StrictTableLayout(GrowDirection.DOWN, GrowDirection.RIGHT, 4);
-
-    public static final ResourceLocation DELETE_ICON = RenderingHelper.linkTexture("gui/actions/delete.png");
-    public static final ResourceLocation COPY_ICON = RenderingHelper.linkTexture("gui/actions/copy.png");
-    public static final ResourceLocation CUT_ICON = RenderingHelper.linkTexture("gui/actions/cut.png");
-    public static final ResourceLocation PASTE_ICON = RenderingHelper.linkTexture("gui/actions/paste.png");
-
-    public static final TextureWrapper CLOSE_ICON = TextureWrapper.ofFlowComponent(18, 36, 9, 9);
-    public static final TextureWrapper CLOSE_ICON_HOVERED = CLOSE_ICON.toRight(1);
-    public static final TextureWrapper SETTINGS_ICON = TextureWrapper.ofFlowComponent(18, 106, 18, 18);
-    public static final TextureWrapper SETTINGS_ICON_HOVERED = SETTINGS_ICON.toRight(1);
-    public static final TextureWrapper ADD_ENTRY_ICON = TextureWrapper.ofFlowComponent(18, 125, 8, 8);
-    public static final TextureWrapper ADD_ENTRY_HOVERED_ICON = ADD_ENTRY_ICON.toRight(1);
-    public static final TextureWrapper REMOVE_ENTRY_ICON = TextureWrapper.ofFlowComponent(34, 125, 8, 8);
-    public static final TextureWrapper REMOVE_ENTRY_HOVERED_ICON = REMOVE_ENTRY_ICON.toRight(1);
-
-    ///////////////////////////////////////////////////////////////////////////
-    // GUI code
-    ///////////////////////////////////////////////////////////////////////////
-
     public static final int FIXED_WIDTH = 256;
     public static final int FIXED_HEIGHT = 180;
     public static final float WIDTH_PROPORTION = 2F / 3F;
@@ -69,7 +45,7 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
     protected void init() {
         super.init();
         PrimaryWindow w = new PrimaryWindow();
-        initializePrimaryWindow(w);
+        setPrimaryWindow(w);
         w.init();
     }
 
@@ -123,14 +99,18 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
             if (fullscreen && !Config.CLIENT.useBackgroundOnFullscreen.get()) {
-                RenderingHelper.drawRect(getPosition(), getBorder(), 0xffc6c6c6);
+                Point pos = getPosition();
+                Dimension border = getBorder();
+                Render2D.beginColoredQuad();
+                Render2D.coloredRect(pos.x, pos.y, pos.x + border.width, pos.y + border.height, 0xffc6c6c6);
+                Render2D.draw();
             } else {
                 glCallList(backgroundDL);
             }
-            topLevel.render(mouseX, mouseY, particleTicks);
+            topLevel.render(mouseX, mouseY, partialTicks);
             RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
         }
 
@@ -196,7 +176,7 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         private final ImmutableList<DynamicWidthWidget<?>> children;
 
         private TopLevelWidget(PrimaryWindow window) {
-            super(window);
+            this.attachWindow(window);
             this.selectionPanel = new SelectionPanel();
             this.editorPanel = new EditorPanel();
             this.connectionsPanel = new ConnectionsPanel();
@@ -207,17 +187,19 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         }
 
         public void init() {
-            attachChildren();
+            for (DynamicWidthWidget<?> child : children) {
+                child.attach(this);
+            }
             editorPanel.readProcedures();
         }
 
         @Override
-        public IWidget getParentWidget() {
+        public IWidget getParent() {
             return null;
         }
 
         @Override
-        public void setParentWidget(IWidget newParent) {
+        public void attach(IWidget newParent) {
             Preconditions.checkArgument(newParent == null);
         }
 
@@ -232,10 +214,10 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             // No render events for this object because it is technically internal for the window, and it has the exact size as the window
             for (DynamicWidthWidget<?> child : children) {
-                child.render(mouseX, mouseY, particleTicks);
+                child.render(mouseX, mouseY, partialTicks);
             }
         }
 

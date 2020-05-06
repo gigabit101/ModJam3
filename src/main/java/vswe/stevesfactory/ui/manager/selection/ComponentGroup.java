@@ -23,11 +23,11 @@ public final class ComponentGroup {
     public static final Set<IProcedureType<?>> ungroupedTypes = new HashSet<>();
     public static final List<ComponentGroup> groups = new ArrayList<>();
 
-    private static final String DEFAULT_COMPONENTS_PATH = "/assets/" + StevesFactoryManager.MODID + "/component_groups/";
+    private static final String DEFAULT_COMPONENTS_PATH = "/assets/" + StevesFactoryManagerAPI.MODID + "/component_groups/";
     private static final String ORDER_DECLARATION_FILE = "@order.json";
 
     private static File getConfigDirectory() {
-        return new File("./config/" + StevesFactoryManager.MODID + "/component_groups/");
+        return new File("./config/" + StevesFactoryManagerAPI.MODID + "/component_groups/");
     }
 
     public static void reload(boolean reset) {

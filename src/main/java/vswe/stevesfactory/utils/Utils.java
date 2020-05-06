@@ -2,6 +2,7 @@ package vswe.stevesfactory.utils;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -13,6 +14,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -65,8 +67,24 @@ public final class Utils {
         return bool ^ predicate;
     }
 
+    public static int map(int x, int minIn, int maxIn, int minOut, int maxOut) {
+        return (x - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
+    }
+
+    public static long map(long x, long minIn, long maxIn, long minOut, long maxOut) {
+        return (x - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
+    }
+
+    public static float map(float x, float minIn, float maxIn, float minOut, float maxOut) {
+        return (x - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
+    }
+
+    public static double map(double x, double minIn, double maxIn, double minOut, double maxOut) {
+        return (x - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
+    }
+
     /**
-     * Helper for negating a method reference.
+     * Helper for negating a method reference (because they don't belong to any type before assigned to some variable)
      */
     public static <T> Predicate<T> not(Predicate<T> original) {
         return original.negate();
@@ -108,5 +126,21 @@ public final class Utils {
                 InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             }
         }
+    }
+
+    public static <L, R> L leftOrThrow(Either<L, R> either) {
+        return either.orThrow();
+    }
+
+    public static <L, R> R rightOrThrow(Either<L, R> either) {
+        return either.map(
+                l -> {
+                    if (l instanceof Throwable) {
+                        throw new RuntimeException((Throwable) l);
+                    }
+                    throw new RuntimeException();
+                },
+                Function.identity()
+        );
     }
 }

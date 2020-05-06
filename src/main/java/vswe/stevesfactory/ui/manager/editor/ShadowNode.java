@@ -17,7 +17,8 @@ public class ShadowNode extends AbstractWidget implements INode, LeafWidgetMixin
     private final INode handle;
 
     public ShadowNode(INode handle) {
-        super(handle.getX(), handle.getY(), handle.getWidth(), handle.getHeight());
+        this.setLocation(handle.getX(), handle.getY());
+        this.setDimensions(handle.getWidth(), handle.getHeight());
         this.handle = handle;
     }
 
@@ -59,6 +60,6 @@ public class ShadowNode extends AbstractWidget implements INode, LeafWidgetMixin
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
     }
 }

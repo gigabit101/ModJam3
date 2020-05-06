@@ -1,8 +1,10 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.widget.NumberField;
+import vswe.stevesfactory.library.gui.widget.Paragraph;
+import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.logic.procedure.IntervalTriggerProcedure;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
@@ -10,7 +12,7 @@ import vswe.stevesfactory.ui.manager.editor.Menu;
 import java.util.ArrayList;
 import java.util.List;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public class IntervalMenu extends Menu<IntervalTriggerProcedure> {
 
@@ -20,17 +22,17 @@ public class IntervalMenu extends Menu<IntervalTriggerProcedure> {
 
     public IntervalMenu() {
         interval = NumberField.integerFieldRanged(38, 14, 1, 1, 999);
-        int x = RenderingHelper.getXForAlignedCenter(0, getWidth(), interval.getWidth() + MARGIN_MIDDLE_UNIT_TEXT + fontRenderer().getStringWidth(getUnitText()));
+        int x = Render2D.computeCenterX(0, getWidth(), interval.getWidth() + MARGIN_MIDDLE_UNIT_TEXT + fontRenderer().getStringWidth(getUnitText()));
         interval.setValue(1);
         interval.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
         interval.setLocation(x, 50);
 
         int desX = interval.getX();
-        TextList description = new TextList(getWidth() - x * 2, 0, new ArrayList<>());
+        Paragraph description = new Paragraph(getWidth() - x * 2, 0, new ArrayList<>());
         description.setLocation(desX, HEADING_BOX.getPortionHeight() + 8);
         description.setFitContents(true);
         description.addLineSplit(getWidth() - 4 * 2, I18n.format("menu.sfm.Interval.Info"));
-        description.setFontHeight(8);
+        description.getTextRenderer().setFontHeight(8);
 
         addChildren(interval);
         addChildren(description);
@@ -51,17 +53,18 @@ public class IntervalMenu extends Menu<IntervalTriggerProcedure> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
-        super.render(mouseX, mouseY, particleTicks);
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void renderContents(int mouseX, int mouseY, float particleTicks) {
-        super.renderContents(mouseX, mouseY, particleTicks);
-        RenderingHelper.drawTextCenteredVertically(
+    public void renderContents(int mouseX, int mouseY, float partialTicks) {
+        super.renderContents(mouseX, mouseY, partialTicks);
+        Render2D.renderVerticallyCenteredText(
                 getUnitText(),
                 interval.getAbsoluteXRight() + MARGIN_MIDDLE_UNIT_TEXT,
                 interval.getAbsoluteY(), interval.getAbsoluteYBottom(),
+                getZLevel(),
                 0xff404040);
     }
 

@@ -1,45 +1,12 @@
 package vswe.stevesfactory.library.gui.widget;
 
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.widget.mixin.ContainerWidgetMixin;
-import vswe.stevesfactory.library.gui.window.IWindow;
 
-import java.awt.*;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public abstract class AbstractContainer<T extends IWidget> extends AbstractWidget implements IContainer<T>, ContainerWidgetMixin<T> {
-
-    public AbstractContainer(IWindow window) {
-        super(window);
-    }
-
-    public AbstractContainer() {
-    }
-
-    public AbstractContainer(int x, int y, int width, int height) {
-        super(x, y, width, height);
-    }
-
-    public AbstractContainer(Point location, Dimension dimensions) {
-        super(location, dimensions);
-    }
-
-    @Override
-    public void setParentWidget(IWidget newParent) {
-        super.setParentWidget(newParent);
-        ContainerWidgetMixin.super.setParentWidget(newParent);
-    }
-
-    @Override
-    public void setWindow(IWindow window) {
-        super.setWindow(window);
-        Collection<T> children = getChildren();
-        if (children != null) {
-            for (T child : children) {
-                // Based on the docs, this will inherit a reference to window from this widget
-                child.setParentWidget(this);
-            }
-        }
-    }
 
     @Override
     public IContainer<T> addChildren(T widget) {
@@ -51,7 +18,25 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
         throw new UnsupportedOperationException();
     }
 
-    // Re-override these because AbstractWidget overrides them without updating children positions
+    @Override
+    public void onAttach(@Nullable IWidget oldParent, IWidget newParent) {
+        // Reattaching
+        if (oldParent != null) {
+            // Inherit the (possible) new window reference
+            for (T child : getChildren()) {
+                child.attach(this);
+            }
+        }
+    }
+
+    public void notifyChildrenForPositionChange() {
+        // Prevent NPE when containers setting coordinates before child widgets get initialized
+        if (getChildren() != null) {
+            for (T child : getChildren()) {
+                child.onParentPositionChanged();
+            }
+        }
+    }
 
     @Override
     public void onParentPositionChanged() {
@@ -65,25 +50,30 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
         notifyChildrenForPositionChange();
     }
 
-    public void notifyChildrenForPositionChange() {
-        // Prevent NPE when containers setting coordinates before child widgets get initialized
-        if (getChildren() != null) {
-            for (T child : getChildren()) {
-                child.onParentPositionChanged();
-            }
-        }
+    @Override
+    public void setLocation(int x, int y) {
+        super.setLocation(x, y);
+        notifyChildrenForPositionChange();
+    }
+
+    @Override
+    public void setX(int x) {
+        super.setX(x);
+        notifyChildrenForPositionChange();
+    }
+
+    @Override
+    public void setY(int y) {
+        super.setY(y);
+        notifyChildrenForPositionChange();
     }
 
     public void adjustMinContent() {
-        if (getChildren().isEmpty()) {
-            return;
-        }
-
         int rightmost = 0;
         int bottommost = 0;
         for (IWidget child : getChildren()) {
-            int right = child.getX() + child.getWidth();
-            int bottom = child.getY() + child.getHeight();
+            int right = child.getX() + child.getFullWidth();
+            int bottom = child.getY() + child.getFullHeight();
             if (right > rightmost) {
                 rightmost = right;
             }
@@ -94,14 +84,49 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
         setDimensions(rightmost, bottommost);
     }
 
-    public void fillWindow() {
-        setLocation(0, 0);
-        setDimensions(getWindow().getContentDimensions());
+    public void adjustMinWidth() {
+        int rightmost = 0;
+        for (IWidget child : getChildren()) {
+            int right = child.getX() + child.getFullWidth();
+            if (right > rightmost) {
+                rightmost = right;
+            }
+        }
+        setHeight(rightmost);
     }
 
-    public void attachChildren() {
-        for (T child : getChildren()) {
-            child.setParentWidget(this);
+    public void adjustMinHeight() {
+        int bottommost = 0;
+        for (IWidget child : getChildren()) {
+            int bottom = child.getY() + child.getFullHeight();
+            if (bottom > bottommost) {
+                bottommost = bottom;
+            }
+        }
+        setHeight(bottommost);
+    }
+
+    public void fillWindow() {
+        setLocation(0, 0);
+        setDimensions(getWindow().getContentWidth(), getWindow().getContentHeight());
+    }
+
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        propagateBuildActionMenu(builder);
+    }
+
+    private void propagateBuildActionMenu(ContextMenuBuilder builder) {
+        propagateBuildActionMenu(this, builder);
+    }
+
+    private static void propagateBuildActionMenu(IContainer<?> container, ContextMenuBuilder builder) {
+        for (IWidget child : container.getChildren()) {
+            if (child instanceof AbstractWidget) {
+                ((AbstractWidget) child).buildContextMenu(builder);
+            } else if (child instanceof IContainer<?>) {
+                propagateBuildActionMenu((IContainer<?>) child, builder);
+            }
         }
     }
 }

@@ -7,9 +7,9 @@ import vswe.stevesfactory.library.gui.widget.IWidget;
 import java.awt.*;
 import java.util.List;
 
-import static vswe.stevesfactory.utils.Utils.isInside;
+import static vswe.stevesfactory.library.gui.Render2D.isInside;
 
-public final class StrictTableLayout {
+public class StrictTableLayout {
 
     public enum GrowDirection {
         UP {
@@ -76,21 +76,20 @@ public final class StrictTableLayout {
 
     public GrowDirection stackDirection;
     public GrowDirection overflowDirection;
-    public int componentMargin;
+    public int tableGap;
 
-    public StrictTableLayout(GrowDirection stackDirection, GrowDirection overflowDirection, int componentMargin) {
+    public StrictTableLayout(GrowDirection stackDirection, GrowDirection overflowDirection, int tableGap) {
         this.stackDirection = stackDirection;
         this.overflowDirection = overflowDirection;
-        this.componentMargin = componentMargin;
+        this.tableGap = tableGap;
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public <T extends IWidget> List<T> reflow(Dimension bounds, List<T> widgets) {
         Preconditions.checkArgument(isWidgetDimensionsIdentical(widgets));
 
-        // TODO add borders to container widgets so that we don't have to simulate borders here
-        int nextX = componentMargin;
-        int nextY = componentMargin;
+        int nextX = 0;
+        int nextY = 0;
         int headX = nextX;
         int headY = nextY;
 
@@ -101,13 +100,13 @@ public final class StrictTableLayout {
 
             widget.setLocation(nextX, nextY);
 
-            int width = widget.getWidth();
-            int height = widget.getHeight();
-            nextX = stackDirection.computeNextX(nextX, width, componentMargin);
-            nextY = stackDirection.computeNextY(nextY, height, componentMargin);
+            int width = widget.getFullWidth();
+            int height = widget.getFullHeight();
+            nextX = stackDirection.computeNextX(nextX, width, tableGap);
+            nextY = stackDirection.computeNextY(nextY, height, tableGap);
             if (!isCompletelyInside(nextX, nextY, width, height, bounds.width, bounds.height)) {
-                nextX = headX = overflowDirection.computeNextX(headX, width, componentMargin);
-                nextY = headY = overflowDirection.computeNextY(headY, height, componentMargin);
+                nextX = headX = overflowDirection.computeNextX(headX, width, tableGap);
+                nextY = headY = overflowDirection.computeNextY(headY, height, tableGap);
             }
         }
         return widgets;
@@ -123,10 +122,10 @@ public final class StrictTableLayout {
         }
 
         IWidget first = widgets.get(0);
-        int commonWidth = first.getWidth();
-        int commonHeight = first.getHeight();
+        int commonWidth = first.getFullWidth();
+        int commonHeight = first.getFullHeight();
         for (IWidget widget : widgets) {
-            if (commonWidth != widget.getWidth() || commonHeight != widget.getHeight()) {
+            if (commonWidth != widget.getFullWidth() || commonHeight != widget.getFullHeight()) {
                 return false;
             }
         }

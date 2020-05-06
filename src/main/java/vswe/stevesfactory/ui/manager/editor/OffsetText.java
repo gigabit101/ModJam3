@@ -8,7 +8,7 @@ import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 import vswe.stevesfactory.library.gui.window.Dialog;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 class OffsetText extends AbstractWidget implements LeafWidgetMixin {
 
@@ -19,7 +19,8 @@ class OffsetText extends AbstractWidget implements LeafWidgetMixin {
     public int rightX;
 
     public OffsetText(String prefix, int xRight, int y) {
-        super(xRight, y, 0, fontRenderer().FONT_HEIGHT);
+        this.setLocation(xRight, y);
+        this.setDimensions(0, fontRenderer().FONT_HEIGHT);
         this.prefix = prefix;
         set(0);
     }
@@ -53,7 +54,7 @@ class OffsetText extends AbstractWidget implements LeafWidgetMixin {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         int color = isInside(mouseX, mouseY) ? 0xffff00 : 0xffffff;
         fontRenderer().drawStringWithShadow(text, getAbsoluteX(), getAbsoluteY(), color);

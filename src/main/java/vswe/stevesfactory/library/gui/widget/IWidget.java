@@ -11,76 +11,84 @@ public interface IWidget {
      */
     Point getPosition();
 
+    Insets getBorders();
+
+    int getBorderTop();
+
+    int getBorderRight();
+
+    int getBorderBottom();
+
+    int getBorderLeft();
+
+    void setBorderTop(int top);
+
+    void setBorderRight(int right);
+
+    void setBorderBottom(int bottom);
+
+    void setBorderLeft(int left);
+
+    void setBorders(int top, int right, int bottom, int left);
+
+    void setBorders(int borders);
+
     int getX();
 
     int getY();
+
+    int getInnerX();
+
+    int getInnerY();
 
     int getAbsoluteX();
 
     int getAbsoluteY();
 
-    default void setLocation(Point point) {
-        setLocation(point.x, point.y);
-    }
+    int getOuterAbsoluteX();
 
-    default void setLocation(int x, int y) {
-        getPosition().x = x;
-        getPosition().y = y;
-        onRelativePositionChanged();
-    }
+    int getOuterAbsoluteY();
 
-    default void setX(int x) {
-        getPosition().x = x;
-        onRelativePositionChanged();
-    }
+    void setLocation(Point point);
 
-    default void setY(int y) {
-        getPosition().y = y;
-        onRelativePositionChanged();
-    }
+    void setLocation(int x, int y);
 
-    default void moveX(int dx) {
-        setX(getX() + dx);
-    }
+    void setX(int x);
 
-    default void moveY(int dy) {
-        setY(getY() + dy);
-    }
-
-    default void move(int dx, int dy) {
-        moveX(dx);
-        moveY(dy);
-    }
+    void setY(int y);
 
     Dimension getDimensions();
-
-    default void setDimensions(Dimension dimensions) {
-        setDimensions(dimensions.width, dimensions.height);
-    }
-
-    default void setDimensions(int width, int height) {
-        setWidth(width);
-        setHeight(height);
-    }
-
-    default void setWidth(int width) {
-        getDimensions().width = width;
-    }
-
-    default void setHeight(int height) {
-        getDimensions().height = height;
-    }
 
     int getWidth();
 
     int getHeight();
 
-    void render(int mouseX, int mouseY, float particleTicks);
+    int getFullWidth();
 
-    IWidget getParentWidget();
+    int getFullHeight();
+
+    /**
+     * Render the widget. Implementations may assume tessellator finished drawing, and the following GL states are in the given mode.
+     * <ul>
+     * <li>depthTest: enabled
+     * <li>alphaTest: enabled
+     * <li>texture: enabled
+     * </ul>
+     */
+    void render(int mouseX, int mouseY, float partialTicks);
+
+    float getZLevel();
+
+    IWidget getParent();
 
     IWindow getWindow();
 
+    /**
+     * Get whether this widget is enabled or not.
+     * <p>
+     * An enabled widgets means it will render and interact with user inputs. On the other hand, a disabled widgets always means it does not
+     * interact with user inputs (i.e. all event methods return {@code false}) but whether to render or not is up to the implementation.
+     */
     boolean isEnabled();
 
     void setEnabled(boolean enabled);
@@ -94,10 +102,14 @@ public interface IWidget {
     }
 
     /**
-     * @implSpec Calling this method should update the value returned by {@link #getParentWidget()} and trigger {@link
+     * Attach and validate this widget.
+     *
+     * @implSpec Calling this method should update the value returned by {@link #getParent()} and trigger {@link
      * #onParentPositionChanged()}.
      */
-    void setParentWidget(IWidget newParent);
+    void attach(IWidget newParent);
+
+    boolean isValid();
 
     void onParentPositionChanged();
 
@@ -153,9 +165,5 @@ public interface IWidget {
 
     void mouseMoved(double mouseX, double mouseY);
 
-    void update(float particleTicks);
-
-    default boolean doesEffectByTranslation() {
-        return false;
-    }
+    void update(float partialTicks);
 }

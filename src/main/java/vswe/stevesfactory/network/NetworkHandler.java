@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.*;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 
 import java.util.function.*;
 
@@ -15,7 +15,7 @@ public final class NetworkHandler {
 
     public static final String PROTOCOL_VERSION = Integer.toString(0);
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
-            .named(new ResourceLocation(StevesFactoryManager.MODID, "main_channel"))
+            .named(new ResourceLocation(StevesFactoryManagerAPI.MODID, "main_channel"))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
             .networkProtocolVersion(() -> PROTOCOL_VERSION)

@@ -3,22 +3,21 @@ package vswe.stevesfactory.ui.manager.editor;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
-import org.lwjgl.glfw.GLFW;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IErrorPopulator;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.contextmenu.IEntry;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
-import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
-import vswe.stevesfactory.library.gui.widget.box.LinearList;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
+import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -30,25 +29,25 @@ import java.util.function.Supplier;
 public abstract class Menu<P extends IProcedure & IClientDataStorage> extends AbstractContainer<IWidget> implements IErrorPopulator, IWidget {
 
     public enum State {
-        COLLAPSED(TextureWrapper.ofFlowComponent(0, 40, 9, 9),
-                TextureWrapper.ofFlowComponent(9, 40, 9, 9)) {
+        COLLAPSED(Render2D.ofFlowComponent(0, 40, 9, 9),
+                Render2D.ofFlowComponent(9, 40, 9, 9)) {
             @Override
             public void toggleStateFor(Menu<?> menu) {
                 menu.expand();
             }
         },
-        EXPANDED(TextureWrapper.ofFlowComponent(0, 49, 9, 9),
-                TextureWrapper.ofFlowComponent(9, 49, 9, 9)) {
+        EXPANDED(Render2D.ofFlowComponent(0, 49, 9, 9),
+                Render2D.ofFlowComponent(9, 49, 9, 9)) {
             @Override
             public void toggleStateFor(Menu<?> menu) {
                 menu.collapse();
             }
         };
 
-        public final TextureWrapper toggleStateNormalTexture;
-        public final TextureWrapper toggleStateHoveringTexture;
+        public final Texture toggleStateNormalTexture;
+        public final Texture toggleStateHoveringTexture;
 
-        State(TextureWrapper toggleStateNormalTexture, TextureWrapper toggleStateHoveringTexture) {
+        State(Texture toggleStateNormalTexture, Texture toggleStateHoveringTexture) {
             this.toggleStateNormalTexture = toggleStateNormalTexture;
             this.toggleStateHoveringTexture = toggleStateHoveringTexture;
         }
@@ -59,30 +58,31 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public static class ToggleStateButton extends AbstractIconButton {
 
         public ToggleStateButton(Menu<?> parent) {
-            super(109, 2, 9, 9);
-            setParentWidget(parent);
+            this.setLocation(109, 2);
+            this.setDimensions(9, 9);
+            attach(parent);
         }
 
         @Override
-        public TextureWrapper getTextureNormal() {
-            return getParentWidget().state.toggleStateNormalTexture;
+        public Texture getTextureNormal() {
+            return getParent().state.toggleStateNormalTexture;
         }
 
         @Override
-        public TextureWrapper getTextureHovered() {
-            return getParentWidget().state.toggleStateHoveringTexture;
+        public Texture getTextureHovered() {
+            return getParent().state.toggleStateHoveringTexture;
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            getParentWidget().toggleState();
+            getParent().toggleState();
             return true;
         }
 
         @Nonnull
         @Override
-        public Menu<?> getParentWidget() {
-            return Objects.requireNonNull((Menu<?>) super.getParentWidget());
+        public Menu<?> getParent() {
+            return Objects.requireNonNull((Menu<?>) super.getParent());
         }
 
         @Override
@@ -91,15 +91,15 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float particleTicks) {
+        public void render(int mouseX, int mouseY, float partialTicks) {
             RenderSystem.color3f(1F, 1F, 1F);
-            super.render(mouseX, mouseY, particleTicks);
+            super.render(mouseX, mouseY, partialTicks);
         }
     }
 
     private static final List<Supplier<IEntry>> EMPTY_LIST = ImmutableList.of();
 
-    public static final TextureWrapper HEADING_BOX = TextureWrapper.ofFlowComponent(0, 0, 120, 13);
+    public static final Texture HEADING_BOX = Render2D.ofFlowComponent(0, 0, 120, 13);
     public static final int DEFAULT_CONTENT_HEIGHT = 65;
 
     private FlowComponent<P> flowComponent;
@@ -113,7 +113,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     public Menu() {
         // Start at a collapsed state
-        super(0, 0, HEADING_BOX.getPortionWidth(), HEADING_BOX.getPortionHeight());
+        this.setDimensions(HEADING_BOX.getPortionWidth(), HEADING_BOX.getPortionHeight());
         this.toggleStateButton = new ToggleStateButton(this);
         this.children = new ArrayList<>();
         {
@@ -187,7 +187,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
-        getParentWidget().reflow();
+        getParent().reflow();
     }
 
     @Override
@@ -200,20 +200,20 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         if (!isEnabled()) {
             return;
         }
 
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         RenderSystem.color3f(1F, 1F, 1F);
-        HEADING_BOX.draw(getAbsoluteX(), getAbsoluteY());
+        HEADING_BOX.render(getAbsoluteX(), getAbsoluteY());
         renderHeadingText();
 
         if (state == State.EXPANDED) {
-            renderContents(mouseX, mouseY, particleTicks);
+            renderContents(mouseX, mouseY, partialTicks);
         } else {
-            toggleStateButton.render(mouseX, mouseY, particleTicks);
+            toggleStateButton.render(mouseX, mouseY, partialTicks);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
@@ -221,7 +221,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public void renderHeadingText() {
         int y1 = getAbsoluteY();
         int y2 = y1 + HEADING_BOX.getPortionHeight();
-        RenderingHelper.drawTextCenteredVertically(getHeadingText(), getHeadingLeftX(), y1, y2 + 1, getHeadingColor());
+        Render2D.renderVerticallyCenteredText(getHeadingText(), getHeadingLeftX(), y1, y2 + 1, getZLevel(), getHeadingColor());
     }
 
     public int getHeadingLeftX() {
@@ -234,9 +234,9 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     public abstract String getHeadingText();
 
-    public void renderContents(int mouseX, int mouseY, float particleTicks) {
+    public void renderContents(int mouseX, int mouseY, float partialTicks) {
         for (IWidget child : children) {
-            child.render(mouseX, mouseY, particleTicks);
+            child.render(mouseX, mouseY, partialTicks);
         }
     }
 
@@ -250,23 +250,21 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         }
         if (isInside(mouseX, mouseY)) {
             getWindow().setFocusedWidget(this);
-            if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-                ImmutableList.Builder<IEntry> list = ImmutableList.<IEntry>builder()
-                        .add(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()))
-                        .add(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
-                addContextMenuEntries(list);
-                for (Supplier<IEntry> entry : actionMenuEntries) {
-                    list.add(entry.get());
-                }
-                ContextMenu contextMenu = ContextMenu.atCursor(list.build());
-                WidgetScreen.getCurrent().addPopupWindow(contextMenu);
-            }
             return true;
         }
         return false;
     }
 
-    protected void addContextMenuEntries(ImmutableList.Builder<IEntry> builder) {
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()));
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
+        // TODO
+//        for (Supplier<IEntry> entry : actionMenuEntries) {
+//            list.add(entry.get());
+//        }
+        super.buildContextMenu(builder);
     }
 
     protected void saveData() {
@@ -275,14 +273,14 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     @SuppressWarnings("unchecked")
     @Nonnull
     @Override
-    public LinearList<Menu<P>> getParentWidget() {
-        return Objects.requireNonNull((LinearList<Menu<P>>) super.getParentWidget());
+    public VerticalList<Menu<P>> getParent() {
+        return Objects.requireNonNull((VerticalList<Menu<P>>) super.getParent());
     }
 
     public void onLinkFlowComponent(FlowComponent<P> flowComponent) {
         Preconditions.checkState(this.flowComponent == null);
         this.flowComponent = flowComponent;
-        this.setParentWidget(flowComponent.getMenusBox());
+        this.attach(flowComponent.getMenusBox());
     }
 
     public FlowComponent<P> getFlowComponent() {

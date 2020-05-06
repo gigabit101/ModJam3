@@ -2,18 +2,13 @@ package vswe.stevesfactory.library.gui.screen;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 import vswe.stevesfactory.StevesFactoryManager;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
+import vswe.stevesfactory.library.gui.Texture;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.*;
+import static vswe.stevesfactory.library.gui.Render2D.*;
 
-@OnlyIn(Dist.CLIENT)
 public final class BackgroundRenderers {
 
     private BackgroundRenderers() {
@@ -23,9 +18,9 @@ public final class BackgroundRenderers {
     // Flat style
     ///////////////////////////////////////////////////////////////////////////
 
-    public static final int LIGHT_BORDER_COLOR = 0xffffff;
-    public static final int DARK_BORDER_COLOR = 0x606060;
-    public static final int BACKGROUND_COLOR = 0xc6c6c6;
+    public static final int LIGHT_BORDER_COLOR = 0xffffffff;
+    public static final int DARK_BORDER_COLOR = 0xff606060;
+    public static final int BACKGROUND_COLOR = 0xffc6c6c6;
 
     /**
      * Draw a flat style GUI background on the given position with the given width and height.
@@ -33,10 +28,7 @@ public final class BackgroundRenderers {
      * The background has a border of 2 pixels, therefore the background cannot have a dimension less than 4x4 pixels. It shares the same
      * bottom color as the vanilla background but has a simpler border (plain color).
      * <p>
-     * Note that {@link GL11#GL_ALPHA_TEST} needs to be disabled in order for this method to function, if the background is drawn in a
-     * standard Minecraft GUI setting (has a dark gradient overlay on the world renderer).
-     * <p>
-     * See {@link #drawVanillaStyle(int, int, int, int, float)} for parameter information.
+     * See {@link #drawVanillaStyle4x4(int, int, int, int, float)} for parameter information.
      *
      * @see #LIGHT_BORDER_COLOR
      * @see #DARK_BORDER_COLOR
@@ -48,27 +40,34 @@ public final class BackgroundRenderers {
         int x2 = x + width;
         int y2 = y + height;
 
-        drawRect(x, y, x2, y2, BACKGROUND_COLOR);
-        usePlainColorGLStates();
-        getRenderer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-
-        rectVertices(x, y, x2, y2, DARK_BORDER_COLOR);
-        rectVertices(x, y, x2 - 2, y2 - 2, LIGHT_BORDER_COLOR);
-        rectVertices(x + 2, y + 2, x2 - 2, y2 - 2, BACKGROUND_COLOR);
-
-        Tessellator.getInstance().draw();
-        RenderSystem.enableTexture();
+        GlStateManager.disableTexture();
+        beginColoredQuad();
+        {
+            coloredRect(x, y, x2, y2, z, DARK_BORDER_COLOR);
+            coloredRect(x, y, x2 - 2, y2 - 2, z, LIGHT_BORDER_COLOR);
+            coloredRect(x + 2, y + 2, x2 - 2, y2 - 2, z, BACKGROUND_COLOR);
+        }
+        draw();
+        GlStateManager.enableTexture();
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Vanilla style
     ///////////////////////////////////////////////////////////////////////////
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(StevesFactoryManager.MODID, "textures/gui/generic_components.png");
-    private static final int UNIT_LENGTH = 4;
-    private static final float UV_MULTIPLIER = 1f / 256f;
+    private static final ResourceLocation GENERIC_COMPONENTS = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/generic_components.png");
+    private static final int TEX_WIDTH = 256;
+    private static final int TEX_HEIGHT = 256;
 
-    private static float zLevel = 0F;
+    public static final Texture TOP_LEFT_CORNER4x4 = Texture.portion(GENERIC_COMPONENTS, TEX_WIDTH, TEX_HEIGHT, 0, 0, 4, 4);
+    public static final Texture TOP_RIGHT_CORNER4x4 = TOP_LEFT_CORNER4x4.moveRight(1);
+    public static final Texture BOTTOM_LEFT_CORNER4x4 = TOP_LEFT_CORNER4x4.moveRight(2);
+    public static final Texture BOTTOM_RIGHT_CORNER4x4 = TOP_LEFT_CORNER4x4.moveRight(3);
+
+    public static final Texture TOP_EDGE4x4 = TOP_LEFT_CORNER4x4.moveRight(4);
+    public static final Texture BOTTOM_EDGE4x4 = TOP_EDGE4x4.moveRight(1);
+    public static final Texture LEFT_EDGE4x4 = TOP_EDGE4x4.moveRight(2);
+    public static final Texture RIGHT_EDGE4x4 = TOP_EDGE4x4.moveRight(3);
 
     /**
      * Draw a vanilla styled GUI background on the given position with the given width and height.
@@ -85,119 +84,96 @@ public final class BackgroundRenderers {
      * @param height Height of the result, including both borders and must be larger than 8
      * @param z      Z level that will be used for drawing and put into the depth buffer
      */
-    public static void drawVanillaStyle(int x, int y, int width, int height, float z) {
+    public static void drawVanillaStyle4x4(int x, int y, int width, int height, float z) {
         Preconditions.checkArgument(width >= 8 && height >= 8);
 
+        int bodyWidth = width - 4 * 2;
+        int bodyHeight = height - 4 * 2;
+        int bodyX = x + 4;
+        int bodyY = y + 4;
+        int bodyXRight = bodyX + bodyWidth;
+        int bodyYBottom = bodyY + bodyHeight;
         useTextureGLStates();
-        zLevel = z;
+        beginTexturedQuad();
+        bindTexture(GENERIC_COMPONENTS);
+        {
+            int cornerXRight = x + width - 4;
+            int cornerYBottom = y + height - 4;
+            TOP_LEFT_CORNER4x4.vertices(x, y, z);
+            TOP_RIGHT_CORNER4x4.vertices(cornerXRight, y, z);
+            BOTTOM_LEFT_CORNER4x4.vertices(x, cornerYBottom, z);
+            BOTTOM_RIGHT_CORNER4x4.vertices(cornerXRight, cornerYBottom, z);
 
-        getRenderer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bindTexture(TEXTURE);
-
-        int cornerXRight = x + width - UNIT_LENGTH;
-        int cornerYBottom = y + height - UNIT_LENGTH;
-        CornerPiece.drawTopLeft(x, y);
-        CornerPiece.drawTopRight(cornerXRight, y);
-        CornerPiece.drawBottomLeft(x, cornerYBottom);
-        CornerPiece.drawBottomRight(cornerXRight, cornerYBottom);
-
-        int bodyWidth = width - UNIT_LENGTH * 2;
-        int bodyHeight = height - UNIT_LENGTH * 2;
-        int bodyX = x + UNIT_LENGTH;
-        int bodyY = y + UNIT_LENGTH;
-
-        if (bodyWidth > 0) {
-            EdgePiece.drawTop(bodyX, y, bodyWidth);
-            EdgePiece.drawBottom(bodyX, bodyY + bodyHeight, bodyWidth);
+            if (bodyWidth > 0) {
+                TOP_EDGE4x4.vertices(bodyX, y, bodyXRight, y + 4, z);
+                BOTTOM_EDGE4x4.vertices(bodyX, bodyYBottom, bodyXRight, bodyYBottom + 4, z);
+            }
+            if (bodyHeight > 0) {
+                LEFT_EDGE4x4.vertices(x, bodyY, x + 4, bodyYBottom, z);
+                RIGHT_EDGE4x4.vertices(bodyXRight, bodyY, bodyXRight + 4, bodyYBottom, z);
+            }
         }
-        if (bodyHeight > 0) {
-            EdgePiece.drawLeft(x, bodyY, bodyHeight);
-            EdgePiece.drawRight(bodyX + bodyWidth, bodyY, bodyHeight);
-        }
-
-        Tessellator.getInstance().draw();
+        draw();
 
         if (bodyWidth > 0 && bodyHeight > 0) {
-            drawRect(bodyX, bodyY, bodyX + bodyWidth, bodyY + bodyHeight, 198, 198, 198, 255);
-            RenderSystem.enableTexture();
+            lightGrayRect(bodyX, bodyY, bodyWidth, bodyHeight, z);
         }
     }
+
+    public static final Texture TOP_LEFT_CORNER3x3 = Texture.portion(GENERIC_COMPONENTS, TEX_WIDTH, TEX_HEIGHT, 0, 4, 3, 3);
+    public static final Texture TOP_RIGHT_CORNER3x3 = TOP_LEFT_CORNER3x3.moveRight(1);
+    public static final Texture BOTTOM_LEFT_CORNER3x3 = TOP_LEFT_CORNER3x3.moveRight(2);
+    public static final Texture BOTTOM_RIGHT_CORNER3x3 = TOP_LEFT_CORNER3x3.moveRight(3);
+
+    public static final Texture TOP_EDGE3x3 = TOP_LEFT_CORNER3x3.moveRight(4);
+    public static final Texture BOTTOM_EDGE3x3 = TOP_EDGE3x3.moveRight(1);
+    public static final Texture LEFT_EDGE3x3 = TOP_EDGE3x3.moveRight(2);
+    public static final Texture RIGHT_EDGE3x3 = TOP_EDGE3x3.moveRight(3);
 
     /**
-     * All methods assume {@link #TEXTURE} is already bond with {@link net.minecraft.client.renderer.texture.TextureManager#bindTexture(ResourceLocation)}.
+     * @see #drawVanillaStyle3x3(int, int, int, int, float)
      */
-    private static final class CornerPiece {
+    public static void drawVanillaStyle3x3(int x, int y, int width, int height, float z) {
+        Preconditions.checkArgument(width >= 6 && height >= 6);
 
-        private static final int TX_TOP_LEFT = 0;
-        private static final int TX_TOP_RIGHT = TX_TOP_LEFT + UNIT_LENGTH;
-        private static final int TX_BOTTOM_LEFT = TX_TOP_LEFT + UNIT_LENGTH * 2;
-        private static final int TX_BOTTOM_RIGHT = TX_TOP_LEFT + UNIT_LENGTH * 3;
-        private static final int TY = 0;
+        int bodyWidth = width - 3 * 2;
+        int bodyHeight = height - 3 * 2;
+        int bodyX = x + 3;
+        int bodyY = y + 3;
+        int bodyXRight = bodyX + bodyWidth;
+        int bodyYBottom = bodyY + bodyHeight;
+        useTextureGLStates();
+        beginTexturedQuad();
+        bindTexture(GENERIC_COMPONENTS);
+        {
+            int cornerXRight = x + width - 3;
+            int cornerYBottom = y + height - 3;
+            TOP_LEFT_CORNER3x3.vertices(x, y, z);
+            TOP_RIGHT_CORNER3x3.vertices(cornerXRight, y, z);
+            BOTTOM_LEFT_CORNER3x3.vertices(x, cornerYBottom, z);
+            BOTTOM_RIGHT_CORNER3x3.vertices(cornerXRight, cornerYBottom, z);
 
-        private static void drawTopLeft(int x, int y) {
-            plotVertexesTex(x, y, UNIT_LENGTH, UNIT_LENGTH, TX_TOP_LEFT, TY);
+            if (bodyWidth > 0) {
+                TOP_EDGE3x3.vertices(bodyX, y, bodyXRight, y + 3, z);
+                BOTTOM_EDGE3x3.vertices(bodyX, bodyYBottom, bodyXRight, bodyYBottom + 3, z);
+            }
+            if (bodyHeight > 0) {
+                LEFT_EDGE3x3.vertices(x, bodyY, x + 3, bodyYBottom, z);
+                RIGHT_EDGE3x3.vertices(bodyXRight, bodyY, bodyXRight + 3, bodyYBottom, z);
+            }
         }
+        draw();
 
-        private static void drawTopRight(int x, int y) {
-            plotVertexesTex(x, y, UNIT_LENGTH, UNIT_LENGTH, TX_TOP_RIGHT, TY);
-        }
-
-        private static void drawBottomLeft(int x, int y) {
-            plotVertexesTex(x, y, UNIT_LENGTH, UNIT_LENGTH, TX_BOTTOM_LEFT, TY);
-        }
-
-        private static void drawBottomRight(int x, int y) {
-            plotVertexesTex(x, y, UNIT_LENGTH, UNIT_LENGTH, TX_BOTTOM_RIGHT, TY);
+        if (bodyWidth > 0 && bodyHeight > 0) {
+            lightGrayRect(bodyX, bodyY, bodyWidth, bodyHeight, z);
         }
     }
 
-    /**
-     * All methods assume {@link #TEXTURE} is already bond with {@link net.minecraft.client.renderer.texture.TextureManager#bindTexture(ResourceLocation)}.
-     */
-    private static final class EdgePiece {
-
-        private static final int TX_TOP = UNIT_LENGTH * 4;
-        private static final int TX_BOTTOM = TX_TOP + UNIT_LENGTH;
-        private static final int TX_LEFT = TX_TOP + UNIT_LENGTH * 2;
-        private static final int TX_RIGHT = TX_TOP + UNIT_LENGTH * 3;
-        private static final int TY = 0;
-
-        private static void drawTop(int x, int y, int width) {
-            plotVertexesTex(x, y, width, UNIT_LENGTH, TX_TOP, TY);
-        }
-
-        private static void drawBottom(int x, int y, int width) {
-            plotVertexesTex(x, y, width, UNIT_LENGTH, TX_BOTTOM, TY);
-        }
-
-        private static void drawLeft(int x, int y, int height) {
-            plotVertexesTex(x, y, UNIT_LENGTH, height, TX_LEFT, TY);
-        }
-
-        private static void drawRight(int x, int y, int height) {
-            plotVertexesTex(x, y, UNIT_LENGTH, height, TX_RIGHT, TY);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Util methods
-    ///////////////////////////////////////////////////////////////////////////
-
-    private static void plotVertexesTex(int x1, int y1, int width, int height, int tx, int ty) {
-        int x2 = x1 + width;
-        int y2 = y1 + height;
-        int tx2 = tx + UNIT_LENGTH;
-        int ty2 = ty + UNIT_LENGTH;
-
-        float u1 = tx * UV_MULTIPLIER;
-        float u2 = tx2 * UV_MULTIPLIER;
-        float v1 = ty * UV_MULTIPLIER;
-        float v2 = ty2 * UV_MULTIPLIER;
-
-        // Bottom Left -> Top Left -> Top Right -> Bottom Right
-        getRenderer().pos(x2, y1, zLevel).tex(u2, v1).endVertex();
-        getRenderer().pos(x1, y1, zLevel).tex(u1, v1).endVertex();
-        getRenderer().pos(x1, y2, zLevel).tex(u1, v2).endVertex();
-        getRenderer().pos(x2, y2, zLevel).tex(u2, v2).endVertex();
+    private static void lightGrayRect(int bodyX, int bodyY, int bodyWidth, int bodyHeight, float z) {
+        GlStateManager.disableTexture();
+        beginColoredQuad();
+        coloredRect(bodyX, bodyY, bodyX + bodyWidth, bodyY + bodyHeight, z, 0xffc6c6c6);
+        draw();
+        GlStateManager.enableTexture();
     }
 }

@@ -1,65 +1,48 @@
 package vswe.stevesfactory.library.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
+import vswe.stevesfactory.library.gui.widget.button.IButton;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import java.util.function.IntConsumer;
 
-public class RadioButton extends AbstractWidget implements IButton, LeafWidgetMixin {
+public class RadioInput extends AbstractWidget implements IButton, IRadioInput, LeafWidgetMixin {
 
-    public static final TextureWrapper UNCHECKED = TextureWrapper.ofFlowComponent(18, 20, 8, 8);
-    public static final TextureWrapper CHECKED = UNCHECKED.toRight(1);
-    public static final TextureWrapper HOVERED_UNCHECKED = UNCHECKED.toDown(1);
-    public static final TextureWrapper HOVERED_CHECKED = CHECKED.toDown(1);
+    private static final Texture UNCHECKED = Texture.portion(Render2D.COMPONENTS, 256, 256, 0, 12, 8, 8);
+    private static final Texture CHECKED = UNCHECKED.moveRight(1);
+    private static final Texture HOVERED_UNCHECKED = UNCHECKED.moveDown(1);
+    private static final Texture HOVERED_CHECKED = CHECKED.moveDown(1);
 
     private final RadioController controller;
     private final int index;
-    private String label = "";
-    public Runnable onChecked = () -> {};
 
+    private IntConsumer onClick = DUMMY;
     private boolean hovered;
     private boolean checked;
 
-    public RadioButton(RadioController controller) {
+    public RadioInput(RadioController controller) {
+        this.setDimensions(8, 8);
         this.controller = controller;
         this.index = controller.add(this);
-        this.setDimensions(8, 8);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         RenderSystem.color3f(1F, 1F, 1F);
-        TextureWrapper texture = hovered
+        Texture texture = hovered
                 ? (checked ? HOVERED_CHECKED : HOVERED_UNCHECKED)
                 : (checked ? CHECKED : UNCHECKED);
-        int x1 = getAbsoluteX();
-        int x2 = getAbsoluteXRight() + 2;
-        int y1 = getAbsoluteY();
-        int y2 = getAbsoluteYBottom();
-        texture.draw(x1, y1);
-
-        if (!label.isEmpty()) {
-            int y = RenderingHelper.getYForAlignedCenter(y1, y2, (int) (RenderingHelper.fontHeight() * 0.7F));
-            RenderSystem.pushMatrix();
-            RenderSystem.translatef(x2, y, 0F);
-            RenderSystem.scalef(0.7F, 0.7F, 1F);
-            fontRenderer().drawString(label, 0F, 0F, 0xff404040);
-            RenderSystem.popMatrix();
-        }
+        texture.render(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), getZLevel());
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (!checked) {
             check(true);
         }
@@ -80,12 +63,27 @@ public class RadioButton extends AbstractWidget implements IButton, LeafWidgetMi
     protected void onUncheck() {
     }
 
-    public String getLabel() {
-        return label;
+    @Override
+    public boolean hasClickAction() {
+        return onClick != DUMMY;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    @Override
+    public IntConsumer getClickAction() {
+        return onClick;
+    }
+
+    @Override
+    public void setClickAction(IntConsumer action) {
+        onClick = action;
+    }
+
+    public void setCheckAction(Runnable action) {
+        setClickAction(__ -> {
+            if (checked) {
+                action.run();
+            }
+        });
     }
 
     @Override
@@ -93,10 +91,12 @@ public class RadioButton extends AbstractWidget implements IButton, LeafWidgetMi
         return hovered;
     }
 
+    @Override
     public boolean isChecked() {
         return checked;
     }
 
+    @Override
     public void setChecked(boolean checked) {
         boolean oldValue = this.checked;
         this.checked = checked;
@@ -108,18 +108,28 @@ public class RadioButton extends AbstractWidget implements IButton, LeafWidgetMi
         }
     }
 
+    @Override
     public void check(boolean checked) {
         setChecked(checked);
         if (checked) {
             controller.checkRadioButton(index);
-            onChecked.run();
         }
     }
 
+    public Label label(String translationKey) {
+        return new Label(this).translate(translationKey);
+    }
+
+    public Label textLabel(String text) {
+        return new Label(this).text(text);
+    }
+
+    @Override
     public int getIndex() {
         return index;
     }
 
+    @Override
     public RadioController getRadioController() {
         return controller;
     }

@@ -1,6 +1,5 @@
 package vswe.stevesfactory.ui.manager.editor;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -15,7 +14,7 @@ import javax.annotation.Nullable;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static vswe.stevesfactory.library.gui.RenderingHelper.rectVertices;
+import static vswe.stevesfactory.library.gui.Render2D.coloredRect;
 
 public class IntermediateNode extends AbstractWidget implements INode, LeafWidgetMixin {
 
@@ -42,11 +41,11 @@ public class IntermediateNode extends AbstractWidget implements INode, LeafWidge
     private int initialDragLocalY = -1;
 
     public IntermediateNode() {
-        super(0, 0, NODE_WIDTH, NODE_HEIGHT);
+        this.setDimensions(NODE_WIDTH, NODE_HEIGHT);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
         RenderSystem.disableTexture();
@@ -55,8 +54,8 @@ public class IntermediateNode extends AbstractWidget implements INode, LeafWidge
         int y1 = getAbsoluteY();
         int x2 = getAbsoluteXRight();
         int y2 = getAbsoluteYBottom();
-        rectVertices(x1, y1, x2, y2, BORDER);
-        rectVertices(x1 + 1, y1 + 1, x2 - 1, y2 - 1, Utils.isInside(mouseX, mouseY, x1, y1, x2, y2) ? HOVERED_FILLER : NORMAL_FILLER);
+        coloredRect(x1, y1, x2, y2, BORDER);
+        coloredRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, Utils.isInside(mouseX, mouseY, x1, y1, x2, y2) ? HOVERED_FILLER : NORMAL_FILLER);
         Tessellator.getInstance().draw();
         RenderSystem.enableTexture();
 

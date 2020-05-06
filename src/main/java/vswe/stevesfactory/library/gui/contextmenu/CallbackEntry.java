@@ -15,8 +15,9 @@ public class CallbackEntry extends DefaultEntry {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        super.onMouseClicked(mouseX, mouseY, button);
         callback.accept(button);
-        return super.mouseClicked(mouseX, mouseY, button);
+        return true;
     }
 }

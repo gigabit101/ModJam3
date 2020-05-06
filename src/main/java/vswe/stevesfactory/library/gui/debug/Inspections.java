@@ -1,31 +1,28 @@
 package vswe.stevesfactory.library.gui.debug;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.lwjgl.opengl.GL11;
 import vswe.stevesfactory.Config;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.window.IWindow;
 
-import java.awt.*;
-
-import static vswe.stevesfactory.library.gui.RenderingHelper.*;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static vswe.stevesfactory.library.gui.Render2D.*;
 
 public abstract class Inspections implements IRenderEventListener {
 
-    /**
-     * Master switch for enabling/disabling inspection. Used for SFM setting 'InspectionBoxHighlighting'.
-     */
-    public static boolean isEnabled() {
-        return Config.CLIENT.enableInspections.get();
-    }
-
-    public interface IInspectionInfoProvider {
+    public interface IInfoProvider {
 
         void provideInformation(ITextReceiver receiver);
+    }
+
+    public interface IHighlightRenderer {
+
+        void renderHighlight();
     }
 
     public static final Inspections INSTANCE = new Inspections() {
@@ -66,35 +63,31 @@ public abstract class Inspections implements IRenderEventListener {
 
         @Override
         public void string(String text) {
-            fontRenderer().drawString(text, x, y, Color.WHITE.getRGB());
+            fontRenderer().drawStringWithShadow(text, x, y, 0xffffff);
             x += fontRenderer().getStringWidth(text);
         }
 
         @Override
         public void line(String line) {
-            fontRenderer().drawString(line, STARTING_X, y, Color.WHITE.getRGB());
+            fontRenderer().drawStringWithShadow(line, STARTING_X, y, 0xffffff);
             nextLine();
         }
 
         @Override
         public void nextLine() {
             x = STARTING_X;
-            y += fontHeight() + 2;
+            y += Render2D.fontHeight() + 2;
         }
     };
 
     public static final int CONTENTS = 0x662696ff;
     public static final int BORDER = 0x88e38a42;
-    public static final int BORDER_A = BORDER >> 24 & 255;
-    public static final int BORDER_R = BORDER >> 16 & 255;
-    public static final int BORDER_G = BORDER >> 8 & 255;
-    public static final int BORDER_B = BORDER & 255;
 
     // Mark these final to enforce the master switch on subclasses
 
     @SuppressWarnings("UnusedReturnValue")
     public final boolean tryRender(IWidget widget, int mx, int my) {
-        if (!isEnabled()) {
+        if (!Config.CLIENT.enableInspections.get()) {
             return false;
         }
         if (widget.isInside(mx, my) && shouldRender(widget, mx, my)) {
@@ -109,7 +102,7 @@ public abstract class Inspections implements IRenderEventListener {
 
     @SuppressWarnings("UnusedReturnValue")
     public final boolean tryRender(IWindow window, int mx, int my) {
-        if (!isEnabled()) {
+        if (!Config.CLIENT.enableInspections.get()) {
             return false;
         }
         if (window.isInside(mx, my) && shouldRender(window, mx, my)) {
@@ -131,84 +124,76 @@ public abstract class Inspections implements IRenderEventListener {
     }
 
     public void renderBox(IWidget widget) {
-        int ax = widget.getAbsoluteX();
-        int ay = widget.getAbsoluteY();
-        useBlendingGLStates();
-        drawRect(ax, ay, ax + widget.getWidth(), ay + widget.getHeight(), CONTENTS);
-        useTextureGLStates();
+        if (widget instanceof IHighlightRenderer) {
+            ((IHighlightRenderer) widget).renderHighlight();
+        } else {
+            fontRenderer().drawStringWithShadow("(Widget does not support highlight)", 0, windowHeight() - Render2D.fontHeight(), 0xffffff);
+        }
     }
 
     public void renderBox(IWindow window) {
-        // Can't just do two rectangles because they are transparent
-        useBlendingGLStates();
-        Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        {
-            int x = window.getX();
-            int y = window.getY();
-            int x2 = x + window.getWidth();
-            int y2 = y + window.getHeight();
-            int bs = window.getBorderSize();
-
-            rectVertices(x, y, x2 - bs, y + bs, BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-            rectVertices(x2 - bs, y, x2, y2 - bs, BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-            rectVertices(x + bs, y2 - bs, x2, y2, BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-            rectVertices(x, y + bs, x + bs, y2, BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+        if (window instanceof IHighlightRenderer) {
+            ((IHighlightRenderer) window).renderHighlight();
+        } else {
+            fontRenderer().drawStringWithShadow("(Window does not support highlight)", 0, windowHeight() - Render2D.fontHeight(), 0xffffff);
         }
-        {
-            int cx = window.getContentX();
-            int cy = window.getContentY();
-            rectVertices(cx, cy, cx + window.getContentWidth(), cy + window.getContentHeight(), CONTENTS);
-        }
-        Tessellator.getInstance().draw();
-        useTextureGLStates();
     }
 
     public void renderOverlayInfo(IWidget widget) {
-        RenderSystem.pushMatrix();
-        RenderSystem.scalef(0.5F, 0.5F, 1F);
+        GlStateManager.pushMatrix();
+        GlStateManager.scalef(0.5F, 0.5F, 1F);
         DEFAULT_INFO_RENDERER.reset();
-        if (widget instanceof IInspectionInfoProvider) {
-            ((IInspectionInfoProvider) widget).provideInformation(DEFAULT_INFO_RENDERER);
+        if (widget instanceof IInfoProvider) {
+            ((IInfoProvider) widget).provideInformation(DEFAULT_INFO_RENDERER);
         } else {
-            defaultOverlayInfo(widget);
+            DEFAULT_INFO_RENDERER.line("(Widget does not support overlay info)");
         }
-        RenderSystem.popMatrix();
+        GlStateManager.popMatrix();
     }
 
     public void renderOverlayInfo(IWindow window) {
-        RenderSystem.pushMatrix();
-        RenderSystem.scalef(0.5F, 0.5F, 1.0F);
+        GlStateManager.pushMatrix();
+        GlStateManager.scalef(0.5F, 0.5F, 1.0F);
         DEFAULT_INFO_RENDERER.reset();
-        if (window instanceof IInspectionInfoProvider) {
-            ((IInspectionInfoProvider) window).provideInformation(DEFAULT_INFO_RENDERER);
+        if (window instanceof IInfoProvider) {
+            ((IInfoProvider) window).provideInformation(DEFAULT_INFO_RENDERER);
         } else {
-            defaultOverlayInfo(window);
+            DEFAULT_INFO_RENDERER.line("(Window does not support overlay info)");
         }
-        RenderSystem.popMatrix();
+        GlStateManager.popMatrix();
     }
 
-    protected void defaultOverlayInfo(IWidget widget) {
-        DEFAULT_INFO_RENDERER.line("(default inspection info)");
-        DEFAULT_INFO_RENDERER.line(widget.toString());
-        DEFAULT_INFO_RENDERER.line("X=" + widget.getX());
-        DEFAULT_INFO_RENDERER.line("Y=" + widget.getY());
-        DEFAULT_INFO_RENDERER.line("AbsX=" + widget.getAbsoluteX());
-        DEFAULT_INFO_RENDERER.line("AbsY=" + widget.getAbsoluteY());
-        DEFAULT_INFO_RENDERER.line("Width=" + widget.getWidth());
-        DEFAULT_INFO_RENDERER.line("Height=" + widget.getHeight());
+    public static void renderHighlight(int x, int y, int width, int height) {
+        useBlendingGLStates();
+        beginColoredQuad();
+        coloredRect(x, y, x + width, y + height, CONTENTS);
+        draw();
+        useTextureGLStates();
     }
 
-    protected void defaultOverlayInfo(IWindow window) {
-        DEFAULT_INFO_RENDERER.line("(default inspection info)");
-        DEFAULT_INFO_RENDERER.line(window.toString());
-        DEFAULT_INFO_RENDERER.line("X=" + window.getX());
-        DEFAULT_INFO_RENDERER.line("Y=" + window.getY());
-        DEFAULT_INFO_RENDERER.line("Width=" + window.getWidth());
-        DEFAULT_INFO_RENDERER.line("Height=" + window.getHeight());
-        DEFAULT_INFO_RENDERER.line("ContentX=" + window.getContentX());
-        DEFAULT_INFO_RENDERER.line("ContentY=" + window.getContentY());
-        DEFAULT_INFO_RENDERER.line("ContentWidth=" + window.getContentWidth());
-        DEFAULT_INFO_RENDERER.line("ContentHeight=" + window.getContentHeight());
-        DEFAULT_INFO_RENDERER.line("BorderSize=" + window.getBorderSize());
+    public static void renderBorderedHighlight(int x1, int y1, int ix1, int iy1, int width, int height, int fullWidth, int fullHeight) {
+        int x2 = x1 + fullWidth;
+        int y2 = y1 + fullHeight;
+        int ix2 = ix1 + width;
+        int iy2 = iy1 + height;
+
+        useBlendingGLStates();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+
+        // Can't just do two rectangles because they are transparent
+
+        // 1------4
+        // |      |
+        // 2------3
+        quad(buffer, x1, y1, ix1, iy1, ix2, iy1, x2, y1, 0F, BORDER); // Top border
+        quad(buffer, ix2, iy1, ix2, iy2, x2, y2, x2, y1, 0F, BORDER); // Right border
+        quad(buffer, ix1, iy2, x1, y2, x2, y2, ix2, iy2, 0F, BORDER); // Bottom border
+        quad(buffer, x1, y1, x1, y2, ix1, iy2, ix1, iy1, 0F, BORDER); // Left border
+        coloredRect(ix1, iy1, ix2, iy2, CONTENTS);
+
+        tessellator.draw();
+        useTextureGLStates();
     }
 }

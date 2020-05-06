@@ -2,11 +2,11 @@ package vswe.stevesfactory.ui.manager.selection;
 
 import net.minecraft.util.ResourceLocation;
 import vswe.stevesfactory.api.logic.IProcedureType;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
+import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.editor.EditorPanel;
 
 import javax.annotation.Nonnull;
@@ -17,17 +17,20 @@ public class SingularComponentChoice extends AbstractWidget implements IComponen
     private final IProcedureType<?> type;
 
     public SingularComponentChoice(IProcedureType<?> type) {
-        super(0, 0, 16, 16);
+        this.setDimensions(16, 16);
         this.type = type;
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         renderBackground(mouseX, mouseY);
-        RenderingHelper.drawCompleteTexture(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), getIcon());
+        Render2D.bindTexture(getIcon());
+        Render2D.beginTexturedQuad();
+        Render2D.textureVertices(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), getZLevel(), 0F, 0F, 1F, 1F);
+        Render2D.draw();
         if (isInside(mouseX, mouseY)) {
-            WidgetScreen.getCurrent().setHoveringText(type.getLocalizedName(), mouseX, mouseY);
+            FactoryManagerGUI.get().scheduleTooltip(type.getLocalizedName(), mouseX, mouseY);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
@@ -45,12 +48,12 @@ public class SingularComponentChoice extends AbstractWidget implements IComponen
 
     @Nonnull
     @Override
-    public SelectionPanel getParentWidget() {
-        return Objects.requireNonNull((SelectionPanel) super.getParentWidget());
+    public SelectionPanel getParent() {
+        return Objects.requireNonNull((SelectionPanel) super.getParent());
     }
 
     @Override
     public EditorPanel getEditorPanel() {
-        return getParentWidget().getParentWidget().editorPanel;
+        return getParent().getParent().editorPanel;
     }
 }

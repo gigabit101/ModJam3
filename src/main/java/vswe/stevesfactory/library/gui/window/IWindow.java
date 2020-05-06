@@ -1,89 +1,63 @@
 package vswe.stevesfactory.library.gui.window;
 
+import net.minecraft.client.gui.IRenderable;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public interface IWindow {
+public interface IWindow extends IRenderable {
 
     Dimension getBorder();
 
-    default int getWidth() {
-        return getBorder().width;
-    }
+    int getWidth();
 
-    default int getHeight() {
-        return getBorder().height;
-    }
+    int getHeight();
 
     int getBorderSize();
 
-    Dimension getContentDimensions();
+    int getContentWidth();
 
-    default int getContentWidth() {
-        return getContentDimensions().width;
-    }
-
-    default int getContentHeight() {
-        return getContentDimensions().height;
-    }
+    int getContentHeight();
 
     List<? extends IWidget> getChildren();
 
     Point getPosition();
 
-    default void setPosition(int x, int y) {
-        getPosition().x = x;
-        getPosition().y = y;
-    }
+    float getZLevel();
 
-    default int getX() {
-        return getPosition().x;
-    }
+    void setPosition(int x, int y);
 
-    default int getY() {
-        return getPosition().y;
-    }
+    int getX();
 
-    default int getContentX() {
-        return getX() + getBorderSize();
-    }
+    int getY();
 
-    default int getContentY() {
-        return getY() + getBorderSize();
-    }
+    int getXRight();
 
-    void render(int mouseX, int mouseY, float particleTicks);
+    int getYBottom();
+
+    int getContentX();
+
+    int getContentY();
+
+    int getContentXRight();
+
+    int getContentYBottom();
+
+    @Override
+    void render(int mouseX, int mouseY, float partialTicks);
 
     @Nullable
     IWidget getFocusedWidget();
 
     /**
      * Change which widget is focused.
-     * <p>
-     * When possible, use {@link #changeFocus(IWidget, boolean)} instead.
      *
      * @implSpec This method should invoke {@link IWidget#onFocusChanged(boolean)} on both the parameter and the focused element as long as
      * they are nonnull.
      */
     void setFocusedWidget(@Nullable IWidget widget);
-
-    /**
-     * Helper method to set focus of a specific element. Notice this would cancel the originally focus element. Implementations should not
-     * override this method unless it is using a special focus handler that is not compatible with the default implementation of this
-     * method.
-     */
-    default boolean changeFocus(IWidget widget, boolean focus) {
-        if (focus && widget.isEnabled()) {
-            setFocusedWidget(widget);
-            return true;
-        } else {
-            setFocusedWidget(null);
-            return false;
-        }
-    }
 
     void onRemoved();
 
@@ -156,5 +130,5 @@ public interface IWindow {
 
     void mouseMoved(double mouseX, double mouseY);
 
-    void update(float particleTicks);
+    void update(float partialTicks);
 }

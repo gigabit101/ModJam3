@@ -1,44 +1,33 @@
 package vswe.stevesfactory.library.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
-import org.lwjgl.opengl.GL11;
-import vswe.stevesfactory.library.gui.RenderingHelper;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
-import static vswe.stevesfactory.library.gui.RenderingHelper.getRenderer;
-import static vswe.stevesfactory.library.gui.RenderingHelper.rectVertices;
+import static vswe.stevesfactory.library.gui.Render2D.*;
 
 public class Checkbox extends AbstractWidget implements LeafWidgetMixin {
 
-    public static final int NORMAL_BORDER = 0xff4d4d4d;
-    public static final int UNCHECKED = 0xffc3c3c3;
-    public static final int CHECKED = 0xff5c9e2d;
-    public static final int HOVERED_BORDER = 0xff8d8d8d;
-    public static final int HOVERED_UNCHECKED = 0xffd7d6d6;
-    public static final int HOVERED_CHECKED = 0xff96bf79;
+    public static final int NORMAL_BORDER = 0x4d4d4d;
+    public static final int UNCHECKED = 0xc3c3c3;
+    public static final int CHECKED = 0x5c9e2d;
+    public static final int HOVERED_BORDER = 0x8d8d8d;
+    public static final int HOVERED_UNCHECKED = 0xd7d6d6;
+    public static final int HOVERED_CHECKED = 0x96bf79;
 
     private boolean checked = false;
-    private String label = "";
 
-    public BooleanConsumer onStateChange = b -> {};
+    public BooleanConsumer onStateChange = b -> {
+    };
 
     public Checkbox() {
-        this(0, 0, 9, 9);
-    }
-
-    public Checkbox(int x, int y, int width, int height) {
-        super(x, y, width, height);
+        this.setDimensions(9, 9);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         int x1 = getAbsoluteX();
         int y1 = getAbsoluteY();
@@ -50,22 +39,18 @@ public class Checkbox extends AbstractWidget implements LeafWidgetMixin {
                 ? (checked ? HOVERED_CHECKED : HOVERED_UNCHECKED)
                 : (checked ? CHECKED : UNCHECKED);
 
-        RenderSystem.disableTexture();
-        getRenderer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        rectVertices(x1, y1, x2, y2, borderColor);
-        rectVertices(x1 + 1, y1 + 1, x2 - 1, y2 - 1, contentColor);
-        Tessellator.getInstance().draw();
-        RenderSystem.enableTexture();
-
-        if (!label.isEmpty()) {
-            RenderingHelper.drawTextCenteredVertically(label, x2 + 2, y1, y2, 0xff404040);
-        }
+        GlStateManager.disableAlphaTest();
+        GlStateManager.disableTexture();
+        beginColoredQuad();
+        coloredRect(x1, y1, x2, y2, getZLevel(), borderColor);
+        coloredRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, getZLevel(), contentColor);
+        draw();
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        getWindow().setFocusedWidget(this);
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        setFocused(true);
         toggle();
         return true;
     }
@@ -82,22 +67,6 @@ public class Checkbox extends AbstractWidget implements LeafWidgetMixin {
 
     public boolean isChecked() {
         return checked;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public void translateLabel(String translationKey) {
-        label = I18n.format(translationKey);
-    }
-
-    public void translateLabel(String translationKey, Object... args) {
-        label = I18n.format(translationKey, args);
     }
 
     @Override

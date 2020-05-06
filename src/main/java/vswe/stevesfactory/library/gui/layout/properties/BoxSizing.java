@@ -1,6 +1,5 @@
 package vswe.stevesfactory.library.gui.layout.properties;
 
-import vswe.stevesfactory.library.gui.layout.ILayoutDataProvider;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 
 public enum BoxSizing {
@@ -10,15 +9,15 @@ public enum BoxSizing {
     PHANTOM(false),
     ;
 
-    public final boolean flow;
+    public final boolean included;
 
-    BoxSizing(boolean flow) {
-        this.flow = flow;
+    BoxSizing(boolean included) {
+        this.included = included;
     }
 
     public static boolean shouldIncludeWidget(IWidget widget) {
-        if (widget instanceof ILayoutDataProvider) {
-            return ((ILayoutDataProvider) widget).getBoxSizing().flow;
+        if (widget instanceof ISizedBox) {
+            return ((ISizedBox) widget).getBoxSizing().included;
         }
         return false;
     }

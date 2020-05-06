@@ -1,17 +1,18 @@
 package vswe.stevesfactory.ui.manager.toolbox;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.RenderingHelper;
-import vswe.stevesfactory.library.gui.TextureWrapper;
+import net.minecraft.util.ResourceLocation;
+import vswe.stevesfactory.api.StevesFactoryManagerAPI;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.tool.ToolHolderPanel;
@@ -27,8 +28,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
-    public static final TextureWrapper GROUP_LIST_ICON = TextureWrapper.ofGUITexture("tool_icon/group.png", 16, 16, 0, 0, 16, 16);
-    public static final TextureWrapper INSPECTOR_ICON = TextureWrapper.ofGUITexture("tool_icon/inspector.png", 16, 16, 0, 0, 16, 16);
+    public static final Texture GROUP_LIST_ICON = Texture.complete(new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/tool_icon/group.png"), 16, 16);
+    public static final Texture INSPECTOR_ICON = Texture.complete(new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/tool_icon/inspector.png"), 16, 16);
 
     private final ToolboxEntry<Grouplist> groupList;
     private final ToolboxEntry<Inspector> inspector;
@@ -37,16 +38,20 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     public ToolboxPanel() {
         super(WidthOccupierType.MIN_WIDTH);
-        this.setWidth(8 + RenderingHelper.LEFT_BORDER);
+        this.setWidth(8 + Render2D.LEFT_BORDER);
 
         addChildOnly(groupList = new ToolboxEntry<>(GROUP_LIST_ICON, Grouplist::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Group.Name")));
         addChildOnly(inspector = new ToolboxEntry<>(INSPECTOR_ICON, Inspector::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Name")));
-        addChildOnly(close = new AbstractIconButton(0, 0, 8, 8) {
+        addChildOnly(close = new AbstractIconButton() {
+            {
+                this.setDimensions(8, 8);
+            }
+
             @Override
-            public void render(int mouseX, int mouseY, float particleTicks) {
-                super.render(mouseX, mouseY, particleTicks);
+            public void render(int mouseX, int mouseY, float partialTicks) {
+                super.render(mouseX, mouseY, partialTicks);
                 if (isInside(mouseX, mouseY)) {
-                    WidgetScreen.getCurrent().setHoveringText(I18n.format("gui.sfm.FactoryManager.Toolbox.CloseToolPanel"), mouseX, mouseY);
+                    FactoryManagerGUI.get().scheduleTooltip(I18n.format("gui.sfm.FactoryManager.Toolbox.CloseToolPanel"), mouseX, mouseY);
                 }
             }
 
@@ -58,13 +63,13 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
             }
 
             @Override
-            public TextureWrapper getTextureNormal() {
-                return FactoryManagerGUI.CLOSE_ICON;
+            public Texture getTextureNormal() {
+                return Render2D.CLOSE_ICON;
             }
 
             @Override
-            public TextureWrapper getTextureHovered() {
-                return FactoryManagerGUI.CLOSE_ICON_HOVERED;
+            public Texture getTextureHovered() {
+                return Render2D.CLOSE_ICON_HOVERED;
             }
 
             @Override
@@ -81,7 +86,7 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     private void addChildOnly(IWidget widget) {
         children.add(widget);
-        widget.setParentWidget(this);
+        widget.attach(this);
     }
 
     @Override
@@ -95,7 +100,7 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
     public ToolboxPanel addChildren(Collection<IWidget> widgets) {
         children.addAll(widgets);
         for (IWidget widget : widgets) {
-            widget.setParentWidget(this);
+            widget.attach(this);
         }
         reflow();
         return this;
@@ -103,16 +108,16 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     @Override
     public void reflow() {
-        FlowLayout.vertical(children, RenderingHelper.LEFT_BORDER, 0, 0);
-        close.setX(RenderingHelper.getXForAlignedCenter(RenderingHelper.LEFT_BORDER, getWidth(), close.getWidth()));
+        FlowLayout.vertical(children, Render2D.LEFT_BORDER, 0, 0);
+        close.setX(Render2D.computeCenterX(Render2D.LEFT_BORDER, getWidth(), close.getWidth()));
         close.alignBottom(getHeight());
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        RenderingHelper.renderSideLine(this);
-        super.render(mouseX, mouseY, particleTicks);
+        Render2D.renderSideLine(this);
+        super.renderChildren(mouseX, mouseY, partialTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 
@@ -125,18 +130,18 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 getWindow().setFocusedWidget(this);
             } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                openActionMenu();
+                createContextMenu(mouseX, mouseY);
             }
             return true;
         }
         return false;
     }
 
-    private void openActionMenu() {
-        ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
-        ));
-        WidgetScreen.getCurrent().addPopupWindow(contextMenu);
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        super.buildContextMenu(builder);
     }
 
     public Grouplist getGroupList() {

@@ -62,7 +62,6 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
     private WidthOccupierType widthOccupier;
 
     public DynamicWidthWidget(WidthOccupierType widthOccupier) {
-        super(0, 0, 0, 0);
         this.widthOccupier = widthOccupier;
     }
 

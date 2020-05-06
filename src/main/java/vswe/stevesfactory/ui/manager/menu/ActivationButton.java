@@ -1,14 +1,13 @@
 package vswe.stevesfactory.ui.manager.menu;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.widget.TextButton;
+import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
-class ActivationButton extends TextButton {
+class ActivationButton extends ColoredTextButton {
 
     private DirectionButton target;
 
@@ -46,13 +45,13 @@ class ActivationButton extends TextButton {
     }
 
     private void updateText() {
-        text = target.isSelected() ? I18n.format("menu.sfm.Deactivate") : I18n.format("menu.sfm.Activate");
+        setText(target.isSelected() ? I18n.format("menu.sfm.Deactivate") : I18n.format("menu.sfm.Activate"));
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         if (isEnabled()) {
-            super.render(mouseX, mouseY, particleTicks);
+            super.render(mouseX, mouseY, partialTicks);
         }
     }
 

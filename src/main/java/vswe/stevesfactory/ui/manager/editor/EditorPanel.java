@@ -1,22 +1,19 @@
 package vswe.stevesfactory.ui.manager.editor;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.math.BlockPos;
-import vswe.stevesfactory.Config;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.network.INetworkController;
-import vswe.stevesfactory.library.gui.RenderingHelper;
+import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
@@ -28,8 +25,9 @@ import vswe.stevesfactory.utils.NetworkHelper;
 
 import java.util.*;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static vswe.stevesfactory.library.gui.RenderingHelper.fontRenderer;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
@@ -45,9 +43,9 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
         super(WidthOccupierType.MAX_WIDTH);
 
         xOffset = new OffsetText(I18n.format("gui.sfm.FactoryManager.Editor.XOff"), 0, 0);
-        xOffset.setParentWidget(this);
+        xOffset.attach(this);
         yOffset = new OffsetText(I18n.format("gui.sfm.FactoryManager.Editor.YOff"), 0, 0);
-        yOffset.setParentWidget(this);
+        yOffset.attach(this);
 
         children = new TreeSet<>();
         childrenView = children.descendingSet();
@@ -62,7 +60,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     private void onGroupRemoved(String group) {
         for (FlowComponent<?> component : children) {
             if (component.getGroup().equals(group)) {
-                FactoryManagerGUI.get().scheduleTask(__ -> component.remove());
+                FactoryManagerGUI.get().defer(component::remove);
             }
         }
     }
@@ -95,7 +93,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     public EditorPanel addChildren(FlowComponent<?> widget) {
-        widget.setParentWidget(this);
+        widget.attach(this);
         widget.setZIndex(nextZIndex());
         children.add(widget);
         return this;
@@ -104,7 +102,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     @Override
     public EditorPanel addChildren(Collection<FlowComponent<?>> widgets) {
         for (FlowComponent<?> widget : widgets) {
-            widget.setParentWidget(this);
+            widget.attach(this);
             widget.setZIndex(nextZIndex());
         }
         children.addAll(widgets);
@@ -112,13 +110,13 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float particleTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
         ScissorTest test = ScissorTest.scaled(getAbsoluteX(), getAbsoluteY(), getWidth(), getHeight());
         RenderSystem.pushMatrix();
         RenderSystem.translatef(xOffset.get(), yOffset.get(), 0F);
-        RenderingHelper.translate(xOffset.get(), yOffset.get());
+        Render2D.translate(xOffset.get(), yOffset.get());
         {
             // Widgets are translated on render, which means player inputs will go at the translated positions
             // we need to translate the inputs back to the original position for logic handling, since the data position isn't changed at all
@@ -127,15 +125,15 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
             // Iterate in ascending order for rendering as a special case
             for (FlowComponent<?> child : children) {
-                child.render(translatedX, translatedY, particleTicks);
+                child.render(translatedX, translatedY, partialTicks);
             }
         }
-        RenderingHelper.clearTranslation();
+        Render2D.clearTranslation();
         RenderSystem.popMatrix();
         test.destroy();
 
-        xOffset.render(mouseX, mouseY, particleTicks);
-        yOffset.render(mouseX, mouseY, particleTicks);
+        xOffset.render(mouseX, mouseY, partialTicks);
+        yOffset.render(mouseX, mouseY, partialTicks);
 
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
@@ -165,7 +163,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
                     getWindow().setFocusedWidget(this);
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
-                    openActionMenu();
+                    createContextMenu(mouseX, mouseY);
                     break;
             }
             return true;
@@ -277,19 +275,19 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     }
 
     @Override
-    public void update(float particleTicks) {
+    public void update(float partialTicks) {
         for (FlowComponent<?> child : getChildren()) {
-            child.update(particleTicks);
+            child.update(partialTicks);
         }
     }
 
-    private void openActionMenu() {
-        ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(FactoryManagerGUI.PASTE_ICON, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
-        ));
-        WidgetScreen.getCurrent().addPopupWindow(contextMenu);
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(Render2D.PASTE, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()));
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()));
+        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        super.buildContextMenu(builder);
     }
 
     private void actionPaste() {
@@ -375,14 +373,14 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     }
 
     public void readProcedures() {
-        BlockPos controllerPos = ((FactoryManagerGUI) WidgetScreen.getCurrent()).getController().getPosition();
+        BlockPos controllerPos = ((FactoryManagerGUI) WidgetScreen.assertActive()).getController().getPosition();
         INetworkController controller = Objects.requireNonNull((INetworkController) Minecraft.getInstance().world.getTileEntity(controllerPos));
 
         FactoryManagerGUI.get().getTopLevel().connectionsPanel.disabledModification = true;
         Map<IProcedure, FlowComponent<?>> m = new HashMap<>();
         for (IProcedure procedure : controller.getPGraph().iterableValidAll()) {
             FlowComponent<?> f = procedure.createFlowComponent();
-            f.setParentWidget(this);
+            f.attach(this);
             f.setZIndex(nextZIndex());
 
             m.put(procedure, f);

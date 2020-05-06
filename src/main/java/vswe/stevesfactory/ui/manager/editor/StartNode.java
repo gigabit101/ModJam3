@@ -2,8 +2,9 @@ package vswe.stevesfactory.ui.manager.editor;
 
 import com.mojang.datafixers.util.Either;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.library.gui.TextureWrapper;
-import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
+import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import javax.annotation.Nonnull;
@@ -17,8 +18,8 @@ import static vswe.stevesfactory.ui.manager.editor.ConnectionsPanel.REGULAR_WIDT
 
 public final class StartNode extends AbstractIconButton implements INode {
 
-    public static final TextureWrapper OUTPUT_NORMAL = TextureWrapper.ofFlowComponent(18, 45, REGULAR_WIDTH, REGULAR_HEIGHT);
-    public static final TextureWrapper OUTPUT_HOVERED = OUTPUT_NORMAL.toRight(1);
+    public static final Texture OUTPUT_NORMAL = Render2D.ofFlowComponent(18, 45, REGULAR_WIDTH, REGULAR_HEIGHT);
+    public static final Texture OUTPUT_HOVERED = OUTPUT_NORMAL.right(1);
 
     private INode next;
     private EndNode end;
@@ -27,7 +28,7 @@ public final class StartNode extends AbstractIconButton implements INode {
     public final ShadowNode shadow;
 
     public StartNode(int index) {
-        super(0, 0, REGULAR_WIDTH, REGULAR_HEIGHT);
+        this.setDimensions(REGULAR_WIDTH, REGULAR_HEIGHT);
         this.index = index;
         this.shadow = new ShadowNode(this);
         // This action will do nothing if we are reading from network data
@@ -126,12 +127,12 @@ public final class StartNode extends AbstractIconButton implements INode {
     }
 
     @Override
-    public TextureWrapper getTextureNormal() {
+    public Texture getTextureNormal() {
         return OUTPUT_NORMAL;
     }
 
     @Override
-    public TextureWrapper getTextureHovered() {
+    public Texture getTextureHovered() {
         return OUTPUT_HOVERED;
     }
 
@@ -150,12 +151,12 @@ public final class StartNode extends AbstractIconButton implements INode {
 
     @Nonnull
     @Override
-    public ConnectionNodes<?> getParentWidget() {
-        return (ConnectionNodes<?>) Objects.requireNonNull(super.getParentWidget());
+    public ConnectionNodes<?> getParent() {
+        return (ConnectionNodes<?>) Objects.requireNonNull(super.getParent());
     }
 
     public FlowComponent<?> getFlowComponent() {
-        return (FlowComponent<?>) getParentWidget().getParentWidget();
+        return (FlowComponent<?>) getParent().getParent();
     }
 
     public IProcedure getProcedure() {
