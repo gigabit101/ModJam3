@@ -1,6 +1,6 @@
 package vswe.stevesfactory.library.gui.debug;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -140,27 +140,27 @@ public abstract class Inspections implements IRenderEventListener {
     }
 
     public void renderOverlayInfo(IWidget widget) {
-        GlStateManager.pushMatrix();
-        GlStateManager.scalef(0.5F, 0.5F, 1F);
+        RenderSystem.pushMatrix();
+        RenderSystem.scalef(0.5F, 0.5F, 1F);
         DEFAULT_INFO_RENDERER.reset();
         if (widget instanceof IInfoProvider) {
             ((IInfoProvider) widget).provideInformation(DEFAULT_INFO_RENDERER);
         } else {
             DEFAULT_INFO_RENDERER.line("(Widget does not support overlay info)");
         }
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     public void renderOverlayInfo(IWindow window) {
-        GlStateManager.pushMatrix();
-        GlStateManager.scalef(0.5F, 0.5F, 1.0F);
+        RenderSystem.pushMatrix();
+        RenderSystem.scalef(0.5F, 0.5F, 1.0F);
         DEFAULT_INFO_RENDERER.reset();
         if (window instanceof IInfoProvider) {
             ((IInfoProvider) window).provideInformation(DEFAULT_INFO_RENDERER);
         } else {
             DEFAULT_INFO_RENDERER.line("(Window does not support overlay info)");
         }
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     public static void renderHighlight(int x, int y, int width, int height) {

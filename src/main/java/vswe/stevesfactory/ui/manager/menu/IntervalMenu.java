@@ -18,9 +18,12 @@ public class IntervalMenu extends Menu<IntervalTriggerProcedure> {
 
     public static final int MARGIN_MIDDLE_UNIT_TEXT = 10;
 
-    private final NumberField<Integer> interval;
+    private NumberField<Integer> interval;
 
-    public IntervalMenu() {
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
         interval = NumberField.integerFieldRanged(38, 14, 1, 1, 999);
         int x = Render2D.computeCenterX(0, getWidth(), interval.getWidth() + MARGIN_MIDDLE_UNIT_TEXT + fontRenderer().getStringWidth(getUnitText()));
         interval.setValue(1);

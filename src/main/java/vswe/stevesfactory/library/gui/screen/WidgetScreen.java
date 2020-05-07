@@ -144,9 +144,6 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
         RenderSystem.disableDepthTest();
         inspectionHandler.endCycle();
 
-        // This should do nothing because we are not adding vanilla buttons
-        super.render(mouseX, mouseY, partialTicks);
-
         while (!tooltipRenderQueue.isEmpty()) {
             Triple<List<String>, Integer, Integer> entry = tooltipRenderQueue.remove();
             GuiUtils.drawHoveringText(entry.getLeft(), entry.getMiddle(), entry.getRight(), windowWidth(), windowHeight(), Integer.MAX_VALUE, fontRenderer());

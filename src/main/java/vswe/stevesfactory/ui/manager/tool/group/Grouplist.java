@@ -22,7 +22,14 @@ public class Grouplist extends VerticalList<GroupButton> {
         FactoryManagerGUI.get().groupModel.addListenerAdd(this::onGroupAdded);
         FactoryManagerGUI.get().groupModel.addListenerRemove(this::onGroupRemoved);
         FactoryManagerGUI.get().groupModel.addListenerUpdate(this::onGroupUpdated);
+
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
         // Wait for reflow to finish in this tick
+        // TODO remove this
         FactoryManagerGUI.get().defer(() -> {
             for (String group : FactoryManagerGUI.get().groupModel.getGroups()) {
                 this.addChildren(new GroupButton(group));
@@ -32,7 +39,7 @@ public class Grouplist extends VerticalList<GroupButton> {
     }
 
     private static Grouplist getGroupList() {
-        return FactoryManagerGUI.get().getTopLevel().toolboxPanel.getGroupList();
+        return FactoryManagerGUI.get().getPrimaryWindow().toolboxPanel.getGroupList();
     }
 
     private void onGroupAdded(String group) {
@@ -235,7 +242,7 @@ public class Grouplist extends VerticalList<GroupButton> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             getParent().selected = this.index;
             return true;
         }

@@ -7,10 +7,6 @@ import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
-import vswe.stevesfactory.ui.manager.editor.EditorPanel;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class SingularComponentChoice extends AbstractWidget implements IComponentChoice, LeafWidgetMixin {
 
@@ -36,7 +32,7 @@ public class SingularComponentChoice extends AbstractWidget implements IComponen
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         createFlowComponent(type);
         getWindow().setFocusedWidget(this);
         return true;
@@ -44,16 +40,5 @@ public class SingularComponentChoice extends AbstractWidget implements IComponen
 
     public ResourceLocation getIcon() {
         return type.getIcon();
-    }
-
-    @Nonnull
-    @Override
-    public SelectionPanel getParent() {
-        return Objects.requireNonNull((SelectionPanel) super.getParent());
-    }
-
-    @Override
-    public EditorPanel getEditorPanel() {
-        return getParent().getParent().editorPanel;
     }
 }

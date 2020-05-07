@@ -1,8 +1,8 @@
 package vswe.stevesfactory.ui.manager.tool.inspector;
 
 import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.TextRenderer;
 import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.TextRenderer;
 import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
@@ -37,6 +37,11 @@ public class StatusPanel extends AbstractContainer<IWidget> {
 
     public StatusPanel() {
         this.setDimensions(120, 64);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         nameBox = new TextField(100, 16);
         nameBox.setLocation(2, 6);

@@ -137,7 +137,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
             }
 
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            public boolean onMouseClicked(double mouseX, double mouseY, int button) {
                 int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
                 setProperty(nextIndex);
                 getContextMenu().discard();

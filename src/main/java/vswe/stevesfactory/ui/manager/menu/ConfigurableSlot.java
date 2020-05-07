@@ -76,7 +76,7 @@ public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (button == GLFW_MOUSE_BUTTON_LEFT) {
             onLeftClick();
             return true;
@@ -129,18 +129,17 @@ public abstract class ConfigurableSlot<E extends IWidget> extends AbstractWidget
                     }
 
                     @Override
-                    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
                         if (isSelected() || in.isEmpty()) {
                             // Unselect slot
                             selected.value = null;
                             stack = ItemStack.EMPTY;
-                            onSetStack();
                         } else {
                             // Select and set slot content
                             selected.value = this;
                             stack = getRepresentative();
-                            onSetStack();
                         }
+                        onSetStack();
                         return true;
                     }
 

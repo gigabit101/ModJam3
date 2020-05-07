@@ -12,10 +12,6 @@ import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
-import vswe.stevesfactory.ui.manager.editor.EditorPanel;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class GroupComponentChoice extends AbstractWidget implements IComponentChoice, LeafWidgetMixin {
 
@@ -51,10 +47,9 @@ public class GroupComponentChoice extends AbstractWidget implements IComponentCh
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         ContextMenu cm = ContextMenu.atCursor();
         cm.setPosition(getAbsoluteXRight() + 2, getAbsoluteY());
-
         Section primary = new Section();
         cm.addSection(primary);
 
@@ -66,6 +61,7 @@ public class GroupComponentChoice extends AbstractWidget implements IComponentCh
             }
         }
 
+        cm.reflow();
         WidgetScreen.assertActive().addPopupWindow(cm);
         getWindow().setFocusedWidget(this);
         return true;
@@ -73,16 +69,5 @@ public class GroupComponentChoice extends AbstractWidget implements IComponentCh
 
     public ResourceLocation getIcon() {
         return group.getIcon();
-    }
-
-    @Nonnull
-    @Override
-    public SelectionPanel getParent() {
-        return Objects.requireNonNull((SelectionPanel) super.getParent());
-    }
-
-    @Override
-    public EditorPanel getEditorPanel() {
-        return getParent().getParent().editorPanel;
     }
 }

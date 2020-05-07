@@ -53,7 +53,7 @@ public class CallbackIconButton extends AbstractIconButton {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         return onClick.apply(button);
     }
 }

@@ -316,6 +316,17 @@ public final class Render2D {
         textRenderer.renderText(text, x, y, z);
     }
 
+    public static void renderVerticalText(String text, int x, int y, float z, int fontHeight, int color) {
+        FontRenderer fr = fontRenderer();
+        float k = (float) fontHeight / fr.FONT_HEIGHT;
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(x + fontHeight, y, z);
+        RenderSystem.rotatef(90F, 0F, 0F, 1F);
+        RenderSystem.scalef(k, k, 1F);
+        fr.drawString(text, 0, 0, color);
+        RenderSystem.popMatrix();
+    }
+
     public static void useGradientGLStates() {
         RenderSystem.disableTexture();
         RenderSystem.disableAlphaTest();

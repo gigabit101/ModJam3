@@ -24,7 +24,7 @@ public final class SettingsEditor extends AbstractContainer<IWidget> {
     private final List<IWidget> children = new ArrayList<>();
 
     public SettingsEditor(MultiLayerMenu<?> menu) {
-        setDimensions(menu.getWidth(), menu.getContentHeight());
+        this.setDimensions(menu.getWidth(), menu.getContentHeight());
 
         AbstractIconButton close = new AbstractIconButton() {
             {
@@ -51,9 +51,9 @@ public final class SettingsEditor extends AbstractContainer<IWidget> {
             }
 
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            public boolean onMouseClicked(double mouseX, double mouseY, int button) {
                 menu.openEditor(null);
-                return super.mouseClicked(mouseX, mouseY, button);
+                return true;
             }
 
             @Override
@@ -61,8 +61,16 @@ public final class SettingsEditor extends AbstractContainer<IWidget> {
                 return BoxSizing.PHANTOM;
             }
         };
-        close.attach(this);
         children.add(close);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        for (IWidget child : children) {
+            child.attach(this);
+        }
     }
 
     @Override

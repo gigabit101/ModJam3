@@ -6,6 +6,8 @@ import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.api.logic.ITrigger;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
+import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
@@ -28,7 +30,7 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
     public static final int HORIZONTAL_MARGIN = 4;
     public static final int VERTICAL_MARGIN = 2;
 
-    private VerticalList<ListEntry> options;
+    private final VerticalList<ListEntry> options;
 
     private int selected = -1;
 
@@ -36,10 +38,20 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
         options = new VerticalList<>();
         options.setLocation(HORIZONTAL_MARGIN, HEADING_BOX.getPortionHeight() + VERTICAL_MARGIN);
         options.setDimensions(getWidth() - HORIZONTAL_MARGIN * 2, getContentHeight() - VERTICAL_MARGIN * 2);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         addChildren(options);
+    }
 
-        injectAction(() -> new CallbackEntry(null, "menu.sfm.InvocationTarget.Rescan", b -> scanTargets()));
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        Section section = builder.obtainSection("");
+        section.addChildren(new CallbackEntry(null, "menu.sfm.InvocationTarget.Rescan", b -> scanTargets()));
+        super.buildContextMenu(builder);
     }
 
     @Override
@@ -49,7 +61,7 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
     }
 
     private void scanTargets() {
-        EditorPanel editor = FactoryManagerGUI.get().getTopLevel().editorPanel;
+        EditorPanel editor = FactoryManagerGUI.get().getPrimaryWindow().editorPanel;
         FunctionInvokeProcedure p = getLinkedProcedure();
         int i = 0;
         for (FlowComponent<?> component : editor.getFlowComponents()) {
@@ -65,17 +77,6 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
             }
         }
         options.reflow();
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return true;
-        }
-        if (!isInside(mouseX, mouseY)) {
-            return false;
-        }
-        return false;
     }
 
     @Override
@@ -103,7 +104,7 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 InvocationTargetMenu.this.selected = index;
                 InvocationTargetMenu.this.getLinkedProcedure().setTarget(target.getProcedure());

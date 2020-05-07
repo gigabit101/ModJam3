@@ -1,9 +1,7 @@
 package vswe.stevesfactory.ui.manager.menu;
 
-import com.mojang.datafixers.util.Either;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.tuple.Pair;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.layout.properties.HorizontalAlignment;
@@ -11,8 +9,6 @@ import vswe.stevesfactory.library.gui.layout.properties.Side;
 import vswe.stevesfactory.library.gui.widget.Label;
 import vswe.stevesfactory.library.gui.widget.RadioController;
 import vswe.stevesfactory.library.gui.widget.RadioInput;
-import vswe.stevesfactory.library.gui.widget.TextField;
-import vswe.stevesfactory.library.gui.widget.panel.FilteredList;
 import vswe.stevesfactory.library.gui.widget.panel.ScrollArrow;
 import vswe.stevesfactory.library.gui.widget.panel.WrappingList;
 import vswe.stevesfactory.logic.FilterType;
@@ -20,7 +16,6 @@ import vswe.stevesfactory.logic.item.ItemTraitsFilter;
 import vswe.stevesfactory.logic.procedure.IItemFilterTarget;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -33,6 +28,7 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
 
     private final RadioInput whitelist, blacklist;
     private final WrappingList<FilterSlot> slots;
+    private final OpenSettingsButton openSettings;
     private SettingsEditor settings;
 
     public ItemTraitsFilterMenu(int id) {
@@ -60,12 +56,17 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
         slots.getScrollUpArrow().setLocation(100, 0);
         slots.alignArrows();
 
-        OpenSettingsButton openSettings = new OpenSettingsButton();
+        openSettings = new OpenSettingsButton();
         ScrollArrow arrow = slots.getScrollDownArrow();
         int ax = slots.getX() + arrow.getX();
         int ay = slots.getY() + arrow.getY();
         openSettings.alignTo(ax, ay, ax + arrow.getWidth(), ay + arrow.getHeight(), Side.BOTTOM, HorizontalAlignment.CENTER.asUnion());
         openSettings.moveY(8);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         addChildren(whitelist);
         addChildren(blacklist);

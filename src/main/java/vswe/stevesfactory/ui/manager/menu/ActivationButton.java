@@ -35,11 +35,11 @@ class ActivationButton extends ColoredTextButton {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (isEnabled() && button == GLFW_MOUSE_BUTTON_LEFT) {
             target.toggleSelected();
             updateText();
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.onMouseClicked(mouseX, mouseY, button);
         }
         return false;
     }

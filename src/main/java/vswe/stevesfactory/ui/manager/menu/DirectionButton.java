@@ -68,10 +68,10 @@ class DirectionButton extends AbstractIconButton {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (button == GLFW_MOUSE_BUTTON_LEFT) {
             setEditing(!editing);
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.onMouseClicked(mouseX, mouseY, button);
         }
         return false;
     }

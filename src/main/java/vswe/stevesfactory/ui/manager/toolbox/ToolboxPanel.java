@@ -31,15 +31,18 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
     public static final Texture GROUP_LIST_ICON = Texture.complete(new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/tool_icon/group.png"), 16, 16);
     public static final Texture INSPECTOR_ICON = Texture.complete(new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/tool_icon/inspector.png"), 16, 16);
 
-    private final ToolboxEntry<Grouplist> groupList;
-    private final ToolboxEntry<Inspector> inspector;
-    private final AbstractIconButton close;
+    private ToolboxEntry<Grouplist> groupList;
+    private ToolboxEntry<Inspector> inspector;
+    private AbstractIconButton close;
     private final List<IWidget> children = new ArrayList<>();
 
     public ToolboxPanel() {
         super(WidthOccupierType.MIN_WIDTH);
         this.setWidth(8 + Render2D.LEFT_BORDER);
+    }
 
+    @Override
+    public void onInitialAttach() {
         addChildOnly(groupList = new ToolboxEntry<>(GROUP_LIST_ICON, Grouplist::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Group.Name")));
         addChildOnly(inspector = new ToolboxEntry<>(INSPECTOR_ICON, Inspector::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Name")));
         addChildOnly(close = new AbstractIconButton() {
@@ -56,8 +59,8 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
             }
 
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                ToolHolderPanel panel = FactoryManagerGUI.get().getPrimaryWindow().topLevel.toolHolderPanel;
+            public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+                ToolHolderPanel panel = FactoryManagerGUI.get().getPrimaryWindow().toolHolderPanel;
                 panel.setActivePanel(null);
                 return true;
             }
@@ -130,7 +133,7 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 getWindow().setFocusedWidget(this);
             } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                createContextMenu(mouseX, mouseY);
+                createContextMenu();
             }
             return true;
         }

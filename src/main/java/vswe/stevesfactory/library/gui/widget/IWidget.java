@@ -111,6 +111,9 @@ public interface IWidget {
 
     boolean isValid();
 
+    /**
+     * Precondition: this widget must return {@code true} in {@link #isValid()}.
+     */
     void onParentPositionChanged();
 
     void onRelativePositionChanged();

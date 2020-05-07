@@ -45,15 +45,15 @@ public abstract class ConnectionNodes<N extends INode> extends AbstractContainer
                     INode[] allNodes = new INode[1 + connection.getPolylineNodes().size() + 1];
                     allNodes[0] = start;
                     allNodes[allNodes.length - 1] = end;
-                    FactoryManagerGUI.get().getTopLevel().connectionsPanel.addChildren(group, start.shadow);
-                    FactoryManagerGUI.get().getTopLevel().connectionsPanel.addChildren(group, end.shadow);
+                    FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.addChildren(group, start.shadow);
+                    FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.addChildren(group, end.shadow);
                     // Generate the intermediate nodes
                     int j = 1;
                     for (Point pos : connection.getPolylineNodes()) {
                         allNodes[j] = new IntermediateNode();
                         allNodes[j].setLocation(pos);
                         // Other's group is the same as our group
-                        FactoryManagerGUI.get().getTopLevel().connectionsPanel.addChildren(group, allNodes[j]);
+                        FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.addChildren(group, allNodes[j]);
                         j++;
                     }
                     // Connect the intermediate nodes
@@ -80,7 +80,7 @@ public abstract class ConnectionNodes<N extends INode> extends AbstractContainer
     }
 
     private static void removeNode(INode node) {
-        ConnectionsPanel panel = FactoryManagerGUI.get().getTopLevel().connectionsPanel;
+        ConnectionsPanel panel = FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel;
         panel.removeChildren(node);
     }
 

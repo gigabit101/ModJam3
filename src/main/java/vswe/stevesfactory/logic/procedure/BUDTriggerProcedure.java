@@ -79,7 +79,7 @@ public class BUDTriggerProcedure extends AbstractProcedure implements ITrigger, 
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<BUDTriggerProcedure> createFlowComponent() {
-        FlowComponent<BUDTriggerProcedure> f = FlowComponent.of(this);
+        FlowComponent<BUDTriggerProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(WATCHING, I18n.format("menu.sfm.BUDTrigger.Watches"), I18n.format("error.sfm.BUDTrigger.NoWatches"), CapabilityEventDispatchers.BUD_EVENT_DISPATCHER_CAPABILITY));
         return f;
     }

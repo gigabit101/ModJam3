@@ -115,7 +115,7 @@ public class RedstoneEmitterProcedure extends AbstractProcedure implements IInve
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<RedstoneEmitterProcedure> createFlowComponent() {
-        FlowComponent<RedstoneEmitterProcedure> f = FlowComponent.of(this);
+        FlowComponent<RedstoneEmitterProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(EMITTERS, I18n.format("menu.sfm.RedstoneEmitter.Emitters"), I18n.format("error.sfm.RedstoneEmitter.NoEmitters"), CapabilityRedstone.REDSTONE_CAPABILITY));
         f.addMenu(new RedstoneSidesMenu<>(SIDES,
                 () -> signalType == IRedstoneHandler.Type.WEAK, () -> signalType = IRedstoneHandler.Type.WEAK, I18n.format("menu.sfm.WeakRedstoneSignal"),

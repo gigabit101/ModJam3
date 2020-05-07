@@ -29,9 +29,17 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
     public CraftingRecipeMenu() {
         for (int i = 0; i < ingredients.length; i++) {
             ingredients[i] = new IngredientSlot(ItemStack.EMPTY, i);
-            addChildren(ingredients[i]);
         }
         product = new ProductSlot(ItemStack.EMPTY);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        for (IngredientSlot ingredient : ingredients) {
+            addChildren(ingredient);
+        }
         addChildren(product);
         reflow();
     }

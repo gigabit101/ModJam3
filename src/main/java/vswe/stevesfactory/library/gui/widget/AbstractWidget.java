@@ -1,6 +1,5 @@
 package vswe.stevesfactory.library.gui.widget;
 
-import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Either;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
@@ -70,34 +69,28 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
 
     @Override
     public void onParentPositionChanged() {
-        Preconditions.checkState(isValid());
+        // Don't check precondition, assume it is met
         updateAbsolutePosition();
     }
 
     @Override
     public void onRelativePositionChanged() {
-        if (isValid()) {
+        if (window != null) {
             updateAbsolutePosition();
         }
     }
 
+    /**
+     * Precondition: {@link #window} is not null.
+     */
     private void updateAbsolutePosition() {
-        absX = getParentAbsXSafe() + getX() + getBorderLeft();
-        absY = getParentAbsYSafe() + getY() + getBorderTop();
-    }
-
-    private int getParentAbsXSafe() {
         if (parent != null) {
-            return parent.getAbsoluteX();
+            absX = parent.getAbsoluteX() + getX() + getBorderLeft();
+            absY = parent.getAbsoluteY() + getY() + getBorderTop();
+        } else {
+            absX = window.getContentX() + getX() + getBorderLeft();
+            absY = window.getContentY() + getY() + getBorderTop();
         }
-        return window.getContentX();
-    }
-
-    private int getParentAbsYSafe() {
-        if (parent != null) {
-            return parent.getAbsoluteY();
-        }
-        return window.getContentY();
     }
 
     public int getParentHeight() {
@@ -507,7 +500,7 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
         }
     }
 
-    public final void createContextMenu(double x, double y) {
+    public final void createContextMenu() {
         ContextMenuBuilder builder = new ContextMenuBuilder();
         buildContextMenu(builder);
         builder.buildAndAdd();

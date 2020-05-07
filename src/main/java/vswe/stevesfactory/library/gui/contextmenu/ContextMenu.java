@@ -1,7 +1,7 @@
 package vswe.stevesfactory.library.gui.contextmenu;
 
 import com.google.common.collect.Iterables;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
 import vswe.stevesfactory.Config;
@@ -106,7 +106,7 @@ public class ContextMenu implements IPopupWindow, WindowEventHandlerMixin, Windo
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
-        GlStateManager.disableTexture();
+        RenderSystem.disableTexture();
         beginColoredQuad();
         int x = getX();
         int y = getY();
@@ -115,7 +115,7 @@ public class ContextMenu implements IPopupWindow, WindowEventHandlerMixin, Windo
         int cy = getContentY();
         coloredRect(cx, cy, cx + getContentWidth(), cy + getContentHeight(), getZLevel(), 0xff3d3d3d);
         draw();
-        GlStateManager.enableTexture();
+        RenderSystem.enableTexture();
 
         for (Section section : sections) {
             section.render(mouseX, mouseY, partialTicks);

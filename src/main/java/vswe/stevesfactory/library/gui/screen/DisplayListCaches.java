@@ -33,10 +33,11 @@ public final class DisplayListCaches {
                 StevesFactoryManager.logger.info("Created background display list with size {}", rectangle);
 
                 int id = glGenLists(1);
-                glNewList(id, GL_COMPILE);
-                {
-                    BackgroundRenderers.drawVanillaStyle4x4(rectangle.x, rectangle.y, rectangle.width, rectangle.height, z);
+                if (id == 0) {
+                    throw new RuntimeException("Unable to allocate GL draw list!");
                 }
+                glNewList(id, GL_COMPILE);
+                BackgroundRenderers.drawVanillaStyle4x4(rectangle.x, rectangle.y, rectangle.width, rectangle.height, z);
                 glEndList();
                 return id;
             });

@@ -1,6 +1,6 @@
 package vswe.stevesfactory.library.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -39,12 +39,13 @@ public class Checkbox extends AbstractWidget implements LeafWidgetMixin {
                 ? (checked ? HOVERED_CHECKED : HOVERED_UNCHECKED)
                 : (checked ? CHECKED : UNCHECKED);
 
-        GlStateManager.disableAlphaTest();
-        GlStateManager.disableTexture();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.disableTexture();
         beginColoredQuad();
         coloredRect(x1, y1, x2, y2, getZLevel(), borderColor);
         coloredRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, getZLevel(), contentColor);
         draw();
+        RenderSystem.enableTexture();
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
 

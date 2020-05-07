@@ -26,7 +26,7 @@ public class FunctionInvokeProcedure extends AbstractProcedure {
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<FunctionInvokeProcedure> createFlowComponent() {
-        FlowComponent<FunctionInvokeProcedure> f = FlowComponent.of(this);
+        FlowComponent<FunctionInvokeProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InvocationTargetMenu());
         return f;
     }

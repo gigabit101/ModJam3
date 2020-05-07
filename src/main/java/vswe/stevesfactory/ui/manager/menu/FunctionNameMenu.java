@@ -15,7 +15,10 @@ public class FunctionNameMenu extends Menu<FunctionHatProcedure> {
 
     private TextField field;
 
-    public FunctionNameMenu() {
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
         field = new TextField(80, 14);
         field.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
         field.alignCenterX(0, getWidth());

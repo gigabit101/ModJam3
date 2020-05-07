@@ -1,7 +1,5 @@
 package vswe.stevesfactory.ui.manager;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
@@ -9,9 +7,7 @@ import vswe.stevesfactory.Config;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.screen.DisplayListCaches;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.window.AbstractWindow;
 import vswe.stevesfactory.ui.manager.editor.ConnectionsPanel;
@@ -22,6 +18,7 @@ import vswe.stevesfactory.ui.manager.tool.group.GroupDataModel;
 import vswe.stevesfactory.ui.manager.toolbox.ToolboxPanel;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.glCallList;
@@ -44,14 +41,12 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
     @Override
     protected void init() {
         super.init();
-        PrimaryWindow w = new PrimaryWindow();
-        setPrimaryWindow(w);
-        w.init();
+        setPrimaryWindow(new PrimaryWindow());
     }
 
     @Override
     public void removed() {
-        getPrimaryWindow().topLevel.editorPanel.saveAll();
+        getPrimaryWindow().editorPanel.saveAll();
         super.removed();
     }
 
@@ -64,38 +59,54 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         return (PrimaryWindow) super.getPrimaryWindow();
     }
 
-    public TopLevelWidget getTopLevel() {
-        return getPrimaryWindow().topLevel;
-    }
-
     public static class PrimaryWindow extends AbstractWindow {
 
-        public final TopLevelWidget topLevel;
+        public final SelectionPanel selectionPanel;
+        public final EditorPanel editorPanel;
+        public final ConnectionsPanel connectionsPanel;
+        public final ToolHolderPanel toolHolderPanel;
+        public final ToolboxPanel toolboxPanel;
+        private final List<DynamicWidthWidget<?>> children = new ArrayList<>();
 
-        // The location and dimensions will be set in the constructor
-        private Rectangle screenBounds = new Rectangle();
         private boolean fullscreen = false;
-
         private int backgroundDL;
 
         private PrimaryWindow() {
-            this.topLevel = new TopLevelWidget(this);
+            asWindow();
+
+            this.selectionPanel = new SelectionPanel();
+            this.editorPanel = new EditorPanel();
+            this.connectionsPanel = new ConnectionsPanel();
+            this.toolHolderPanel = new ToolHolderPanel();
+            this.toolboxPanel = new ToolboxPanel();
+            addChildren(selectionPanel);
+            // Let connections panel receive events first
+            addChildren(connectionsPanel);
+            addChildren(editorPanel);
+            addChildren(toolHolderPanel);
+            addChildren(toolboxPanel);
+
+            reflow();
         }
 
-        public void init() {
-            topLevel.init();
-            setFocusedWidget(topLevel);
-            asProportional();
-        }
-
-        @Override
-        public int getBorderSize() {
-            return 4;
-        }
-
-        @Override
-        public List<? extends IWidget> getChildren() {
-            return ImmutableList.of(topLevel);
+        public void reflow() {
+            int h = getContentHeight();
+            for (DynamicWidthWidget<?> child : children) {
+                child.setHeight(h);
+                child.reflow();
+            }
+//            selectionPanel.setHeight(h);
+//            editorPanel.setHeight(h);
+//            connectionsPanel.setHeight(h);
+//            toolHolderPanel.setHeight(h);
+//            toolboxPanel.setHeight(h);
+//
+//            selectionPanel.reflow();
+//            editorPanel.reflow();
+//            connectionsPanel.reflow();
+//            toolHolderPanel.reflow();
+//            toolboxPanel.reflow();
+            DynamicWidthWidget.resizeAll(this.getContentWidth(), children);
         }
 
         @Override
@@ -110,32 +121,22 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
             } else {
                 glCallList(backgroundDL);
             }
-            topLevel.render(mouseX, mouseY, partialTicks);
+
+            for (DynamicWidthWidget<?> child : children) {
+                child.render(mouseX, mouseY, partialTicks);
+            }
             RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
         }
 
-        public Rectangle getScreenBounds() {
-            return screenBounds;
-        }
-
-        public void setScreenBounds(int width, int height) {
-            // Borders
-            this.screenBounds.width = width;
-            this.screenBounds.height = height;
-            // Centering
-            this.screenBounds.x = screenWidth() / 2 - width / 2;
-            this.screenBounds.y = screenHeight() / 2 - height / 2;
-
-            setPosition(screenBounds.x, screenBounds.y);
+        private void setScreenBounds(int width, int height) {
             setBorder(width, height);
-            updateBackgroundDL();
+            centralize();
+            backgroundDL = createVanillaStyleDL();
+            FactoryManagerGUI.get().xSize = width;
+            FactoryManagerGUI.get().ySize = height;
         }
 
-        private void updateBackgroundDL() {
-            backgroundDL = DisplayListCaches.createVanillaStyleBackground(new Rectangle(screenBounds), 0F);
-        }
-
-        private void asProportional() {
+        private void asWindow() {
             int width, height;
             if (Config.CLIENT.useFixedSizeScreen.get()) {
                 width = FIXED_WIDTH;
@@ -145,15 +146,10 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
                 height = (int) (screenHeight() * HEIGHT_PROPORTION);
             }
             setScreenBounds(width, height);
-            topLevel.reflow();
-
-            get().xSize = width;
-            get().ySize = height;
         }
 
         private void asFullscreen() {
             setScreenBounds(screenWidth(), screenHeight());
-            topLevel.reflow();
         }
 
         public void toggleFullscreen() {
@@ -161,89 +157,25 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
             if (fullscreen) {
                 asFullscreen();
             } else {
-                asProportional();
+                asWindow();
             }
         }
-    }
 
-    public static class TopLevelWidget extends AbstractContainer<DynamicWidthWidget<?>> {
-
-        public final SelectionPanel selectionPanel;
-        public final EditorPanel editorPanel;
-        public final ConnectionsPanel connectionsPanel;
-        public final ToolHolderPanel toolHolderPanel;
-        public final ToolboxPanel toolboxPanel;
-        private final ImmutableList<DynamicWidthWidget<?>> children;
-
-        private TopLevelWidget(PrimaryWindow window) {
-            this.attachWindow(window);
-            this.selectionPanel = new SelectionPanel();
-            this.editorPanel = new EditorPanel();
-            this.connectionsPanel = new ConnectionsPanel();
-            this.toolHolderPanel = new ToolHolderPanel();
-            this.toolboxPanel = new ToolboxPanel();
-            // Let connections panel receive events first
-            this.children = ImmutableList.of(selectionPanel, connectionsPanel, editorPanel, toolHolderPanel, toolboxPanel);
-        }
-
-        public void init() {
-            for (DynamicWidthWidget<?> child : children) {
-                child.attach(this);
-            }
-            editorPanel.readProcedures();
+        private void addChildren(DynamicWidthWidget<?> child) {
+            children.add(child);
+            child.attachWindow(this);
         }
 
         @Override
-        public IWidget getParent() {
-            return null;
+        public int getBorderSize() {
+            return 4;
         }
 
         @Override
-        public void attach(IWidget newParent) {
-            Preconditions.checkArgument(newParent == null);
-        }
-
-        @Override
-        public void onParentPositionChanged() {
-            // Do nothing because we don't really have a parent widget
-        }
-
-        @Override
-        public List<DynamicWidthWidget<?>> getChildren() {
+        public List<? extends IWidget> getChildren() {
             return children;
         }
-
-        @Override
-        public void render(int mouseX, int mouseY, float partialTicks) {
-            // No render events for this object because it is technically internal for the window, and it has the exact size as the window
-            for (DynamicWidthWidget<?> child : children) {
-                child.render(mouseX, mouseY, partialTicks);
-            }
-        }
-
-        private int prevWidth, prevHeight;
-
-        @Override
-        public void reflow() {
-            fillWindow();
-            if (getWidth() != prevWidth || getHeight() != prevHeight) {
-                prevWidth = getWidth();
-                prevHeight = getHeight();
-                selectionPanel.setHeight(prevHeight);
-                editorPanel.setHeight(prevHeight);
-                connectionsPanel.setHeight(prevHeight);
-                toolHolderPanel.setHeight(prevHeight);
-                toolboxPanel.setHeight(prevHeight);
-            }
-
-            selectionPanel.reflow();
-            editorPanel.reflow();
-            connectionsPanel.reflow();
-            toolHolderPanel.reflow();
-            toolboxPanel.reflow();
-            DynamicWidthWidget.reflowDynamicWidth(getDimensions(), children);
-        }
     }
 
-    public final GroupDataModel groupModel = new GroupDataModel(this);
+    public final GroupDataModel groupModel = new GroupDataModel();
 }

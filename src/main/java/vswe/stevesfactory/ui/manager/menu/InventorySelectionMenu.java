@@ -37,6 +37,7 @@ public class InventorySelectionMenu<P extends IInventoryTarget & IProcedure & IC
         this.name = name;
         this.errorMessage = errorMessage;
 
+        // TODO add selection buttons
         Pair<WrappingList<BlockTarget>, TextField> constructionResult = FilteredList.createSearchableList(new ArrayList<>(), "");
         searchBox = constructionResult.getRight();
         searchBox.setLocation(4, 4);
@@ -50,8 +51,10 @@ public class InventorySelectionMenu<P extends IInventoryTarget & IProcedure & IC
         for (BlockPos pos : FactoryManagerGUI.get().getController().getLinkedInventories(cap)) {
             list.addElement(new BlockTarget(pos));
         }
+    }
 
-        // TODO add selection buttons
+    @Override
+    public void onInitialAttach() {
         addChildren(searchBox);
         addChildren(list);
     }

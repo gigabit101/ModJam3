@@ -19,10 +19,10 @@ import static vswe.stevesfactory.library.gui.Render2D.coloredRect;
 public class IntermediateNode extends AbstractWidget implements INode, LeafWidgetMixin {
 
     public static IntermediateNode dragOutIntermediateNode(INode start, INode end, int mouseX, int mouseY) {
-        FactoryManagerGUI.TopLevelWidget topLevel = FactoryManagerGUI.get().getTopLevel();
+        FactoryManagerGUI.PrimaryWindow window = FactoryManagerGUI.get().getPrimaryWindow();
         IntermediateNode node = ConnectionsPanel.subdivideConnection(start, end);
-        topLevel.connectionsPanel.addChildren(node);
-        node.setLocation(mouseX - topLevel.editorPanel.getAbsoluteX(), mouseY - topLevel.editorPanel.getAbsoluteY());
+        window.connectionsPanel.addChildren(node);
+        node.setLocation(mouseX - window.editorPanel.getAbsoluteX(), mouseY - window.editorPanel.getAbsoluteY());
         node.startDrag(mouseX, mouseY);
         return node;
     }
@@ -63,14 +63,14 @@ public class IntermediateNode extends AbstractWidget implements INode, LeafWidge
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 startDrag((int) mouseX, (int) mouseY);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 ConnectionsPanel.mergeConnection(previous, next, this);
-                FactoryManagerGUI.get().getTopLevel().connectionsPanel.removeChildren(this);
+                FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.removeChildren(this);
                 break;
         }
         return true;
@@ -83,9 +83,9 @@ public class IntermediateNode extends AbstractWidget implements INode, LeafWidge
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean onMouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (isDragging()) {
-            ConnectionsPanel parent = FactoryManagerGUI.get().getTopLevel().connectionsPanel;
+            ConnectionsPanel parent = FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel;
             int x = (int) mouseX - parent.getAbsoluteX() - initialDragLocalX;
             int y = (int) mouseY - parent.getAbsoluteY() - initialDragLocalY;
             setLocation(x, y);
@@ -95,7 +95,7 @@ public class IntermediateNode extends AbstractWidget implements INode, LeafWidge
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
         clearDrag();
         return true;
     }
@@ -143,7 +143,7 @@ public class IntermediateNode extends AbstractWidget implements INode, LeafWidge
 
     @Override
     public void onEdgeRemoval() {
-        FactoryManagerGUI.get().getTopLevel().connectionsPanel.removeChildren(this);
+        FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.removeChildren(this);
     }
 
     @Override

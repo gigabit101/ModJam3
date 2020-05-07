@@ -66,7 +66,7 @@ public class CraftingProcedure extends AbstractProcedure implements ICraftingGri
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<CraftingProcedure> createFlowComponent() {
-        FlowComponent<CraftingProcedure> f = FlowComponent.of(this);
+        FlowComponent<CraftingProcedure> f = new FlowComponent<>(this);
         f.addMenu(new CraftingRecipeMenu<>());
         return f;
     }

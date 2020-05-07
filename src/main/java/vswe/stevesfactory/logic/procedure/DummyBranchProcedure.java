@@ -31,6 +31,6 @@ public class DummyBranchProcedure extends AbstractProcedure {
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<DummyBranchProcedure> createFlowComponent() {
-        return FlowComponent.of(this);
+        return new FlowComponent<>(this);
     }
 }

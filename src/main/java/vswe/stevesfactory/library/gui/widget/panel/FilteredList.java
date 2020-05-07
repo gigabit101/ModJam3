@@ -18,7 +18,7 @@ public class FilteredList<T extends IWidget & IStringSerializable> extends Abstr
         FilteredList<T> filteredList = pair.getLeft();
 
         TextField textField = pair.getRight();
-        WrappingList<T> wrappingList = new WrappingList<T>();
+        WrappingList<T> wrappingList = new WrappingList<>();
         filteredList.onUpdate = searchResult -> {
             wrappingList.setContentList(searchResult);
             wrappingList.reflow();

@@ -59,8 +59,8 @@ public class ToolboxEntry<T extends IWidget & ResizableWidgetMixin> extends Abst
         RenderSystem.enableAlphaTest();
 
         int textureSize = getWidth();
-        tex.render(x1, y1, textureSize, textureSize);
-        Render2D.renderVerticallyCenteredText(name, x1 + 1, y1 + textureSize + LABEL_VERTICAL_GAP, FONT_HEIGHT, getZLevel(), 0xffffffff);
+        tex.render(x1, y1, x1 + textureSize, y1 + textureSize);
+        Render2D.renderVerticalText(name, x1 + 1, y1 + textureSize + LABEL_VERTICAL_GAP, getZLevel(), FONT_HEIGHT, 0xffffffff);
 
         if (hovered && !name.isEmpty()) {
             FactoryManagerGUI.get().scheduleTooltip(name, mouseX, mouseY);
@@ -70,8 +70,8 @@ public class ToolboxEntry<T extends IWidget & ResizableWidgetMixin> extends Abst
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        FactoryManagerGUI.get().getTopLevel().toolHolderPanel.setActivePanel(getToolWindow());
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        FactoryManagerGUI.get().getPrimaryWindow().toolHolderPanel.setActivePanel(getToolWindow());
         return true;
     }
 

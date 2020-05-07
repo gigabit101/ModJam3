@@ -3,11 +3,9 @@ package vswe.stevesfactory.ui.manager.tool;
 import com.google.common.collect.ImmutableList;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
@@ -41,7 +39,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
                 ((AbstractContainer<?>) panel).reflow();
             }
         }
-        FactoryManagerGUI.get().getTopLevel().reflow();
+        FactoryManagerGUI.get().getPrimaryWindow().reflow();
     }
 
     @Override
@@ -78,7 +76,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
                     getWindow().setFocusedWidget(this);
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
-                    createContextMenu(mouseX, mouseY);
+                    createContextMenu();
                     break;
             }
             return true;

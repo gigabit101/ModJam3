@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.contextmenu;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.ResourceLocation;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -44,11 +45,11 @@ public class DefaultEntry extends AbstractWidget implements IEntry, LeafWidgetMi
         int y2 = getAbsoluteYBottom();
         if (isInside(mouseX, mouseY)) {
             IWindow parent = getWindow();
-            GlStateManager.disableTexture();
+            RenderSystem.disableTexture();
             beginColoredQuad();
             coloredRect(x, y, parent.getContentX() + parent.getWidth() - parent.getBorderSize() * 2, y2, getZLevel(), 0xff3b86ff);
             draw();
-            GlStateManager.enableTexture();
+            RenderSystem.enableTexture();
         }
 
         ResourceLocation icon = getIcon();
@@ -56,6 +57,7 @@ public class DefaultEntry extends AbstractWidget implements IEntry, LeafWidgetMi
             int iconX = x + MARGIN_SIDES;
             int iconY = y + MARGIN_SIDES;
 
+            RenderSystem.enableAlphaTest();
             beginTexturedQuad();
             bindTexture(icon);
             completeTexture(iconX, iconY, iconX + RENDERED_ICON_WIDTH, iconY + RENDERED_ICON_HEIGHT, 0F);

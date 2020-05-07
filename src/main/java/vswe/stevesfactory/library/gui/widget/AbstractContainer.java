@@ -33,6 +33,9 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
         // Prevent NPE when containers setting coordinates before child widgets get initialized
         if (getChildren() != null) {
             for (T child : getChildren()) {
+                if (!child.isValid()) {
+                    continue;
+                }
                 child.onParentPositionChanged();
             }
         }
@@ -122,6 +125,9 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
 
     private static void propagateBuildActionMenu(IContainer<?> container, ContextMenuBuilder builder) {
         for (IWidget child : container.getChildren()) {
+            if (!child.isInside(builder.getX(), builder.getY())) {
+                continue;
+            }
             if (child instanceof AbstractWidget) {
                 ((AbstractWidget) child).buildContextMenu(builder);
             } else if (child instanceof IContainer<?>) {

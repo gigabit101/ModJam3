@@ -37,6 +37,13 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
 
     public WrappingList(int width, int height) {
         this.setDimensions(width, height);
+        this.scrollUpArrow = ScrollArrow.up(0, 0);
+        this.scrollUpArrow.attach(this);
+        this.scrollDownArrow = ScrollArrow.down(0, 0);
+        this.scrollDownArrow.attach(this);
+        this.alignArrows();
+        // Update arrow states
+        this.scroll(1);
         this.children = new AbstractList<IWidget>() {
             @Override
             public IWidget get(int i) {
@@ -59,13 +66,9 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
 
     @Override
     public void onInitialAttach() {
-        this.scrollUpArrow = ScrollArrow.up(0, 0);
-        this.scrollUpArrow.attach(this);
-        this.scrollDownArrow = ScrollArrow.down(0, 0);
-        this.scrollDownArrow.attach(this);
-        this.alignArrows();
-        // Update arrow states
-        this.scroll(1);
+        for (IWidget child : children) {
+            child.attach(this);
+        }
     }
 
     @Override

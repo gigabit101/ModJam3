@@ -32,6 +32,14 @@ public final class ContextMenuBuilder {
         return contextMenu;
     }
 
+    public int getX() {
+        return getContextMenu().getX();
+    }
+
+    public int getY() {
+        return getContextMenu().getY();
+    }
+
     public ContextMenu build() {
         ContextMenu menu = getContextMenu();
         menu.reflow();

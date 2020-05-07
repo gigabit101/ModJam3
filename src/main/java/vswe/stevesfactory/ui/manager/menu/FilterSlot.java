@@ -63,11 +63,14 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
 
     public class Editor extends AbstractContainer<IWidget> {
 
-        private final NumberField<Integer> count;
-        private final NumberField<Integer> damage;
-        private final List<IWidget> children;
+        private NumberField<Integer> count;
+        private NumberField<Integer> damage;
+        private List<IWidget> children;
 
-        public Editor() {
+        @Override
+        public void onInitialAttach() {
+            super.onInitialAttach();
+
             MultiLayerMenu<?> menu = getMenu();
             setDimensions(menu.getWidth(), menu.getContentHeight());
 
@@ -105,9 +108,9 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
                 }
 
                 @Override
-                public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                public boolean onMouseClicked(double mouseX, double mouseY, int button) {
                     closeEditor();
-                    return super.mouseClicked(mouseX, mouseY, button);
+                    return true;
                 }
 
                 @Override

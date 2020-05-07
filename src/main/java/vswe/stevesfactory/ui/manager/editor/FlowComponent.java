@@ -35,10 +35,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class FlowComponent<P extends IProcedure & IClientDataStorage> extends AbstractContainer<IWidget> implements Comparable<FlowComponent<?>> {
 
-    public static <P extends IProcedure & IClientDataStorage> FlowComponent<P> of(P procedure) {
-        return new FlowComponent<>(procedure, procedure.predecessors().length, procedure.successors().length);
-    }
-
     private P procedure;
 
     private final TextField nameBox;
@@ -55,26 +51,35 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     private int initialDragLocalX;
     private int initialDragLocalY;
 
-    public FlowComponent(P procedure, int amountInputs, int amountOutputs) {
+    public FlowComponent(P procedure) {
         this.setDimensions(64, 20);
-        String name = procedure.getName();
+//        // Record reference only, initialization is done in #onInitialAttach()
+//        this.procedure = procedure;
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
         this.nameBox = new TextField();
         this.nameBox.setLocation(6, 8);
         this.nameBox.setWidth(this.getWidth() - nameBox.getX() - 2);
         this.nameBox.setBackgroundStyle(TextField.BackgroundStyle.NONE);
-        this.nameBox.setText(name);
+        this.nameBox.setText(procedure.getName());
         this.nameBox.setTextColor(0xff303030, 0xff303030);
         this.nameBox.setEditable(false);
         this.nameBox.getTextRenderer().setFontHeight(6);
-        this.inputNodes = ConnectionNodes.inputNodes(amountInputs);
-        this.outputNodes = ConnectionNodes.outputNodes(amountOutputs);
+        this.inputNodes = ConnectionNodes.inputNodes(procedure.predecessors().length);
+        this.outputNodes = ConnectionNodes.outputNodes(procedure.successors().length);
         this.errorIndicator = ErrorIndicator.error();
         this.menus = new MinimumVerticalList<>();
         this.children = ImmutableList.of(nameBox, inputNodes, outputNodes, errorIndicator);
+        // Initialize data related to the procedure object
         this.setLinkedProcedure(procedure);
 
         errorIndicator.setLocation(2, 8);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        for (IWidget child : children) {
+            child.attach(this);
+        }
     }
 
     public String getName() {
@@ -148,12 +153,14 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
+        RenderSystem.disableTexture();
         RenderSystem.color3f(1F, 1F, 1F);
         int x = getAbsoluteX();
         int y = getAbsoluteY();
         Render2D.beginColoredQuad();
         Render2D.borderedRect(x, y, x + getWidth(), y + getHeight());
         Render2D.draw();
+        RenderSystem.enableTexture();
 
         nameBox.render(mouseX, mouseY, partialTicks);
         inputNodes.render(mouseX, mouseY, partialTicks);

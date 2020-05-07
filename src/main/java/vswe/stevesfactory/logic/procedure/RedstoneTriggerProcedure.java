@@ -109,7 +109,7 @@ public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrig
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<RedstoneTriggerProcedure> createFlowComponent() {
-        FlowComponent<RedstoneTriggerProcedure> f = FlowComponent.of(this);
+        FlowComponent<RedstoneTriggerProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(WATCHING, I18n.format("menu.sfm.RedstoneTrigger.Watches"), I18n.format("error.sfm.RedstoneTrigger.NoWatches"), CapabilityEventDispatchers.REDSTONE_EVENT_DISPATCHER_CAPABILITY));
         f.addMenu(new RedstoneSidesMenu<>(DIRECTIONS,
                 () -> conjunction == Type.ANY, () -> conjunction = Type.ANY, I18n.format("menu.sfm.IfAny"),

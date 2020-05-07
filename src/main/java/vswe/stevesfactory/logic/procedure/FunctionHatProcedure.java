@@ -36,7 +36,7 @@ public class FunctionHatProcedure extends AbstractProcedure implements ITrigger,
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<FunctionHatProcedure> createFlowComponent() {
-        FlowComponent<FunctionHatProcedure> f = FlowComponent.of(this);
+        FlowComponent<FunctionHatProcedure> f = new FlowComponent<>(this);
         f.addMenu(new FunctionNameMenu());
         return f;
     }

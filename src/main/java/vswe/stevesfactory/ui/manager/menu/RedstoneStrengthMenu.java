@@ -17,9 +17,10 @@ import java.util.List;
 
 public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IAnalogTarget> extends Menu<P> {
 
-    private NumberField<Integer> begin;
-    private NumberField<Integer> end;
-    private Checkbox invertCondition;
+    private final NumberField<Integer> begin;
+    private final NumberField<Integer> end;
+    private final Checkbox invertCondition;
+    private final Paragraph info;
 
     public RedstoneStrengthMenu() {
         begin = NumberField.integerFieldRanged(33, 12, 1, 1, 15);
@@ -28,10 +29,15 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
         end.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
         invertCondition = new Checkbox();
         invertCondition.setDimensions(8, 8);
-        Paragraph info = new Paragraph(getWidth() - 10 * 2, 16, new ArrayList<>());
+        info = new Paragraph(getWidth() - 10 * 2, 16, new ArrayList<>());
         info.getTextRenderer().setFontHeight(6);
         info.addLineSplit(I18n.format("menu.sfm.RedstoneTrigger.Strength.Info"));
         info.setLocation(4, HEADING_BOX.getPortionHeight() + 2);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         addChildren(begin);
         addChildren(end);

@@ -108,7 +108,7 @@ public class FluidTransferProcedure extends AbstractProcedure implements IInvent
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<FluidTransferProcedure> createFlowComponent() {
-        FlowComponent<FluidTransferProcedure> f = FlowComponent.of(this);
+        FlowComponent<FluidTransferProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(SOURCE_TANKS, I18n.format("menu.sfm.TankSelection.Source"), I18n.format("error.sfm.FluidTransfer.NoSrcTank"), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY));
         f.addMenu(new InventorySelectionMenu<>(DESTINATION_TANKS, I18n.format("menu.sfm.TankSelection.Destination"), I18n.format("error.sfm.FluidTransfer.NoSrcTarget"), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY));
         f.addMenu(new DirectionSelectionMenu<>(SOURCE_TANKS, I18n.format("menu.sfm.TargetSides.Source"), I18n.format("error.sfm.FluidTransfer.NoDestTank")));

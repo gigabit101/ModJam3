@@ -46,7 +46,7 @@ public abstract class AbstractWindow implements IWindow, WindowEventHandlerMixin
         if (button == GLFW_MOUSE_BUTTON_RIGHT) {
             for (IWidget child : getChildren()) {
                 if (child.isInside(mouseX, mouseY) && child instanceof AbstractWidget) {
-                    ((AbstractWidget) child).createContextMenu(mouseX, mouseY);
+                    ((AbstractWidget) child).createContextMenu();
                 }
             }
         }

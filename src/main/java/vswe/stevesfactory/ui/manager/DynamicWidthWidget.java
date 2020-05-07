@@ -4,13 +4,12 @@ import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 
-import java.awt.*;
 import java.util.List;
 
 public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractContainer<T> implements IWidget {
 
     @SuppressWarnings("UnusedReturnValue")
-    public static List<DynamicWidthWidget<?>> reflowDynamicWidth(Dimension bounds, List<DynamicWidthWidget<?>> widgets) {
+    public static List<DynamicWidthWidget<?>> resizeAll(int width, List<DynamicWidthWidget<?>> widgets) {
         int amountMaxWidth = 0;
         for (DynamicWidthWidget<?> widget : widgets) {
             if (!BoxSizing.shouldIncludeWidget(widget)) {
@@ -25,7 +24,7 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
             }
         }
 
-        int usable = bounds.width;
+        int usable = width;
         for (DynamicWidthWidget<?> widget : widgets) {
             if (!BoxSizing.shouldIncludeWidget(widget)) {
                 continue;
@@ -49,7 +48,7 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
         }
 
         for (DynamicWidthWidget<?> widget : widgets) {
-            widget.onAfterReflow();
+            widget.reflowAfter();
         }
 
         return widgets;
@@ -65,16 +64,16 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
         this.widthOccupier = widthOccupier;
     }
 
-    @Override
-    public void onParentPositionChanged() {
-        super.onParentPositionChanged();
-        setHeight(getParentHeight());
-    }
+//    @Override
+//    public void onParentPositionChanged() {
+//        super.onParentPositionChanged();
+//        setHeight(getParentHeight());
+//    }
 
     public WidthOccupierType getWidthOccupier() {
         return widthOccupier;
     }
 
-    protected void onAfterReflow() {
+    protected void reflowAfter() {
     }
 }

@@ -13,9 +13,6 @@ public class SignUpdaterLinesMenu extends Menu<SignUpdaterProcedure> {
 
     private TextField[] textFields = new TextField[4];
 
-    public SignUpdaterLinesMenu() {
-    }
-
     @Override
     public void onLinkFlowComponent(FlowComponent<SignUpdaterProcedure> flowComponent) {
         super.onLinkFlowComponent(flowComponent);

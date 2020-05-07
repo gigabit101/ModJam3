@@ -157,7 +157,7 @@ public abstract class MultiLayerMenu<P extends IProcedure & IClientDataStorage> 
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             MultiLayerMenu<?> parent = getParent();
             parent.openEditor(parent.getEditor());
             return true;

@@ -4,10 +4,7 @@ import net.minecraft.util.Direction;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
-import vswe.stevesfactory.library.gui.widget.Checkbox;
-import vswe.stevesfactory.library.gui.widget.Paragraph;
-import vswe.stevesfactory.library.gui.widget.RadioController;
-import vswe.stevesfactory.library.gui.widget.RadioInput;
+import vswe.stevesfactory.library.gui.widget.*;
 import vswe.stevesfactory.logic.procedure.IDirectionTarget;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
@@ -21,18 +18,22 @@ import java.util.function.BooleanSupplier;
 
 public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDirectionTarget> extends Menu<P> {
 
+    private final RadioInput firstOption, secondOption;
+    private final Label firstOptionLabel, secondOptionLabel;
+    private final Paragraph info;
     private final Map<Direction, Checkbox> sides;
 
     private final String menuName;
     private final int id;
 
+    // TODO
     public RedstoneSidesMenu(int id, BooleanSupplier firstOptionGetter, Runnable firstOptionSetter, String firstOptionName, BooleanSupplier secondOptionGetter, Runnable secondOptionSetter, String secondOptionName, String menuName, String infoText) {
         this.id = id;
         this.menuName = menuName;
 
         RadioController filterTypeController = new RadioController();
-        RadioInput firstOption = new RadioInput(filterTypeController);
-        RadioInput secondOption = new RadioInput(filterTypeController);
+        firstOption = new RadioInput(filterTypeController);
+        secondOption = new RadioInput(filterTypeController);
         int y = HEADING_BOX.getPortionHeight() + 4;
         firstOption.setLocation(4, y);
         firstOption.check(firstOptionGetter.getAsBoolean());
@@ -41,11 +42,8 @@ public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDire
         secondOption.check(secondOptionGetter.getAsBoolean());
         secondOption.setCheckAction(secondOptionSetter);
 
-        addChildren(firstOption);
-        addChildren(secondOption);
-        // TODO label pos
-        addChildren(firstOption.makeLabel().text(firstOptionName));
-        addChildren(secondOption.makeLabel().text(secondOptionName));
+        firstOptionLabel = firstOption.makeLabel().text(firstOptionName);
+        secondOptionLabel = secondOption.makeLabel().text(secondOptionName);
 
         sides = new EnumMap<>(Direction.class);
         for (Direction direction : Utils.DIRECTIONS) {
@@ -57,10 +55,21 @@ public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDire
         }
         FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 30, getWidth(), sides);
 
-        Paragraph info = new Paragraph(getWidth() - 4 * 2, 16, new ArrayList<>());
+        info = new Paragraph(getWidth() - 4 * 2, 16, new ArrayList<>());
         info.getTextRenderer().setFontHeight(6);
         info.addLineSplit(infoText);
         info.setLocation(4, firstOption.getYBottom() + 2);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        addChildren(firstOption);
+        addChildren(secondOption);
+        // TODO label pos
+        addChildren(firstOptionLabel);
+        addChildren(secondOptionLabel);
         addChildren(info);
     }
 

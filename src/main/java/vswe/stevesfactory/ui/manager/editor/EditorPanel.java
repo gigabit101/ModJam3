@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.util.math.BlockPos;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.library.gui.Render2D;
@@ -16,14 +15,16 @@ import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 import vswe.stevesfactory.ui.manager.tool.group.GroupDataModel;
 import vswe.stevesfactory.utils.NetworkHelper;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
@@ -31,7 +32,7 @@ import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
-    private Map<String, TreeSet<FlowComponent<?>>> groupMappedChildren = new HashMap<>();
+    private final Map<String, TreeSet<FlowComponent<?>>> groupMappedChildren = new HashMap<>();
     private TreeSet<FlowComponent<?>> children;
     private Collection<FlowComponent<?>> childrenView;
     private int nextZIndex = 0;
@@ -41,7 +42,10 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     public EditorPanel() {
         super(WidthOccupierType.MAX_WIDTH);
+    }
 
+    @Override
+    public void onInitialAttach() {
         xOffset = new OffsetText(I18n.format("gui.sfm.FactoryManager.Editor.XOff"), 0, 0);
         xOffset.attach(this);
         yOffset = new OffsetText(I18n.format("gui.sfm.FactoryManager.Editor.YOff"), 0, 0);
@@ -55,6 +59,8 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
         data.addListenerRemove(this::onGroupRemoved);
         data.addListenerUpdate(this::onGroupUpdated);
         data.addListenerSelect(this::onGroupSelected);
+
+        FactoryManagerGUI.get().defer(this::readProcedures);
     }
 
     private void onGroupRemoved(String group) {
@@ -76,6 +82,26 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     private void onGroupSelected(String current) {
         children = groupMappedChildren.computeIfAbsent(current, __ -> new TreeSet<>());
         childrenView = children.descendingSet();
+    }
+
+    public void readProcedures() {
+        FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.disabledModification = true;
+        Map<IProcedure, FlowComponent<?>> m = new HashMap<>();
+        for (IProcedure procedure : FactoryManagerGUI.get().getController().getPGraph().iterableValidAll()) {
+            FlowComponent<?> f = procedure.createFlowComponent();
+            f.attach(this);
+            f.setZIndex(nextZIndex());
+
+            m.put(procedure, f);
+            groupMappedChildren.computeIfAbsent(f.getGroup(), __ -> new TreeSet<>()).add(f);
+        }
+        FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.disabledModification = false;
+
+        for (TreeSet<FlowComponent<?>> children : groupMappedChildren.values()) {
+            for (FlowComponent<?> child : children) {
+                child.readConnections(m);
+            }
+        }
     }
 
     public TreeSet<FlowComponent<?>> getFlowComponents() {
@@ -163,7 +189,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
                     getWindow().setFocusedWidget(this);
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
-                    createContextMenu(mouseX, mouseY);
+                    createContextMenu();
                     break;
             }
             return true;
@@ -328,7 +354,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     }
 
     @Override
-    public void onAfterReflow() {
+    public void reflowAfter() {
         int statusX = getWidth() - 4;
         int fontHeight = fontRenderer().FONT_HEIGHT;
         int yStatusY = getHeight() - 4 - fontHeight;
@@ -368,29 +394,6 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
         for (TreeSet<FlowComponent<?>> children : groupMappedChildren.values()) {
             for (FlowComponent<?> child : children) {
                 child.save();
-            }
-        }
-    }
-
-    public void readProcedures() {
-        BlockPos controllerPos = ((FactoryManagerGUI) WidgetScreen.assertActive()).getController().getPosition();
-        INetworkController controller = Objects.requireNonNull((INetworkController) Minecraft.getInstance().world.getTileEntity(controllerPos));
-
-        FactoryManagerGUI.get().getTopLevel().connectionsPanel.disabledModification = true;
-        Map<IProcedure, FlowComponent<?>> m = new HashMap<>();
-        for (IProcedure procedure : controller.getPGraph().iterableValidAll()) {
-            FlowComponent<?> f = procedure.createFlowComponent();
-            f.attach(this);
-            f.setZIndex(nextZIndex());
-
-            m.put(procedure, f);
-            groupMappedChildren.computeIfAbsent(f.getGroup(), __ -> new TreeSet<>()).add(f);
-        }
-        FactoryManagerGUI.get().getTopLevel().connectionsPanel.disabledModification = false;
-
-        for (TreeSet<FlowComponent<?>> children : groupMappedChildren.values()) {
-            for (FlowComponent<?> child : children) {
-                child.readConnections(m);
             }
         }
     }

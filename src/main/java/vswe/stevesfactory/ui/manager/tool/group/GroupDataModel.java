@@ -12,16 +12,11 @@ public final class GroupDataModel {
 
     public static final String DEFAULT_GROUP = "";
 
-    private FactoryManagerGUI gui;
     private List<Consumer<String>> addListeners = new ArrayList<>();
     private List<Consumer<String>> removeListeners = new ArrayList<>();
     private List<BiConsumer<String, String>> updateListeners = new ArrayList<>();
     private List<Consumer<String>> selectListeners = new ArrayList<>();
     private String currentGroup = DEFAULT_GROUP;
-
-    public GroupDataModel(FactoryManagerGUI gui) {
-        this.gui = gui;
-    }
 
     public int addListenerAdd(Consumer<String> listener) {
         addListeners.add(listener);
@@ -64,11 +59,11 @@ public final class GroupDataModel {
     }
 
     public Collection<String> getGroups() {
-        return gui.getController().getGroups();
+        return FactoryManagerGUI.get().getController().getGroups();
     }
 
     public boolean addGroup(String group) {
-        if (gui.getController().getGroups().add(group)) {
+        if (FactoryManagerGUI.get().getController().getGroups().add(group)) {
             for (Consumer<String> listener : addListeners) {
                 listener.accept(group);
             }
@@ -78,7 +73,7 @@ public final class GroupDataModel {
     }
 
     public boolean removeGroup(String group) {
-        if (gui.getController().getGroups().remove(group)) {
+        if (FactoryManagerGUI.get().getController().getGroups().remove(group)) {
             for (Consumer<String> listener : removeListeners) {
                 listener.accept(group);
             }
@@ -88,6 +83,7 @@ public final class GroupDataModel {
     }
 
     public boolean updateGroup(String from, String to) {
+        FactoryManagerGUI gui = FactoryManagerGUI.get();
         if (gui.getController().getGroups().remove(from)) {
             gui.getController().getGroups().add(to);
             for (BiConsumer<String, String> listener : updateListeners) {

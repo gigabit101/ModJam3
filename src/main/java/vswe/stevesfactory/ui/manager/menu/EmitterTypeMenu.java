@@ -15,9 +15,9 @@ import java.util.Map;
 
 public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
 
-    private final Paragraph paragraph;
-    private final NumberField<Integer> valueInput;
-    private final Map<OperationType, RadioInput> type;
+    private Paragraph paragraph;
+    private NumberField<Integer> valueInput;
+    private Map<OperationType, RadioInput> type;
 
     public EmitterTypeMenu() {
         int y = HEADING_BOX.getPortionHeight() + 2;
@@ -25,14 +25,12 @@ public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
         paragraph = new Paragraph(0, 20, new ArrayList<>());
         paragraph.setLocation(4, y);
         paragraph.getTextRenderer().setFontHeight(7);
-        addChildren(paragraph);
 
         valueInput = NumberField.integerFieldRanged(33, 12, 15, 1, 15);
         valueInput.alignRight(getWidth() - 4);
         valueInput.setY(y);
         valueInput.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
         paragraph.setWidth(valueInput.getX() - 4 - paragraph.getX());
-        addChildren(valueInput);
 
         RadioController controller = new RadioController();
         type = new EnumMap<>(OperationType.class);
@@ -43,6 +41,14 @@ public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
             addChildren(box.makeLabel().translate(type.nameKey));
             this.type.put(type, box);
         }
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        addChildren(paragraph);
+        addChildren(valueInput);
         FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 25, getWidth(), type);
     }
 

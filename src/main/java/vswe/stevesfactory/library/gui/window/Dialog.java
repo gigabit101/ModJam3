@@ -37,8 +37,6 @@ public class Dialog extends AbstractPopupWindow {
         dialog.insertBeforeButtons(inputBox);
         dialog.onPostReflow = inputBox::expandHorizontally;
 
-        dialog.insertBeforeButtons(new Spacer(0, 4));
-
         dialog.buttons.addChildren(ColoredTextButton.of(confirm, b -> onConfirm.accept(b, inputBox.getText())));
         dialog.bindRemoveSelf2LastButton();
         dialog.buttons.addChildren(ColoredTextButton.of(cancel, b -> onCancel.accept(b, inputBox.getText())));
@@ -55,7 +53,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public static Dialog createBiSelectionDialog(String message, IntConsumer onConfirm, IntConsumer onCancel) {
-        return createBiSelectionDialog(message, "gui.harmonics.Dialog.OK", "gui.harmonics.Dialog.Cancel", onConfirm, onCancel);
+        return createBiSelectionDialog(message, "gui.sfm.ok", "gui.sfm.cancel", onConfirm, onCancel);
     }
 
     public static Dialog createBiSelectionDialog(String message, String confirm, String cancel, IntConsumer onConfirm, IntConsumer onCancel) {
@@ -76,7 +74,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public static Dialog createDialog(String message, IntConsumer onConfirm) {
-        return createDialog(message, "gui.harmonics.Dialog.OK", onConfirm);
+        return createDialog(message, "gui.sfm.ok", onConfirm);
     }
 
     public static Dialog createDialog(String message, String ok, IntConsumer onConfirm) {

@@ -27,14 +27,10 @@ public class GroupButton extends ColoredTextButton {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        switch (button) {
-            case GLFW_MOUSE_BUTTON_LEFT:
-                actionSwitchGroup();
-                return true;
-            case GLFW_MOUSE_BUTTON_RIGHT:
-                createContextMenu(mouseX, mouseY);
-                return true;
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT) {
+            actionSwitchGroup();
+            return true;
         }
         return false;
     }
@@ -82,8 +78,8 @@ public class GroupButton extends ColoredTextButton {
         Grouplist.createSelectGroupDialog(
                 toGroup -> {
                     if (!this.group.equals(toGroup)) {
-                        FactoryManagerGUI.get().getTopLevel().editorPanel.moveGroup(this.group, toGroup);
-                        FactoryManagerGUI.get().getTopLevel().connectionsPanel.moveGroup(this.group, toGroup);
+                        FactoryManagerGUI.get().getPrimaryWindow().editorPanel.moveGroup(this.group, toGroup);
+                        FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.moveGroup(this.group, toGroup);
                     }
                 },
                 () -> {
@@ -110,7 +106,7 @@ public class GroupButton extends ColoredTextButton {
     }
 
     private Grouplist getGroupList() {
-        return FactoryManagerGUI.get().getTopLevel().toolboxPanel.getGroupList();
+        return FactoryManagerGUI.get().getPrimaryWindow().toolboxPanel.getGroupList();
     }
 
     private boolean isSelected() {

@@ -12,13 +12,10 @@ import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
-import vswe.stevesfactory.ui.manager.FactoryManagerGUI.TopLevelWidget;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
@@ -29,12 +26,17 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
     public static final ResourceLocation BACKGROUND_NORMAL = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/component_background/background_normal.png");
     public static final ResourceLocation BACKGROUND_HOVERED = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/component_background/background_hovered.png");
 
-    private final ImmutableList<IComponentChoice> staticIcons;
-    private final List<IComponentChoice> addendumIcons;
-    private final List<IComponentChoice> icons;
+    private ImmutableList<IComponentChoice> staticIcons;
+    private List<IComponentChoice> addendumIcons;
+    private List<IComponentChoice> icons;
 
     public SelectionPanel() {
         super(WidthOccupierType.MIN_WIDTH);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         this.staticIcons = createStaticIcons();
         this.addendumIcons = new ArrayList<>();
@@ -44,10 +46,14 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
     private ImmutableList<IComponentChoice> createStaticIcons() {
         ImmutableList.Builder<IComponentChoice> icons = ImmutableList.builder();
         for (ComponentGroup group : ComponentGroup.groups) {
-            icons.add(new GroupComponentChoice(group));
+            GroupComponentChoice element = new GroupComponentChoice(group);
+            element.attach(this);
+            icons.add(element);
         }
         for (IProcedureType<?> type : ComponentGroup.ungroupedTypes) {
-            icons.add(new SingularComponentChoice(type));
+            SingularComponentChoice element = new SingularComponentChoice(type);
+            element.attach(this);
+            icons.add(element);
         }
         return icons.build();
     }
@@ -75,12 +81,6 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
                 .map(furthest -> furthest.getX() + furthest.getWidth())
                 .orElse(0) + DOWN_RIGHT_4_STRICT_TABLE.tableGap;
         setWidth(w);
-    }
-
-    @Nonnull
-    @Override
-    public TopLevelWidget getParent() {
-        return Objects.requireNonNull((TopLevelWidget) super.getParent());
     }
 
     @Override

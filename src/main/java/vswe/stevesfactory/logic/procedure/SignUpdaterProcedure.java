@@ -65,7 +65,7 @@ public class SignUpdaterProcedure extends AbstractProcedure implements IInventor
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<SignUpdaterProcedure> createFlowComponent() {
-        FlowComponent<SignUpdaterProcedure> f = FlowComponent.of(this);
+        FlowComponent<SignUpdaterProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(SIGNS, I18n.format("menu.sfm.SignUpdater.Signs"), I18n.format("error.sfm.SignUpdater.NoTargets"), CapabilityDocuments.TEXT_DISPLAY_CAPABILITY));
         f.addMenu(new SignUpdaterLinesMenu());
         return f;

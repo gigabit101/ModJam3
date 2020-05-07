@@ -35,6 +35,8 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
 
     private final RadioInput whitelist, blacklist;
     private final VerticalList<Entry> fields;
+    private final OpenSettingsButton openSettings;
+    private final AbstractIconButton addEntryButton;
     private SettingsEditor settings;
 
     public ItemTagFilterMenu(int id) {
@@ -54,10 +56,10 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
 
         int contentY = whitelist.getYBottom() + 4;
 
-        OpenSettingsButton openSettings = new OpenSettingsButton();
+        openSettings = new OpenSettingsButton();
         openSettings.setLocation(getWidth() - 2 - 12, getHeight() + getContentHeight() - 2 - 12);
 
-        AbstractIconButton addEntryButton = new AbstractIconButton() {
+        addEntryButton = new AbstractIconButton() {
             {
                 this.setLocation(getWidth() - 4 - 8, contentY);
                 this.setDimensions(8, 8);
@@ -82,7 +84,7 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
             }
 
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            public boolean onMouseClicked(double mouseX, double mouseY, int button) {
                 fields.addChildren(new Entry());
                 fields.reflow();
                 return true;
@@ -92,6 +94,11 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         fields = new VerticalList<>();
         fields.setLocation(4, contentY);
         fields.setDimensions(addEntryButton.getX() - 4 * 2, getContentHeight() - whitelist.getHeight() - 4 * 2);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         addChildren(whitelist);
         addChildren(blacklist);
@@ -206,7 +213,7 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
                 }
 
                 @Override
-                public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                public boolean onMouseClicked(double mouseX, double mouseY, int button) {
                     Entry entry = Entry.this;
                     VerticalList<Entry> list = entry.getParent();
                     list.getChildren().remove(entry);

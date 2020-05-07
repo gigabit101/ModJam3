@@ -45,12 +45,7 @@ public class BlockTarget extends AbstractWidget implements IButton, IStringSeria
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // TODO needed?
-//        if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-//            return false;
-//        }
-
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         clicked = true;
         setSelected(!selected);
         action.accept(button);

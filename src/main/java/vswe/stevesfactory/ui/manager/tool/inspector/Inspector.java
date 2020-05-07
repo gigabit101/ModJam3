@@ -18,7 +18,7 @@ public class Inspector extends AbstractContainer<IWidget> {
 
     @Nullable
     public static Inspector getActiveInspector() {
-        IWidget tool = FactoryManagerGUI.get().getTopLevel().toolHolderPanel.getContainedWidget();
+        IWidget tool = FactoryManagerGUI.get().getPrimaryWindow().toolHolderPanel.getContainedWidget();
         if (tool instanceof Inspector) {
             return (Inspector) tool;
         } else {

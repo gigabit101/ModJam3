@@ -1,6 +1,6 @@
 package vswe.stevesfactory.library.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 
 import java.util.List;
@@ -16,23 +16,23 @@ public class VanillaTextRenderer implements TextRenderer {
 
     @Override
     public void renderText(String text, int x, int y, float z) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(x, y, z + 0.1F);
-        GlStateManager.scaled(scaleFactor, scaleFactor, 1F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translated(x, y, z + 0.1F);
+        RenderSystem.scaled(scaleFactor, scaleFactor, 1F);
         Minecraft.getInstance().fontRenderer.drawString(text, 0, 0, textColor);
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     @Override
     public void renderLines(List<String> text, int x, int y, float z) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(x, y, z + 0.1F);
-        GlStateManager.scalef(scaleFactor, scaleFactor, 1F);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(x, y, z + 0.1F);
+        RenderSystem.scalef(scaleFactor, scaleFactor, 1F);
         for (String line : text) {
             Minecraft.getInstance().fontRenderer.drawString(line, 0, 0, textColor);
-            GlStateManager.translatef(0F, fontHeight, 0F);
+            RenderSystem.translatef(0F, fontHeight, 0F);
         }
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
     @Override

@@ -1,9 +1,8 @@
 package vswe.stevesfactory.library.gui.screen;
 
 import com.google.common.base.Preconditions;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.ResourceLocation;
-import vswe.stevesfactory.StevesFactoryManager;
 import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.library.gui.Texture;
 
@@ -40,7 +39,7 @@ public final class BackgroundRenderers {
         int x2 = x + width;
         int y2 = y + height;
 
-        GlStateManager.disableTexture();
+        RenderSystem.disableTexture();
         beginColoredQuad();
         {
             coloredRect(x, y, x2, y2, z, DARK_BORDER_COLOR);
@@ -48,7 +47,7 @@ public final class BackgroundRenderers {
             coloredRect(x + 2, y + 2, x2 - 2, y2 - 2, z, BACKGROUND_COLOR);
         }
         draw();
-        GlStateManager.enableTexture();
+        RenderSystem.enableTexture();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -170,10 +169,10 @@ public final class BackgroundRenderers {
     }
 
     private static void lightGrayRect(int bodyX, int bodyY, int bodyWidth, int bodyHeight, float z) {
-        GlStateManager.disableTexture();
+        RenderSystem.disableTexture();
         beginColoredQuad();
         coloredRect(bodyX, bodyY, bodyX + bodyWidth, bodyY + bodyHeight, z, 0xffc6c6c6);
         draw();
-        GlStateManager.enableTexture();
+        RenderSystem.enableTexture();
     }
 }

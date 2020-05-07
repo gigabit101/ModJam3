@@ -19,8 +19,8 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
     private final String errorMessage;
 
     // TODO refactor with EnumMap
-    private DirectionButton down, up, north, south, east, west;
-    private ActivationButton activationButton;
+    private final DirectionButton down, up, north, south, east, west;
+    private final ActivationButton activationButton;
 
     public DirectionSelectionMenu(int id) {
         this(id, I18n.format("menu.sfm.TargetSides"), I18n.format("error.sfm.ItemIO.NoTarget"));
@@ -60,6 +60,11 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
         int x = Render2D.computeCenterX(leftMid, rightMid, activationButton.getFullWidth());
         activationButton.setLocation(x, y);
         activationButton.setEditingState(false);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
 
         addChildren(down);
         addChildren(up);

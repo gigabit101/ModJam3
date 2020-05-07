@@ -74,7 +74,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             getParent().toggleState();
             return true;
         }
@@ -103,22 +103,22 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public static final int DEFAULT_CONTENT_HEIGHT = 65;
 
     private FlowComponent<P> flowComponent;
-
     private State state = State.COLLAPSED;
 
     private ToggleStateButton toggleStateButton;
-    private final List<IWidget> children;
+    private final List<IWidget> children = new ArrayList<>();
 
     private List<Supplier<IEntry>> actionMenuEntries = EMPTY_LIST;
 
     public Menu() {
         // Start at a collapsed state
         this.setDimensions(HEADING_BOX.getPortionWidth(), HEADING_BOX.getPortionHeight());
-        this.toggleStateButton = new ToggleStateButton(this);
-        this.children = new ArrayList<>();
-        {
-            children.add(toggleStateButton);
-        }
+    }
+
+    @Override
+    public void onInitialAttach() {
+        toggleStateButton = new ToggleStateButton(this);
+        addChildren(toggleStateButton);
     }
 
     @Override
@@ -135,16 +135,17 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     }
 
     @Override
-    public Menu
-
-            <P> addChildren(IWidget widget) {
+    public Menu<P> addChildren(IWidget widget) {
         children.add(widget);
+        widget.attach(this);
         return this;
     }
 
     @Override
     public Menu<P> addChildren(Collection<IWidget> widgets) {
-        children.addAll(widgets);
+        for (IWidget widget : widgets) {
+            addChildren(widget);
+        }
         return this;
     }
 
@@ -182,17 +183,6 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     public void shrinkHeight(int shrinkage) {
         growHeight(-shrinkage);
-    }
-
-    @Override
-    public void setHeight(int height) {
-        super.setHeight(height);
-        getParent().reflow();
-    }
-
-    @Override
-    public void setWidth(int width) {
-        throw new UnsupportedOperationException();
     }
 
     public int getContentHeight() {
@@ -260,10 +250,9 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         Section section = builder.obtainSection("");
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()));
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
-        // TODO
-//        for (Supplier<IEntry> entry : actionMenuEntries) {
-//            list.add(entry.get());
-//        }
+        for (Supplier<IEntry> entry : actionMenuEntries) {
+            section.addChildren(entry.get());
+        }
         super.buildContextMenu(builder);
     }
 

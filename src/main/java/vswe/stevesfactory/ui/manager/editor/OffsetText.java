@@ -62,7 +62,7 @@ class OffsetText extends AbstractWidget implements LeafWidgetMixin {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (button == GLFW_MOUSE_BUTTON_LEFT) {
             if (Screen.hasControlDown()) {
                 set(0);
