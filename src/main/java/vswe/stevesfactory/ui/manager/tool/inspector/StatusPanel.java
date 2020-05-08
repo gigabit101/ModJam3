@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.tool.inspector;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.TextRenderer;
@@ -27,26 +28,21 @@ public class StatusPanel extends AbstractContainer<IWidget> {
     public static final Texture CANCEL_HOVERING = CANCEL_NORMAL.right(1);
 
     private FlowComponent<?> opened = null;
-    private List<IWidget> children = new ArrayList<>();
-    private TextField nameBox;
-    private CallbackIconButton renameButton;
-    private CallbackIconButton submitButton;
-    private CallbackIconButton cancelButton;
+    private final List<IWidget> children = new ArrayList<>();
+    private final TextField nameBox;
+    private final CallbackIconButton renameButton;
+    private final CallbackIconButton submitButton;
+    private final CallbackIconButton cancelButton;
 
     private String previousName;
 
     public StatusPanel() {
         this.setDimensions(120, 64);
-    }
 
-    @Override
-    public void onInitialAttach() {
-        super.onInitialAttach();
-
-        nameBox = new TextField(100, 16);
+        nameBox = new TextField(100, 12);
         nameBox.setLocation(2, 6);
-        nameBox.attach(this);
         nameBox.setBackgroundStyle(TextField.BackgroundStyle.NONE);
+        nameBox.setText(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.NoTarget"));
         nameBox.setTextColor(0xff303030, 0xff303030);
         nameBox.setEditable(false);
         children.add(nameBox);
@@ -54,7 +50,6 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         int baseX = getXRight() - 10;
         int baseY = 2;
         renameButton = new CallbackIconButton(RENAME_NORMAL, RENAME_HOVERING);
-        renameButton.attach(this);
         renameButton.setLocation(baseX, baseY + 6);
         renameButton.setEnabled(false);
         renameButton.onClick = b -> {
@@ -66,7 +61,6 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         };
         children.add(renameButton);
         submitButton = new CallbackIconButton(SUBMIT_NORMAL, SUBMIT_HOVERING);
-        submitButton.attach(this);
         submitButton.setLocation(baseX + 2, baseY + 3);
         submitButton.setEnabled(false);
         submitButton.onClick = b -> {
@@ -80,7 +74,6 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         };
         children.add(submitButton);
         cancelButton = new CallbackIconButton(CANCEL_NORMAL, CANCEL_HOVERING);
-        cancelButton.attach(this);
         cancelButton.setLocation(baseX + 2, baseY + 11);
         cancelButton.setEnabled(false);
         cancelButton.onClick = b -> {
@@ -94,6 +87,15 @@ public class StatusPanel extends AbstractContainer<IWidget> {
             return false;
         };
         children.add(cancelButton);
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        for (IWidget child : children) {
+            child.attach(this);
+        }
     }
 
     private void setRenamingState() {
@@ -124,16 +126,17 @@ public class StatusPanel extends AbstractContainer<IWidget> {
         int y = getAbsoluteY();
         if (opened != null) {
             int y2 = y + 2 + 16 /* height of name */ + 2 /* margin */;
-            ToolboxPanel.GROUP_LIST_ICON.render(x + 2, y2, 8, 8);
+            RenderSystem.enableAlphaTest();
+            ToolboxPanel.GROUP_LIST_ICON.render(x + 2, y2, x + 2 + 8, y2 + 8);
             TextRenderer tr = TextRenderer.vanilla();
             tr.setFontHeight(7);
             tr.setTextColor(0xff404040);
             tr.renderText(GroupButton.formatGroupName(opened.getGroup()), x + 2 + 8 + 2, y2, getZLevel());
         } else {
-            TextRenderer tr = TextRenderer.vanilla();
-            tr.setFontHeight(9);
-            tr.setTextColor(0xff404040);
-            tr.renderText(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.NoTarget"), x + 2, y + 2, getZLevel());
+//            TextRenderer tr = TextRenderer.vanilla();
+//            tr.setFontHeight(9);
+//            tr.setTextColor(0xff404040);
+//            tr.renderText(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.NoTarget"), x + 2, y + 2, getZLevel());
         }
 
         super.renderChildren(mouseX, mouseY, partialTicks);

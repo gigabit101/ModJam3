@@ -17,7 +17,7 @@ public class Label extends AbstractWidget implements LeafWidgetMixin {
 
     private IWidget target;
     private Side side = Side.RIGHT;
-    private Either<HorizontalAlignment, VerticalAlignment> alignment = HorizontalAlignment.CENTER.asUnion();
+    private Either<HorizontalAlignment, VerticalAlignment> alignment = VerticalAlignment.CENTER.asUnion();
 
     private BoxSizing boxSizing = BoxSizing.BORDER_BOX;
     private String text = "";

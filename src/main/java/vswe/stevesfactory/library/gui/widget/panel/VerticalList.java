@@ -212,8 +212,8 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
 
     @Override
     public VerticalList<T> addChildren(T widget) {
-        widget.attach(this);
         elements.add(widget);
+        widget.attach(this);
         return this;
     }
 

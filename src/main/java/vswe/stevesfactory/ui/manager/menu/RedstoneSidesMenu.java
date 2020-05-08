@@ -26,7 +26,7 @@ public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDire
     private final String menuName;
     private final int id;
 
-    // TODO
+    // TODO split into two menus
     public RedstoneSidesMenu(int id, BooleanSupplier firstOptionGetter, Runnable firstOptionSetter, String firstOptionName, BooleanSupplier secondOptionGetter, Runnable secondOptionSetter, String secondOptionName, String menuName, String infoText) {
         this.id = id;
         this.menuName = menuName;
@@ -42,6 +42,7 @@ public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDire
         secondOption.check(secondOptionGetter.getAsBoolean());
         secondOption.setCheckAction(secondOptionSetter);
 
+        // TODO parent
         firstOptionLabel = firstOption.makeLabel().text(firstOptionName);
         secondOptionLabel = secondOption.makeLabel().text(secondOptionName);
 

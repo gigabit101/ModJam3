@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
@@ -38,7 +37,8 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     public ToolboxPanel() {
         super(WidthOccupierType.MIN_WIDTH);
-        this.setWidth(8 + Render2D.LEFT_BORDER);
+        this.setWidth(8);
+        this.setBorderLeft(Render2D.LEFT_BORDER);
     }
 
     @Override
@@ -111,8 +111,8 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     @Override
     public void reflow() {
-        FlowLayout.vertical(children, Render2D.LEFT_BORDER, 0, 0);
-        close.setX(Render2D.computeCenterX(Render2D.LEFT_BORDER, getWidth(), close.getWidth()));
+        FlowLayout.vertical(children, 0, 0, 0);
+        close.setX(Render2D.computeCenterX(0, getWidth(), close.getWidth()));
         close.alignBottom(getHeight());
     }
 
@@ -132,8 +132,6 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
         if (isInside(mouseX, mouseY)) {
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 getWindow().setFocusedWidget(this);
-            } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                createContextMenu();
             }
             return true;
         }
@@ -142,8 +140,8 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
-        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        Section window = builder.obtainSection("Window");
+        window.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
         super.buildContextMenu(builder);
     }
 

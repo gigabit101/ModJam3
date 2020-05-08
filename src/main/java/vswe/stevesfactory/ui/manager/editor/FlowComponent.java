@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import vswe.stevesfactory.api.logic.Connection;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
@@ -282,7 +283,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
+        Section section = builder.obtainSection("FlowComponent");
         section.addChildren(new CallbackEntry(Render2D.DELETE, "gui.sfm.FactoryManager.Editor.Delete", b -> actionDelete()));
         section.addChildren(new CallbackEntry(Render2D.CUT, "gui.sfm.FactoryManager.Editor.Cut", b -> actionCut()));
         section.addChildren(new CallbackEntry(Render2D.COPY, "gui.sfm.FactoryManager.Editor.Copy", b -> actionCopy()));
@@ -293,11 +294,11 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     private void actionDelete() {
         if (Screen.hasShiftDown()) {
             Dialog.createBiSelectionDialog(
-                    "gui.sfm.FactoryManager.Editor.DeleteAll.ConfirmMsg",
-                    "gui.sfm.yes",
-                    "gui.sfm.no",
-                    b -> removeGraph(this), b -> {
-                    }).tryAddSelfToActiveGUI();
+                    I18n.format("gui.sfm.FactoryManager.Editor.DeleteAll.ConfirmMsg"),
+                    I18n.format("gui.sfm.yes"),
+                    I18n.format("gui.sfm.no"),
+                    b -> removeGraph(this), b -> {}
+            ).tryAddSelfToActiveGUI();
         } else {
             remove();
         }

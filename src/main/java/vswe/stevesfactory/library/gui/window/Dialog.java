@@ -2,12 +2,16 @@ package vswe.stevesfactory.library.gui.window;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.Config;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.screen.BackgroundRenderers;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
-import vswe.stevesfactory.library.gui.widget.*;
+import vswe.stevesfactory.library.gui.widget.AbstractWidget;
+import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.Paragraph;
+import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.library.gui.widget.button.IButton;
 import vswe.stevesfactory.library.gui.widget.panel.Panel;
@@ -31,15 +35,13 @@ public class Dialog extends AbstractPopupWindow {
         Dialog dialog = dialog(message);
 
         TextField inputBox = fieldProvider.get();
-        inputBox.setDimensions(0, 16);
-        inputBox.setText(message);
         inputBox.setBorderBottom(4);
         dialog.insertBeforeButtons(inputBox);
         dialog.onPostReflow = inputBox::expandHorizontally;
 
-        dialog.buttons.addChildren(ColoredTextButton.of(confirm, b -> onConfirm.accept(b, inputBox.getText())));
+        dialog.buttons.addChildren(ColoredTextButton.of(I18n.format(confirm), b1 -> onConfirm.accept(b1, inputBox.getText())));
         dialog.bindRemoveSelf2LastButton();
-        dialog.buttons.addChildren(ColoredTextButton.of(cancel, b -> onCancel.accept(b, inputBox.getText())));
+        dialog.buttons.addChildren(ColoredTextButton.of(I18n.format(cancel), b -> onCancel.accept(b, inputBox.getText())));
         dialog.bindRemoveSelf2LastButton();
 
         dialog.reflow();
@@ -53,7 +55,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public static Dialog createBiSelectionDialog(String message, IntConsumer onConfirm, IntConsumer onCancel) {
-        return createBiSelectionDialog(message, "gui.sfm.ok", "gui.sfm.cancel", onConfirm, onCancel);
+        return createBiSelectionDialog(message, I18n.format("gui.sfm.ok"), I18n.format("gui.sfm.cancel"), onConfirm, onCancel);
     }
 
     public static Dialog createBiSelectionDialog(String message, String confirm, String cancel, IntConsumer onConfirm, IntConsumer onCancel) {
@@ -74,7 +76,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public static Dialog createDialog(String message, IntConsumer onConfirm) {
-        return createDialog(message, "gui.sfm.ok", onConfirm);
+        return createDialog(message, I18n.format("gui.sfm.ok"), onConfirm);
     }
 
     public static Dialog createDialog(String message, String ok, IntConsumer onConfirm) {
@@ -91,7 +93,7 @@ public class Dialog extends AbstractPopupWindow {
     private static Dialog dialog(String message) {
         Dialog dialog = new Dialog();
         dialog.messageBox.setBorderTop(5);
-        dialog.messageBox.addTranslatedLineSplit(Config.CLIENT.dialogMessageMaxWidth.get(), message);
+        dialog.messageBox.addLineSplit(Config.CLIENT.dialogMessageMaxWidth.get(), message);
         return dialog;
     }
 
@@ -111,23 +113,19 @@ public class Dialog extends AbstractPopupWindow {
     private Consumer<Dialog> backgroundRenderer;
     private int borderSize;
 
-    private Paragraph messageBox;
-    private Panel<IButton> buttons;
-    private List<AbstractWidget> children;
+    private final Paragraph messageBox;
+    private final Panel<IButton> buttons;
+    private final List<AbstractWidget> children;
 
-    public Runnable onPreReflow = () -> {
-    };
-    public Runnable onPostReflow = () -> {
-    };
+    public Runnable onPreReflow = () -> {};
+    public Runnable onPostReflow = () -> {};
 
     public Dialog() {
         this.messageBox = new Paragraph(10, 10, new ArrayList<>());
         this.messageBox.setBorders(0);
         this.messageBox.setFitContents(true);
         this.buttons = new Panel<>();
-        this.buttons
-                .setLayout(b -> FlowLayout.reverseHorizontal(b, buttons.getWidth(), 0, 2))
-                .setDimensions(10, 10);
+        this.buttons.setDimensions(10, 10);
         this.children = new ArrayList<>();
         children.add(messageBox);
         children.add(buttons);
@@ -148,16 +146,21 @@ public class Dialog extends AbstractPopupWindow {
 
     public void reflow() {
         onPreReflow.run();
-        buttons.adjustMinHeight();
-        // Calculate the min width of the buttons
-        FlowLayout.horizontal(buttons.getChildren(), 0, 0, 2);
 
+        buttons.adjustMinHeight();
+
+        int widths = buttons.getChildren().stream()
+                .mapToInt(IWidget::getFullWidth)
+                .sum();
+        int margins = (buttons.getChildren().size() - 1) * 2;
+        buttons.setWidth(widths + margins);
         FlowLayout.vertical(children, 0, 0, 0);
         updateDimensions();
         updatePosition();
 
         buttons.expandHorizontally();
-        buttons.reflow();
+        FlowLayout.reverseHorizontal(buttons.getChildren(), buttons.getWidth(), 0, 2);
+
         onPostReflow.run();
     }
 
@@ -165,8 +168,8 @@ public class Dialog extends AbstractPopupWindow {
         int rightmost = 0;
         int bottommost = 0;
         for (IWidget child : children) {
-            int right = child.getX() + child.getWidth();
-            int bottom = child.getY() + child.getHeight();
+            int right = child.getX() + child.getFullHeight();
+            int bottom = child.getY() + child.getFullWidth();
             if (right > rightmost) {
                 rightmost = right;
             }
@@ -243,14 +246,14 @@ public class Dialog extends AbstractPopupWindow {
 
     @SuppressWarnings("UnusedReturnValue")
     public boolean tryAddSelfToActiveGUI() {
-        if (Minecraft.getInstance().currentScreen instanceof WidgetScreen) {
+        if (Minecraft.getInstance().currentScreen instanceof WidgetScreen<?>) {
             addSelfTo(WidgetScreen.assertActive());
             return true;
         }
         return false;
     }
 
-    public void addSelfTo(WidgetScreen gui) {
-        gui.addPopupWindow(this);
+    public void addSelfTo(WidgetScreen<?> gui) {
+        gui.defer(() -> gui.addPopupWindow(this));
     }
 }

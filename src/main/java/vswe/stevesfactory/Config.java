@@ -156,7 +156,7 @@ public final class Config {
             dialogMessageMaxWidth = builder
                     .comment("Maximum text width before splitting into a new line for dialog messages")
                     .translation("config.harmonics.client.dialogMsgMaxWidth")
-                    .defineInRange("DialogMessageMaxWidth", 160, 0, Integer.MAX_VALUE);
+                    .defineInRange("dialogMessageMaxWidth", 160, 0, Integer.MAX_VALUE);
             minBorderDistance = builder
                     .comment("Minimum distance from the border of a context menu to the border of the screen",
                             "If the context menu is created too close to the screen border, it will shift towards the center")

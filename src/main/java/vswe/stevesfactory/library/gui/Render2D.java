@@ -277,10 +277,10 @@ public final class Render2D {
 
     public static void renderVerticallyCenteredText(String text, int leftX, int top, int bottom, float z, int color) {
         int y = getYForVerticallyCenteredText(top, bottom);
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0F, 0F, z + 0.1F);
-        fontRenderer().drawString(text, leftX, y, color);
-        RenderSystem.popMatrix();
+        TextRenderer tr = TextRenderer.vanilla();
+        tr.setFontHeight(9);
+        tr.setTextColor(color);
+        tr.renderText(text, leftX, y, z);
     }
 
     public static void renderVerticallyCenteredText(TextRenderer textRenderer, String text, int leftX, int top, int bottom, float z) {
@@ -290,10 +290,10 @@ public final class Render2D {
 
     public static void renderHorizontallyCenteredText(String text, int left, int right, int topY, float z, int color) {
         int x = getXForHorizontallyCenteredText(text, left, right);
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0F, 0F, z + 0.1F);
-        fontRenderer().drawString(text, x, topY, color);
-        RenderSystem.popMatrix();
+        TextRenderer tr = TextRenderer.vanilla();
+        tr.setFontHeight(9);
+        tr.setTextColor(color);
+        tr.renderText(text, x, topY, z);
     }
 
     public static void renderHorizontallyCenteredText(TextRenderer textRenderer, String text, int left, int right, int topY, float z) {
@@ -304,10 +304,10 @@ public final class Render2D {
     public static void renderCenteredText(String text, int top, int bottom, int left, int right, float z, int color) {
         int x = getXForHorizontallyCenteredText(text, left, right);
         int y = getYForVerticallyCenteredText(top, bottom);
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0F, 0F, z + 0.1F);
-        fontRenderer().drawString(text, x, y, color);
-        RenderSystem.popMatrix();
+        VanillaTextRenderer tr = TextRenderer.vanilla();
+        tr.setFontHeight(9);
+        tr.setTextColor(color);
+        tr.renderText(text, x, y, z);
     }
 
     public static void renderCenteredText(TextRenderer textRenderer, String text, int top, int bottom, int left, int right, float z) {
@@ -388,7 +388,7 @@ public final class Render2D {
     public static void renderSideLine(AbstractWidget widget) {
         RenderSystem.disableTexture();
         Tessellator.getInstance().getBuffer().begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        int x1 = widget.getAbsoluteX();
+        int x1 = widget.getOuterAbsoluteX();
         int x2 = x1 + LEFT_BORDER;
         int y1 = widget.getAbsoluteY() - 1;
         int y2 = widget.getAbsoluteYBottom() + 1;

@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
@@ -184,15 +183,10 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
             return yOffset.mouseClicked(mouseX, mouseY, button);
         }
         if (isInside(mouseX, mouseY)) {
-            switch (button) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    getWindow().setFocusedWidget(this);
-                    break;
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    createContextMenu();
-                    break;
+            if (button == GLFW_MOUSE_BUTTON_LEFT) {
+                getWindow().setFocusedWidget(this);
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -309,10 +303,12 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
-        section.addChildren(new CallbackEntry(Render2D.PASTE, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()));
-        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()));
-        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        Section window = builder.obtainSection("Window");
+        window.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+
+        Section editor = builder.obtainSection("EditorPanel");
+        editor.addChildren(new CallbackEntry(Render2D.PASTE, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()));
+        editor.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()));
         super.buildContextMenu(builder);
     }
 
@@ -322,7 +318,9 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
         try {
             tag = JsonToNBT.getTagFromJson(json);
         } catch (CommandSyntaxException e) {
-            Dialog.createDialog("gui.sfm.FactoryManager.Editor.Paste.Fail").tryAddSelfToActiveGUI();
+            Dialog.createDialog(
+                    I18n.format("gui.sfm.FactoryManager.Editor.Paste.Fail")
+            ).tryAddSelfToActiveGUI();
             return;
         }
 

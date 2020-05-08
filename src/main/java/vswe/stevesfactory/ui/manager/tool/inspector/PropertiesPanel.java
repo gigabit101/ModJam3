@@ -11,7 +11,7 @@ import java.util.List;
 
 public class PropertiesPanel extends AbstractContainer<VerticalList<Menu<?>>> {
 
-    private List<VerticalList<Menu<?>>> child = new ArrayList<>();
+    private final List<VerticalList<Menu<?>>> child = new ArrayList<>();
 
     public PropertiesPanel() {
         this.setWidth(120);

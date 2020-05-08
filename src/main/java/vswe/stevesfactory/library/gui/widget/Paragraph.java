@@ -1,8 +1,8 @@
 package vswe.stevesfactory.library.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import vswe.stevesfactory.library.gui.*;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.TextRenderer;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
@@ -56,14 +56,6 @@ public class Paragraph extends AbstractWidget implements LeafWidgetMixin {
         tryExpand(newLine);
     }
 
-    public void addTranslatedLine(String translationKey) {
-        addLine(I18n.format(translationKey));
-    }
-
-    public void addTranslatedLine(String translationKey, Object... args) {
-        addLine(I18n.format(translationKey, args));
-    }
-
     public void addLineSplit(String text) {
         addLineSplit(getWidth(), text);
     }
@@ -78,14 +70,6 @@ public class Paragraph extends AbstractWidget implements LeafWidgetMixin {
             addLine(trimmed);
             addLineSplit(maxWidth, after);
         }
-    }
-
-    public void addTranslatedLineSplit(int maxWidth, String translationKey) {
-        addLineSplit(maxWidth, I18n.format(translationKey));
-    }
-
-    public void addTranslatedLineSplit(int maxWidth, String translationKey, Object... args) {
-        addLineSplit(maxWidth, I18n.format(translationKey, args));
     }
 
     private void tryExpand(String line) {

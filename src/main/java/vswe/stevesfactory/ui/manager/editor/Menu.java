@@ -247,7 +247,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
+        Section section = builder.obtainSection("FlowComponent.Menu");
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()));
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
         for (Supplier<IEntry> entry : actionMenuEntries) {

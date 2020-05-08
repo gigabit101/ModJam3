@@ -33,11 +33,18 @@ public class Inspector extends AbstractContainer<IWidget> {
     public Inspector() {
         this.setWidth(120);
         status = new StatusPanel(); // with fixed size
-        status.attach(this);
         props = new PropertiesPanel();
-        props.attach(this);
         children = ImmutableList.of(status, props);
         reflow();
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        for (IWidget child : children) {
+            child.attach(this);
+        }
     }
 
     public void openFlowComponent(FlowComponent<?> target) {

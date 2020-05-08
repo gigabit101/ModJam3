@@ -508,8 +508,4 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
 
     protected void buildContextMenu(ContextMenuBuilder builder) {
     }
-
-    public enum Alignment {
-        TOP_LEFT, CENTER, BOTTOM_RIGHT
-    }
 }

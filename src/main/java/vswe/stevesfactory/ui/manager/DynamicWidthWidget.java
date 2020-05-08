@@ -30,7 +30,7 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
                 continue;
             }
             if (widget.getWidthOccupier() == WidthOccupierType.MIN_WIDTH) {
-                usable -= widget.getWidth();
+                usable -= widget.getFullWidth();
             }
         }
 
@@ -44,7 +44,7 @@ public abstract class DynamicWidthWidget<T extends IWidget> extends AbstractCont
                 widget.setWidth(unit);
             }
             widget.setX(nextX);
-            nextX += widget.getWidth();
+            nextX += widget.getFullWidth();
         }
 
         for (DynamicWidthWidget<?> widget : widgets) {

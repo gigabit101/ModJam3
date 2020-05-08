@@ -14,30 +14,14 @@ import static vswe.stevesfactory.library.gui.Render2D.*;
 
 public class ColoredTextButton extends AbstractWidget implements IButton, LeafWidgetMixin, IStringSerializable {
 
-    public static ColoredTextButton of(String key) {
-        return ofText(I18n.format(key));
-    }
-
-    public static ColoredTextButton of(String key, IntConsumer action) {
-        return ofText(I18n.format(key), action);
-    }
-
-    public static ColoredTextButton of(String key, Object... args) {
-        return ofText(I18n.format(key, args));
-    }
-
-    public static ColoredTextButton of(String key, IntConsumer action, Object... args) {
-        return ofText(I18n.format(key, args), action);
-    }
-
-    public static ColoredTextButton ofText(String text) {
+    public static ColoredTextButton of(String text) {
         ColoredTextButton button = new ColoredTextButton();
         button.setText(text);
         button.expandToTextWidth();
         return button;
     }
 
-    public static ColoredTextButton ofText(String text, IntConsumer action) {
+    public static ColoredTextButton of(String text, IntConsumer action) {
         ColoredTextButton button = new ColoredTextButton();
         button.setText(text);
         button.expandToTextWidth();

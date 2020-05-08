@@ -16,7 +16,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
 
@@ -24,6 +23,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
 
     public ToolHolderPanel() {
         super(WidthOccupierType.MIN_WIDTH);
+        this.setBorderLeft(Render2D.LEFT_BORDER);
     }
 
     public <T extends IWidget & ResizableWidgetMixin> void setActivePanel(@Nullable T panel) {
@@ -32,7 +32,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
         } else {
             children = ImmutableList.of(panel);
             panel.attach(this);
-            panel.setX(Render2D.LEFT_BORDER + 1);
+            panel.setX(1);
             panel.setHeight(getHeight());
             getWindow().setFocusedWidget(panel);
             if (panel instanceof AbstractContainer) {
@@ -50,7 +50,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
     @Override
     public void reflow() {
         IWidget widget = getContainedWidget();
-        setWidth(widget == null ? 0 : widget.getWidth() + 2 + Render2D.LEFT_BORDER);
+        setWidth(widget == null ? 0 : widget.getWidth() + 2);
     }
 
     public IWidget getContainedWidget() {
@@ -60,7 +60,9 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        Render2D.renderSideLine(this);
+        if (getWidth() > 0) {
+            Render2D.renderSideLine(this);
+        }
         super.renderChildren(mouseX, mouseY, partialTicks);
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
     }
@@ -71,13 +73,8 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
             return true;
         }
         if (isInside(mouseX, mouseY)) {
-            switch (button) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    getWindow().setFocusedWidget(this);
-                    break;
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    createContextMenu();
-                    break;
+            if (button == GLFW_MOUSE_BUTTON_LEFT) {
+                getWindow().setFocusedWidget(this);
             }
             return true;
         }
@@ -86,8 +83,8 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
-        section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
+        Section window = builder.obtainSection("Window");
+        window.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
         super.buildContextMenu(builder);
     }
 }

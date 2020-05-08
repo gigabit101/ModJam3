@@ -64,7 +64,7 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
             radius.setValue(container.intake.getRadius());
             radius.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
             radius.onValueUpdated = container.intake::setRadius;
-            mode = ColoredTextButton.of(container.intake.getMode().statusTranslationKey);
+            mode = ColoredTextButton.of(I18n.format(container.intake.getMode().statusTranslationKey));
             mode.attachWindow(this);
             mode.setClickAction(b -> {
                 container.intake.cycleMode();
@@ -77,7 +77,7 @@ public class ItemIntakeGUI extends WidgetScreen<ItemIntakeContainer> {
             rendering.onStateChange = container.intake::setRendering;
             Label renderingLabel = new Label(rendering).translate("gui.sfm.ItemIntake.RenderWorkingArea");
 
-            ColoredTextButton btnSaveData = ColoredTextButton.of("gui.sfm.ItemIntake.SaveData");
+            ColoredTextButton btnSaveData = ColoredTextButton.of(I18n.format("gui.sfm.ItemIntake.SaveData"));
             btnSaveData.attachWindow(this);
             btnSaveData.setClickAction(b -> onClose());
             btnSaveData.setWidth(getContentWidth());

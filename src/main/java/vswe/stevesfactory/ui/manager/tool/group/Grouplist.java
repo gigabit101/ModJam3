@@ -1,8 +1,8 @@
 package vswe.stevesfactory.ui.manager.tool.group;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.Render2D;
-import vswe.stevesfactory.library.gui.widget.Spacer;
 import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
@@ -100,17 +100,18 @@ public class Grouplist extends VerticalList<GroupButton> {
 
     public static Dialog createNewGroupDialog() {
         return Dialog.createPrompt(
-                "gui.sfm.FactoryManager.Tool.Group.CreateGroup",
+                I18n.format("gui.sfm.FactoryManager.Tool.Group.CreateGroup"),
                 () -> new TextField(0, 16),
                 "gui.sfm.ok", "gui.sfm.cancel",
                 (b, name) -> {
                     boolean success = FactoryManagerGUI.get().groupModel.addGroup(name);
                     if (!success) {
-                        Dialog.createDialog("gui.sfm.FactoryManager.Tool.Group.CreateFailed").tryAddSelfToActiveGUI();
+                        Dialog.createDialog(
+                                I18n.format("gui.sfm.FactoryManager.Tool.Group.CreateFailed")
+                        ).tryAddSelfToActiveGUI();
                     }
                 },
-                (b, name) -> {
-                });
+                (b, name) -> {});
     }
 
     public static final int SEL_DIALOG_LIST_WIDTH = 280;
@@ -131,6 +132,7 @@ public class Grouplist extends VerticalList<GroupButton> {
         int removeId = data.addListenerRemove(group -> {
             int i = 0;
             for (Target target : list.getChildren()) {
+
                 if (target.getGroup().equals(group)) {
                     int index = i; // Effectively final index for lambda capturing
                     FactoryManagerGUI.get().defer(() -> list.getChildren().remove(index));
@@ -146,23 +148,23 @@ public class Grouplist extends VerticalList<GroupButton> {
             }
         });
 
-        dialog.getButtons().addChildren(ColoredTextButton.of("gui.sfm.ok", b -> {
+        dialog.getButtons().addChildren(ColoredTextButton.of(I18n.format("gui.sfm.ok"), b2 -> {
             onConfirm.accept(list.getSelectedGroup());
             data.removeListenerAdd(addId);
             data.removeListenerRemove(removeId);
             data.removeListenerUpdate(updateId);
         }));
         dialog.bindRemoveSelf2LastButton();
-        dialog.getButtons().addChildren(ColoredTextButton.of("gui.sfm.cancel", b -> {
+        dialog.getButtons().addChildren(ColoredTextButton.of(I18n.format("gui.sfm.cancel"), b1 -> {
             onCancel.run();
             data.removeListenerAdd(addId);
             data.removeListenerRemove(removeId);
             data.removeListenerUpdate(updateId);
         }));
         dialog.bindRemoveSelf2LastButton();
-        dialog.getButtons().addChildren(ColoredTextButton.of("gui.sfm.new", b -> createNewGroupDialog().tryAddSelfToActiveGUI()));
+        dialog.getButtons().addChildren(ColoredTextButton.of(I18n.format("gui.sfm.new"), b -> createNewGroupDialog().tryAddSelfToActiveGUI()));
 
-        dialog.insertBeforeButtons(new Spacer(0, 10));
+        dialog.getButtons().setBorderTop(10);
 
         dialog.reflow();
         dialog.centralize();
@@ -176,24 +178,33 @@ public class Grouplist extends VerticalList<GroupButton> {
 
         public TargetList() {
             this.setDimensions(SEL_DIALOG_LIST_WIDTH, SEL_DIALOG_LIST_HEIGHT);
+        }
+
+        @Override
+        public void onInitialAttach() {
+            super.onInitialAttach();
+
             for (String group : FactoryManagerGUI.get().groupModel.getGroups()) {
                 createTarget(group);
             }
             reflow();
         }
 
-        public void createTarget(String group) {
+        public Target createTarget(String group) {
             int index = getChildren().size();
             Target target = new Target(index, group);
-            addChildren(target);
             target.setWidth(this.getBarLeft() - 2);
+            addChildren(target);
+            return target;
         }
 
         @Override
         public void render(int mouseX, int mouseY, float partialTicks) {
+            RenderSystem.disableTexture();
             Render2D.beginColoredQuad();
             Render2D.coloredRect(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom(), getZLevel(), 0xffb1b1b1);
             Render2D.draw();
+            RenderSystem.enableTexture();
             super.render(mouseX, mouseY, partialTicks);
         }
 

@@ -10,6 +10,7 @@ import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.mixin.FullHeightMajorMixin;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
@@ -18,10 +19,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 import static vswe.stevesfactory.library.gui.Render2D.DOWN_RIGHT_4_STRICT_TABLE;
 
-public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
+public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> implements FullHeightMajorMixin {
 
     public static final ResourceLocation BACKGROUND_NORMAL = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/component_background/background_normal.png");
     public static final ResourceLocation BACKGROUND_HOVERED = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/component_background/background_hovered.png");
@@ -32,6 +32,7 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
 
     public SelectionPanel() {
         super(WidthOccupierType.MIN_WIDTH);
+        this.setBorders(4);
     }
 
     @Override
@@ -78,8 +79,8 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
         DOWN_RIGHT_4_STRICT_TABLE.reflow(getDimensions(), getChildren());
         int w = getChildren().stream()
                 .max(Comparator.comparingInt(IWidget::getX))
-                .map(furthest -> furthest.getX() + furthest.getWidth())
-                .orElse(0) + DOWN_RIGHT_4_STRICT_TABLE.tableGap;
+                .map(furthest -> furthest.getX() + furthest.getFullWidth())
+                .orElse(0);
         setWidth(w);
     }
 
@@ -92,8 +93,6 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 getWindow().setFocusedWidget(this);
                 return true;
-            } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                return false;
             }
         }
         return false;
@@ -101,7 +100,7 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> {
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
+        Section section = builder.obtainSection("Window");
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
         super.buildContextMenu(builder);
     }

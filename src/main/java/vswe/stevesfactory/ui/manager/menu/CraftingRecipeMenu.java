@@ -9,8 +9,8 @@ import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.library.gui.layout.properties.HorizontalAlignment;
 import vswe.stevesfactory.library.gui.layout.properties.Side;
+import vswe.stevesfactory.library.gui.layout.properties.VerticalAlignment;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.logic.procedure.ICraftingGrid;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
@@ -73,7 +73,7 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
         // 0 1 2
         // 3 4 5 P
         // 6 7 8
-        product.alignTo(ingredients[5], Side.RIGHT, HorizontalAlignment.CENTER.asUnion());
+        product.alignTo(ingredients[5], Side.RIGHT, VerticalAlignment.CENTER.asUnion());
         product.moveX(4);
     }
 

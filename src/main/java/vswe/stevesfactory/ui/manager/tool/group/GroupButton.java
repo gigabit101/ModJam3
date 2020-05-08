@@ -11,7 +11,6 @@ import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public class GroupButton extends ColoredTextButton {
 
@@ -30,6 +29,7 @@ public class GroupButton extends ColoredTextButton {
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (button == GLFW_MOUSE_BUTTON_LEFT) {
             actionSwitchGroup();
+            onParentPositionChanged();
             return true;
         }
         return false;
@@ -37,7 +37,7 @@ public class GroupButton extends ColoredTextButton {
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
+        Section section = builder.obtainSection("Grouplist.Entry");
         section.addChildren(new CallbackEntry(Render2D.DELETE, "gui.sfm.FactoryManager.Tool.Group.Delete", b -> actionDelete()));
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.RenameGroup", b -> actionRename()));
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.MoveContent", b -> actionMoveContent()));
@@ -54,24 +54,23 @@ public class GroupButton extends ColoredTextButton {
 
     private void actionRename() {
         Dialog.createPrompt(
-                "gui.sfm.FactoryManager.Tool.Group.RenameGroup.Prompt",
-                () -> {
-                    TextField result = new TextField();
-                    result.setHeight(16);
-                    return result;
-                },
-                "gui.sfm.ok", "gui.sfm.cancel",
+                I18n.format("gui.sfm.FactoryManager.Tool.Group.RenameGroup.Prompt"),
+                () -> new TextField(0, 16),
+                I18n.format("gui.sfm.ok"),
+                I18n.format("gui.sfm.cancel"),
                 (b, newName) -> {
                     for (String group : FactoryManagerGUI.get().groupModel.getGroups()) {
                         if (newName.equals(group)) {
-                            Dialog.createDialog(I18n.format("gui.sfm.FactoryManager.Tool.Group.RenameGroup.Failed", newName)).tryAddSelfToActiveGUI();
+                            Dialog.createDialog(
+                                    I18n.format("gui.sfm.FactoryManager.Tool.Group.RenameGroup.Failed", newName)
+                            ).tryAddSelfToActiveGUI();
                             return;
                         }
                     }
                     FactoryManagerGUI.get().groupModel.updateGroup(group, newName);
                 },
-                (b, newName) -> {
-                }).tryAddSelfToActiveGUI();
+                (b, newName) -> {}
+        ).tryAddSelfToActiveGUI();
     }
 
     private void actionMoveContent() {

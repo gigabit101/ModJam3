@@ -17,8 +17,8 @@ public class VanillaTextRenderer implements TextRenderer {
     @Override
     public void renderText(String text, int x, int y, float z) {
         RenderSystem.pushMatrix();
-        RenderSystem.translated(x, y, z + 0.1F);
-        RenderSystem.scaled(scaleFactor, scaleFactor, 1F);
+        RenderSystem.translatef(x, y, z + 0.1F);
+        RenderSystem.scalef(scaleFactor, scaleFactor, 1F);
         Minecraft.getInstance().fontRenderer.drawString(text, 0, 0, textColor);
         RenderSystem.popMatrix();
     }

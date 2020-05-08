@@ -44,9 +44,7 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
         blacklist = new RadioInput(filterTypeController);
         int y = HEADING_BOX.getPortionHeight() + 4;
         whitelist.setLocation(4, y);
-        Label whitelistLabel = new Label(whitelist).translate("gui.sfm.whitelist");
         blacklist.setLocation(getWidth() / 2, y);
-        Label blacklistLabel = new Label(blacklist).translate("gui.sfm.blacklist");
 
         slots = new WrappingList<>();
         slots.setLocation(4, whitelist.getYBottom() + 4);
@@ -69,7 +67,9 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
         super.onInitialAttach();
 
         addChildren(whitelist);
+        addChildren(whitelist.makeLabel().translate("gui.sfm.whitelist"));
         addChildren(blacklist);
+        addChildren(blacklist.makeLabel().translate("gui.sfm.blacklist"));
         addChildren(slots);
         addChildren(openSettings);
     }
@@ -86,7 +86,7 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
                 stack = ItemStack.EMPTY;
                 filter.getItems().add(ItemStack.EMPTY);
             }
-            slots.addChildren(new FilterSlot(filter, i, stack));
+            slots.addElement(new FilterSlot(filter, i, stack));
         }
 
         switch (filter.type) {
