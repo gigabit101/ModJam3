@@ -2,6 +2,7 @@ package vswe.stevesfactory.ui.manager.tool.group;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.val;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
 import java.util.Collection;
@@ -12,18 +13,18 @@ public final class GroupDataModel {
 
     public static final String DEFAULT_GROUP = "";
 
-    private Int2ObjectMap<Consumer<String>> addListeners = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Consumer<String>> addListeners = new Int2ObjectOpenHashMap<>();
     private int addListenersId = 0;
-    private Int2ObjectMap<Consumer<String>> removeListeners = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Consumer<String>> removeListeners = new Int2ObjectOpenHashMap<>();
     private int removeListenersId = 0;
-    private Int2ObjectMap<BiConsumer<String, String>> updateListeners = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<BiConsumer<String, String>> updateListeners = new Int2ObjectOpenHashMap<>();
     private int updateListenersId = 0;
-    private Int2ObjectMap<Consumer<String>> selectListeners = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Consumer<String>> selectListeners = new Int2ObjectOpenHashMap<>();
     private int selectListenersId = 0;
     private String currentGroup = DEFAULT_GROUP;
 
     public int addListenerAdd(Consumer<String> listener) {
-        int id = addListenersId++;
+        val id = addListenersId++;
         addListeners.put(id, listener);
         return id;
     }

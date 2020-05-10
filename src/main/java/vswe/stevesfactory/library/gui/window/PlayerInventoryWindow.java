@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.window;
 
 import com.google.common.collect.ImmutableList;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -24,21 +25,21 @@ public class PlayerInventoryWindow extends AbstractPopupWindow {
     }
 
     public PlayerInventoryWindow(int x, int y, Function<ItemStack, AbstractItemSlot> factory) {
-        setPosition(x, y);
+        this.setPosition(x, y);
 
-        PlayerInventory playerInventory = Minecraft.getInstance().player.inventory;
-        ItemSlotPanel inventory = new ItemSlotPanel(9, 3, playerInventory.mainInventory.subList(9, playerInventory.mainInventory.size()), factory);
+        val inv = Minecraft.getInstance().player.inventory;
+        val inventory = new ItemSlotPanel(9, 3, inv.mainInventory.subList(9, inv.mainInventory.size()), factory);
         inventory.setBorderTop(8 + 2);
         inventory.setBorderBottom(4);
         inventory.setLocation(0, 0);
-        ItemSlotPanel hotbar = new ItemSlotPanel(9, 1, playerInventory.mainInventory.subList(0, 9), factory);
+        val hotbar = new ItemSlotPanel(9, 1, inv.mainInventory.subList(0, 9), factory);
         hotbar.setLocation(0, inventory.getYBottom());
-        SimpleIconButton close = new SimpleIconButton(CLOSE, CLOSE);
+        val close = new SimpleIconButton(CLOSE, CLOSE);
         close.setLocation(inventory.getWidth() - 8, 0);
         close.setClickAction(b -> discard());
         children = ImmutableList.of(close, inventory, hotbar);
 
-        setContents(inventory.getWidth(), inventory.getFullHeight() + hotbar.getFullHeight());
+        this.setContents(inventory.getWidth(), inventory.getFullHeight() + hotbar.getFullHeight());
     }
 
     @Override

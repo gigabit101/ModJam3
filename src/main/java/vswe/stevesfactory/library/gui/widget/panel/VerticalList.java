@@ -4,6 +4,7 @@
 package vswe.stevesfactory.library.gui.widget.panel;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static vswe.stevesfactory.library.gui.Render2D.coloredRect;
 
@@ -32,7 +34,7 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
     private boolean scrolling;
     protected float scrollDistance;
 
-    private final List<T> elements;
+    protected final List<T> elements;
 
     public VerticalList() {
         this.elements = new ArrayList<>();
@@ -43,7 +45,7 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
         if (!isInside(mouseX, mouseY)) {
             return false;
         }
-        scrolling = button == GLFW.GLFW_MOUSE_BUTTON_LEFT && isInsideBar(mouseX, mouseY) && isDrawingScrollBar();
+        scrolling = button == GLFW_MOUSE_BUTTON_LEFT && isInsideBar(mouseX, mouseY) && isDrawingScrollBar();
         if (scrolling) {
             return true;
         }
@@ -109,12 +111,12 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
             int width = getWidth();
             int height = getHeight();
 
-            Tessellator tess = Tessellator.getInstance();
-            BufferBuilder renderer = tess.getBuffer();
+            val tess = Tessellator.getInstance();
+            val renderer = tess.getBuffer();
 
-            ScissorTest test = ScissorTest.scaled(left, top, width, height);
+            val test = ScissorTest.scaled(left, top, width, height);
 
-            for (T child : getChildren()) {
+            for (val child : getChildren()) {
                 child.render(mouseX, mouseY, partialTicks);
             }
             drawOverlay();
@@ -204,9 +206,9 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
     public void reflow() {
         int offset = (int) -scrollDistance;
         int y = getBorder();
-        for (T child : getChildren()) {
+        for (val child : getChildren()) {
             child.setY(y + offset);
-            y += child.getHeight() + getMarginMiddle();
+            y += child.getFullHeight() + getMarginMiddle();
         }
     }
 
@@ -229,7 +231,7 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
     protected int getContentHeight() {
         int contentHeight = 0;
         for (T child : getChildren()) {
-            contentHeight += child.getHeight() + getMarginMiddle();
+            contentHeight += child.getFullHeight() + getMarginMiddle();
         }
         // Remove last unnecessary border
         return contentHeight - getMarginMiddle();

@@ -3,6 +3,7 @@ package vswe.stevesfactory.ui.manager.tool.group;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.widget.Paragraph;
 import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
@@ -120,7 +121,9 @@ public class Grouplist extends VerticalList<GroupButton> {
     public static Dialog createSelectGroupDialog(Consumer<String> onConfirm, Runnable onCancel) {
         Dialog dialog = new Dialog();
 
-        dialog.getMessageBox().addLine(I18n.format("gui.sfm.FactoryManager.Tool.Group.SelectGroup"));
+        Paragraph messageBox = dialog.getMessageBox();
+        messageBox.addLine(I18n.format("gui.sfm.FactoryManager.Tool.Group.SelectGroup"));
+        messageBox.setBorderTop(5);
         TargetList list = new TargetList();
         dialog.insertBeforeButtons(list);
 

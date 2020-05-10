@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 import static vswe.stevesfactory.library.gui.Render2D.*;
 
+// TODO fix textures
 public class NavigationBar extends AbstractContainer<IWidget> {
 
     public static final Texture CLOSE = Texture.portion(Render2D.COMPONENTS, 256, 256, 0, 28, 9, 9);

@@ -133,7 +133,7 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (isEnabled() && editable) {
             setFocused(true);
-            if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            if (button == GLFW_MOUSE_BUTTON_RIGHT) {
                 setText("");
             }
             return true;

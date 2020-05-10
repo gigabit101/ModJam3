@@ -1,6 +1,7 @@
 package vswe.stevesfactory.ui.manager.selection;
 
 import com.google.common.collect.ImmutableList;
+import lombok.val;
 import net.minecraft.util.ResourceLocation;
 import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 import vswe.stevesfactory.api.logic.IProcedureType;
@@ -46,13 +47,13 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> i
 
     private ImmutableList<IComponentChoice> createStaticIcons() {
         ImmutableList.Builder<IComponentChoice> icons = ImmutableList.builder();
-        for (ComponentGroup group : ComponentGroup.groups) {
-            GroupComponentChoice element = new GroupComponentChoice(group);
+        for (val group : ComponentGroup.groups) {
+            val element = new GroupComponentChoice(group);
             element.attach(this);
             icons.add(element);
         }
-        for (IProcedureType<?> type : ComponentGroup.ungroupedTypes) {
-            SingularComponentChoice element = new SingularComponentChoice(type);
+        for (val type : ComponentGroup.ungroupedTypes) {
+            val element = new SingularComponentChoice(type);
             element.attach(this);
             icons.add(element);
         }
@@ -62,7 +63,7 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> i
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        for (IComponentChoice icon : staticIcons) {
+        for (val icon : staticIcons) {
             icon.render(mouseX, mouseY, partialTicks);
         }
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
@@ -100,7 +101,7 @@ public final class SelectionPanel extends DynamicWidthWidget<IComponentChoice> i
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("Window");
+        val section = builder.obtainSection("Window");
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
         super.buildContextMenu(builder);
     }

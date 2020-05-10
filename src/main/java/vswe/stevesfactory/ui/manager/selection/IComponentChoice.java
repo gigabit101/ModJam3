@@ -1,18 +1,12 @@
 package vswe.stevesfactory.ui.manager.selection;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
+import lombok.val;
 import vswe.stevesfactory.api.logic.IProcedureType;
-import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.library.gui.Render2D;
-import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
-import vswe.stevesfactory.ui.manager.editor.EditorPanel;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.utils.NetworkHelper;
-
-import java.util.Objects;
 
 public interface IComponentChoice extends IWidget {
 
@@ -31,14 +25,14 @@ public interface IComponentChoice extends IWidget {
     }
 
     default void createFlowComponent(IProcedureType<?> type) {
-        BlockPos controllerPos = ((FactoryManagerGUI) WidgetScreen.assertActive()).getController().getPosition();
-        INetworkController controller = (INetworkController) Objects.requireNonNull(Minecraft.getInstance().world.getTileEntity(controllerPos));
-        EditorPanel editor = FactoryManagerGUI.get().getPrimaryWindow().editorPanel;
+        val gui = FactoryManagerGUI.get();
+        val controller = gui.getController();
+        val editor = gui.getPrimaryWindow().editorPanel;
 
-        FlowComponent<?> comp = NetworkHelper.fabricateInstance(controller, type).createFlowComponent();
+        val comp = NetworkHelper.fabricateInstance(controller, type).createFlowComponent();
         // Magic number so that the flow component don't overlap with the selection panel
         comp.setLocation(10, 20);
-        comp.setGroup(FactoryManagerGUI.get().groupModel.getCurrentGroup());
+        comp.setGroup(gui.groupModel.getCurrentGroup());
         editor.addChildren(comp);
     }
 }

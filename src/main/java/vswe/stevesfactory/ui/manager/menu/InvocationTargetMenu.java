@@ -27,17 +27,14 @@ import static vswe.stevesfactory.library.gui.Render2D.*;
 
 public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
 
-    public static final int HORIZONTAL_MARGIN = 4;
-    public static final int VERTICAL_MARGIN = 2;
-
     private final VerticalList<ListEntry> options;
 
     private int selected = -1;
 
     public InvocationTargetMenu() {
         options = new VerticalList<>();
-        options.setLocation(HORIZONTAL_MARGIN, HEADING_BOX.getPortionHeight() + VERTICAL_MARGIN);
-        options.setDimensions(getWidth() - HORIZONTAL_MARGIN * 2, getContentHeight() - VERTICAL_MARGIN * 2);
+        options.setDimensions(this.getWidth() - 4 * 2, this.getHeight());
+        options.alignCenterX(0, this.getWidth());
     }
 
     @Override

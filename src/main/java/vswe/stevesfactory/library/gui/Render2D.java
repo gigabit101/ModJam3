@@ -3,6 +3,7 @@ package vswe.stevesfactory.library.gui;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -29,7 +30,7 @@ public final class Render2D {
     public static final float CONTEXT_MENU_Z = 200F;
 
     public static final ResourceLocation INVALID_TEXTURE = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/invalid.png");
-    public static final ResourceLocation COMPONENTS = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/default_components.png");
+    public static final ResourceLocation COMPONENTS = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/flow_components.png");
     public static final ResourceLocation DELETE = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/delete.png");
     public static final ResourceLocation CUT = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/cut.png");
     public static final ResourceLocation COPY = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/copy.png");
@@ -38,16 +39,15 @@ public final class Render2D {
     public static final ResourceLocation CLOSE = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/close.png");
     public static final ResourceLocation ITEM_SLOT = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/icon/item_slot.png");
     public static final ResourceLocation RIGHT_ARROW_SHORT = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/icon/right_arrow_short.png");
-    public static final ResourceLocation FLOW_COMPONENTS = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/flow_components.png");
 
     public static final Texture CLOSE_ICON = Render2D.ofFlowComponent(18, 36, 9, 9);
-    public static final Texture CLOSE_ICON_HOVERED = CLOSE_ICON.right(1);
+    public static final Texture CLOSE_ICON_HOVERED = CLOSE_ICON.moveRight(1);
     public static final Texture SETTINGS_ICON = Render2D.ofFlowComponent(18, 106, 18, 18);
-    public static final Texture SETTINGS_ICON_HOVERED = SETTINGS_ICON.right(1);
+    public static final Texture SETTINGS_ICON_HOVERED = SETTINGS_ICON.moveRight(1);
     public static final Texture ADD_ENTRY_ICON = Render2D.ofFlowComponent(18, 125, 8, 8);
-    public static final Texture ADD_ENTRY_HOVERED_ICON = ADD_ENTRY_ICON.right(1);
+    public static final Texture ADD_ENTRY_HOVERED_ICON = ADD_ENTRY_ICON.moveRight(1);
     public static final Texture REMOVE_ENTRY_ICON = Render2D.ofFlowComponent(34, 125, 8, 8);
-    public static final Texture REMOVE_ENTRY_HOVERED_ICON = REMOVE_ENTRY_ICON.right(1);
+    public static final Texture REMOVE_ENTRY_HOVERED_ICON = REMOVE_ENTRY_ICON.moveRight(1);
 
     public static final StrictTableLayout DOWN_RIGHT_4_STRICT_TABLE = new StrictTableLayout(GrowDirection.DOWN, GrowDirection.RIGHT, 4);
 
@@ -60,7 +60,7 @@ public final class Render2D {
     }
 
     public static Texture ofFlowComponent(int x, int y, int width, int height) {
-        return Texture.portion256x256(FLOW_COMPONENTS, x, y, width, height);
+        return Texture.portion256x256(COMPONENTS, x, y, width, height);
     }
 
     public static boolean isInside(int x, int y, int mx, int my) {
@@ -143,7 +143,7 @@ public final class Render2D {
         int red = (color >> 16) & 255;
         int green = (color >> 8) & 255;
         int blue = color & 255;
-        BufferBuilder renderer = Tessellator.getInstance().getBuffer();
+        val renderer = Tessellator.getInstance().getBuffer();
         renderer.pos(x1, y1, z).color(red, green, blue, alpha).endVertex();
         renderer.pos(x1, y2, z).color(red, green, blue, alpha).endVertex();
         renderer.pos(x2, y2, z).color(red, green, blue, alpha).endVertex();
@@ -164,7 +164,7 @@ public final class Render2D {
         int g2 = (color2 >> 8) & 255;
         int b2 = color2 & 255;
 
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        val buffer = Tessellator.getInstance().getBuffer();
         buffer.pos(x2, y1, z).color(r1, g1, b1, a1).endVertex();
         buffer.pos(x1, y1, z).color(r1, g1, b1, a1).endVertex();
         buffer.pos(x1, y2, z).color(r2, g2, b2, a2).endVertex();
@@ -181,7 +181,7 @@ public final class Render2D {
         int g2 = (color2 >> 8) & 255;
         int b2 = color2 & 255;
 
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        val buffer = Tessellator.getInstance().getBuffer();
         buffer.pos(x1, y1, z).color(r1, g1, b1, a1).endVertex();
         buffer.pos(x1, y2, z).color(r1, g1, b1, a1).endVertex();
         buffer.pos(x2, y2, z).color(r2, g2, b2, a2).endVertex();
@@ -277,7 +277,7 @@ public final class Render2D {
 
     public static void renderVerticallyCenteredText(String text, int leftX, int top, int bottom, float z, int color) {
         int y = getYForVerticallyCenteredText(top, bottom);
-        TextRenderer tr = TextRenderer.vanilla();
+        val tr = TextRenderer.vanilla();
         tr.setFontHeight(9);
         tr.setTextColor(color);
         tr.renderText(text, leftX, y, z);
@@ -290,7 +290,7 @@ public final class Render2D {
 
     public static void renderHorizontallyCenteredText(String text, int left, int right, int topY, float z, int color) {
         int x = getXForHorizontallyCenteredText(text, left, right);
-        TextRenderer tr = TextRenderer.vanilla();
+        val tr = TextRenderer.vanilla();
         tr.setFontHeight(9);
         tr.setTextColor(color);
         tr.renderText(text, x, topY, z);
@@ -317,7 +317,7 @@ public final class Render2D {
     }
 
     public static void renderVerticalText(String text, int x, int y, float z, int fontHeight, int color) {
-        FontRenderer fr = fontRenderer();
+        val fr = fontRenderer();
         float k = (float) fontHeight / fr.FONT_HEIGHT;
         RenderSystem.pushMatrix();
         RenderSystem.translatef(x + fontHeight, y, z);

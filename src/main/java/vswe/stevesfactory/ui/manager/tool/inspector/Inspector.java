@@ -2,6 +2,7 @@ package vswe.stevesfactory.ui.manager.tool.inspector;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.Getter;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;

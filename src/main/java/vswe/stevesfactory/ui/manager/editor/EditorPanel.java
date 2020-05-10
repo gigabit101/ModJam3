@@ -2,17 +2,16 @@ package vswe.stevesfactory.ui.manager.editor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
-import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.window.Dialog;
@@ -126,7 +125,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     public EditorPanel addChildren(Collection<FlowComponent<?>> widgets) {
-        for (FlowComponent<?> widget : widgets) {
+        for (val widget : widgets) {
             widget.attach(this);
             widget.setZIndex(nextZIndex());
         }
@@ -138,7 +137,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
 
-        ScissorTest test = ScissorTest.scaled(getAbsoluteX(), getAbsoluteY(), getWidth(), getHeight());
+        val test = ScissorTest.scaled(getAbsoluteX(), getAbsoluteY(), getWidth(), getHeight());
         RenderSystem.pushMatrix();
         RenderSystem.translatef(xOffset.get(), yOffset.get(), 0F);
         Render2D.translate(xOffset.get(), yOffset.get());
@@ -149,7 +148,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
             int translatedY = mouseY - yOffset.get();
 
             // Iterate in ascending order for rendering as a special case
-            for (FlowComponent<?> child : children) {
+            for (val child : children) {
                 child.render(translatedX, translatedY, partialTicks);
             }
         }
@@ -259,14 +258,14 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
             yOffset.mouseMoved(mouseX, mouseY);
         }
 
-        for (FlowComponent<?> child : getChildren()) {
+        for (val child : getChildren()) {
             child.mouseMoved(mouseX - xOffset.get(), mouseY - yOffset.get());
         }
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        for (FlowComponent<?> child : getChildren()) {
+        for (val child : getChildren()) {
             if (child.keyPressed(keyCode, scanCode, modifiers)) {
                 return true;
             }
@@ -276,7 +275,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        for (FlowComponent<?> child : getChildren()) {
+        for (val child : getChildren()) {
             if (child.keyReleased(keyCode, scanCode, modifiers)) {
                 return true;
             }
@@ -286,7 +285,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     public boolean charTyped(char charTyped, int keyCode) {
-        for (FlowComponent<?> child : getChildren()) {
+        for (val child : getChildren()) {
             if (child.charTyped(charTyped, keyCode)) {
                 return true;
             }
@@ -296,20 +295,27 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     public void update(float partialTicks) {
-        for (FlowComponent<?> child : getChildren()) {
+        for (val child : getChildren()) {
             child.update(partialTicks);
         }
     }
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section window = builder.obtainSection("Window");
+        val window = builder.obtainSection("Window");
         window.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen()));
 
-        Section editor = builder.obtainSection("EditorPanel");
+        val editor = builder.obtainSection("EditorPanel");
         editor.addChildren(new CallbackEntry(Render2D.PASTE, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()));
         editor.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()));
-        super.buildContextMenu(builder);
+
+        int x = builder.getX() - xOffset.get();
+        int y = builder.getY() - yOffset.get();
+        for (val child : this.getChildren()) {
+            if (child.isInside(x, y)) {
+                child.buildContextMenu(builder);
+            }
+        }
     }
 
     private void actionPaste() {
@@ -324,9 +330,8 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
             return;
         }
 
-        INetworkController controller = FactoryManagerGUI.get().getController();
-        IProcedure procedure = NetworkHelper.retrieveProcedureAndAdd(controller, tag);
-
+        val controller = FactoryManagerGUI.get().getController();
+        val procedure = NetworkHelper.retrieveProcedureAndAdd(controller, tag);
         addChildren(procedure.createFlowComponent());
     }
 
@@ -389,8 +394,8 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     }
 
     public void saveAll() {
-        for (TreeSet<FlowComponent<?>> children : groupMappedChildren.values()) {
-            for (FlowComponent<?> child : children) {
+        for (val children : groupMappedChildren.values()) {
+            for (val child : children) {
                 child.save();
             }
         }
@@ -405,9 +410,9 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     }
 
     public void moveGroup(String from, String to) {
-        TreeSet<FlowComponent<?>> original = groupMappedChildren.computeIfAbsent(from, __ -> new TreeSet<>());
+        val original = groupMappedChildren.computeIfAbsent(from, __ -> new TreeSet<>());
         groupMappedChildren.computeIfAbsent(to, __ -> new TreeSet<>()).addAll(original);
-        for (FlowComponent<?> component : original) {
+        for (val component : original) {
             component.setGroup(to);
         }
         original.clear();
@@ -415,8 +420,8 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     @Override
     public void notifyChildrenForPositionChange() {
-        for (TreeSet<FlowComponent<?>> children : groupMappedChildren.values()) {
-            for (FlowComponent<?> child : children) {
+        for (val children : groupMappedChildren.values()) {
+            for (val child : children) {
                 child.onParentPositionChanged();
             }
         }

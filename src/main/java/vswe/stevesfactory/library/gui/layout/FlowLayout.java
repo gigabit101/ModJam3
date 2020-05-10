@@ -1,5 +1,6 @@
 package vswe.stevesfactory.library.gui.layout;
 
+import lombok.val;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
 import vswe.stevesfactory.library.gui.layout.properties.HorizontalAlignment;
@@ -99,12 +100,11 @@ public class FlowLayout {
 
     // Simpler version of StrictTableLayout
     // TODO merge?
-    public static <T, W extends IWidget> void table(int initialX, int initialY, int width, Map<T, W> widgets) {
+    public static <T, W extends IWidget> void table(int initialX, int initialY, int width, Collection<W> widgets) {
         int x = initialX;
         int y = initialY;
         int i = 1;
-        for (Map.Entry<T, W> entry : widgets.entrySet()) {
-            W widget = entry.getValue();
+        for (val widget : widgets) {
             widget.setLocation(x, y);
             if (i % 2 == 0) {
                 x = initialX;

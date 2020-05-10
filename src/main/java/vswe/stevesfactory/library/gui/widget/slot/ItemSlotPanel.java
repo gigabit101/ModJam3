@@ -6,7 +6,10 @@ import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -47,10 +50,18 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
 
         this.children = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            addChildren(factory.apply(stacks.get(i)));
+            children.add(factory.apply(stacks.get(i)));
         }
         adjustMinContent();
         reflow();
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+        for (AbstractItemSlot child : children) {
+            child.attach(this);
+        }
     }
 
     @Override

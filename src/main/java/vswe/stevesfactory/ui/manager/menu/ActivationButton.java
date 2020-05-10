@@ -45,7 +45,7 @@ class ActivationButton extends ColoredTextButton {
     }
 
     private void updateText() {
-        setText(target.isSelected() ? I18n.format("menu.sfm.Deactivate") : I18n.format("menu.sfm.Activate"));
+        setTextRaw(target.isSelected() ? I18n.format("menu.sfm.Deactivate") : I18n.format("menu.sfm.Activate"));
     }
 
     @Override

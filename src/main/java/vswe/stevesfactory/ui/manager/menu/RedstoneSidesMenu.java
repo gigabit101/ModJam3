@@ -54,7 +54,7 @@ public class RedstoneSidesMenu<P extends IProcedure & IClientDataStorage & IDire
             addChildren(box.makeLabel().translate("gui.sfm." + direction.getName()));
             sides.put(direction, box);
         }
-        FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 30, getWidth(), sides);
+        FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 30, getWidth(), sides.values());
 
         info = new Paragraph(getWidth() - 4 * 2, 16, new ArrayList<>());
         info.getTextRenderer().setFontHeight(6);

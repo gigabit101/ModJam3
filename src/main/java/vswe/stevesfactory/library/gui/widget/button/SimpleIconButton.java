@@ -71,6 +71,9 @@ public class SimpleIconButton extends AbstractIconButton implements ResizableWid
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        if (!isEnabled()) {
+            return false;
+        }
         onClick.accept(button);
         return true;
     }

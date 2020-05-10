@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.widget.panel;
 
-import vswe.stevesfactory.library.gui.*;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
@@ -10,10 +11,10 @@ import java.util.Objects;
 
 public abstract class ScrollArrow extends AbstractIconButton implements LeafWidgetMixin {
 
-    private static final Texture UP_NORMAL = Texture.portion256x256(Render2D.COMPONENTS, 0, 0, 10, 6);
-    private static final Texture UP_HOVERED = UP_NORMAL.moveRight(1);
-    private static final Texture UP_CLICKED = UP_NORMAL.moveRight(2);
-    private static final Texture UP_DISABLED = UP_NORMAL.moveRight(3);
+    public static final Texture UP_NORMAL = Render2D.ofFlowComponent(0, 58, 10, 6);
+    public static final Texture UP_HOVERED = UP_NORMAL.moveRight(1);
+    public static final Texture UP_CLICKED = UP_NORMAL.moveRight(2);
+    public static final Texture UP_DISABLED = UP_NORMAL.moveRight(3);
 
     public static ScrollArrow up(int x, int y) {
         return new ScrollArrow(x, y) {
@@ -86,7 +87,7 @@ public abstract class ScrollArrow extends AbstractIconButton implements LeafWidg
     @Override
     public void update(float partialTicks) {
         if (isClicked()) {
-            WrappingList parent = getParent();
+            WrappingList<?> parent = getParent();
             parent.scroll(parent.getScrollSpeed() * getScrollDirectionMask());
         }
     }
@@ -101,8 +102,8 @@ public abstract class ScrollArrow extends AbstractIconButton implements LeafWidg
 
     @Nonnull
     @Override
-    public WrappingList getParent() {
-        return Objects.requireNonNull((WrappingList) super.getParent());
+    public WrappingList<?> getParent() {
+        return Objects.requireNonNull((WrappingList<?>) super.getParent());
     }
 
     @Override

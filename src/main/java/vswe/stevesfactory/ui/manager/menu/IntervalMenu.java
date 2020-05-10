@@ -17,28 +17,33 @@ import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 public class IntervalMenu extends Menu<IntervalTriggerProcedure> {
 
     public static final int MARGIN_MIDDLE_UNIT_TEXT = 10;
+    public static final int INTERVAL_BOX_WIDTH = 38;
 
-    private NumberField<Integer> interval;
+    private final NumberField<Integer> interval;
+    private final Paragraph description;
+
+    public IntervalMenu() {
+        int x = Render2D.computeCenterX(0, this.getXRight(), INTERVAL_BOX_WIDTH + MARGIN_MIDDLE_UNIT_TEXT + fontRenderer().getStringWidth(getUnitText()));
+
+        description = new Paragraph(getWidth() - x * 2, 0, new ArrayList<>());
+        description.setLocation(x, 8);
+        description.setFitContents(true);
+        description.getTextRenderer().setTextColor(0xff404040);
+        description.getTextRenderer().setFontHeight(8);
+        description.addLineSplit(getWidth() - 4 * 2, I18n.format("menu.sfm.Interval.Info"));
+
+        interval = NumberField.integerFieldRanged(INTERVAL_BOX_WIDTH, 14, 1, 1, 999);
+        interval.setLocation(x, description.getYBottom() + 2);
+        interval.setValue(1);
+        interval.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
+    }
 
     @Override
     public void onInitialAttach() {
         super.onInitialAttach();
 
-        interval = NumberField.integerFieldRanged(38, 14, 1, 1, 999);
-        int x = Render2D.computeCenterX(0, getWidth(), interval.getWidth() + MARGIN_MIDDLE_UNIT_TEXT + fontRenderer().getStringWidth(getUnitText()));
-        interval.setValue(1);
-        interval.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
-        interval.setLocation(x, 50);
-
-        int desX = interval.getX();
-        Paragraph description = new Paragraph(getWidth() - x * 2, 0, new ArrayList<>());
-        description.setLocation(desX, HEADING_BOX.getPortionHeight() + 8);
-        description.setFitContents(true);
-        description.addLineSplit(getWidth() - 4 * 2, I18n.format("menu.sfm.Interval.Info"));
-        description.getTextRenderer().setFontHeight(8);
-
-        addChildren(interval);
         addChildren(description);
+        addChildren(interval);
     }
 
     @Override

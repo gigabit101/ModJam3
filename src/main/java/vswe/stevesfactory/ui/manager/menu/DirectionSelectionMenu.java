@@ -1,11 +1,11 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Direction;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
-import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.logic.procedure.IDirectionTarget;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
@@ -18,7 +18,6 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
     private final String name;
     private final String errorMessage;
 
-    // TODO refactor with EnumMap
     private final DirectionButton down, up, north, south, east, west;
     private final ActivationButton activationButton;
 
@@ -32,33 +31,24 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
         this.errorMessage = errorMessage;
 
         down = new DirectionButton(Direction.DOWN);
-        down.onStateChanged = b -> getLinkedProcedure().setEnabled(id, Direction.DOWN, b);
         up = new DirectionButton(Direction.UP);
-        up.onStateChanged = b -> getLinkedProcedure().setEnabled(id, Direction.UP, b);
         north = new DirectionButton(Direction.NORTH);
-        north.onStateChanged = b -> getLinkedProcedure().setEnabled(id, Direction.NORTH, b);
         south = new DirectionButton(Direction.SOUTH);
-        south.onStateChanged = b -> getLinkedProcedure().setEnabled(id, Direction.SOUTH, b);
         east = new DirectionButton(Direction.EAST);
-        east.onStateChanged = b -> getLinkedProcedure().setEnabled(id, Direction.EAST, b);
         west = new DirectionButton(Direction.WEST);
-        west.onStateChanged = b -> getLinkedProcedure().setEnabled(id, Direction.WEST, b);
         activationButton = new ActivationButton(down);
 
-        final int y = HEADING_BOX.getPortionHeight() + 4;
-
-        down.setLocation(2, y);
+        down.setLocation(0, 0);
+        up.setLocation(getWidth() - 2 - up.getWidth(), 0);
         north.setLocation(down.getX(), down.getY() + down.getHeight() + 6);
-        west.setLocation(down.getX(), north.getY() + north.getHeight() + 6);
-
-        up.setLocation(getWidth() - 2 - up.getWidth(), y);
         south.setLocation(up.getX(), up.getY() + up.getHeight() + 6);
+        west.setLocation(down.getX(), north.getY() + north.getHeight() + 6);
         east.setLocation(up.getX(), south.getY() + south.getHeight() + 6);
 
-        int leftMid = down.getX() + down.getWidth();
+        int leftMid = down.getXRight();
         int rightMid = up.getX();
-        int x = Render2D.computeCenterX(leftMid, rightMid, activationButton.getFullWidth());
-        activationButton.setLocation(x, y);
+        activationButton.alignCenterX(leftMid, rightMid);
+        activationButton.setY(0);
         activationButton.setEditingState(false);
     }
 
@@ -78,28 +68,22 @@ public class DirectionSelectionMenu<P extends IDirectionTarget & IProcedure & IC
     @Override
     public void onLinkFlowComponent(FlowComponent<P> flowComponent) {
         super.onLinkFlowComponent(flowComponent);
-        for (Direction direction : getLinkedProcedure().getDirections(id)) {
-            switch (direction) {
-                case DOWN:
-                    down.setSelected(true);
-                    break;
-                case UP:
-                    up.setSelected(true);
-                    break;
-                case NORTH:
-                    north.setSelected(true);
-                    break;
-                case SOUTH:
-                    south.setSelected(true);
-                    break;
-                case WEST:
-                    west.setSelected(true);
-                    break;
-                case EAST:
-                    east.setSelected(true);
-                    break;
-            }
-        }
+        val proc = flowComponent.getProcedure();
+
+        down.onStateChanged = b -> proc.setEnabled(id, Direction.DOWN, b);
+        up.onStateChanged = b -> proc.setEnabled(id, Direction.UP, b);
+        north.onStateChanged = b -> proc.setEnabled(id, Direction.NORTH, b);
+        south.onStateChanged = b -> proc.setEnabled(id, Direction.SOUTH, b);
+        east.onStateChanged = b -> proc.setEnabled(id, Direction.EAST, b);
+        west.onStateChanged = b -> proc.setEnabled(id, Direction.WEST, b);
+
+        val directions = proc.getDirections(id);
+        down.setSelected(directions.contains(Direction.DOWN));
+        up.setSelected(directions.contains(Direction.UP));
+        north.setSelected(directions.contains(Direction.NORTH));
+        south.setSelected(directions.contains(Direction.SOUTH));
+        east.setSelected(directions.contains(Direction.EAST));
+        west.setSelected(directions.contains(Direction.WEST));
     }
 
     void clearEditing() {

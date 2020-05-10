@@ -7,9 +7,9 @@ import vswe.stevesfactory.library.gui.TextRenderer;
 import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
-import vswe.stevesfactory.library.gui.widget.CallbackIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.TextField;
+import vswe.stevesfactory.library.gui.widget.button.SimpleIconButton;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.tool.group.GroupButton;
 import vswe.stevesfactory.ui.manager.toolbox.ToolboxPanel;
@@ -30,9 +30,9 @@ public class StatusPanel extends AbstractContainer<IWidget> {
     private FlowComponent<?> opened = null;
     private final List<IWidget> children = new ArrayList<>();
     private final TextField nameBox;
-    private final CallbackIconButton renameButton;
-    private final CallbackIconButton submitButton;
-    private final CallbackIconButton cancelButton;
+    private final SimpleIconButton renameButton;
+    private final SimpleIconButton submitButton;
+    private final SimpleIconButton cancelButton;
 
     private String previousName;
 
@@ -49,43 +49,37 @@ public class StatusPanel extends AbstractContainer<IWidget> {
 
         int baseX = getXRight() - 10;
         int baseY = 2;
-        renameButton = new CallbackIconButton(RENAME_NORMAL, RENAME_HOVERING);
+        renameButton = new SimpleIconButton(RENAME_NORMAL, RENAME_HOVERING);
         renameButton.setLocation(baseX, baseY + 6);
         renameButton.setEnabled(false);
-        renameButton.onClick = b -> {
+        renameButton.setClickAction(__ -> {
             if (renameButton.isEnabled() && opened != null) {
                 setRenamingState();
-                return true;
             }
-            return false;
-        };
+        });
         children.add(renameButton);
-        submitButton = new CallbackIconButton(SUBMIT_NORMAL, SUBMIT_HOVERING);
+        submitButton = new SimpleIconButton(SUBMIT_NORMAL, SUBMIT_HOVERING);
         submitButton.setLocation(baseX + 2, baseY + 3);
         submitButton.setEnabled(false);
-        submitButton.onClick = b -> {
+        submitButton.setClickAction(__ -> {
             if (submitButton.isEnabled() && opened != null) {
                 // Keep input name
                 opened.setName(nameBox.getText());
                 setWaitingState();
-                return true;
             }
-            return false;
-        };
+        });
         children.add(submitButton);
-        cancelButton = new CallbackIconButton(CANCEL_NORMAL, CANCEL_HOVERING);
+        cancelButton = new SimpleIconButton(CANCEL_NORMAL, CANCEL_HOVERING);
         cancelButton.setLocation(baseX + 2, baseY + 11);
         cancelButton.setEnabled(false);
-        cancelButton.onClick = b -> {
+        cancelButton.setClickAction(__ -> {
             if (cancelButton.isEnabled() && opened != null) {
                 // Discard input name
                 nameBox.setText(previousName);
                 opened.setName(previousName);
                 setWaitingState();
-                return true;
             }
-            return false;
-        };
+        });
         children.add(cancelButton);
     }
 

@@ -2,10 +2,11 @@ package vswe.stevesfactory.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,6 +18,8 @@ import vswe.stevesfactory.api.StevesFactoryManagerAPI;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.GL_LINES;
 
 @EventBusSubscriber(modid = StevesFactoryManagerAPI.MODID, value = Dist.CLIENT, bus = Bus.FORGE)
 public final class BlockHighlight {
@@ -53,19 +56,22 @@ public final class BlockHighlight {
     }
 
     public static void renderOutline(RenderWorldLastEvent event, BlockPos c) {
-        Vec3d vpos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
-        MatrixStack ms = event.getMatrixStack();
+        val vpos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        val ms = event.getMatrixStack();
         ms.push();
         ms.translate(-vpos.x, -vpos.y, -vpos.z);
         RenderSystem.disableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.lineWidth(3);
 
-        IVertexBuilder builder = Tessellator.getInstance().getBuffer();
+        val tess = Tessellator.getInstance();
+        val builder = tess.getBuffer();
         float mx = c.getX();
         float my = c.getY();
         float mz = c.getZ();
+        builder.begin(GL_LINES, DefaultVertexFormats.POSITION_COLOR);
         WorldRenderer.drawBoundingBox(ms, builder, mx, my, mz, mx + 1, my + 1, mz + 1, 1F, 0F, 0F, 1F);
+        tess.draw();
 
         RenderSystem.enableTexture();
         ms.pop();

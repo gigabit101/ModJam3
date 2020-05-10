@@ -20,6 +20,7 @@ import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.logic.item.ItemTraitsFilter;
+import vswe.stevesfactory.ui.manager.editor.Menu;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
+// TODO popup configuration menu
 public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
 
     private final int index;
@@ -72,7 +74,7 @@ public class FilterSlot extends ConfigurableSlot<FilterSlot.Editor> {
             super.onInitialAttach();
 
             MultiLayerMenu<?> menu = getMenu();
-            setDimensions(menu.getWidth(), menu.getContentHeight());
+            setDimensions(menu.getWidth(), Menu.DEFAULT_CONTENT_HEIGHT);
 
             ColoredTextButton delete = new DeleteFilterButton();
             delete.setText(I18n.format("menu.sfm.Delete"));

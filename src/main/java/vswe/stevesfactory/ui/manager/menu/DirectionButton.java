@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.menu;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Direction;
@@ -18,17 +19,16 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 class DirectionButton extends AbstractIconButton {
 
     public static final Texture NORMAL = Render2D.ofFlowComponent(0, 70, 31, 12);
-    public static final Texture HOVERED = NORMAL.down(1);
-    public static final Texture DISABLED = NORMAL.down(2);
-    public static final Texture SELECTED_NORMAL = NORMAL.right(1);
-    public static final Texture SELECTED_HOVERED = SELECTED_NORMAL.down(1);
-    public static final Texture SELECTED_DISABLED = SELECTED_NORMAL.down(2);
+    public static final Texture HOVERED = NORMAL.moveDown(1);
+    public static final Texture DISABLED = NORMAL.moveDown(2);
+    public static final Texture SELECTED_NORMAL = NORMAL.moveRight(1);
+    public static final Texture SELECTED_HOVERED = SELECTED_NORMAL.moveDown(1);
+    public static final Texture SELECTED_DISABLED = SELECTED_NORMAL.moveDown(2);
 
     private boolean selected = false;
     private boolean editing = false;
 
-    public BooleanConsumer onStateChanged = b -> {
-    };
+    public BooleanConsumer onStateChanged = b -> {};
     private final String name;
 
     public DirectionButton(Direction direction) {
@@ -38,6 +38,7 @@ class DirectionButton extends AbstractIconButton {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.enableAlphaTest();
         super.render(mouseX, mouseY, partialTicks);
         Render2D.renderVerticallyCenteredText(name, getAbsoluteX() + 2, getAbsoluteY(), getAbsoluteYBottom(), getZLevel(), 0xff4d4d4d);
     }

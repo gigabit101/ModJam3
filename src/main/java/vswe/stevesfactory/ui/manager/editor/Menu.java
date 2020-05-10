@@ -3,6 +3,8 @@ package vswe.stevesfactory.ui.manager.editor;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.Getter;
+import lombok.val;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IErrorPopulator;
 import vswe.stevesfactory.api.logic.IProcedure;
@@ -26,6 +28,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * A collapsible menu that's shown inside {@link vswe.stevesfactory.ui.manager.tool.inspector.Inspector inspector}'s
+ * {@link vswe.stevesfactory.ui.manager.tool.inspector.PropertiesPanel properties panel}.
+ * <p>
+ * See {@link #onLinkFlowComponent(FlowComponent)} for more docs about additional widget lifecycle for menu widgets.
+ */
 public abstract class Menu<P extends IProcedure & IClientDataStorage> extends AbstractContainer<IWidget> implements IErrorPopulator, IWidget {
 
     public enum State {
@@ -58,8 +66,6 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public static class ToggleStateButton extends AbstractIconButton {
 
         public ToggleStateButton(Menu<?> parent) {
-            this.setLocation(109, 2);
-            this.setDimensions(9, 9);
             attach(parent);
         }
 
@@ -100,24 +106,30 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     private static final List<Supplier<IEntry>> EMPTY_LIST = ImmutableList.of();
 
     public static final Texture HEADING_BOX = Render2D.ofFlowComponent(0, 0, 120, 13);
-    public static final int DEFAULT_CONTENT_HEIGHT = 65;
+    public static final int DEFAULT_CONTENT_HEIGHT = 57;
+    public static final int SIDE_MARGINS = 4;
 
+    @Getter
     private FlowComponent<P> flowComponent;
-    private State state = State.COLLAPSED;
+    private State state = State.EXPANDED;
+    private int contentHeight = -1;
 
-    private ToggleStateButton toggleStateButton;
+    private final ToggleStateButton toggleStateButton;
     private final List<IWidget> children = new ArrayList<>();
 
     private List<Supplier<IEntry>> actionMenuEntries = EMPTY_LIST;
 
     public Menu() {
-        // Start at a collapsed state
-        this.setDimensions(HEADING_BOX.getPortionWidth(), HEADING_BOX.getPortionHeight());
+        this.setBorders(SIDE_MARGINS);
+        this.setBorderTop(HEADING_BOX.getPortionHeight() + SIDE_MARGINS);
+        this.setDimensions(HEADING_BOX.getPortionWidth() - SIDE_MARGINS * 2, DEFAULT_CONTENT_HEIGHT);
+        this.toggleStateButton = new ToggleStateButton(this);
+        this.toggleStateButton.setLocation(109 - 4, 2 - 4 - HEADING_BOX.getPortionHeight());
+        this.toggleStateButton.setDimensions(9, 9);
     }
 
     @Override
     public void onInitialAttach() {
-        toggleStateButton = new ToggleStateButton(this);
         addChildren(toggleStateButton);
     }
 
@@ -143,7 +155,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     @Override
     public Menu<P> addChildren(Collection<IWidget> widgets) {
-        for (IWidget widget : widgets) {
+        for (val widget : widgets) {
             addChildren(widget);
         }
         return this;
@@ -156,7 +168,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public void expand() {
         if (state == State.COLLAPSED) {
             state = State.EXPANDED;
-            growHeight(getContentHeight());
+            growHeight(contentHeight);
             updateChildrenEnableState(true);
         }
     }
@@ -164,13 +176,14 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public void collapse() {
         if (state == State.EXPANDED) {
             state = State.COLLAPSED;
-            shrinkHeight(getContentHeight());
+            contentHeight = this.getHeight();
+            shrinkHeight(contentHeight);
             updateChildrenEnableState(false);
         }
     }
 
     private void updateChildrenEnableState(boolean state) {
-        for (IWidget child : children) {
+        for (val child : children) {
             if (BoxSizing.shouldIncludeWidget(child)) {
                 child.setEnabled(state);
             }
@@ -185,10 +198,6 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         growHeight(-shrinkage);
     }
 
-    public int getContentHeight() {
-        return DEFAULT_CONTENT_HEIGHT;
-    }
-
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         if (!isEnabled()) {
@@ -197,7 +206,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
         RenderSystem.color3f(1F, 1F, 1F);
-        HEADING_BOX.render(getAbsoluteX(), getAbsoluteY());
+        HEADING_BOX.render(getOuterAbsoluteX(), getOuterAbsoluteY());
         renderHeadingText();
 
         if (state == State.EXPANDED) {
@@ -209,13 +218,14 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     }
 
     public void renderHeadingText() {
-        int y1 = getAbsoluteY();
+        int x = getOuterAbsoluteX() + 5;
+        int y1 = getOuterAbsoluteY();
         int y2 = y1 + HEADING_BOX.getPortionHeight();
-        Render2D.renderVerticallyCenteredText(getHeadingText(), getHeadingLeftX(), y1, y2 + 1, getZLevel(), getHeadingColor());
+        Render2D.renderVerticallyCenteredText(getHeadingText(), x, y1, y2, getZLevel(), getHeadingColor());
     }
 
     public int getHeadingLeftX() {
-        return getAbsoluteX() + 5;
+        return getOuterAbsoluteX() + 5;
     }
 
     public int getHeadingColor() {
@@ -225,24 +235,28 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     public abstract String getHeadingText();
 
     public void renderContents(int mouseX, int mouseY, float partialTicks) {
-        for (IWidget child : children) {
+        for (val child : children) {
             child.render(mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!isEnabled()) {
-            return false;
+        switch (state) {
+            case COLLAPSED:
+                if (toggleStateButton.mouseClicked(mouseX, mouseY, button)) {
+                    return true;
+                }
+                if (this.isInside(mouseX, mouseY)) {
+                    getWindow().setFocusedWidget(this);
+                    return true;
+                }
+                return false;
+            case EXPANDED:
+                return super.mouseClicked(mouseX, mouseY, button);
+            default:
+                throw new IllegalStateException();
         }
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return state != State.COLLAPSED || toggleStateButton.isInside(mouseX, mouseY);
-        }
-        if (isInside(mouseX, mouseY)) {
-            getWindow().setFocusedWidget(this);
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -259,21 +273,24 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     protected void saveData() {
     }
 
-    @SuppressWarnings("unchecked")
-    @Nonnull
     @Override
-    public VerticalList<Menu<P>> getParent() {
-        return Objects.requireNonNull((VerticalList<Menu<P>>) super.getParent());
+    public void onDimensionChanged() {
+        val parent = getParent();
+        if (parent != null) {
+            @SuppressWarnings("unchecked") val list = (VerticalList<Menu<P>>) parent;
+            list.reflow();
+        }
     }
 
+    /**
+     * An additional lifecycle event that is gardened to happen after {@link #onInitialAttach()}. Any operations related
+     * to flow component or the procedure should be done here or after here. Generally, child widgets are created in the
+     * constructor, attached in {@link #onInitialAttach()}, and data bindings are created here.
+     */
     public void onLinkFlowComponent(FlowComponent<P> flowComponent) {
         Preconditions.checkState(this.flowComponent == null);
         this.flowComponent = flowComponent;
         this.attach(flowComponent.getMenusBox());
-    }
-
-    public FlowComponent<P> getFlowComponent() {
-        return flowComponent;
     }
 
     public P getLinkedProcedure() {

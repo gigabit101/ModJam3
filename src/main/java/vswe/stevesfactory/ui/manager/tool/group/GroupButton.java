@@ -9,6 +9,7 @@ import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.button.ColoredTextButton;
 import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
+import vswe.stevesfactory.ui.manager.FactoryManagerGUI.PrimaryWindow;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -77,8 +78,9 @@ public class GroupButton extends ColoredTextButton {
         Grouplist.createSelectGroupDialog(
                 toGroup -> {
                     if (!this.group.equals(toGroup)) {
-                        FactoryManagerGUI.get().getPrimaryWindow().editorPanel.moveGroup(this.group, toGroup);
-                        FactoryManagerGUI.get().getPrimaryWindow().connectionsPanel.moveGroup(this.group, toGroup);
+                        PrimaryWindow window = FactoryManagerGUI.get().getPrimaryWindow();
+                        window.editorPanel.moveGroup(this.group, toGroup);
+                        window.connectionsPanel.moveGroup(this.group, toGroup);
                     }
                 },
                 () -> {

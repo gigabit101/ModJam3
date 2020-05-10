@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+// TODO is this useful?
 public abstract class MultiLayerMenu<P extends IProcedure & IClientDataStorage> extends Menu<P> {
 
     private IWidget openEditor;

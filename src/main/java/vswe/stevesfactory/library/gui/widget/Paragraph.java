@@ -76,7 +76,8 @@ public class Paragraph extends AbstractWidget implements LeafWidgetMixin {
         if (fitContents) {
             int w = textRenderer.calculateWidth(line);
             setWidth(Math.max(getWidth(), 1 + w + 1));
-            setHeight((int) (1 + (textRenderer.getFontHeight() + 2) * texts.size() + 1));
+            int original = getHeight();
+            setHeight((int) (original + 1 + textRenderer.getFontHeight() + 1));
         }
     }
 

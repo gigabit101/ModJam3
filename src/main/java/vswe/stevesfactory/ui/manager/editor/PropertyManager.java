@@ -2,6 +2,7 @@ package vswe.stevesfactory.ui.manager.editor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
@@ -60,7 +61,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
     }
 
     public Case<T, P> on(Predicate<T> condition) {
-        Case<T, P> caseElement = new Case<>(condition);
+        val caseElement = new Case<T, P>(condition);
         cases.add(caseElement);
         return caseElement;
     }
@@ -72,7 +73,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
     public void setProperty(@Nonnull T property) {
         Preconditions.checkNotNull(property);
         int i = 0;
-        for (Case<T, P> caseElement : cases) {
+        for (val caseElement : cases) {
             if (caseElement.matches(property)) {
                 if (i != selectedIndex) {
                     setPropertyBase(i, caseElement, property);
@@ -84,8 +85,8 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
     }
 
     private void setProperty(int index) {
-        Case<T, P> expectedCase = cases.get(index);
-        T newProp = expectedCase.createProperty();
+        val expectedCase = cases.get(index);
+        val newProp = expectedCase.createProperty();
         Preconditions.checkNotNull(newProp);
         Preconditions.checkState(expectedCase.matches(newProp));
         setPropertyBase(index, expectedCase, newProp);
@@ -94,7 +95,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
     private void setPropertyBase(int index, Case<T, P> caseElement, T property) {
         selectedIndex = index;
 
-        Menu<P> oldMenu = menu;
+        val oldMenu = menu;
         if (oldMenu != null) {
             flowComponent.getMenusBox().getChildren().remove(oldMenu);
             oldMenu.onRemoved();
@@ -148,7 +149,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
                 // Lazy initialization so that even if the property is updated without using the cycling action, the text will still be in sync
                 int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
                 if (cachedIndex != nextIndex || cachedText == null) {
-                    Case<T, P> nextCase = cases.get(nextIndex);
+                    val nextCase = cases.get(nextIndex);
                     cachedText = nextCase.hasName()
                             ? I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty.Named", nextCase.getName())
                             : I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty");

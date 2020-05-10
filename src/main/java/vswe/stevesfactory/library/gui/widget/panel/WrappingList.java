@@ -5,6 +5,8 @@
 package vswe.stevesfactory.library.gui.widget.panel;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.Setter;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
@@ -25,22 +27,23 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
     private int rows;
     private boolean disabledScroll;
 
+    @Getter
+    @Setter
+    private int itemSize;
+
     // Child widgets
-    private ScrollArrow scrollUpArrow;
-    private ScrollArrow scrollDownArrow;
+    @Getter
+    private final ScrollArrow scrollUpArrow;
+    @Getter
+    private final ScrollArrow scrollDownArrow;
+    @Getter
     private List<T> contents = new ArrayList<>();
-    private List<IWidget> children;
+    @Getter
+    private final List<IWidget> children;
 
     public WrappingList() {
-        this(80, 80);
-    }
-
-    public WrappingList(int width, int height) {
-        this.setDimensions(width, height);
         this.scrollUpArrow = ScrollArrow.up(0, 0);
-        this.scrollUpArrow.attach(this);
         this.scrollDownArrow = ScrollArrow.down(0, 0);
-        this.scrollDownArrow.attach(this);
         this.alignArrows();
         // Update arrow states
         this.scroll(1);
@@ -66,9 +69,40 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
 
     @Override
     public void onInitialAttach() {
-        for (IWidget child : children) {
+        this.scrollUpArrow.attach(this);
+        this.scrollDownArrow.attach(this);
+        for (IWidget child : contents) {
             child.attach(this);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!isEnabled()) {
+            return false;
+        }
+        if (scrollUpArrow.mouseClicked(mouseX, mouseY, button) || scrollDownArrow.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+        // Prevent child widgets outside of the visible box to receive events
+        if (!isInside(mouseX, mouseY)) {
+            return false;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (!isEnabled()) {
+            return false;
+        }
+        if (scrollUpArrow.mouseClicked(mouseX, mouseY, button) || scrollDownArrow.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+        if (!isInside(mouseX, mouseY)) {
+            return false;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
@@ -152,20 +186,9 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
         scroll(getScrollSpeed());
     }
 
-    @Override
-    public List<IWidget> getChildren() {
-        return children;
-    }
-
-    public List<T> getContents() {
-        return contents;
-    }
-
     public WrappingList<T> addElement(T widget) {
         Preconditions.checkState(isValid());
-        Preconditions.checkArgument(widget.getFullWidth() == getItemSize() && widget.getFullHeight() == getItemSize());
-        widget.attach(this);
-        contents.add(widget);
+        addChildInternal(widget);
         reflow();
         return this;
     }
@@ -173,12 +196,16 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
     public WrappingList<T> addElement(Collection<T> widgets) {
         Preconditions.checkState(isValid());
         for (T widget : widgets) {
-            Preconditions.checkArgument(widget.getFullWidth() == getItemSize() && widget.getFullHeight() == getItemSize());
-            widget.attach(this);
-            contents.add(widget);
+            addChildInternal(widget);
         }
         reflow();
         return this;
+    }
+
+    private void addChildInternal(T widget) {
+        Preconditions.checkArgument(widget.getFullWidth() == getItemSize() && widget.getFullHeight() == getItemSize());
+        widget.attach(this);
+        contents.add(widget);
     }
 
     void setContentList(List<T> list) {
@@ -232,24 +259,12 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
         return 4;
     }
 
-    public int getItemSize() {
-        return 16;
-    }
-
     public int getItemSizeWithMargin() {
         return getItemSize() + getMargin();
     }
 
     public int getScrollSpeed() {
         return 5;
-    }
-
-    public ScrollArrow getScrollUpArrow() {
-        return scrollUpArrow;
-    }
-
-    public ScrollArrow getScrollDownArrow() {
-        return scrollDownArrow;
     }
 
     public void placeArrows(int x, int y) {

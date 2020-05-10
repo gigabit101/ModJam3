@@ -10,12 +10,14 @@ import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
 import java.util.function.IntConsumer;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
 public class RadioInput extends AbstractWidget implements IButton, IRadioInput, LeafWidgetMixin {
 
-    private static final Texture UNCHECKED = Texture.portion(Render2D.COMPONENTS, 256, 256, 0, 12, 8, 8);
-    private static final Texture CHECKED = UNCHECKED.moveRight(1);
-    private static final Texture HOVERED_UNCHECKED = UNCHECKED.moveDown(1);
-    private static final Texture HOVERED_CHECKED = CHECKED.moveDown(1);
+    public static final Texture UNCHECKED = Render2D.ofFlowComponent(18, 20, 8, 8);
+    public static final Texture CHECKED = UNCHECKED.moveRight(1);
+    public static final Texture HOVERED_UNCHECKED = UNCHECKED.moveDown(1);
+    public static final Texture HOVERED_CHECKED = CHECKED.moveDown(1);
 
     private final RadioController controller;
     private final int index;
@@ -33,6 +35,7 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
+        RenderSystem.enableAlphaTest();
         RenderSystem.color3f(1F, 1F, 1F);
         Texture texture = hovered
                 ? (checked ? HOVERED_CHECKED : HOVERED_UNCHECKED)
@@ -43,6 +46,9 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        if (button != GLFW_MOUSE_BUTTON_LEFT) {
+            return false;
+        }
         if (!checked) {
             check(true);
         }

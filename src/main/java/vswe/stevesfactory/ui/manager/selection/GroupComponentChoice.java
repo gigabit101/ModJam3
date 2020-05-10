@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.selection;
 
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import vswe.stevesfactory.api.logic.IProcedureType;
@@ -12,6 +13,8 @@ import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class GroupComponentChoice extends AbstractWidget implements IComponentChoice, LeafWidgetMixin {
 
@@ -48,15 +51,19 @@ public class GroupComponentChoice extends AbstractWidget implements IComponentCh
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
-        ContextMenu cm = ContextMenu.atCursor();
+        if (button != GLFW_MOUSE_BUTTON_LEFT) {
+            return false;
+        }
+
+        val cm = ContextMenu.atCursor();
         cm.setPosition(getAbsoluteXRight() + 2, getAbsoluteY());
-        Section primary = new Section();
+        val primary = new Section();
         cm.addSection(primary);
 
         if (group.getMembers().isEmpty()) {
             primary.addChildren(new DefaultEntry(null, "gui.sfm.FactoryManager.Selection.NoComponentGroupsPresent"));
         } else {
-            for (IProcedureType<?> type : group.getMembers()) {
+            for (val type : group.getMembers()) {
                 primary.addChildren(new CallbackEntry(type.getIcon(), type.getLocalizedName(), b -> createFlowComponent(type)));
             }
         }

@@ -1,6 +1,8 @@
 package vswe.stevesfactory.ui.manager.menu;
 
+import lombok.val;
 import net.minecraft.client.resources.I18n;
+import vswe.stevesfactory.library.gui.widget.NotifiedTextField;
 import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.logic.procedure.FunctionHatProcedure;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
@@ -13,16 +15,16 @@ import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
 
 public class FunctionNameMenu extends Menu<FunctionHatProcedure> {
 
-    private TextField field;
+    private NotifiedTextField field;
 
     @Override
     public void onInitialAttach() {
         super.onInitialAttach();
 
-        field = new TextField(80, 14);
+        field = new NotifiedTextField(80, 14);
         field.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
         field.alignCenterX(0, getWidth());
-        field.alignCenterY(HEADING_BOX.getPortionHeight(), HEADING_BOX.getPortionHeight() + getContentHeight());
+        field.alignCenterY(0, getYBottom());
         addChildren(field);
     }
 
@@ -38,14 +40,9 @@ public class FunctionNameMenu extends Menu<FunctionHatProcedure> {
     @Override
     public void onLinkFlowComponent(FlowComponent<FunctionHatProcedure> flowComponent) {
         super.onLinkFlowComponent(flowComponent);
-        FunctionHatProcedure p = getLinkedProcedure();
+        val p = getLinkedProcedure();
         field.setText(p.getFunctionName());
-    }
-
-    @Override
-    protected void saveData() {
-        FunctionHatProcedure p = getLinkedProcedure();
-        p.setFunctionName(field.getText());
+        field.onValueUpdated = p::setFunctionName;
     }
 
     @Override

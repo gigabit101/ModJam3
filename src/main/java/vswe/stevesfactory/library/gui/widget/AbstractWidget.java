@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.widget;
 
 import com.mojang.datafixers.util.Either;
+import lombok.val;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
@@ -135,14 +136,12 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
     }
 
     public Label makeLabel() {
-        return new Label(this);
+        val label = new Label(this);
+        label.setBoxSizing(BoxSizing.PHANTOM);
+        return label;
     }
 
     public void alignTo(IWidget other, Side side, Either<HorizontalAlignment, VerticalAlignment> alignment) {
-        if (this.getParent() != other.getParent()) {
-            return;
-        }
-
         int otherLeft = other.getX();
         int otherTop = other.getY();
         int otherRight = otherLeft + other.getFullWidth();

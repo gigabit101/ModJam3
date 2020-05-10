@@ -171,7 +171,7 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
                     break passEvents;
                 }
             }
-            for (IPopupWindow window : popupWindows) {
+            for (IPopupWindow window : popupWindows.descendingSet()) {
                 if (window.mouseClicked(mouseX, mouseY, button)) {
                     capturedWindow = window;
                     captured = true;

@@ -4,7 +4,8 @@ import com.google.common.base.MoreObjects;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.ItemStack;
-import vswe.stevesfactory.library.gui.*;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
@@ -22,9 +23,11 @@ public abstract class AbstractItemSlot extends AbstractWidget implements LeafWid
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         RenderEventDispatcher.onPreRender(this, mouseX, mouseY);
-        renderBase();
         if (isInside(mouseX, mouseY)) {
+            renderHoveredBase();
             renderHoveredOverlay();
+        } else {
+            renderHoveredBase();
         }
         renderStack();
         RenderEventDispatcher.onPostRender(this, mouseX, mouseY);
@@ -41,6 +44,10 @@ public abstract class AbstractItemSlot extends AbstractWidget implements LeafWid
     }
 
     public void renderBase() {
+        BASE.render(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom());
+    }
+
+    public void renderHoveredBase() {
         BASE.render(getAbsoluteX(), getAbsoluteY(), getAbsoluteXRight(), getAbsoluteYBottom());
     }
 

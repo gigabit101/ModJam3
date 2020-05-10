@@ -1,5 +1,6 @@
 package vswe.stevesfactory.library.gui.widget;
 
+import lombok.val;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.widget.mixin.ContainerWidgetMixin;
 
@@ -26,6 +27,12 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
             for (T child : getChildren()) {
                 child.attach(this);
             }
+        }
+    }
+
+    public void reattachChildren() {
+        for (val child : getChildren()) {
+            child.attach(this);
         }
     }
 
@@ -116,10 +123,6 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        propagateBuildActionMenu(builder);
-    }
-
-    private void propagateBuildActionMenu(ContextMenuBuilder builder) {
         propagateBuildActionMenu(this, builder);
     }
 

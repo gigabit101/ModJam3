@@ -69,6 +69,7 @@ minecraft {
 }
 
 repositories {
+    mavenCentral()
     maven {
         // JEI
         name = "Progwml6 maven"
@@ -86,6 +87,9 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")

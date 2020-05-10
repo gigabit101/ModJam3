@@ -18,7 +18,6 @@ import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
-import vswe.stevesfactory.library.gui.widget.MinimumVerticalList;
 import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 import vswe.stevesfactory.library.gui.window.Dialog;
@@ -37,12 +36,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 public class FlowComponent<P extends IProcedure & IClientDataStorage> extends AbstractContainer<IWidget> implements Comparable<FlowComponent<?>> {
 
     private P procedure;
+    private final DetatchedVerticalList menus;
 
     private final TextField nameBox;
     private final ConnectionNodes<EndNode> inputNodes;
     private final ConnectionNodes<StartNode> outputNodes;
     private final ErrorIndicator errorIndicator;
-    private final MinimumVerticalList<Menu<P>> menus;
     // A list that refers to all the widgets above
     private final List<IWidget> children;
 
@@ -54,8 +53,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
 
     public FlowComponent(P procedure) {
         this.setDimensions(64, 20);
-//        // Record reference only, initialization is done in #onInitialAttach()
-//        this.procedure = procedure;
         // The cursor looks a bit to short (and cute) with these numbers, might want change them?
         this.nameBox = new TextField();
         this.nameBox.setLocation(6, 8);
@@ -68,7 +65,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
         this.inputNodes = ConnectionNodes.inputNodes(procedure.predecessors().length);
         this.outputNodes = ConnectionNodes.outputNodes(procedure.successors().length);
         this.errorIndicator = ErrorIndicator.error();
-        this.menus = new MinimumVerticalList<>();
+        this.menus = new DetatchedVerticalList();
         this.children = ImmutableList.of(nameBox, inputNodes, outputNodes, errorIndicator);
         // Initialize data related to the procedure object
         this.setLinkedProcedure(procedure);
@@ -128,25 +125,6 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
 
     public FlowComponent<P> addMenu(Menu<P> menu) {
         menus.addChildren(menu);
-        menu.onLinkFlowComponent(this);
-        return this;
-    }
-
-    @Override
-    public FlowComponent<P> addChildren(IWidget widget) {
-        if (widget instanceof Menu) {
-            @SuppressWarnings("unchecked") Menu<P> menu = (Menu<P>) widget;
-            return addMenu(menu);
-        } else {
-            throw new IllegalArgumentException("Flow components do not accept new child widgets with type other than Menu");
-        }
-    }
-
-    @Override
-    public FlowComponent<P> addChildren(Collection<IWidget> widgets) {
-        for (IWidget widget : widgets) {
-            addChildren(widget);
-        }
         return this;
     }
 
@@ -297,7 +275,8 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
                     I18n.format("gui.sfm.FactoryManager.Editor.DeleteAll.ConfirmMsg"),
                     I18n.format("gui.sfm.yes"),
                     I18n.format("gui.sfm.no"),
-                    b -> removeGraph(this), b -> {}
+                    b -> removeGraph(this), b -> {
+                    }
             ).tryAddSelfToActiveGUI();
         } else {
             remove();
@@ -470,5 +449,46 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
         receiver.line("Z=" + this.getZIndex());
+    }
+
+    private class DetatchedVerticalList extends VerticalList<Menu<P>> {
+
+        @Override
+        public VerticalList<Menu<P>> addChildren(Menu<P> widget) {
+            elements.add(widget);
+            return this;
+        }
+
+        @Override
+        public VerticalList<Menu<P>> addChildren(Collection<Menu<P>> widgets) {
+            elements.addAll(widgets);
+            return this;
+        }
+
+        @Override
+        public void onInitialAttach() {
+            super.onInitialAttach();
+
+            for (Menu<P> menu : elements) {
+                menu.attach(this);
+                menu.onLinkFlowComponent(FlowComponent.this);
+            }
+            reflow();
+        }
+
+        @Override
+        protected boolean isDrawingScrollBar() {
+            return false;
+        }
+
+        @Override
+        public int getBorder() {
+            return 0;
+        }
+
+        @Override
+        public int getMarginMiddle() {
+            return 0;
+        }
     }
 }

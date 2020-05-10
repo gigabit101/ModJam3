@@ -1,6 +1,7 @@
 package vswe.stevesfactory.ui.manager.menu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.val;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
@@ -54,7 +55,7 @@ public class BlockTarget extends AbstractWidget implements IButton, IStringSeria
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
+        val section = builder.obtainSection("");
         section.addChildren(new CallbackEntry(null, "menu.sfm.BlockTarget.Highlight", b -> BlockHighlight.createHighlight(pos, 80)));
         super.buildContextMenu(builder);
     }

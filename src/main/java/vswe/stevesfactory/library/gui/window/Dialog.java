@@ -168,8 +168,8 @@ public class Dialog extends AbstractPopupWindow {
         int rightmost = 0;
         int bottommost = 0;
         for (IWidget child : children) {
-            int right = child.getX() + child.getFullHeight();
-            int bottom = child.getY() + child.getFullWidth();
+            int right = child.getX() + child.getFullWidth();
+            int bottom = child.getY() + child.getFullHeight();
             if (right > rightmost) {
                 rightmost = right;
             }

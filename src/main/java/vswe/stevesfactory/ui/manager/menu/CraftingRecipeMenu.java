@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.menu;
 
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.world.ClientWorld;
@@ -11,7 +12,7 @@ import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.layout.properties.Side;
 import vswe.stevesfactory.library.gui.layout.properties.VerticalAlignment;
-import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.library.gui.widget.slot.ItemSlot;
 import vswe.stevesfactory.logic.procedure.ICraftingGrid;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
@@ -21,23 +22,24 @@ import java.util.Optional;
 
 public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICraftingGrid> extends Menu<P> {
 
-    @SuppressWarnings("unchecked") // We don't really care the concrete generic parameter
-    private IngredientSlot[] ingredients = new CraftingRecipeMenu.IngredientSlot[9];
-    private ProductSlot product;
+    private final ItemSlot[] ingredients = new ItemSlot[9];
+    private final ItemSlot product;
     private ICraftingRecipe recipe;
 
     public CraftingRecipeMenu() {
         for (int i = 0; i < ingredients.length; i++) {
-            ingredients[i] = new IngredientSlot(ItemStack.EMPTY, i);
+            val slot = ingredients[i] = new ItemSlot(ItemStack.EMPTY);
+            slot.defaultedBoth();
         }
-        product = new ProductSlot(ItemStack.EMPTY);
+        product = new ItemSlot(ItemStack.EMPTY);
+        product.defaultedRight(() -> {});
     }
 
     @Override
     public void onInitialAttach() {
         super.onInitialAttach();
 
-        for (IngredientSlot ingredient : ingredients) {
+        for (val ingredient : ingredients) {
             addChildren(ingredient);
         }
         addChildren(product);
@@ -47,9 +49,9 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
     @Override
     public void onLinkFlowComponent(FlowComponent<P> flowComponent) {
         super.onLinkFlowComponent(flowComponent);
-        P procedure = getLinkedProcedure();
-        for (IngredientSlot slot : ingredients) {
-            slot.stack = procedure.getIngredient(slot.slot);
+        val procedure = getLinkedProcedure();
+        for (int i = 0; i < ingredients.length; i++) {
+            ingredients[i].setRenderedStack(procedure.getIngredient(i));
         }
         updateRecipeProduct(); // Sets `product` displaying item stack
     }
@@ -59,7 +61,7 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
         int x = 4;
         int y = HEADING_BOX.getPortionHeight() + 4;
         int i = 1;
-        for (IngredientSlot slot : ingredients) {
+        for (val slot : ingredients) {
             slot.setLocation(x, y);
             if (i % 3 == 0) {
                 x = 4;
@@ -100,7 +102,7 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
         ItemStack stack = lookup
                 .map(r -> r.getCraftingResult(inventory))
                 .orElse(ItemStack.EMPTY);
-        this.product.setStack(stack);
+        this.product.setRenderedStack(stack);
     }
 
     private void onSetIngredient(int slot, ItemStack ingredient) {
@@ -110,66 +112,9 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
     }
 
     private void onClearIngredients() {
-        for (IngredientSlot slot : ingredients) {
-            slot.setStack(ItemStack.EMPTY);
+        for (val slot : ingredients) {
+            slot.clearRenderedStack();
         }
-        product.setStack(ItemStack.EMPTY);
-    }
-
-    public class IngredientSlot extends ConfigurableSlot<IWidget> {
-
-        public final int slot;
-
-        public IngredientSlot(ItemStack stack, int slot) {
-            super(stack);
-            this.slot = slot;
-        }
-
-        @Override
-        protected boolean hasEditor() {
-            return false;
-        }
-
-        @Override
-        protected IWidget createEditor() {
-            return null;
-        }
-
-        @Override
-        protected void onRightClick() {
-            setStack(ItemStack.EMPTY);
-        }
-
-        @Override
-        protected void onSetStack() {
-            CraftingRecipeMenu.this.onSetIngredient(slot, stack);
-        }
-    }
-
-    public class ProductSlot extends ConfigurableSlot<IWidget> {
-
-        public ProductSlot(ItemStack stack) {
-            super(stack);
-        }
-
-        @Override
-        protected boolean hasEditor() {
-            return false;
-        }
-
-        @Override
-        protected IWidget createEditor() {
-            return null;
-        }
-
-        @Override
-        protected void onLeftClick() {
-            // No inventory selection dialog for the product slot
-        }
-
-        @Override
-        protected void onRightClick() {
-            CraftingRecipeMenu.this.onClearIngredients();
-        }
+        product.clearRenderedStack();
     }
 }
