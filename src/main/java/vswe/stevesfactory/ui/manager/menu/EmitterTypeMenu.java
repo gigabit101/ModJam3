@@ -21,17 +21,14 @@ public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
     private final Map<OperationType, RadioInput> types;
 
     public EmitterTypeMenu() {
-        int y = HEADING_BOX.getPortionHeight() + 2;
-
         paragraph = new Paragraph(0, 20, new ArrayList<>());
-        paragraph.setLocation(4, y);
         paragraph.getTextRenderer().setFontHeight(7);
 
         valueInput = NumberField.integerFieldRanged(33, 12, 15, 1, 15);
-        valueInput.alignRight(getWidth() - 4);
-        valueInput.setY(y);
+        valueInput.alignRight(this.getWidth());
         valueInput.setBackgroundStyle(TextField.BackgroundStyle.RED_OUTLINE);
         paragraph.setWidth(valueInput.getX() - 4 - paragraph.getX());
+        paragraph.addLineSplit(I18n.format("menu.sfm.RedstoneEmitter.Type.Info"));
 
         types = new EnumMap<>(OperationType.class);
     }
@@ -50,30 +47,28 @@ public class EmitterTypeMenu extends Menu<RedstoneEmitterProcedure> {
             types.put(type, box);
         }
 
-        FlowLayout.table(4, HEADING_BOX.getPortionHeight() + 25, getWidth(), types.values());
+        FlowLayout.table(0, paragraph.getYBottom() + 2, this.getWidth(), types.values());
         for (val entry : types.entrySet()) {
             val box = entry.getValue();
             val type = entry.getKey();
             addChildren(box.makeLabel().translate(type.nameKey));
         }
+
+        adjustMinHeight();
     }
 
     @Override
     public void onLinkFlowComponent(FlowComponent<RedstoneEmitterProcedure> flowComponent) {
         super.onLinkFlowComponent(flowComponent);
-        RedstoneEmitterProcedure procedure = getLinkedProcedure();
-        for (Map.Entry<OperationType, RadioInput> entry : types.entrySet()) {
-            RadioInput box = entry.getValue();
-            OperationType type = entry.getKey();
-            box.setCheckAction(() -> {
-                procedure.setOperationType(type);
-                paragraph.getTexts().clear();
-                paragraph.addLineSplit(I18n.format("menu.sfm.RedstoneEmitter.Type.Info"));
-            });
+        val proc = getLinkedProcedure();
+        for (val entry : types.entrySet()) {
+            val box = entry.getValue();
+            val type = entry.getKey();
+            box.setCheckAction(() -> proc.setOperationType(type));
         }
-        types.get(procedure.getOperationType()).check(true);
-        valueInput.setValue(procedure.getValue());
-        valueInput.onValueUpdated = procedure::setValue;
+        types.get(proc.getOperationType()).setCheckedAndUpdate(true);
+        valueInput.setValue(proc.getValue());
+        valueInput.onValueUpdated = proc::setValue;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -10,18 +11,28 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import vswe.stevesfactory.api.capability.*;
-import vswe.stevesfactory.api.logic.*;
+import org.apache.commons.lang3.tuple.Pair;
+import vswe.stevesfactory.api.capability.CapabilityEventDispatchers;
+import vswe.stevesfactory.api.capability.IRedstoneEventDispatcher;
+import vswe.stevesfactory.api.logic.Connection;
+import vswe.stevesfactory.api.logic.IExecutionContext;
+import vswe.stevesfactory.api.logic.ITrigger;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.logic.AbstractProcedure;
-import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.logic.execution.ProcedureExecutor;
+import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
-import vswe.stevesfactory.ui.manager.menu.*;
+import vswe.stevesfactory.ui.manager.menu.InventorySelectionMenu;
+import vswe.stevesfactory.ui.manager.menu.RadioOptionsMenu;
+import vswe.stevesfactory.ui.manager.menu.RedstoneSidesMenu;
+import vswe.stevesfactory.ui.manager.menu.RedstoneStrengthMenu;
 import vswe.stevesfactory.utils.IOHelper;
 import vswe.stevesfactory.utils.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrigger, IInventoryTarget, IDirectionTarget, ILogicalConjunction, IAnalogTarget {
 
@@ -111,10 +122,15 @@ public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrig
     public FlowComponent<RedstoneTriggerProcedure> createFlowComponent() {
         FlowComponent<RedstoneTriggerProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(WATCHING, I18n.format("menu.sfm.RedstoneTrigger.Watches"), I18n.format("error.sfm.RedstoneTrigger.NoWatches"), CapabilityEventDispatchers.REDSTONE_EVENT_DISPATCHER_CAPABILITY));
-        f.addMenu(new RedstoneSidesMenu<>(DIRECTIONS,
-                () -> conjunction == Type.ANY, () -> conjunction = Type.ANY, I18n.format("menu.sfm.IfAny"),
-                () -> conjunction == Type.ALL, () -> conjunction = Type.ALL, I18n.format("menu.sfm.RequireAll"),
-                I18n.format("menu.sfm.RedstoneTrigger.Sides"), I18n.format("menu.sfm.RedstoneTrigger.Sides.Info")));
+        f.addMenu(new RedstoneSidesMenu<>(DIRECTIONS, I18n.format("menu.sfm.RedstoneTrigger.Sides")));
+        f.addMenu(new RadioOptionsMenu<>(
+                I18n.format("menu.sfm.RedstoneTrigger.Conjunction"),
+                I18n.format("menu.sfm.RedstoneTrigger.Conjunction.Info"),
+                ImmutableList.of(
+                        Pair.of(() -> conjunction = Type.ANY, I18n.format("menu.sfm.IfAny")),
+                        Pair.of(() -> conjunction = Type.ALL, I18n.format("menu.sfm.RequireAll"))
+                ),
+                conjunction == Type.ANY ? 0 : 1));
         f.addMenu(new RedstoneStrengthMenu<>());
         return f;
     }

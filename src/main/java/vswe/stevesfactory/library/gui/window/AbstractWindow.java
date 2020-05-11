@@ -47,7 +47,6 @@ public abstract class AbstractWindow implements IWindow, WindowEventHandlerMixin
             for (IWidget child : getChildren()) {
                 if (child.isInside(mouseX, mouseY) && child instanceof AbstractWidget) {
                     ((AbstractWidget) child).createContextMenu();
-                    return true;
                 }
             }
         }

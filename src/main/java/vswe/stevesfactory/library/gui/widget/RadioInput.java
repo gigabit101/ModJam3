@@ -1,6 +1,8 @@
 package vswe.stevesfactory.library.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.Getter;
+import lombok.Setter;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
@@ -19,10 +21,20 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
     public static final Texture HOVERED_UNCHECKED = UNCHECKED.moveDown(1);
     public static final Texture HOVERED_CHECKED = CHECKED.moveDown(1);
 
+    public static final Runnable DUMMY_RUNNABLE = () -> {};
+
     private final RadioController controller;
     private final int index;
 
-    private IntConsumer onClick = DUMMY;
+    @Getter
+    @Setter
+    private IntConsumer clickAction = DUMMY;
+    @Getter
+    @Setter
+    private Runnable checkAction = DUMMY_RUNNABLE;
+    @Getter
+    @Setter
+    private Runnable uncheckAction = DUMMY_RUNNABLE;
     private boolean hovered;
     private boolean checked;
 
@@ -46,11 +58,12 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        clickAction.accept(button);
         if (button != GLFW_MOUSE_BUTTON_LEFT) {
             return false;
         }
         if (!checked) {
-            check(true);
+            setCheckedAndUpdate(true);
         }
         return true;
     }
@@ -60,36 +73,17 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
         hovered = isInside(mouseX, mouseY);
     }
 
-    protected void onStateUpdate(boolean oldValue) {
-    }
-
     protected void onCheck() {
+        checkAction.run();
     }
 
     protected void onUncheck() {
+        uncheckAction.run();
     }
 
     @Override
     public boolean hasClickAction() {
-        return onClick != DUMMY;
-    }
-
-    @Override
-    public IntConsumer getClickAction() {
-        return onClick;
-    }
-
-    @Override
-    public void setClickAction(IntConsumer action) {
-        onClick = action;
-    }
-
-    public void setCheckAction(Runnable action) {
-        setClickAction(__ -> {
-            if (checked) {
-                action.run();
-            }
-        });
+        return clickAction != DUMMY;
     }
 
     @Override
@@ -104,9 +98,7 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
 
     @Override
     public void setChecked(boolean checked) {
-        boolean oldValue = this.checked;
         this.checked = checked;
-        onStateUpdate(oldValue);
         if (checked) {
             onCheck();
         } else {
@@ -115,19 +107,11 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
     }
 
     @Override
-    public void check(boolean checked) {
+    public void setCheckedAndUpdate(boolean checked) {
         setChecked(checked);
         if (checked) {
             controller.checkRadioButton(index);
         }
-    }
-
-    public Label label(String translationKey) {
-        return new Label(this).translate(translationKey);
-    }
-
-    public Label textLabel(String text) {
-        return new Label(this).text(text);
     }
 
     @Override
@@ -141,8 +125,8 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
     }
 
     /**
-     * Same as {@link #isChecked()} because it a radio button doesn't really need a clicked style. Prefer to use the mentioned method for
-     * its semantic advantages.
+     * Same as {@link #isChecked()} because it a radio button doesn't really need a clicked style. Prefer to use the
+     * mentioned method for its semantic advantages.
      */
     @Override
     public boolean isClicked() {

@@ -12,8 +12,6 @@ import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
-import vswe.stevesfactory.library.gui.contextmenu.IEntry;
-import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
@@ -26,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 /**
  * A collapsible menu that's shown inside {@link vswe.stevesfactory.ui.manager.tool.inspector.Inspector inspector}'s
@@ -103,7 +101,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         }
     }
 
-    private static final List<Supplier<IEntry>> EMPTY_LIST = ImmutableList.of();
+    private static final List<Consumer<ContextMenuBuilder>> EMPTY_LIST = ImmutableList.of();
 
     public static final Texture HEADING_BOX = Render2D.ofFlowComponent(0, 0, 120, 13);
     public static final int DEFAULT_CONTENT_HEIGHT = 57;
@@ -117,7 +115,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
     private final ToggleStateButton toggleStateButton;
     private final List<IWidget> children = new ArrayList<>();
 
-    private List<Supplier<IEntry>> actionMenuEntries = EMPTY_LIST;
+    private List<Consumer<ContextMenuBuilder>> actionMenuEntries = EMPTY_LIST;
 
     public Menu() {
         this.setBorders(SIDE_MARGINS);
@@ -165,10 +163,15 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         state.toggleStateFor(this);
     }
 
+    // TODO get rid of this border resizing hack and use a proper child widget to contain the custom contents
     public void expand() {
         if (state == State.COLLAPSED) {
             state = State.EXPANDED;
             growHeight(contentHeight);
+
+            setBorderTop(HEADING_BOX.getPortionHeight() + SIDE_MARGINS);
+            setBorderBottom(SIDE_MARGINS);
+            toggleStateButton.moveY(-SIDE_MARGINS);
             updateChildrenEnableState(true);
         }
     }
@@ -178,6 +181,10 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
             state = State.COLLAPSED;
             contentHeight = this.getHeight();
             shrinkHeight(contentHeight);
+
+            setBorderTop(HEADING_BOX.getPortionHeight());
+            setBorderBottom(0);
+            toggleStateButton.moveY(SIDE_MARGINS);
             updateChildrenEnableState(false);
         }
     }
@@ -261,11 +268,12 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("FlowComponent.Menu");
+        val section = builder.obtainSection("FlowComponent.Menu");
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()));
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
-        for (Supplier<IEntry> entry : actionMenuEntries) {
-            section.addChildren(entry.get());
+
+        for (val entry : actionMenuEntries) {
+            entry.accept(builder);
         }
         super.buildContextMenu(builder);
     }
@@ -297,11 +305,7 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         return flowComponent.getProcedure();
     }
 
-    void useActionList(List<Supplier<IEntry>> actions) {
-        actionMenuEntries = actions;
-    }
-
-    public void injectAction(Supplier<IEntry> action) {
+    public void injectAction(Consumer<ContextMenuBuilder> action) {
         if (actionMenuEntries == EMPTY_LIST) {
             actionMenuEntries = new ArrayList<>();
         }

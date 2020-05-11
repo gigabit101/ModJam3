@@ -4,6 +4,9 @@ import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.layout.properties.HorizontalAlignment;
+import vswe.stevesfactory.library.gui.layout.properties.Side;
+import vswe.stevesfactory.library.gui.layout.properties.VerticalAlignment;
 import vswe.stevesfactory.library.gui.widget.Checkbox;
 import vswe.stevesfactory.library.gui.widget.NumberField;
 import vswe.stevesfactory.library.gui.widget.Paragraph;
@@ -30,9 +33,9 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
         invertCondition = new Checkbox();
         invertCondition.setDimensions(8, 8);
         info = new Paragraph(getWidth() - 10 * 2, 16, new ArrayList<>());
+        info.setWidth(this.getWidth());
         info.getTextRenderer().setFontHeight(6);
         info.addLineSplit(I18n.format("menu.sfm.RedstoneTrigger.Strength.Info"));
-        info.setLocation(4, HEADING_BOX.getPortionHeight() + 2);
     }
 
     @Override
@@ -43,9 +46,8 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
         addChildren(end);
         addChildren(invertCondition);
         addChildren(info);
-        // TODO label pos
-        addChildren(invertCondition.makeLabel().translate("menu.sfm.InvertCondition"));
         reflow();
+        addChildren(invertCondition.makeLabel().translate("menu.sfm.InvertCondition"));
     }
 
     @Override
@@ -64,12 +66,18 @@ public class RedstoneStrengthMenu<P extends IProcedure & IClientDataStorage & IA
 
     @Override
     public void reflow() {
-        int y = HEADING_BOX.getPortionHeight() + 20;
-        begin.alignLeft(4);
-        begin.setY(y);
-        end.alignRight(getWidth() - 4);
-        end.setY(y);
-        invertCondition.setLocation(4, y + 20);
+        begin.alignTo(info, Side.BOTTOM, HorizontalAlignment.LEFT.asUnion());
+        begin.moveY(2);
+        end.alignTo(info, Side.BOTTOM, HorizontalAlignment.RIGHT.asUnion());
+        end.moveY(2);
+        invertCondition.alignLeft(begin.getX());
+        invertCondition.setY(begin.getYBottom() + 4);
+//        int y = HEADING_BOX.getPortionHeight() + 20;
+//        begin.alignLeft(4);
+//        begin.setY(y);
+//        end.alignRight(getWidth() - 4);
+//        end.setY(y);
+//        invertCondition.setLocation(4, y + 20);
     }
 
     @Override

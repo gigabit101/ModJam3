@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -8,22 +9,22 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import org.apache.commons.lang3.tuple.Pair;
 import vswe.stevesfactory.api.capability.CapabilityRedstone;
 import vswe.stevesfactory.api.capability.IRedstoneHandler;
+import vswe.stevesfactory.api.capability.IRedstoneHandler.Type;
 import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.logic.AbstractProcedure;
 import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.menu.EmitterTypeMenu;
 import vswe.stevesfactory.ui.manager.menu.InventorySelectionMenu;
+import vswe.stevesfactory.ui.manager.menu.RadioOptionsMenu;
 import vswe.stevesfactory.ui.manager.menu.RedstoneSidesMenu;
 import vswe.stevesfactory.utils.IOHelper;
 import vswe.stevesfactory.utils.NetworkHelper;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class RedstoneEmitterProcedure extends AbstractProcedure implements IInventoryTarget, IDirectionTarget {
 
@@ -117,10 +118,15 @@ public class RedstoneEmitterProcedure extends AbstractProcedure implements IInve
     public FlowComponent<RedstoneEmitterProcedure> createFlowComponent() {
         FlowComponent<RedstoneEmitterProcedure> f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(EMITTERS, I18n.format("menu.sfm.RedstoneEmitter.Emitters"), I18n.format("error.sfm.RedstoneEmitter.NoEmitters"), CapabilityRedstone.REDSTONE_CAPABILITY));
-        f.addMenu(new RedstoneSidesMenu<>(SIDES,
-                () -> signalType == IRedstoneHandler.Type.WEAK, () -> signalType = IRedstoneHandler.Type.WEAK, I18n.format("menu.sfm.WeakRedstoneSignal"),
-                () -> signalType == IRedstoneHandler.Type.STRONG, () -> signalType = IRedstoneHandler.Type.STRONG, I18n.format("menu.sfm.StrongRedstoneSignal"),
-                I18n.format("menu.sfm.RedstoneEmitter.Sides"), I18n.format("menu.sfm.RedstoneEmitter.Sides.Info")));
+        f.addMenu(new RedstoneSidesMenu<>(SIDES, I18n.format("menu.sfm.RedstoneEmitter.Sides")));
+        f.addMenu(new RadioOptionsMenu<>(
+                I18n.format("menu.sfm.RedstoneEmitter.SignalType"),
+                I18n.format("menu.sfm.RedstoneEmitter.SignalType.Info"),
+                ImmutableList.of(
+                        Pair.of(() -> signalType = Type.WEAK, I18n.format("menu.sfm.WeakRedstoneSignal")),
+                        Pair.of(() -> signalType = Type.STRONG, I18n.format("menu.sfm.StrongRedstoneSignal"))
+                ),
+                signalType == Type.WEAK ? 0 : 1));
         f.addMenu(new EmitterTypeMenu());
         return f;
     }

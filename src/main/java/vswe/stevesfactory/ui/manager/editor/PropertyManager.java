@@ -6,8 +6,10 @@ import lombok.val;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.contextmenu.DefaultEntry;
 import vswe.stevesfactory.library.gui.contextmenu.IEntry;
+import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 import vswe.stevesfactory.logic.item.IItemFilter;
 import vswe.stevesfactory.logic.item.ItemTagFilter;
 import vswe.stevesfactory.logic.item.ItemTraitsFilter;
@@ -43,13 +45,13 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
         return pm;
     }
 
-    private static final List<Supplier<IEntry>> EMPTY_LIST = ImmutableList.of();
+    private static final List<Consumer<ContextMenuBuilder>> EMPTY_LIST = ImmutableList.of();
     private final FlowComponent<P> flowComponent;
     private final List<Case<T, P>> cases = new ArrayList<>();
     private final Supplier<T> propertyGetter;
     private final Consumer<T> propertySetter;
 
-    private List<Supplier<IEntry>> actions = EMPTY_LIST;
+    private List<Consumer<ContextMenuBuilder>> actions = EMPTY_LIST;
     private Menu<P> menu;
 
     private int selectedIndex = -1;
@@ -95,9 +97,10 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
     private void setPropertyBase(int index, Case<T, P> caseElement, T property) {
         selectedIndex = index;
 
+        val menusBox = flowComponent.getMenusBox();
         val oldMenu = menu;
         if (oldMenu != null) {
-            flowComponent.getMenusBox().getChildren().remove(oldMenu);
+            menusBox.getChildren().remove(oldMenu);
             oldMenu.onRemoved();
         }
 
@@ -105,9 +108,15 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
 
         menu = caseElement.menuFactory.get();
         flowComponent.addMenu(menu);
-        menu.attach(flowComponent.getMenusBox());
-        flowComponent.getMenusBox().reflow();
-        menu.useActionList(actions);
+        if (menusBox.isValid()) {
+            menu.attach(menusBox);
+            menu.onLinkFlowComponent(flowComponent);
+            menusBox.reflow();
+        }
+
+        for (val action : actions) {
+            menu.injectAction(action);
+        }
     }
 
     public Menu<P> getMenu() {
@@ -120,49 +129,54 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
         }
     }
 
-    public void action(Supplier<IEntry> action) {
+    public void action(Consumer<ContextMenuBuilder> action) {
         enableActions();
         actions.add(action);
     }
 
     public void actionCycling() {
         // Custom entry name logic implemented, dummy value here
-        action(() -> new DefaultEntry(null, "") {
-            private int cachedIndex = -1;
-            private String cachedText;
+        action(builder -> {
+            val entry = new DefaultEntry(null, "") {
+                private int cachedIndex = -1;
+                private String cachedText;
 
-            @Override
-            public String getText() {
-                updateText();
-                return cachedText;
-            }
-
-            @Override
-            public boolean onMouseClicked(double mouseX, double mouseY, int button) {
-                int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
-                setProperty(nextIndex);
-                getContextMenu().discard();
-                return true;
-            }
-
-            private void updateText() {
-                // Lazy initialization so that even if the property is updated without using the cycling action, the text will still be in sync
-                int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
-                if (cachedIndex != nextIndex || cachedText == null) {
-                    val nextCase = cases.get(nextIndex);
-                    cachedText = nextCase.hasName()
-                            ? I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty.Named", nextCase.getName())
-                            : I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty");
-                    cachedIndex = nextIndex;
-                    reflowSafe();
+                @Override
+                public String getText() {
+                    updateText();
+                    return cachedText;
                 }
-            }
 
-            private void reflowSafe() {
-                if (getContextMenu() != null) {
-                    getContextMenu().reflow();
+                @Override
+                public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+                    int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
+                    setProperty(nextIndex);
+                    getContextMenu().discard();
+                    return true;
                 }
-            }
+
+                private void updateText() {
+                    // Lazy initialization so that even if the property is updated without using the cycling action, the text will still be in sync
+                    int nextIndex = selectedIndex + 1 >= cases.size() ? 0 : selectedIndex + 1;
+                    if (cachedIndex != nextIndex || cachedText == null) {
+                        val nextCase = cases.get(nextIndex);
+                        cachedText = nextCase.hasName()
+                                ? I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty.Named", nextCase.getName())
+                                : I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty");
+                        cachedIndex = nextIndex;
+                        reflowSafe();
+                    }
+                }
+
+                private void reflowSafe() {
+                    if (getContextMenu() != null) {
+                        getContextMenu().reflow();
+                    }
+                }
+            };
+
+            val section = builder.obtainSection("FlowComponent.PropertyManager");
+            section.addChildren(entry);
         });
     }
 

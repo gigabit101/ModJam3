@@ -10,8 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.Render2D;
-import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
+import vswe.stevesfactory.library.gui.layout.properties.Side;
+import vswe.stevesfactory.library.gui.layout.properties.VerticalAlignment;
 import vswe.stevesfactory.library.gui.widget.*;
 import vswe.stevesfactory.library.gui.widget.TextField.BackgroundStyle;
 import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
@@ -26,7 +27,6 @@ import vswe.stevesfactory.ui.manager.editor.Menu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,6 +58,8 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         fields = new VerticalList<>();
 
         addEntryButton = new SimpleIconButton(Render2D.ADD_ENTRY_ICON, Render2D.REMOVE_ENTRY_HOVERED_ICON);
+        addEntryButton.alignRight(this.getWidth() - 2);
+        addEntryButton.alignTop(whitelist.getYBottom() + 4);
         addEntryButton.setClickAction(b -> {
             if (b != GLFW_MOUSE_BUTTON_LEFT) {
                 return;
@@ -66,8 +68,8 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
             fields.reflow();
         });
 
-        fields.setLocation(4, whitelist.getYBottom() + 4);
-        fields.setDimensions(addEntryButton.getX() - 4 * 2, DEFAULT_CONTENT_HEIGHT - whitelist.getHeight());
+        fields.alignTop(whitelist.getYBottom() + 4);
+        fields.setDimensions(addEntryButton.getX() - 2, DEFAULT_CONTENT_HEIGHT - whitelist.getYBottom() - 2);
 
         settings = new SettingsEditor();
         settings.setWidth(this.getWidth());
@@ -107,10 +109,10 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
 
         switch (filter.type) {
             case WHITELIST:
-                whitelist.check(true);
+                whitelist.setCheckedAndUpdate(true);
                 break;
             case BLACKLIST:
-                blacklist.check(true);
+                blacklist.setCheckedAndUpdate(true);
                 break;
         }
         whitelist.setCheckAction(() -> filter.type = FilterType.WHITELIST);
@@ -169,34 +171,30 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
             tag.setDimensions(75, getHeight());
             tag.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
             tag.getTextRenderer().setFontHeight(7);
-            int buttonSize = 9;
-            val removeEntry = new AbstractIconButton() {
-                {
-                    this.setLocation(tag.getXRight() + 4, getHeight() / 2 - buttonSize / 2 - 1 /* Exclusive position, just to make it look nice */);
-                    this.setDimensions(buttonSize, buttonSize);
+
+            val removeEntry = new SimpleIconButton(Render2D.CLOSE_ICON, Render2D.CLOSE_ICON_HOVERED);
+            removeEntry.alignTo(tag, Side.RIGHT, VerticalAlignment.CENTER.asUnion());
+            removeEntry.moveX(3);
+            removeEntry.setClickAction(b -> {
+                if (b != GLFW_MOUSE_BUTTON_LEFT) {
+                    return;
                 }
 
-                @Override
-                public Texture getTextureNormal() {
-                    return Render2D.CLOSE_ICON;
-                }
-
-                @Override
-                public Texture getTextureHovered() {
-                    return Render2D.CLOSE_ICON_HOVERED;
-                }
-
-                @Override
-                public boolean onMouseClicked(double mouseX, double mouseY, int button) {
-                    Entry entry = Entry.this;
-                    VerticalList<Entry> list = entry.getParent();
-                    list.getChildren().remove(entry);
-                    list.reflow();
-                    return true;
-                }
-            };
+                val list = this.getParent();
+                list.getChildren().remove(this);
+                list.reflow();
+            });
 
             children = ImmutableList.of(tag, removeEntry);
+        }
+
+        @Override
+        public void onInitialAttach() {
+            super.onInitialAttach();
+
+            for (val child : children) {
+                child.attach(this);
+            }
         }
 
         @Override
@@ -207,7 +205,7 @@ public class ItemTagFilterMenu<P extends IProcedure & IClientDataStorage & IItem
         }
 
         @Override
-        public Collection<IWidget> getChildren() {
+        public List<IWidget> getChildren() {
             return children;
         }
 

@@ -111,10 +111,10 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
 
         switch (filter.type) {
             case WHITELIST:
-                whitelist.check(true);
+                whitelist.setCheckedAndUpdate(true);
                 break;
             case BLACKLIST:
-                blacklist.check(true);
+                blacklist.setCheckedAndUpdate(true);
                 break;
         }
         whitelist.setCheckAction(() -> filter.type = FilterType.WHITELIST);
