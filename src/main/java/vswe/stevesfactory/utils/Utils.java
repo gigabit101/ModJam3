@@ -14,6 +14,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -142,5 +143,13 @@ public final class Utils {
                 },
                 Function.identity()
         );
+    }
+
+    public static <E> E first(List<E> list) {
+        return list.get(0);
+    }
+
+    public static <E> E last(List<E> list) {
+        return list.get(list.size() - 1);
     }
 }

@@ -70,6 +70,10 @@ minecraft {
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
     maven {
         // JEI
         name = "Progwml6 maven"
@@ -91,8 +95,21 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
+    implementation group: 'systems.manifold', name: 'manifold-all', version: '2020.1.9'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+
+    // tools.jar dependency, primarily to support structural typing without static proxies.
+    // Thus if you are *not* using structural typing, you **don't** need tools.jar
+    compile files("${System.properties['java.home']}/../lib/tools.jar")
+    // Add manifold to -processorpath for javac
+    annotationProcessor group: 'systems.manifold', name: 'manifold-all', version: '2020.1.9'
+
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xplugin:Manifold']
 }
 
 jar {
@@ -110,7 +127,7 @@ jar {
 }
 
 def static getCheckedOutGitCommitHash() {
-     'git rev-parse --verify --short HEAD'.execute().text.trim()
+    'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
 
 task buildForCommit(type: Copy, dependsOn: build) {

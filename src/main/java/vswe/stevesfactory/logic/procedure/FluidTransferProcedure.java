@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -57,19 +58,19 @@ public class FluidTransferProcedure extends AbstractProcedure implements IInvent
         cacheCaps(context);
 
         List<SingleFluidBufferElement> buffers = new ArrayList<>();
-        for (LazyOptional<IFluidHandler> cap : cachedSourceCaps) {
+        for (val cap : cachedSourceCaps) {
             if (cap.isPresent()) {
-                IFluidHandler handler = cap.orElseThrow(RuntimeException::new);
-                FluidStack stack = handler.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
+                val handler = cap.orElseThrow(RuntimeException::new);
+                val stack = handler.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
                 buffers.add(new SingleFluidBufferElement(stack, handler));
             }
         }
 
-        for (LazyOptional<IFluidHandler> cap : cachedDestinationCaps) {
+        for (val cap : cachedDestinationCaps) {
             if (cap.isPresent()) {
-                IFluidHandler handler = cap.orElseThrow(RuntimeException::new);
-                for (SingleFluidBufferElement buffer : buffers) {
-                    FluidStack source = buffer.stack;
+                val handler = cap.orElseThrow(RuntimeException::new);
+                for (val buffer : buffers) {
+                    val source = buffer.stack;
                     if (source.isEmpty()) {
                         continue;
                     }
@@ -79,7 +80,7 @@ public class FluidTransferProcedure extends AbstractProcedure implements IInvent
             }
         }
 
-        for (SingleFluidBufferElement buffer : buffers) {
+        for (val buffer : buffers) {
             if (buffer.used > 0) {
                 buffer.handler.drain(buffer.used, FluidAction.EXECUTE);
             }
@@ -96,7 +97,7 @@ public class FluidTransferProcedure extends AbstractProcedure implements IInvent
             return;
         }
 
-        Set<BlockPos> linkedInventories = context.getController().getLinkedInventories(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        val linkedInventories = context.getController().getLinkedInventories(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         cachedSourceCaps.clear();
         cachedDestinationCaps.clear();
         NetworkHelper.cacheDirectionalCaps(context, linkedInventories, cachedSourceCaps, sourceTanks, sourceDirections, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, __ -> markDirty());
@@ -108,7 +109,7 @@ public class FluidTransferProcedure extends AbstractProcedure implements IInvent
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<FluidTransferProcedure> createFlowComponent() {
-        FlowComponent<FluidTransferProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(SOURCE_TANKS, I18n.format("menu.sfm.TankSelection.Source"), I18n.format("error.sfm.FluidTransfer.NoSrcTank"), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY));
         f.addMenu(new InventorySelectionMenu<>(DESTINATION_TANKS, I18n.format("menu.sfm.TankSelection.Destination"), I18n.format("error.sfm.FluidTransfer.NoSrcTarget"), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY));
         f.addMenu(new DirectionSelectionMenu<>(SOURCE_TANKS, I18n.format("menu.sfm.TargetSides.Source"), I18n.format("error.sfm.FluidTransfer.NoDestTank")));

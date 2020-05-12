@@ -3,6 +3,7 @@ package vswe.stevesfactory.ui.manager.selection;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import lombok.val;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -23,11 +24,11 @@ public final class ComponentGroup {
     public static final Set<IProcedureType<?>> ungroupedTypes = new HashSet<>();
     public static final List<ComponentGroup> groups = new ArrayList<>();
 
-    private static final String DEFAULT_COMPONENTS_PATH = "/assets/" + StevesFactoryManagerAPI.MODID + "/component_groups/";
+    private static final String DEFAULT_COMPONENTS_PATH = "/assets/${StevesFactoryManagerAPI.MODID}/component_groups/";
     private static final String ORDER_DECLARATION_FILE = "@order.json";
 
     private static File getConfigDirectory() {
-        return new File("./config/" + StevesFactoryManagerAPI.MODID + "/component_groups/");
+        return new File("./config/${StevesFactoryManagerAPI.MODID}/component_groups/");
     }
 
     public static void reload(boolean reset) {
@@ -67,27 +68,27 @@ public final class ComponentGroup {
     private static void copySettings(JsonParser parser, File configDir) {
         boolean success = configDir.mkdirs();
 
-        String ordersFileName = "@order.json";
-        try (InputStream loaderIn = StevesFactoryManager.class.getResourceAsStream(DEFAULT_COMPONENTS_PATH + "@loader.json")) {
+        val ordersFileName = "@order.json";
+        try (val loaderIn = StevesFactoryManager.class.getResourceAsStream(DEFAULT_COMPONENTS_PATH + "@loader.json")) {
             // No need to close this because it is essentially a wrapper around the InputStream
-            InputStreamReader loadReader = new InputStreamReader(loaderIn);
-            JsonObject loaderRoot = parser.parse(loadReader).getAsJsonObject();
+            val loadReader = new InputStreamReader(loaderIn);
+            val loaderRoot = parser.parse(loadReader).getAsJsonObject();
 
             // Parsing files
-            JsonArray files = loaderRoot.getAsJsonArray("files");
+            val files = loaderRoot.getAsJsonArray("files");
             for (JsonElement element : files) {
-                String fileName = element.getAsString();
-                String filePath = DEFAULT_COMPONENTS_PATH + fileName;
+                val fileName = element.getAsString();
+                val filePath = DEFAULT_COMPONENTS_PATH + fileName;
 
                 // Copy the definition file to config directory
-                try (InputStream fileIn = StevesFactoryManager.class.getResourceAsStream(filePath)) {
+                try (val fileIn = StevesFactoryManager.class.getResourceAsStream(filePath)) {
                     Files.copy(fileIn, new File(configDir.getPath() + "/" + fileName).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     StevesFactoryManager.logger.error("Error copying default component group config file {}", filePath, e);
                 }
             }
 
-            JsonElement ordersElement = loaderRoot.get("orderFile");
+            val ordersElement = loaderRoot.get("orderFile");
             if (ordersElement != null) {
                 ordersFileName = ordersElement.getAsString();
             }
@@ -96,7 +97,7 @@ public final class ComponentGroup {
         }
 
         // Copying @order.json
-        try (InputStream orderIn = StevesFactoryManager.class.getResourceAsStream(DEFAULT_COMPONENTS_PATH + ordersFileName)) {
+        try (val orderIn = StevesFactoryManager.class.getResourceAsStream(DEFAULT_COMPONENTS_PATH + ordersFileName)) {
             Files.copy(orderIn, new File(configDir.getPath() + "/" + ORDER_DECLARATION_FILE).toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             StevesFactoryManager.logger.error("Error copying default component group order config", e);
@@ -104,31 +105,31 @@ public final class ComponentGroup {
     }
 
     private static void setupInternal(JsonParser parser, File directory) throws IOException {
-        Object2IntMap<String> orders = new Object2IntOpenHashMap<>();
-        File orderFile = new File(directory, ORDER_DECLARATION_FILE);
-        try (FileReader reader = new FileReader(orderFile)) {
-            JsonObject root = parser.parse(reader).getAsJsonObject();
-            JsonArray entries = root.getAsJsonArray("order");
+        val orders = new Object2IntOpenHashMap<>();
+        val orderFile = new File(directory, ORDER_DECLARATION_FILE);
+        try (val reader = new FileReader(orderFile)) {
+            val root = parser.parse(reader).getAsJsonObject();
+            val entries = root.getAsJsonArray("order");
             int i = 1;
-            for (JsonElement entry : entries) {
-                String name = entry.getAsString();
+            for (val entry : entries) {
+                val name = entry.getAsString();
                 orders.put(name, i);
                 i++;
             }
         }
 
-        File[] files = directory.listFiles();
+        val files = directory.listFiles();
         if (files == null) {
             return;
         }
-        for (File file : files) {
-            String fileName = file.getName();
+        for (val file : files) {
+            val fileName = file.getName();
             if (!"json".equals(FilenameUtils.getExtension(fileName)) || ORDER_DECLARATION_FILE.equals(fileName)) {
                 continue;
             }
-            try (FileReader reader = new FileReader(file)) {
-                JsonElement rootElement = parser.parse(reader);
-                ComponentGroup group = new ComponentGroup();
+            try (val reader = new FileReader(file)) {
+                val rootElement = parser.parse(reader);
+                val group = new ComponentGroup();
                 group.setup(rootElement);
                 groups.add(group);
             }
@@ -138,10 +139,10 @@ public final class ComponentGroup {
     }
 
     private static void categorizeTypes() {
-        for (ComponentGroup group : groups) {
+        for (val group : groups) {
             groupedTypes.addAll(group.members);
         }
-        for (IProcedureType<?> type : StevesFactoryManagerAPI.getProceduresRegistry().getValues()) {
+        for (val type : StevesFactoryManagerAPI.getProceduresRegistry().getValues()) {
             if (!groupedTypes.contains(type) && GUIVisibility.isEnabled(type)) {
                 ungroupedTypes.add(type);
             }
@@ -175,7 +176,7 @@ public final class ComponentGroup {
 
     private void setup(JsonElement rootElement) {
         if (rootElement.isJsonObject()) {
-            JsonObject root = (JsonObject) rootElement;
+            val root = (JsonObject) rootElement;
             processName(root.get("name"));
             processIcon(root.get("icon"));
             processTranslationKey(root.get("translation_key"));
@@ -184,13 +185,13 @@ public final class ComponentGroup {
     }
 
     private void processName(JsonElement nameElement) {
-        String name = nameElement.getAsString();
+        val name = nameElement.getAsString();
         registryName = new ResourceLocation(name);
     }
 
     private void processIcon(JsonElement iconElement) {
         if (iconElement != null) {
-            String iconPath = iconElement.getAsString();
+            val iconPath = iconElement.getAsString();
             icon = new ResourceLocation(iconPath);
         }
     }
@@ -204,10 +205,10 @@ public final class ComponentGroup {
     }
 
     private void processMembers(JsonElement membersElement) {
-        JsonArray members = membersElement.getAsJsonArray();
-        for (JsonElement memberElement : members) {
-            ResourceLocation member = new ResourceLocation(memberElement.getAsString());
-            IProcedureType<?> type = StevesFactoryManagerAPI.getProceduresRegistry().getValue(member);
+        val members = membersElement.getAsJsonArray();
+        for (val memberElement : members) {
+            val member = new ResourceLocation(memberElement.getAsString());
+            val type = StevesFactoryManagerAPI.getProceduresRegistry().getValue(member);
             if (type != null && GUIVisibility.isEnabled(type)) {
                 this.members.add(type);
             }

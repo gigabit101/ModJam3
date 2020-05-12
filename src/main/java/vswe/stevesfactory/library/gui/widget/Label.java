@@ -5,10 +5,7 @@ import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.TextRenderer;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
-import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
-import vswe.stevesfactory.library.gui.layout.properties.HorizontalAlignment;
-import vswe.stevesfactory.library.gui.layout.properties.Side;
-import vswe.stevesfactory.library.gui.layout.properties.VerticalAlignment;
+import vswe.stevesfactory.library.gui.layout.properties.*;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
 import static vswe.stevesfactory.library.gui.Render2D.fontRenderer;
@@ -116,9 +113,9 @@ public class Label extends AbstractWidget implements LeafWidgetMixin {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Text=" + text);
-        receiver.line("Color=" + color);
-        receiver.line("Side=" + side);
-        receiver.line("Alignment=" + alignment);
+        receiver.line("Text=${text}");
+        receiver.line("Color=${color}");
+        receiver.line("Side=${side}");
+        receiver.line("Alignment=${alignment}");
     }
 }

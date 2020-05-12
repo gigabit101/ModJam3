@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -26,14 +27,14 @@ public class FunctionInvokeProcedure extends AbstractProcedure {
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<FunctionInvokeProcedure> createFlowComponent() {
-        FlowComponent<FunctionInvokeProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InvocationTargetMenu());
         return f;
     }
 
     @Override
     public CompoundNBT serializeExtra(SerializationContext ctx) {
-        CompoundNBT tag = new CompoundNBT();
+        val tag = new CompoundNBT();
         tag.putInt("CallTarget", ctx.identify(target));
         return tag;
     }

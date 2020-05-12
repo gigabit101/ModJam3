@@ -36,7 +36,7 @@ public class Icon extends AbstractWidget implements LeafWidgetMixin, IStringSeri
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Texture=" + texture);
+        receiver.line("Texture=${texture}");
     }
 
     @Override

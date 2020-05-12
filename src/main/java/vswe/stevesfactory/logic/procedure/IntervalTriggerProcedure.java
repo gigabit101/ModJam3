@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -7,8 +8,8 @@ import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.api.logic.ITrigger;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.logic.AbstractProcedure;
-import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.logic.execution.ProcedureExecutor;
+import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.menu.IntervalMenu;
 
@@ -48,14 +49,14 @@ public class IntervalTriggerProcedure extends AbstractProcedure implements ITrig
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<IntervalTriggerProcedure> createFlowComponent() {
-        FlowComponent<IntervalTriggerProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new IntervalMenu());
         return f;
     }
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.putInt("Interval", interval);
         return tag;
     }

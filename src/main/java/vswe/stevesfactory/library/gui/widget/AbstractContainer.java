@@ -124,6 +124,7 @@ public abstract class AbstractContainer<T extends IWidget> extends AbstractWidge
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
         propagateBuildActionMenu(this, builder);
+        super.buildContextMenu(builder);
     }
 
     private static void propagateBuildActionMenu(IContainer<?> container, ContextMenuBuilder builder) {

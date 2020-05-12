@@ -305,6 +305,6 @@ public class VerticalList<T extends IWidget> extends AbstractContainer<T> implem
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Offset=" + scrollDistance);
+        receiver.line("Offset=${scrollDistance}");
     }
 }

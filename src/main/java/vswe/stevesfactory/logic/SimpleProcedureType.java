@@ -55,7 +55,7 @@ public class SimpleProcedureType<P extends IProcedure> extends ForgeRegistryEntr
     @Nonnull
     public ResourceLocation getRegistryNameNonnull() {
         ResourceLocation id = super.getRegistryName();
-        Preconditions.checkState(id != null, "Procedure type " + this + " does not have a registry name!");
+        Preconditions.checkState(id != null, "Procedure type ${this} does not have a registry name!");
         return id;
     }
 }

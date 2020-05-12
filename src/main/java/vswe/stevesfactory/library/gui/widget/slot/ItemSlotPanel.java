@@ -1,15 +1,13 @@
 package vswe.stevesfactory.library.gui.widget.slot;
 
 import com.google.common.base.Preconditions;
+import lombok.val;
 import net.minecraft.item.ItemStack;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -25,16 +23,14 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
     }
 
     public ItemSlotPanel(int width, int height, Supplier<AbstractItemSlot> factory) {
+        int size = width * height;
         this.width = width;
         this.height = height;
 
         this.children = new ArrayList<>();
-        int size = width * height;
         for (int i = 0; i < size; i++) {
-            addChildren(factory.get());
+            children.add(factory.get());
         }
-        adjustMinContent();
-        reflow();
     }
 
     public ItemSlotPanel(int width, int height, List<ItemStack> stacks) {
@@ -52,16 +48,15 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
         for (int i = 0; i < size; i++) {
             children.add(factory.apply(stacks.get(i)));
         }
-        adjustMinContent();
-        reflow();
     }
 
     @Override
     public void onInitialAttach() {
         super.onInitialAttach();
-        for (AbstractItemSlot child : children) {
+        for (val child : children) {
             child.attach(this);
         }
+        reflow();
     }
 
     @Override
@@ -89,20 +84,25 @@ public class ItemSlotPanel extends AbstractContainer<AbstractItemSlot> {
 
     @Override
     public void reflow() {
-        int x = 0;
         int y = 0;
-        int i = 0;
-        for (int yi = 0; yi < height; yi++) {
+        int maxXRight = 0;
+        for (int i = 0, yi = 0; yi < height; yi++) {
+            int x = 0;
             int maxHeight = 0;
             for (int xi = 0; xi < width; xi++) {
-                AbstractItemSlot slot = children.get(i);
+                val slot = children.get(i);
                 slot.setLocation(x, y);
-                y += slot.getWidth();
-                maxHeight = Math.max(maxHeight, slot.getHeight());
+                x += slot.getFullWidth();
                 i++;
+
+                maxHeight = Math.max(maxHeight, slot.getFullHeight());
             }
             y += maxHeight;
+
+            maxXRight = Math.max(maxXRight, x);
         }
+
+        this.setDimensions(maxXRight, y);
     }
 
     @Override

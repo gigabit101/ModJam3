@@ -5,8 +5,7 @@
 package vswe.stevesfactory.library.gui.widget.panel;
 
 import com.google.common.base.Preconditions;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
@@ -276,9 +275,16 @@ public class WrappingList<T extends IWidget> extends AbstractContainer<IWidget> 
         scrollDownArrow.setLocation(scrollUpArrow.getX(), scrollUpArrow.getY() + scrollUpArrow.getFullHeight() + getMargin());
     }
 
+    public T removeLast() {
+        val last = Utils.last(contents);
+        contents.remove(contents.size() - 1);
+        last.onRemoved();
+        return last;
+    }
+
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Offset=" + offset);
+        receiver.line("Offset=${offset}");
     }
 }

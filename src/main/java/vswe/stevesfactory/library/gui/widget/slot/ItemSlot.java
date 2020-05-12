@@ -1,10 +1,10 @@
 package vswe.stevesfactory.library.gui.widget.slot;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.minecraft.item.ItemStack;
 import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.window.PlayerInventoryWindow;
 
@@ -12,7 +12,6 @@ import javax.xml.ws.Holder;
 import java.util.function.IntConsumer;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 @Getter
 @Setter
@@ -22,7 +21,8 @@ public class ItemSlot extends AbstractItemSlot {
     private IntConsumer action;
 
     public ItemSlot(ItemStack renderedStack) {
-        this(renderedStack, b -> {});
+        this(renderedStack, b -> {
+        });
     }
 
     public ItemSlot(ItemStack renderedStack, IntConsumer action) {
@@ -32,7 +32,9 @@ public class ItemSlot extends AbstractItemSlot {
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
-        action.accept(button);
+        if (button == GLFW_MOUSE_BUTTON_LEFT) {
+            action.accept(button);
+        }
         return true;
     }
 
@@ -40,66 +42,15 @@ public class ItemSlot extends AbstractItemSlot {
         setRenderedStack(ItemStack.EMPTY);
     }
 
-    public void defaultedLeft(Runnable rightClick) {
-        setAction(b -> {
-            switch (b) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    createSelectItemPopup();
-                    break;
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    rightClick.run();
-                    break;
-            }
-        });
-    }
-
-    public void defaultedRight(Runnable leftClick) {
-        setAction(b -> {
-            switch (b) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    leftClick.run();
-                    break;
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    clearRenderedStack();
-                    break;
-            }
-        });
-    }
-
-    public void defaultedBoth() {
-        setAction(b -> {
-            switch (b) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    createSelectItemPopup();
-                    break;
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    clearRenderedStack();
-                    break;
-            }
-        });
-    }
-
-    public void customBoth(Runnable leftClick, Runnable rightClick) {
-        setAction(b -> {
-            switch (b) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    leftClick.run();
-                    break;
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    rightClick.run();
-                    break;
-            }
-        });
-    }
-
     public void createSelectItemPopup() {
-        WidgetScreen.assertActive().addPopupWindow(this.selectItemPopup());
+        val popup = this.selectItemPopup();
+        popup.centralize();
+        WidgetScreen.assertActive().addPopupWindow(popup);
     }
 
     public PlayerInventoryWindow selectItemPopup() {
-        Holder<AbstractItemSlot> selected = new Holder<>();
+        val selected = new Holder<AbstractItemSlot>();
         return new PlayerInventoryWindow(
-                Render2D.mouseX(), Render2D.mouseY(),
                 in -> new AbstractItemSlot() {
                     private ItemStack representative;
 
@@ -147,5 +98,23 @@ public class ItemSlot extends AbstractItemSlot {
                         return representative;
                     }
                 });
+    }
+
+    public void setInventorySelectAction() {
+        setAction(b -> {
+            if (b == GLFW_MOUSE_BUTTON_LEFT) {
+                createSelectItemPopup();
+            }
+        });
+    }
+
+    public void setCtxMenuClear() {
+        addCtxMenuListener(builder -> {
+            val section = builder.obtainSection("Misc");
+            section.addChildren(new CallbackEntry(
+                    null,
+                    "gui.sfm.clear",
+                    b -> this.clearRenderedStack()));
+        });
     }
 }

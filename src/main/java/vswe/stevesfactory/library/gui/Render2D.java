@@ -36,7 +36,6 @@ public final class Render2D {
     public static final ResourceLocation COPY = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/copy.png");
     public static final ResourceLocation PASTE = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/paste.png");
     public static final ResourceLocation BACK = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/back.png");
-    public static final ResourceLocation CLOSE = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/actions/close.png");
     public static final ResourceLocation ITEM_SLOT = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/icon/item_slot.png");
     public static final ResourceLocation RIGHT_ARROW_SHORT = new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/icon/right_arrow_short.png");
 
@@ -350,6 +349,7 @@ public final class Render2D {
     public static void useTextureGLStates() {
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
         RenderSystem.color3f(1F, 1F, 1F);
     }
 

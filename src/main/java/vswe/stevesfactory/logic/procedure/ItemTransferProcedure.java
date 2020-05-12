@@ -1,7 +1,7 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -11,7 +11,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.*;
 import vswe.stevesfactory.api.logic.IExecutionContext;
-import vswe.stevesfactory.logic.*;
+import vswe.stevesfactory.logic.AbstractProcedure;
+import vswe.stevesfactory.logic.FilterType;
 import vswe.stevesfactory.logic.item.*;
 import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
@@ -53,11 +54,11 @@ public class ItemTransferProcedure extends AbstractProcedure implements IInvento
 
         cacheCaps(context);
 
-        List<SingleItemBufferElement> items = new ArrayList<>();
-        Set<IItemHandler> visited = new HashSet<>();
-        for (LazyOptional<IItemHandler> cap : cachedSourceCaps) {
+        val items = new ArrayList<SingleItemBufferElement>();
+        val visited = new HashSet<IItemHandler>();
+        for (val cap : cachedSourceCaps) {
             if (cap.isPresent()) {
-                IItemHandler handler = cap.orElseThrow(RuntimeException::new);
+                val handler = cap.orElseThrow(RuntimeException::new);
                 if (visited.contains(handler)) {
                     continue;
                 }
@@ -66,19 +67,19 @@ public class ItemTransferProcedure extends AbstractProcedure implements IInvento
             }
         }
 
-        for (LazyOptional<IItemHandler> cap : cachedDestinationCaps) {
+        for (val cap : cachedDestinationCaps) {
             if (cap.isPresent()) {
-                IItemHandler handler = cap.orElseThrow(RuntimeException::new);
+                val handler = cap.orElseThrow(RuntimeException::new);
                 // We don't need filter here because this is just in one procedure
                 // It does not make sense to have multiple filters for one item transferring step
-                for (SingleItemBufferElement buffer : items) {
-                    ItemStack source = buffer.stack;
+                for (val buffer : items) {
+                    val source = buffer.stack;
                     if (source.isEmpty()) {
                         continue;
                     }
                     int sourceStackSize = source.getCount();
                     // This will "invalidate" the parameter stack if insertion is successful
-                    ItemStack untaken = ItemHandlerHelper.insertItem(handler, source, false);
+                    val untaken = ItemHandlerHelper.insertItem(handler, source, false);
 
                     buffer.used += sourceStackSize - untaken.getCount();
                     // Remainder stack can be safely used later
@@ -89,7 +90,7 @@ public class ItemTransferProcedure extends AbstractProcedure implements IInvento
 
         }
 
-        for (SingleItemBufferElement buffer : items) {
+        for (val buffer : items) {
             if (buffer.used > 0) {
                 buffer.inventory.extractItem(buffer.slot, buffer.used, false);
             }
@@ -106,7 +107,7 @@ public class ItemTransferProcedure extends AbstractProcedure implements IInvento
             return;
         }
 
-        Set<BlockPos> linkedInventories = context.getController().getLinkedInventories(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        val linkedInventories = context.getController().getLinkedInventories(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         cachedSourceCaps.clear();
         cachedDestinationCaps.clear();
         NetworkHelper.cacheDirectionalCaps(context, linkedInventories, cachedSourceCaps, sourceInventories, sourceDirections, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, __ -> markDirty());
@@ -117,7 +118,7 @@ public class ItemTransferProcedure extends AbstractProcedure implements IInvento
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<ItemTransferProcedure> createFlowComponent() {
-        FlowComponent<ItemTransferProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(SOURCE_INVENTORIES, I18n.format("menu.sfm.InventorySelection.Source"), I18n.format("error.sfm.ItemTransfer.NoSrcInv"), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY));
         f.addMenu(new InventorySelectionMenu<>(DESTINATION_INVENTORIES, I18n.format("menu.sfm.InventorySelection.Destination"), I18n.format("error.sfm.ItemTransfer.NoSrcTarget"), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY));
         f.addMenu(new DirectionSelectionMenu<>(SOURCE_INVENTORIES, I18n.format("menu.sfm.TargetSides.Source"), I18n.format("error.sfm.ItemTransfer.NoDestInv")));
@@ -128,7 +129,7 @@ public class ItemTransferProcedure extends AbstractProcedure implements IInvento
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("SourcePoses", IOHelper.writeBlockPoses(sourceInventories));
         tag.putIntArray("SourceDirections", IOHelper.direction2Index(sourceDirections));
         tag.put("TargetPoses", IOHelper.writeBlockPoses(destinationInventories));

@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui.window;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.Config;
@@ -32,14 +33,14 @@ public class Dialog extends AbstractPopupWindow {
             BiConsumer<Integer, String> onConfirm,
             BiConsumer<Integer, String> onCancel
     ) {
-        Dialog dialog = dialog(message);
+        val dialog = dialog(message);
 
-        TextField inputBox = fieldProvider.get();
+        val inputBox = fieldProvider.get();
         inputBox.setBorderBottom(4);
         dialog.insertBeforeButtons(inputBox);
         dialog.onPostReflow = inputBox::expandHorizontally;
 
-        dialog.buttons.addChildren(ColoredTextButton.of(I18n.format(confirm), b1 -> onConfirm.accept(b1, inputBox.getText())));
+        dialog.buttons.addChildren(ColoredTextButton.of(I18n.format(confirm), b -> onConfirm.accept(b, inputBox.getText())));
         dialog.bindRemoveSelf2LastButton();
         dialog.buttons.addChildren(ColoredTextButton.of(I18n.format(cancel), b -> onCancel.accept(b, inputBox.getText())));
         dialog.bindRemoveSelf2LastButton();
@@ -59,7 +60,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public static Dialog createBiSelectionDialog(String message, String confirm, String cancel, IntConsumer onConfirm, IntConsumer onCancel) {
-        Dialog dialog = dialog(message);
+        val dialog = dialog(message);
 
         dialog.buttons.addChildren(ColoredTextButton.of(confirm, onConfirm));
         dialog.bindRemoveSelf2LastButton();
@@ -80,7 +81,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public static Dialog createDialog(String message, String ok, IntConsumer onConfirm) {
-        Dialog dialog = dialog(message);
+        val dialog = dialog(message);
 
         dialog.buttons.addChildren(ColoredTextButton.of(ok, onConfirm));
         dialog.bindRemoveSelf2LastButton();
@@ -91,7 +92,7 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     private static Dialog dialog(String message) {
-        Dialog dialog = new Dialog();
+        val dialog = new Dialog();
         dialog.messageBox.setBorderTop(5);
         dialog.messageBox.addLineSplit(Config.CLIENT.dialogMessageMaxWidth.get(), message);
         return dialog;
@@ -129,7 +130,7 @@ public class Dialog extends AbstractPopupWindow {
         this.children = new ArrayList<>();
         children.add(messageBox);
         children.add(buttons);
-        for (AbstractWidget child : children) {
+        for (val child : children) {
             child.attachWindow(this);
         }
 
@@ -167,7 +168,7 @@ public class Dialog extends AbstractPopupWindow {
     private void updateDimensions() {
         int rightmost = 0;
         int bottommost = 0;
-        for (IWidget child : children) {
+        for (val child : children) {
             int right = child.getX() + child.getFullWidth();
             int bottom = child.getY() + child.getFullHeight();
             if (right > rightmost) {
@@ -228,9 +229,9 @@ public class Dialog extends AbstractPopupWindow {
     }
 
     public void bindRemoveSelf(int buttonID) {
-        IButton button = buttons.getChildren().get(buttonID);
+        val button = buttons.getChildren().get(buttonID);
         if (button.hasClickAction()) {
-            IntConsumer oldAction = button.getClickAction();
+            val oldAction = button.getClickAction();
             button.setClickAction(b -> {
                 discard();
                 oldAction.accept(b);

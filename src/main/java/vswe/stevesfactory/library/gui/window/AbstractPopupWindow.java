@@ -85,6 +85,6 @@ public abstract class AbstractPopupWindow extends AbstractWindow implements IPop
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Order=" + order);
+        receiver.line("Order=${order}");
     }
 }

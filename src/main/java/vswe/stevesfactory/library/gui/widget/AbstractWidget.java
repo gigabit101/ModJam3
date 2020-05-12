@@ -1,5 +1,6 @@
 package vswe.stevesfactory.library.gui.widget;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import lombok.val;
 import vswe.stevesfactory.library.gui.Render2D;
@@ -13,8 +14,13 @@ import vswe.stevesfactory.utils.Utils;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvider, Inspections.IHighlightRenderer, ISizedBox, ResizableWidgetMixin {
+
+    public static final List<Consumer<ContextMenuBuilder>> EMPTY_ACTION_LIST = ImmutableList.of();
 
     private Point location;
     private Dimension dimensions;
@@ -24,6 +30,8 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
     private boolean enabled = true;
     private IWindow window;
     private IWidget parent;
+
+    private List<Consumer<ContextMenuBuilder>> actionMenuEntries = EMPTY_ACTION_LIST;
 
     // Cached because this might reach all the up to the root node by recursion on getAbsoluteX/Y
     private int absX;
@@ -409,13 +417,13 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
     @Override
     public void provideInformation(ITextReceiver receiver) {
         receiver.line(this.toString());
-        receiver.line("Position=(" + location.x + ", " + location.y + ")");
-        receiver.line("Dimensions=(" + dimensions.width + ", " + dimensions.height + ")");
-        receiver.line(String.format("Borders={top: %d, right: %d, bottom: %d, left: %d}", border.top, border.right, border.bottom, border.left));
-        receiver.line("Enabled=" + isEnabled());
-        receiver.line("Z=" + z);
-        receiver.line("AbsX=" + getAbsoluteX());
-        receiver.line("AbsY=" + getAbsoluteY());
+        receiver.line("Position=(${location.x}, ${location.y})");
+        receiver.line("Dimensions=(${dimensions.width}, ${dimensions.height})");
+        receiver.line("Borders={top: ${border.top}, right: ${border.right}, bottom: ${border.bottom}, left: ${border.left})");
+        receiver.line("Enabled=${isEnabled()}");
+        receiver.line("Z=${z}");
+        receiver.line("AbsX=${getAbsoluteX()}");
+        receiver.line("AbsY=${getAbsoluteY()}");
     }
 
     @Override
@@ -500,11 +508,21 @@ public abstract class AbstractWidget implements IWidget, Inspections.IInfoProvid
     }
 
     public final void createContextMenu() {
-        ContextMenuBuilder builder = new ContextMenuBuilder();
+        val builder = new ContextMenuBuilder();
         buildContextMenu(builder);
         builder.buildAndAdd();
     }
 
     protected void buildContextMenu(ContextMenuBuilder builder) {
+        for (val entry : actionMenuEntries) {
+            entry.accept(builder);
+        }
+    }
+
+    public void addCtxMenuListener(Consumer<ContextMenuBuilder> action) {
+        if (actionMenuEntries == EMPTY_ACTION_LIST) {
+            actionMenuEntries = new ArrayList<>();
+        }
+        actionMenuEntries.add(action);
     }
 }

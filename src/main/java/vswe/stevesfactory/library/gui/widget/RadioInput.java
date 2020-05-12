@@ -136,8 +136,8 @@ public class RadioInput extends AbstractWidget implements IButton, IRadioInput, 
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Hovered=" + hovered);
-        receiver.line("Checked=" + checked);
-        receiver.line("Index=" + index);
+        receiver.line("Hovered=${hovered}");
+        receiver.line("Checked=${checked}");
+        receiver.line("Index=${index}");
     }
 }

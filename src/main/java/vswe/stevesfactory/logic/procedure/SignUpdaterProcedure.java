@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -19,9 +20,7 @@ import vswe.stevesfactory.ui.manager.menu.SignUpdaterLinesMenu;
 import vswe.stevesfactory.utils.IOHelper;
 import vswe.stevesfactory.utils.NetworkHelper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 // TODO support for RFTools screens
 public class SignUpdaterProcedure extends AbstractProcedure implements IInventoryTarget {
@@ -43,7 +42,7 @@ public class SignUpdaterProcedure extends AbstractProcedure implements IInventor
     public void execute(IExecutionContext context) {
         pushFrame(context, 0);
         updateCaches(context);
-        for (LazyOptional<ITextDocument> cap : cachedCaps) {
+        for (val cap : cachedCaps) {
             cap.ifPresent(display -> {
                 for (int i = 0; i < texts.length; i++) {
                     display.setLine(i, new StringTextComponent(texts[i]));
@@ -65,7 +64,7 @@ public class SignUpdaterProcedure extends AbstractProcedure implements IInventor
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<SignUpdaterProcedure> createFlowComponent() {
-        FlowComponent<SignUpdaterProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(SIGNS, I18n.format("menu.sfm.SignUpdater.Signs"), I18n.format("error.sfm.SignUpdater.NoTargets"), CapabilityDocuments.TEXT_DISPLAY_CAPABILITY));
         f.addMenu(new SignUpdaterLinesMenu());
         return f;
@@ -73,7 +72,7 @@ public class SignUpdaterProcedure extends AbstractProcedure implements IInventor
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("Signs", IOHelper.writeBlockPoses(signs));
         tag.put("Texts", IOHelper.writeStrings(texts));
         return tag;

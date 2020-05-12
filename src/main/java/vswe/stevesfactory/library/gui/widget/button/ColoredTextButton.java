@@ -10,6 +10,7 @@ import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
 
 import java.util.function.IntConsumer;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static vswe.stevesfactory.library.gui.Render2D.*;
 
 public class ColoredTextButton extends AbstractWidget implements IButton, LeafWidgetMixin, IStringSerializable {
@@ -83,6 +84,9 @@ public class ColoredTextButton extends AbstractWidget implements IButton, LeafWi
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        if (button != GLFW_MOUSE_BUTTON_LEFT) {
+            return false;
+        }
         clicked = true;
         onClick.accept(button);
         return true;
@@ -168,7 +172,7 @@ public class ColoredTextButton extends AbstractWidget implements IButton, LeafWi
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Hovered=" + hovered);
-        receiver.line("Clicked=" + clicked);
+        receiver.line("Hovered=${hovered}");
+        receiver.line("Clicked=${clicked}");
     }
 }

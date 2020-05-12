@@ -8,10 +8,8 @@ import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.Texture;
-import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
-import vswe.stevesfactory.library.gui.layout.properties.HorizontalAlignment;
-import vswe.stevesfactory.library.gui.layout.properties.Side;
-import vswe.stevesfactory.library.gui.layout.properties.VerticalAlignment;
+import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
+import vswe.stevesfactory.library.gui.layout.properties.*;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.RadioController;
 import vswe.stevesfactory.library.gui.widget.RadioInput;
@@ -125,10 +123,11 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
             slots.addElement(this.newFilterSlot(ItemStack.EMPTY));
         });
         removeFilter.setClickAction(__ -> {
-            // TODO
-//            items.remove(items.size() - 1);
-//            val children = slots.getChildren();
-//            children.remove(children.size() - 1);
+            if (items.isEmpty()) {
+                return;
+            }
+            items.remove(items.size() - 1);
+            slots.removeLast();
         });
 
         settings.addOption(filter.isMatchingAmount(), "menu.sfm.ItemFilter.Traits.MatchAmount").onStateChange = filter::setMatchingAmount;
@@ -141,27 +140,37 @@ public class ItemTraitsFilterMenu<P extends IProcedure & IClientDataStorage & II
 
     private ItemSlot newFilterSlot(ItemStack stack) {
         val slot = new FilterSlot(stack);
-        slot.defaultedLeft(() -> {
-            val window = new SettingsEditorWindow(this.getWidth());
-            val editor = window.getEditor();
+        slot.setInventorySelectAction();
+        slot.addCtxMenuListener(builder -> {
+            val section = builder.obtainSection("Misc");
+            section.addChildren(new CallbackEntry(
+                    null,
+                    "menu.sfm.ItemFilter.Traits.FilterSlot.Settings",
+                    b -> {
+                        val window = new SettingsEditorWindow(this.getWidth());
+                        val editor = window.getEditor();
 
-            val count = editor.addIntegerInput(1, 1, Integer.MAX_VALUE, "menu.sfm.ItemFilter.Traits.Amount");
-            count.setValue(stack.getCount());
-            count.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
-            count.onValueUpdated = stack::setCount;
+                        val count = editor.addIntegerInput(1, 1, Integer.MAX_VALUE, "menu.sfm.ItemFilter.Traits.Amount");
+                        count.setValue(stack.getCount());
+                        count.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
+                        count.onValueUpdated = stack::setCount;
 
-            val damage = editor.addIntegerInput("menu.sfm.ItemFilter.Traits.Damage");
-            damage.setValue(stack.getDamage());
-            damage.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
-            damage.onValueUpdated = stack::setDamage;
+                        val damage = editor.addIntegerInput("menu.sfm.ItemFilter.Traits.Damage");
+                        damage.setValue(stack.getDamage());
+                        damage.setBackgroundStyle(BackgroundStyle.RED_OUTLINE);
+                        damage.onValueUpdated = stack::setDamage;
 
-            val delete = new DeleteFilterButton();
-            delete.setDimensions(32, 11);
-            editor.addLine(delete);
-            delete.setClickAction(__ -> slot.clearRenderedStack());
+                        val delete = new DeleteFilterButton();
+                        delete.setDimensions(32, 11);
+                        editor.addLine(delete);
+                        delete.setClickAction(__ -> slot.clearRenderedStack());
 
-            editor.adjustMinHeight();
-            FactoryManagerGUI.get().addPopupWindow(window);
+                        editor.adjustMinHeight();
+                        window.setContents(editor.getFullWidth(), editor.getFullHeight());
+                        window.centralize();
+                        val gui = FactoryManagerGUI.get();
+                        gui.defer(() -> gui.addPopupWindow(window));
+                    }));
         });
         return slot;
     }

@@ -2,15 +2,14 @@ package vswe.stevesfactory.ui.manager.tool;
 
 import com.google.common.collect.ImmutableList;
 import vswe.stevesfactory.library.gui.Render2D;
-import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
-import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
-import vswe.stevesfactory.library.gui.contextmenu.Section;
+import vswe.stevesfactory.library.gui.contextmenu.*;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.ResizableWidgetMixin;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
+import vswe.stevesfactory.utils.Utils;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -54,7 +53,7 @@ public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
     }
 
     public IWidget getContainedWidget() {
-        return children.isEmpty() ? null : children.get(0);
+        return children.isEmpty() ? null : Utils.first(children);
     }
 
     @Override

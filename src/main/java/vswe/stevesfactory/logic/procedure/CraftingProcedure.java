@@ -1,29 +1,27 @@
 package vswe.stevesfactory.logic.procedure;
 
 import com.google.common.base.Preconditions;
+import lombok.val;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.logic.AbstractProcedure;
-import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.logic.item.CraftingBufferElement;
 import vswe.stevesfactory.logic.item.RecipeInfo;
+import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.menu.CraftingRecipeMenu;
 import vswe.stevesfactory.utils.IOHelper;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
 
 public class CraftingProcedure extends AbstractProcedure implements ICraftingGrid {
 
@@ -42,7 +40,7 @@ public class CraftingProcedure extends AbstractProcedure implements ICraftingGri
             return;
         }
 
-        CraftingBufferElement buffer = new CraftingBufferElement(context);
+        val buffer = new CraftingBufferElement(context);
         buffer.setRecipe(info);
         context.getItemBuffers(CraftingBufferElement.class)
                 .put(buffer.getStack().getItem(), buffer);
@@ -50,10 +48,10 @@ public class CraftingProcedure extends AbstractProcedure implements ICraftingGri
 
     private void updateRecipe(IExecutionContext context) {
         if (info == null) {
-            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+            val server = ServerLifecycleHooks.getCurrentServer();
             // In all cases we will not get null from the above invocation if we are on a server thread
             Preconditions.checkState(server != null, "Illegal to execute procedure on client side");
-            Optional<ICraftingRecipe> lookup = server.getRecipeManager().getRecipe(IRecipeType.CRAFTING, inventory, context.getControllerWorld());
+            val lookup = server.getRecipeManager().getRecipe(IRecipeType.CRAFTING, inventory, context.getControllerWorld());
             info = lookup.map(RecipeInfo::new).orElse(null);
         }
     }
@@ -66,7 +64,7 @@ public class CraftingProcedure extends AbstractProcedure implements ICraftingGri
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<CraftingProcedure> createFlowComponent() {
-        FlowComponent<CraftingProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new CraftingRecipeMenu<>());
         return f;
     }
@@ -89,7 +87,7 @@ public class CraftingProcedure extends AbstractProcedure implements ICraftingGri
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("RecipeInv", IOHelper.writeInventory(inventory));
         return tag;
     }

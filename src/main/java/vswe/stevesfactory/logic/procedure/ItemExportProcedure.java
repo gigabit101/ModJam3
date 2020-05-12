@@ -1,5 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -8,15 +9,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.*;
 import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.logic.AbstractProcedure;
 import vswe.stevesfactory.logic.FilterType;
-import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.logic.item.IItemFilter;
 import vswe.stevesfactory.logic.item.ItemTraitsFilter;
+import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.PropertyManager;
 import vswe.stevesfactory.ui.manager.menu.DirectionSelectionMenu;
@@ -24,10 +23,7 @@ import vswe.stevesfactory.ui.manager.menu.InventorySelectionMenu;
 import vswe.stevesfactory.utils.IOHelper;
 import vswe.stevesfactory.utils.NetworkHelper;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ItemExportProcedure extends AbstractProcedure implements IInventoryTarget, IDirectionTarget, IItemFilterTarget {
 
@@ -54,9 +50,9 @@ public class ItemExportProcedure extends AbstractProcedure implements IInventory
         }
 
         updateCaches(context);
-        for (LazyOptional<IItemHandler> cap : cachedCaps) {
+        for (val cap : cachedCaps) {
             cap.ifPresent(handler -> context.forEachItemBuffer((item, buffer) -> {
-                ItemStack bufferedStack = buffer.getStack();
+                val bufferedStack = buffer.getStack();
                 if (!filter.test(bufferedStack)) {
                     return;
                 }
@@ -72,7 +68,7 @@ public class ItemExportProcedure extends AbstractProcedure implements IInventory
                 }
                 bufferedStack.setCount(need);
 
-                ItemStack untaken = ItemHandlerHelper.insertItem(handler, bufferedStack, false);
+                val untaken = ItemHandlerHelper.insertItem(handler, bufferedStack, false);
                 int takenCount = need - untaken.getCount();
                 int untakenCount = sourceCount - takenCount;
 
@@ -90,7 +86,7 @@ public class ItemExportProcedure extends AbstractProcedure implements IInventory
         }
         int totalCount = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlot(i);
+            val stack = handler.getStackInSlot(i);
             if (source.isItemEqual(stack)) {
                 totalCount += stack.getCount();
             }
@@ -118,7 +114,7 @@ public class ItemExportProcedure extends AbstractProcedure implements IInventory
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<ItemExportProcedure> createFlowComponent() {
-        FlowComponent<ItemExportProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(INVENTORIES, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY));
         f.addMenu(new DirectionSelectionMenu<>(INVENTORIES));
         PropertyManager.createFilterMenu(this, f, FILTER);
@@ -127,7 +123,7 @@ public class ItemExportProcedure extends AbstractProcedure implements IInventory
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("Inventories", IOHelper.writeBlockPoses(inventories));
         tag.putIntArray("Directions", IOHelper.direction2Index(directions));
         tag.put("Filter", IOHelper.writeItemFilter(filter));

@@ -448,7 +448,7 @@ public class FlowComponent<P extends IProcedure & IClientDataStorage> extends Ab
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Z=" + this.getZIndex());
+        receiver.line("Z=${this.getZIndex()}");
     }
 
     private class DetatchedVerticalList extends VerticalList<Menu<P>> {

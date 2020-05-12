@@ -39,7 +39,7 @@ public class Section extends AbstractContainer<IEntry> {
         int by = getAbsoluteYBottom() + 1;
         RenderSystem.disableTexture();
         RenderSystem.color3f(LINE_COLOR, LINE_COLOR, LINE_COLOR);
-        glLineWidth(1F);
+        RenderSystem.lineWidth(1F);
         glBegin(GL_LINES);
         glVertex3f(bx, by, getZLevel());
         glVertex3f(bx2, by, getZLevel());

@@ -1,11 +1,10 @@
 package vswe.stevesfactory.logic.procedure;
 
+import lombok.val;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import vswe.stevesfactory.api.logic.IExecutionContext;
-import vswe.stevesfactory.api.logic.IProcedureType;
-import vswe.stevesfactory.api.logic.ITrigger;
+import vswe.stevesfactory.api.logic.*;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.logic.AbstractProcedure;
 import vswe.stevesfactory.setup.ModProcedures;
@@ -36,14 +35,14 @@ public class FunctionHatProcedure extends AbstractProcedure implements ITrigger,
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<FunctionHatProcedure> createFlowComponent() {
-        FlowComponent<FunctionHatProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new FunctionNameMenu());
         return f;
     }
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.putString("FunctionName", funcName);
         return tag;
     }

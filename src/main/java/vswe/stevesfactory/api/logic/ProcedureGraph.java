@@ -216,7 +216,7 @@ public final class ProcedureGraph {
 
         IProcedureType<?> p = StevesFactoryManagerAPI.getProceduresRegistry().getValue(id);
         // Not using checkNotNull here because technically the above method returns null is a registry (game state) problem
-        Preconditions.checkArgument(p != null, "Unable to find a procedure registered as " + id + "!");
+        Preconditions.checkArgument(p != null, "Unable to find a procedure registered as ${id}!");
 
         return p.retrieveInstance(tag);
     }

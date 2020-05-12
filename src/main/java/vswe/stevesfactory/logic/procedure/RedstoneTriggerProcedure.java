@@ -1,38 +1,28 @@
 package vswe.stevesfactory.logic.procedure;
 
 import com.google.common.collect.ImmutableList;
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.LazyOptional;
 import org.apache.commons.lang3.tuple.Pair;
 import vswe.stevesfactory.api.capability.CapabilityEventDispatchers;
 import vswe.stevesfactory.api.capability.IRedstoneEventDispatcher;
-import vswe.stevesfactory.api.logic.Connection;
-import vswe.stevesfactory.api.logic.IExecutionContext;
-import vswe.stevesfactory.api.logic.ITrigger;
+import vswe.stevesfactory.api.logic.*;
 import vswe.stevesfactory.api.network.INetworkController;
 import vswe.stevesfactory.logic.AbstractProcedure;
 import vswe.stevesfactory.logic.execution.ProcedureExecutor;
 import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
-import vswe.stevesfactory.ui.manager.menu.InventorySelectionMenu;
-import vswe.stevesfactory.ui.manager.menu.RadioOptionsMenu;
-import vswe.stevesfactory.ui.manager.menu.RedstoneSidesMenu;
-import vswe.stevesfactory.ui.manager.menu.RedstoneStrengthMenu;
+import vswe.stevesfactory.ui.manager.menu.*;
 import vswe.stevesfactory.utils.IOHelper;
 import vswe.stevesfactory.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrigger, IInventoryTarget, IDirectionTarget, ILogicalConjunction, IAnalogTarget {
 
@@ -68,21 +58,21 @@ public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrig
             return;
         }
 
-        World world = controller.getControllerWorld();
-        for (BlockPos watching : watchingSources) {
-            TileEntity tile = world.getTileEntity(watching);
+        val world = controller.getControllerWorld();
+        for (val watching : watchingSources) {
+            val tile = world.getTileEntity(watching);
             if (tile == null) {
                 continue;
             }
 
-            LazyOptional<IRedstoneEventDispatcher> cap = tile.getCapability(CapabilityEventDispatchers.REDSTONE_EVENT_DISPATCHER_CAPABILITY);
+            val cap = tile.getCapability(CapabilityEventDispatchers.REDSTONE_EVENT_DISPATCHER_CAPABILITY);
             if (!cap.isPresent()) {
                 continue;
             }
-            IRedstoneEventDispatcher dispatcher = cap.orElseThrow(RuntimeException::new);
+            val dispatcher = cap.orElseThrow(RuntimeException::new);
 
             // This holder is captured by this specific event handler
-            BooleanHolder last = new BooleanHolder(dispatcher.hasSignal());
+            val last = new BooleanHolder(dispatcher.hasSignal());
             dispatcher.subscribe(status -> {
                 // If this procedure is invalid, which means it was removed from the controller, remove the event handler
                 if (!this.isValid()) {
@@ -106,7 +96,7 @@ public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrig
 
     private boolean applyConjunction(IRedstoneEventDispatcher.SignalStatus status) {
         boolean result = conjunction == Type.ALL;
-        for (Direction direction : directions) {
+        for (val direction : directions) {
             int power = status.get(direction);
             result = conjunction.combine(result, applyAnalog(power));
         }
@@ -120,7 +110,7 @@ public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrig
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<RedstoneTriggerProcedure> createFlowComponent() {
-        FlowComponent<RedstoneTriggerProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(WATCHING, I18n.format("menu.sfm.RedstoneTrigger.Watches"), I18n.format("error.sfm.RedstoneTrigger.NoWatches"), CapabilityEventDispatchers.REDSTONE_EVENT_DISPATCHER_CAPABILITY));
         f.addMenu(new RedstoneSidesMenu<>(DIRECTIONS, I18n.format("menu.sfm.RedstoneTrigger.Sides")));
         f.addMenu(new RadioOptionsMenu<>(
@@ -137,7 +127,7 @@ public class RedstoneTriggerProcedure extends AbstractProcedure implements ITrig
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("Watching", IOHelper.writeBlockPoses(watchingSources));
         tag.putIntArray("Directions", IOHelper.direction2Index(directions));
         tag.putInt("ConjunctionType", conjunction.ordinal());

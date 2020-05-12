@@ -19,7 +19,7 @@ import static vswe.stevesfactory.ui.manager.editor.ConnectionsPanel.REGULAR_WIDT
 public final class EndNode extends AbstractIconButton implements INode {
 
     public static final Texture INPUT_NORMAL = Render2D.ofFlowComponent(18, 51, REGULAR_WIDTH, REGULAR_HEIGHT);
-    public static final Texture INPUT_HOVERED = INPUT_NORMAL.right(1);
+    public static final Texture INPUT_HOVERED = INPUT_NORMAL.moveRight(1);
 
     private INode previous;
     private StartNode start;

@@ -1,6 +1,6 @@
 package vswe.stevesfactory.logic.procedure;
 
-import net.minecraft.item.Item;
+import lombok.val;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -12,10 +12,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.logic.AbstractProcedure;
+import vswe.stevesfactory.logic.item.*;
 import vswe.stevesfactory.setup.ModProcedures;
-import vswe.stevesfactory.logic.item.DirectBufferElement;
-import vswe.stevesfactory.logic.item.IItemFilter;
-import vswe.stevesfactory.logic.item.ItemTraitsFilter;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.PropertyManager;
 import vswe.stevesfactory.ui.manager.menu.DirectionSelectionMenu;
@@ -49,9 +47,9 @@ public class ItemImportProcedure extends AbstractProcedure implements IInventory
         }
 
         updateCaches(context);
-        Map<Item, DirectBufferElement> buffers = context.getItemBuffers(DirectBufferElement.class);
-        VisitedInventories visited = NetworkHelper.obtainCustomData(context, VisitedInventories.class, VisitedInventories::new);
-        for (LazyOptional<IItemHandler> cap : cachedCaps) {
+        val buffers = context.getItemBuffers(DirectBufferElement.class);
+        val visited = NetworkHelper.obtainCustomData(context, VisitedInventories.class, VisitedInventories::new);
+        for (val cap : cachedCaps) {
             cap.ifPresent(handler -> {
                 if (!visited.add(handler)) {
                     return;
@@ -60,7 +58,7 @@ public class ItemImportProcedure extends AbstractProcedure implements IInventory
                     // If this stack is used to create the buffer, the stack count will be reset and we will lose necessary information
                     // Therefore copy the size in case it happens
                     int count = stack.getCount();
-                    DirectBufferElement element = buffers.computeIfAbsent(stack.getItem(), key -> {
+                    val element = buffers.computeIfAbsent(stack.getItem(), key -> {
                         stack.setCount(0);
                         return new DirectBufferElement(stack);
                     });
@@ -91,7 +89,7 @@ public class ItemImportProcedure extends AbstractProcedure implements IInventory
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<ItemImportProcedure> createFlowComponent() {
-        FlowComponent<ItemImportProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(INVENTORIES, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY));
         f.addMenu(new DirectionSelectionMenu<>(INVENTORIES));
         PropertyManager.createFilterMenu(this, f, FILTER);
@@ -100,7 +98,7 @@ public class ItemImportProcedure extends AbstractProcedure implements IInventory
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("Inventories", IOHelper.writeBlockPoses(inventories));
         tag.putIntArray("Directions", IOHelper.direction2Index(directions));
         tag.put("Filter", IOHelper.writeItemFilter(filter));

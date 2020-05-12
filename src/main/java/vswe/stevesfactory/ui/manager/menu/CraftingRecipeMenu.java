@@ -3,8 +3,6 @@ package vswe.stevesfactory.ui.manager.menu;
 import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
@@ -18,7 +16,6 @@ import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICraftingGrid> extends Menu<P> {
 
@@ -29,10 +26,11 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
     public CraftingRecipeMenu() {
         for (int i = 0; i < ingredients.length; i++) {
             val slot = ingredients[i] = new ItemSlot(ItemStack.EMPTY);
-            slot.defaultedBoth();
+            slot.setInventorySelectAction();
+            slot.setCtxMenuClear();
         }
         product = new ItemSlot(ItemStack.EMPTY);
-        product.defaultedRight(() -> {});
+        product.setCtxMenuClear();
     }
 
     @Override
@@ -58,8 +56,8 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
 
     @Override
     public void reflow() {
-        int x = 4;
-        int y = HEADING_BOX.getPortionHeight() + 4;
+        int x = 0;
+        int y = 0;
         int i = 1;
         for (val slot : ingredients) {
             slot.setLocation(x, y);
@@ -95,18 +93,19 @@ public class CraftingRecipeMenu<P extends IProcedure & IClientDataStorage & ICra
     }
 
     private void updateRecipeProduct() {
-        ClientWorld world = Minecraft.getInstance().world;
-        CraftingInventory inventory = getLinkedProcedure().getInventory();
-        Optional<ICraftingRecipe> lookup = world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, inventory, world);
+        val world = Minecraft.getInstance().world;
+        assert world != null;
+        val inventory = getLinkedProcedure().getInventory();
+        val lookup = world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, inventory, world);
         this.recipe = lookup.orElse(null);
-        ItemStack stack = lookup
+        val stack = lookup
                 .map(r -> r.getCraftingResult(inventory))
                 .orElse(ItemStack.EMPTY);
         this.product.setRenderedStack(stack);
     }
 
     private void onSetIngredient(int slot, ItemStack ingredient) {
-        P procedure = getLinkedProcedure();
+        val procedure = getLinkedProcedure();
         procedure.setIngredient(slot, ingredient);
         updateRecipeProduct();
     }

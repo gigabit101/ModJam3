@@ -269,7 +269,7 @@ public class HorizontalList<T extends IWidget> extends AbstractContainer<T> impl
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Offset=" + scrollDistance);
+        receiver.line("Offset=${scrollDistance}");
     }
 }
 

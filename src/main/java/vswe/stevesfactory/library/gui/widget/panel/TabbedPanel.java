@@ -5,11 +5,10 @@ import vswe.stevesfactory.library.collections.ReferenceList;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.utils.Utils;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class TabbedPanel<P extends IWidget> extends AbstractContainer<IWidget> {
 
@@ -69,7 +68,7 @@ public class TabbedPanel<P extends IWidget> extends AbstractContainer<IWidget> {
 
     public P getActivePanel() {
         if (activePanel == null) {
-            activePanel = panels.get(0);
+            activePanel = Utils.first(panels);
         }
         return activePanel;
     }

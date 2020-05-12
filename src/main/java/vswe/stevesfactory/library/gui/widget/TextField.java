@@ -6,11 +6,13 @@ package vswe.stevesfactory.library.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager.LogicOp;
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.val;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
-import vswe.stevesfactory.library.gui.TextRenderer;
 import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.TextRenderer;
+import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
+import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.debug.ITextReceiver;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
@@ -133,9 +135,6 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (isEnabled() && editable) {
             setFocused(true);
-            if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                setText("");
-            }
             return true;
         }
         return false;
@@ -558,12 +557,19 @@ public class TextField extends AbstractWidget implements LeafWidgetMixin {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Editable=" + editable);
-        receiver.line("Text=" + text);
-        receiver.line("StartOffset=" + startOffset);
-        receiver.line("Cursor=" + cursor);
-        receiver.line("SelectionStart=" + getSelectionStart());
-        receiver.line("SelectionEnd=" + getSelectionEnd());
-        receiver.line("SelectedText=" + getSelectedTextSafe());
+        receiver.line("Editable=${editable}");
+        receiver.line("Text=${text}");
+        receiver.line("StartOffset=${startOffset}");
+        receiver.line("Cursor=${cursor}");
+        receiver.line("SelectionStart=${getSelectionStart()}");
+        receiver.line("SelectionEnd=${getSelectionEnd()}");
+        receiver.line("SelectedText=${getSelectedTextSafe()}");
+    }
+
+    @Override
+    protected void buildContextMenu(ContextMenuBuilder builder) {
+        val section = builder.obtainSection("Misc");
+        section.addChildren(new CallbackEntry(null, "gui.sfm.clear", b -> setText("")));
+        super.buildContextMenu(builder);
     }
 }

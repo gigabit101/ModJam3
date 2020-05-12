@@ -1,13 +1,10 @@
 package vswe.stevesfactory.ui.manager.editor;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import lombok.val;
-import vswe.stevesfactory.api.logic.IClientDataStorage;
-import vswe.stevesfactory.api.logic.IErrorPopulator;
-import vswe.stevesfactory.api.logic.IProcedure;
+import vswe.stevesfactory.api.logic.*;
 import vswe.stevesfactory.library.gui.Render2D;
 import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
@@ -20,11 +17,7 @@ import vswe.stevesfactory.library.gui.widget.button.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.*;
 
 /**
  * A collapsible menu that's shown inside {@link vswe.stevesfactory.ui.manager.tool.inspector.Inspector inspector}'s
@@ -101,8 +94,6 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         }
     }
 
-    private static final List<Consumer<ContextMenuBuilder>> EMPTY_LIST = ImmutableList.of();
-
     public static final Texture HEADING_BOX = Render2D.ofFlowComponent(0, 0, 120, 13);
     public static final int DEFAULT_CONTENT_HEIGHT = 57;
     public static final int SIDE_MARGINS = 4;
@@ -114,8 +105,6 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     private final ToggleStateButton toggleStateButton;
     private final List<IWidget> children = new ArrayList<>();
-
-    private List<Consumer<ContextMenuBuilder>> actionMenuEntries = EMPTY_LIST;
 
     public Menu() {
         this.setBorders(SIDE_MARGINS);
@@ -271,10 +260,6 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
         val section = builder.obtainSection("FlowComponent.Menu");
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.CollapseAll", b -> flowComponent.collapseAllMenus()));
         section.addChildren(new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Inspector.Props.ExpandAll", b -> flowComponent.expandAllMenus()));
-
-        for (val entry : actionMenuEntries) {
-            entry.accept(builder);
-        }
         super.buildContextMenu(builder);
     }
 
@@ -303,12 +288,5 @@ public abstract class Menu<P extends IProcedure & IClientDataStorage> extends Ab
 
     public P getLinkedProcedure() {
         return flowComponent.getProcedure();
-    }
-
-    public void injectAction(Consumer<ContextMenuBuilder> action) {
-        if (actionMenuEntries == EMPTY_LIST) {
-            actionMenuEntries = new ArrayList<>();
-        }
-        actionMenuEntries.add(action);
     }
 }

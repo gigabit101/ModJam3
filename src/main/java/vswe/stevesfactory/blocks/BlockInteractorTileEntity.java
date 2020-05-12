@@ -11,19 +11,11 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.common.util.*;
+import net.minecraftforge.items.*;
 import vswe.stevesfactory.setup.ModBlocks;
 
 import javax.annotation.Nonnull;
@@ -131,7 +123,7 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (slot != 0) {
-            throw new IndexOutOfBoundsException("Slot index " + slot + " is not in range of [0,0]!");
+            throw new IndexOutOfBoundsException("Slot index ${slot} is not in range of [0,0]!");
         }
         if (world == null || !(world instanceof ServerWorld)) {
             return stack;
@@ -168,7 +160,7 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (slot != 0) {
-            throw new IndexOutOfBoundsException("Slot index " + slot + " is not in range of [0,0]!");
+            throw new IndexOutOfBoundsException("Slot index ${slot} is not in range of [0,0]!");
         }
         if (world == null || !(world instanceof ServerWorld)) {
             return ItemStack.EMPTY;

@@ -126,6 +126,6 @@ public abstract class AbstractDockableWindow<T extends IWidget> extends Abstract
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Order=" + order);
+        receiver.line("Order=${order}");
     }
 }

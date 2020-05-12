@@ -56,7 +56,7 @@ public final class ScissorTest {
 
             resume();
         } else {
-            StevesFactoryManager.logger.error("Scissor count limit reached: " + max);
+            StevesFactoryManager.logger.error("Scissor count limit reached: ${max}");
         }
     }
 

@@ -3,9 +3,9 @@ package vswe.stevesfactory.library.gui.window;
 import com.google.common.collect.ImmutableList;
 import lombok.val;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import vswe.stevesfactory.library.gui.*;
+import vswe.stevesfactory.library.gui.Render2D;
+import vswe.stevesfactory.library.gui.Texture;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.library.gui.widget.button.SimpleIconButton;
@@ -16,26 +16,25 @@ import java.util.function.Function;
 
 public class PlayerInventoryWindow extends AbstractPopupWindow {
 
-    private static final Texture CLOSE = Texture.portion(Render2D.CLOSE, 16, 16, 0, 0, 16, 16);
-
     private final List<IWidget> children;
 
     public PlayerInventoryWindow() {
-        this(0, 0, ItemSlot::new);
+        this(ItemSlot::new);
     }
 
-    public PlayerInventoryWindow(int x, int y, Function<ItemStack, AbstractItemSlot> factory) {
-        this.setPosition(x, y);
-
+    public PlayerInventoryWindow(Function<ItemStack, AbstractItemSlot> factory) {
         val inv = Minecraft.getInstance().player.inventory;
         val inventory = new ItemSlotPanel(9, 3, inv.mainInventory.subList(9, inv.mainInventory.size()), factory);
-        inventory.setBorderTop(8 + 2);
+        inventory.attachWindow(this);
+        inventory.setBorderTop(9 + 2);
         inventory.setBorderBottom(4);
-        inventory.setLocation(0, 0);
         val hotbar = new ItemSlotPanel(9, 1, inv.mainInventory.subList(0, 9), factory);
-        hotbar.setLocation(0, inventory.getYBottom());
-        val close = new SimpleIconButton(CLOSE, CLOSE);
-        close.setLocation(inventory.getWidth() - 8, 0);
+        hotbar.attachWindow(this);
+        hotbar.alignTop(inventory.getYBottom());
+        val close = new SimpleIconButton(Render2D.CLOSE_ICON, Render2D.CLOSE_ICON_HOVERED);
+        close.attachWindow(this);
+        close.alignBottom(inventory.getInnerY() - 1);
+        close.alignRight(inventory.getXRight() - 1);
         close.setClickAction(b -> discard());
         children = ImmutableList.of(close, inventory, hotbar);
 

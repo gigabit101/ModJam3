@@ -9,12 +9,12 @@ public interface WindowOverlayInfoMixin extends IWindow, Inspections.IInfoProvid
     @Override
     default void provideInformation(ITextReceiver receiver) {
         receiver.line(this.toString());
-        receiver.line("Position=(" + getPosition().x + ", " + getPosition().y + ")");
-        receiver.line("Dimensions=(" + getBorder().width + ", " + getBorder().width + ")");
-        receiver.line("ContentPosition=(" + getContentX() + ", " + getContentY() + ")");
-        receiver.line("ContentDimensions=(" + getContentWidth() + ", " + getContentHeight() + ")");
-        receiver.line("BorderSize=" + getBorderSize());
-        receiver.line("Z=" + getZLevel());
+        receiver.line("Position=(${getPosition().x}, ${getPosition().y})");
+        receiver.line("Dimensions=(${getBorder().width}, ${getBorder().width})");
+        receiver.line("ContentPosition=(${getContentX()}, ${getContentY()})");
+        receiver.line("ContentDimensions=(${getContentWidth()}, ${getContentHeight()})");
+        receiver.line("BorderSize=${getBorderSize()}");
+        receiver.line("Z=${getZLevel()}");
     }
 
     @Override

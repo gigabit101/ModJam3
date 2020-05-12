@@ -99,9 +99,7 @@ public final class ConnectionsPanel extends DynamicWidthWidget<INode> {
 
     public static void drawConnectionLine(int x1, int y1, int x2, int y2) {
         RenderSystem.disableTexture();
-        glEnable(GL_LINE_SMOOTH);
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glLineWidth(4);
+        RenderSystem.lineWidth(4F);
         glColor3f(94F / 255F, 94F / 255F, 94F / 255F);
         glBegin(GL_LINES);
         {

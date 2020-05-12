@@ -127,7 +127,7 @@ class DirectionButton extends AbstractIconButton {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Selected=" + selected);
-        receiver.line("Editing=" + editing);
+        receiver.line("Selected=${selected}");
+        receiver.line("Editing=${editing}");
     }
 }

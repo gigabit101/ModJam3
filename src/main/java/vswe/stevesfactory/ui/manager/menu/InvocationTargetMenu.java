@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.menu;
 
+import lombok.val;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
@@ -7,7 +8,6 @@ import vswe.stevesfactory.api.logic.ITrigger;
 import vswe.stevesfactory.library.gui.ScissorTest;
 import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
-import vswe.stevesfactory.library.gui.contextmenu.Section;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.widget.AbstractWidget;
 import vswe.stevesfactory.library.gui.widget.mixin.LeafWidgetMixin;
@@ -15,7 +15,6 @@ import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 import vswe.stevesfactory.logic.procedure.FunctionInvokeProcedure;
 import vswe.stevesfactory.logic.procedure.IFunctionHat;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
-import vswe.stevesfactory.ui.manager.editor.EditorPanel;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 import vswe.stevesfactory.ui.manager.editor.Menu;
 
@@ -46,7 +45,7 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        Section section = builder.obtainSection("");
+        val section = builder.obtainSection("");
         section.addChildren(new CallbackEntry(null, "menu.sfm.InvocationTarget.Rescan", b -> scanTargets()));
         super.buildContextMenu(builder);
     }
@@ -58,16 +57,18 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
     }
 
     private void scanTargets() {
-        EditorPanel editor = FactoryManagerGUI.get().getPrimaryWindow().editorPanel;
-        FunctionInvokeProcedure p = getLinkedProcedure();
+        options.getChildren().clear();
+
+        val editor = FactoryManagerGUI.get().getPrimaryWindow().editorPanel;
+        val proc = getLinkedProcedure();
         int i = 0;
-        for (FlowComponent<?> component : editor.getFlowComponents()) {
+        for (val component : editor.getFlowComponents()) {
             if (component.getProcedure() instanceof ITrigger) {
-                ITrigger trigger = (ITrigger) component.getProcedure();
-                ListEntry entry = new ListEntry(component, i);
+                val trigger = (ITrigger) component.getProcedure();
+                val entry = new ListEntry(component, i);
                 entry.setWidth(options.getWidth() - options.getBarWidth());
                 options.addChildren(entry);
-                if (trigger == p.getTarget()) {
+                if (trigger == proc.getTarget()) {
                     selected = i;
                 }
                 i++;
@@ -124,9 +125,12 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
             Tessellator.getInstance().draw();
 
             ScissorTest test = ScissorTest.scaled(x1, y1, x2, y2);
-            String name = target.getName();
+            String name;
             if (target.getProcedure() instanceof IFunctionHat) {
-                name += " (" + ((IFunctionHat) target.getProcedure()).getFunctionName() + ")";
+                val proc = (IFunctionHat) target.getProcedure();
+                name = "${target.getName()} (${proc.getFunctionName()})";
+            } else {
+                name = target.getName();
             }
             renderVerticallyCenteredText(name, x1 + 2, y1, y2, getZLevel(), 0xff000000);
             test.destroy();

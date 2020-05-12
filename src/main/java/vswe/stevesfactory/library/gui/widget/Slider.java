@@ -237,9 +237,9 @@ public class Slider extends AbstractWidget implements LeafWidgetMixin {
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
         receiver.line("Type=" + (horizontal ? "horizontal" : "vertical"));
-        receiver.line("Dragging=" + dragging);
-        receiver.line("Hovered=" + hovered);
-        receiver.line("Offset=" + offset);
-        receiver.line("Value=" + value);
+        receiver.line("Dragging=${dragging}");
+        receiver.line("Hovered=${hovered}");
+        receiver.line("Offset=${offset}");
+        receiver.line("Value=${value}");
     }
 }

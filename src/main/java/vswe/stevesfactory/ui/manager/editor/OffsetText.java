@@ -1,5 +1,6 @@
 package vswe.stevesfactory.ui.manager.editor;
 
+import lombok.val;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
@@ -68,7 +69,7 @@ class OffsetText extends AbstractWidget implements LeafWidgetMixin {
             if (Screen.hasControlDown()) {
                 set(0);
             } else {
-                NumberField<Integer> field = NumberField.integerField(0, 16);
+                val field = NumberField.integerField(0, 16);
                 field.setValue(value);
 
                 Dialog.createPrompt(

@@ -1,8 +1,10 @@
 package vswe.stevesfactory.library.gui.layout;
 
 import com.google.common.base.Preconditions;
+import lombok.val;
 import vswe.stevesfactory.library.gui.layout.properties.BoxSizing;
 import vswe.stevesfactory.library.gui.widget.IWidget;
+import vswe.stevesfactory.utils.Utils;
 
 import java.awt.*;
 import java.util.List;
@@ -121,10 +123,10 @@ public class StrictTableLayout {
             return true;
         }
 
-        IWidget first = widgets.get(0);
+        val first = Utils.first(widgets);
         int commonWidth = first.getFullWidth();
         int commonHeight = first.getFullHeight();
-        for (IWidget widget : widgets) {
+        for (val widget : widgets) {
             if (commonWidth != widget.getFullWidth() || commonHeight != widget.getFullHeight()) {
                 return false;
             }

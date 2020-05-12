@@ -8,8 +8,6 @@ import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenuBuilder;
 import vswe.stevesfactory.library.gui.contextmenu.DefaultEntry;
-import vswe.stevesfactory.library.gui.contextmenu.IEntry;
-import vswe.stevesfactory.library.gui.widget.panel.VerticalList;
 import vswe.stevesfactory.logic.item.IItemFilter;
 import vswe.stevesfactory.logic.item.ItemTagFilter;
 import vswe.stevesfactory.logic.item.ItemTraitsFilter;
@@ -115,7 +113,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
         }
 
         for (val action : actions) {
-            menu.injectAction(action);
+            menu.addCtxMenuListener(action);
         }
     }
 
@@ -175,7 +173,7 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
                 }
             };
 
-            val section = builder.obtainSection("FlowComponent.PropertyManager");
+            val section = builder.obtainSection("FlowComponent.Menu");
             section.addChildren(entry);
         });
     }

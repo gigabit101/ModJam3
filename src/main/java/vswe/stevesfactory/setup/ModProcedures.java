@@ -58,7 +58,7 @@ public final class ModProcedures {
     }
 
     private static <P extends IProcedure> IProcedureType<P> create(String id, Supplier<P> constructor, ForgeConfigSpec.BooleanValue enabledGetter) {
-        IProcedureType<P> p = new SimpleProcedureType<>(constructor, new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/procedure_icon/" + id + ".png"));
+        IProcedureType<P> p = new SimpleProcedureType<>(constructor, new ResourceLocation(StevesFactoryManagerAPI.MODID, "textures/gui/procedure_icon/${id}.png"));
         ResourceLocation rl = new ResourceLocation(StevesFactoryManagerAPI.MODID, id);
         p.setRegistryName(rl);
         GUIVisibility.registerEnableState(rl, enabledGetter::get);

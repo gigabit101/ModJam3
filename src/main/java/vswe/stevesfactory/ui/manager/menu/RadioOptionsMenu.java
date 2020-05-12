@@ -5,10 +5,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import vswe.stevesfactory.api.logic.IClientDataStorage;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.layout.FlowLayout;
-import vswe.stevesfactory.library.gui.widget.Paragraph;
-import vswe.stevesfactory.library.gui.widget.RadioController;
-import vswe.stevesfactory.library.gui.widget.RadioInput;
+import vswe.stevesfactory.library.gui.widget.*;
 import vswe.stevesfactory.ui.manager.editor.Menu;
+import vswe.stevesfactory.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +69,7 @@ public class RadioOptionsMenu<P extends IProcedure & IClientDataStorage> extends
             val name = names[i];
             addChildren(option.makeLabel().text(name));
         }
-        info.setY(options.get(options.size() - 1).getYBottom() + 4);
+        info.setY(Utils.last(options).getYBottom() + 4);
 
         this.names = null;
     }

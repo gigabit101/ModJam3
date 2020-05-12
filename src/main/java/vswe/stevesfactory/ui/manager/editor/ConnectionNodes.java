@@ -2,6 +2,7 @@ package vswe.stevesfactory.ui.manager.editor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import lombok.val;
 import vswe.stevesfactory.api.logic.Connection;
 import vswe.stevesfactory.api.logic.IProcedure;
 import vswe.stevesfactory.library.gui.widget.AbstractContainer;
@@ -73,10 +74,19 @@ public abstract class ConnectionNodes<N extends INode> extends AbstractContainer
         this.setHeight(ConnectionsPanel.REGULAR_HEIGHT);
         ImmutableList.Builder<N> nodes = ImmutableList.builder();
         for (int i = 0; i < amountNodes; i++) {
-            N node = factory.apply(i);
+            val node = factory.apply(i);
             nodes.add(node);
         }
         this.nodes = nodes.build();
+    }
+
+    @Override
+    public void onInitialAttach() {
+        super.onInitialAttach();
+
+        for (val node : nodes) {
+            node.attach(this);
+        }
     }
 
     private static void removeNode(INode node) {

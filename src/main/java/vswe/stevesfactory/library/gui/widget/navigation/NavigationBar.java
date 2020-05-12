@@ -201,7 +201,7 @@ public class NavigationBar extends AbstractContainer<IWidget> {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("DragLocalX=" + initialDragLocalX);
-        receiver.line("DragLocalY=" + initialDragLocalY);
+        receiver.line("DragLocalX=${initialDragLocalX}");
+        receiver.line("DragLocalY=${initialDragLocalY}");
     }
 }

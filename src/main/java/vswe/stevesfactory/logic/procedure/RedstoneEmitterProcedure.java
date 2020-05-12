@@ -1,6 +1,7 @@
 package vswe.stevesfactory.logic.procedure;
 
 import com.google.common.collect.ImmutableList;
+import lombok.val;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -17,10 +18,7 @@ import vswe.stevesfactory.api.logic.IExecutionContext;
 import vswe.stevesfactory.logic.AbstractProcedure;
 import vswe.stevesfactory.setup.ModProcedures;
 import vswe.stevesfactory.ui.manager.editor.FlowComponent;
-import vswe.stevesfactory.ui.manager.menu.EmitterTypeMenu;
-import vswe.stevesfactory.ui.manager.menu.InventorySelectionMenu;
-import vswe.stevesfactory.ui.manager.menu.RadioOptionsMenu;
-import vswe.stevesfactory.ui.manager.menu.RedstoneSidesMenu;
+import vswe.stevesfactory.ui.manager.menu.*;
 import vswe.stevesfactory.utils.IOHelper;
 import vswe.stevesfactory.utils.NetworkHelper;
 
@@ -52,7 +50,7 @@ public class RedstoneEmitterProcedure extends AbstractProcedure implements IInve
         }
 
         updateCache(context);
-        for (LazyOptional<IRedstoneHandler> cap : cachedRedstoneCaps) {
+        for (val cap : cachedRedstoneCaps) {
             cap.ifPresent(redstone -> {
                 redstone.setType(signalType);
                 switch (operationType) {
@@ -116,7 +114,7 @@ public class RedstoneEmitterProcedure extends AbstractProcedure implements IInve
     @Override
     @OnlyIn(Dist.CLIENT)
     public FlowComponent<RedstoneEmitterProcedure> createFlowComponent() {
-        FlowComponent<RedstoneEmitterProcedure> f = new FlowComponent<>(this);
+        val f = new FlowComponent<>(this);
         f.addMenu(new InventorySelectionMenu<>(EMITTERS, I18n.format("menu.sfm.RedstoneEmitter.Emitters"), I18n.format("error.sfm.RedstoneEmitter.NoEmitters"), CapabilityRedstone.REDSTONE_CAPABILITY));
         f.addMenu(new RedstoneSidesMenu<>(SIDES, I18n.format("menu.sfm.RedstoneEmitter.Sides")));
         f.addMenu(new RadioOptionsMenu<>(
@@ -133,7 +131,7 @@ public class RedstoneEmitterProcedure extends AbstractProcedure implements IInve
 
     @Override
     public CompoundNBT serialize() {
-        CompoundNBT tag = super.serialize();
+        val tag = super.serialize();
         tag.put("Emitters", IOHelper.writeBlockPoses(emitters));
         tag.putIntArray("Directions", IOHelper.direction2Index(directions));
         tag.putInt("OperationType", operationType.ordinal());

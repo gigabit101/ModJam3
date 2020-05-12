@@ -73,6 +73,6 @@ public class Checkbox extends AbstractWidget implements LeafWidgetMixin {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Checked=" + checked);
+        receiver.line("Checked=${checked}");
     }
 }

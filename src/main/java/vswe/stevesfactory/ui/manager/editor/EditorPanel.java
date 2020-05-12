@@ -430,7 +430,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("XOff=" + xOffset.get());
-        receiver.line("YOff=" + yOffset.get());
+        receiver.line("XOff=${xOffset.get()}");
+        receiver.line("YOff=${yOffset.get()}");
     }
 }

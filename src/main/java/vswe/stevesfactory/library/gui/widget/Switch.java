@@ -99,6 +99,6 @@ public class Switch extends AbstractWidget implements LeafWidgetMixin {
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("Active=" + active);
+        receiver.line("Active=${active}");
     }
 }

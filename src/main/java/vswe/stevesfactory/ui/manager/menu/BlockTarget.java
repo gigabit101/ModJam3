@@ -55,7 +55,7 @@ public class BlockTarget extends AbstractWidget implements IButton, IStringSeria
 
     @Override
     protected void buildContextMenu(ContextMenuBuilder builder) {
-        val section = builder.obtainSection("");
+        val section = builder.obtainSection("Misc");
         section.addChildren(new CallbackEntry(null, "menu.sfm.BlockTarget.Highlight", b -> BlockHighlight.createHighlight(pos, 80)));
         super.buildContextMenu(builder);
     }
@@ -153,6 +153,6 @@ public class BlockTarget extends AbstractWidget implements IButton, IStringSeria
     @Override
     public void provideInformation(ITextReceiver receiver) {
         super.provideInformation(receiver);
-        receiver.line("BlockState=" + state);
+        receiver.line("BlockState=${state}");
     }
 }

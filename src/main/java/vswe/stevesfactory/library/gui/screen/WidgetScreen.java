@@ -113,7 +113,7 @@ public abstract class WidgetScreen<C extends WidgetContainer> extends ContainerS
     }
 
     protected final void setPrimaryWindow(IWindow primaryWindow) {
-        Preconditions.checkState(this.primaryWindow == null, "Already initialized the primary window " + this.primaryWindow);
+        Preconditions.checkState(this.primaryWindow == null, "Already initialized the primary window ${this.primaryWindow}");
         this.primaryWindow = primaryWindow;
     }
 
