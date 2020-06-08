@@ -11,26 +11,18 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.common.util.*;
+import net.minecraftforge.items.*;
 import vswe.stevesfactory.setup.ModBlocks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
-// TODO drop stored item when broken
 public class BlockInteractorTileEntity extends TileEntity implements IItemHandler {
 
     public static final int UNREADY = 0;
@@ -60,10 +52,13 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
             return;
         }
 
+        // If somebody requested a simulate lookup, in the next tick, world state might have changed
+        // so we have to force update
         if (state != READY_PERFORMED && world.getGameTime() != lastUpdateGT) {
             lastUpdateGT = world.getGameTime();
             state = UNREADY;
         }
+
         switch (state) {
             case UNREADY: {
                 Direction facing = this.getBlockState().get(BlockStateProperties.FACING);
@@ -72,7 +67,14 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
                 if (neighbor.isAir(world, neighborPos)) {
                     return;
                 }
+
                 droppedItems = Block.getDrops(neighbor, (ServerWorld) world, neighborPos, world.getTileEntity(neighborPos));
+                if (droppedItems.isEmpty()) {
+                    // No drops, remain in unready state
+                    if (remove) world.removeBlock(neighborPos, false);
+                    return;
+                }
+
                 readerIndex = droppedItems.size() - 1;
                 if (remove) {
                     world.removeBlock(neighborPos, false);
@@ -97,7 +99,10 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
         }
     }
 
-    private ItemStack getNextItem(boolean remove) {
+    /**
+     * Get the current reading item if present, otherwise try to harvest a block and retry.
+     */
+    private ItemStack obtainCurrentItem(boolean remove) {
         breakFrontBlock(remove);
         // Tried to break block in front, but nothing happened -> unable to do anything
         if (isUnready()) {
@@ -124,7 +129,7 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
         if (slot != 0) {
             return ItemStack.EMPTY;
         }
-        return getNextItem(false);
+        return obtainCurrentItem(false);
     }
 
     @Nonnull
@@ -175,7 +180,7 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
         }
 
         if (simulate) {
-            ItemStack next = getNextItem(false);
+            ItemStack next = obtainCurrentItem(false);
             if (next.isEmpty()) {
                 return next;
             }
@@ -184,7 +189,7 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
             result.setCount(Math.min(result.getCount(), amount));
             return result;
         } else {
-            ItemStack next = getNextItem(true);
+            ItemStack next = obtainCurrentItem(true);
             if (next.isEmpty()) {
                 return next;
             }
@@ -234,7 +239,7 @@ public class BlockInteractorTileEntity extends TileEntity implements IItemHandle
         super.read(compound);
         state = compound.getInt("State");
         readerIndex = compound.getInt("ReaderIdx");
-        droppedItems.clear();
+        droppedItems = new ArrayList<>();
         ListNBT serializedItems = compound.getList("DroppedItems", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < serializedItems.size(); i++) {
             droppedItems.add(ItemStack.read(compound));
