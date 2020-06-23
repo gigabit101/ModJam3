@@ -34,7 +34,7 @@ public class PacketSyncProcedureGroups {
         int size = buf.readVarInt();
         List<String> groups = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            groups.add(buf.readString());
+            groups.add(buf.readString(32767));
         }
         return new PacketSyncProcedureGroups(dimension, pos, groups);
     }
