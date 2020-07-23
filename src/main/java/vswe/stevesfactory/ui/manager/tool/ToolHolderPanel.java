@@ -6,6 +6,7 @@ import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
 import vswe.stevesfactory.library.gui.debug.RenderEventDispatcher;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
+import vswe.stevesfactory.library.gui.widget.AbstractContainer;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
@@ -16,11 +17,11 @@ import java.util.List;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
-public final class ToolPanel extends DynamicWidthWidget<IWidget> {
+public final class ToolHolderPanel extends DynamicWidthWidget<IWidget> {
 
     private List<IWidget> children = ImmutableList.of();
 
-    public ToolPanel() {
+    public ToolHolderPanel() {
         super(WidthOccupierType.MIN_WIDTH);
     }
 
@@ -33,6 +34,9 @@ public final class ToolPanel extends DynamicWidthWidget<IWidget> {
             panel.setX(RenderingHelper.LEFT_BORDER + 1);
             panel.setHeight(getHeight());
             getWindow().setFocusedWidget(panel);
+            if (panel instanceof AbstractContainer) {
+                ((AbstractContainer<?>) panel).reflow();
+            }
         }
         FactoryManagerGUI.get().getTopLevel().reflow();
     }
@@ -81,7 +85,7 @@ public final class ToolPanel extends DynamicWidthWidget<IWidget> {
 
     private void openContextMenu() {
         ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.CtxMenu.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
         ));
         WidgetScreen.getCurrent().addPopupWindow(contextMenu);
     }

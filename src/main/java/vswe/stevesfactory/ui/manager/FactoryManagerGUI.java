@@ -21,7 +21,7 @@ import vswe.stevesfactory.library.gui.window.AbstractWindow;
 import vswe.stevesfactory.ui.manager.editor.ConnectionsPanel;
 import vswe.stevesfactory.ui.manager.editor.EditorPanel;
 import vswe.stevesfactory.ui.manager.selection.SelectionPanel;
-import vswe.stevesfactory.ui.manager.tool.ToolPanel;
+import vswe.stevesfactory.ui.manager.tool.ToolHolderPanel;
 import vswe.stevesfactory.ui.manager.tool.group.GroupDataModel;
 import vswe.stevesfactory.ui.manager.toolbox.ToolboxPanel;
 
@@ -191,7 +191,7 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
         public final SelectionPanel selectionPanel;
         public final EditorPanel editorPanel;
         public final ConnectionsPanel connectionsPanel;
-        public final ToolPanel toolPanel;
+        public final ToolHolderPanel toolHolderPanel;
         public final ToolboxPanel toolboxPanel;
         private final ImmutableList<DynamicWidthWidget<?>> children;
 
@@ -200,10 +200,10 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
             this.selectionPanel = new SelectionPanel();
             this.editorPanel = new EditorPanel();
             this.connectionsPanel = new ConnectionsPanel();
-            this.toolPanel = new ToolPanel();
+            this.toolHolderPanel = new ToolHolderPanel();
             this.toolboxPanel = new ToolboxPanel();
             // Let connections panel receive events first
-            this.children = ImmutableList.of(selectionPanel, connectionsPanel, editorPanel, toolPanel, toolboxPanel);
+            this.children = ImmutableList.of(selectionPanel, connectionsPanel, editorPanel, toolHolderPanel, toolboxPanel);
         }
 
         public void init() {
@@ -250,14 +250,14 @@ public class FactoryManagerGUI extends WidgetScreen<FactoryManagerContainer> {
                 selectionPanel.setHeight(prevHeight);
                 editorPanel.setHeight(prevHeight);
                 connectionsPanel.setHeight(prevHeight);
-                toolPanel.setHeight(prevHeight);
+                toolHolderPanel.setHeight(prevHeight);
                 toolboxPanel.setHeight(prevHeight);
             }
 
             selectionPanel.reflow();
             editorPanel.reflow();
             connectionsPanel.reflow();
-            toolPanel.reflow();
+            toolHolderPanel.reflow();
             toolboxPanel.reflow();
             DynamicWidthWidget.reflowDynamicWidth(getDimensions(), children);
         }

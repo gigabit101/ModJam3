@@ -150,8 +150,8 @@ public class PropertyManager<T, P extends IProcedure & IClientDataStorage> {
                 if (cachedIndex != nextIndex || cachedText == null) {
                     Case<T, P> nextCase = cases.get(nextIndex);
                     cachedText = nextCase.hasName()
-                            ? I18n.format("gui.sfm.FactoryManager.Editor.CtxMenu.CycleProperty.Named", nextCase.getName())
-                            : I18n.format("gui.sfm.FactoryManager.Editor.CtxMenu.CycleProperty");
+                            ? I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty.Named", nextCase.getName())
+                            : I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Props.CycleProperty");
                     cachedIndex = nextIndex;
                     reflowSafe();
                 }

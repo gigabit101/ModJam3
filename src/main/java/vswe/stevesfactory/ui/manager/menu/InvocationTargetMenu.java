@@ -38,7 +38,7 @@ public class InvocationTargetMenu extends Menu<FunctionInvokeProcedure> {
 
         addChildren(options);
 
-        injectAction(() -> new CallbackEntry(null, "menu.sfm.InvocationTarget.CtxMenu.Rescan", b -> scanTargets()));
+        injectAction(() -> new CallbackEntry(null, "menu.sfm.InvocationTarget.Rescan", b -> scanTargets()));
     }
 
     @Override

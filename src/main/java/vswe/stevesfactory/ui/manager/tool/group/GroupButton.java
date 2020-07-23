@@ -6,6 +6,7 @@ import vswe.stevesfactory.library.gui.contextmenu.CallbackEntry;
 import vswe.stevesfactory.library.gui.contextmenu.ContextMenu;
 import vswe.stevesfactory.library.gui.screen.WidgetScreen;
 import vswe.stevesfactory.library.gui.widget.TextButton;
+import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
 
@@ -40,9 +41,9 @@ public class GroupButton extends TextButton {
 
     private void openContextMenu() {
         ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(FactoryManagerGUI.DELETE_ICON, "gui.sfm.FactoryManager.Tool.Group.CtxMenu.Delete", b -> actionDelete()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.CtxMenu.RenameGroup", b -> actionRename()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.CtxMenu.MoveContent", b -> actionMoveContent())
+                new CallbackEntry(FactoryManagerGUI.DELETE_ICON, "gui.sfm.FactoryManager.Tool.Group.Delete", b -> actionDelete()),
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.RenameGroup", b -> actionRename()),
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Tool.Group.MoveContent", b -> actionMoveContent())
         ));
         WidgetScreen.getCurrent().addPopupWindow(contextMenu);
     }
@@ -56,15 +57,20 @@ public class GroupButton extends TextButton {
     }
 
     private void actionRename() {
-        Dialog.createPrompt("gui.sfm.FactoryManager.Tool.Group.Dialog.RenameGroup", (b, newName) -> {
-            for (String group : FactoryManagerGUI.get().groupModel.getGroups()) {
-                if (newName.equals(group)) {
-                    Dialog.createDialog(I18n.format("gui.sfm.FactoryManager.Tool.Group.Dialog.RenameFailed", newName)).tryAddSelfToActiveGUI();
-                    return;
-                }
-            }
-            FactoryManagerGUI.get().groupModel.updateGroup(group, newName);
-        }).tryAddSelfToActiveGUI();
+        Dialog.createPrompt(
+                "gui.sfm.FactoryManager.Tool.Group.RenameGroup.Prompt",
+                () -> new TextField(0, 0, 0, 16),
+                "gui.sfm.ok", "gui.sfm.cancel",
+                (b, newName) -> {
+                    for (String group : FactoryManagerGUI.get().groupModel.getGroups()) {
+                        if (newName.equals(group)) {
+                            Dialog.createDialog(I18n.format("gui.sfm.FactoryManager.Tool.Group.RenameGroup.Failed", newName)).tryAddSelfToActiveGUI();
+                            return;
+                        }
+                    }
+                    FactoryManagerGUI.get().groupModel.updateGroup(group, newName);
+                },
+                (b, newName) -> {}).tryAddSelfToActiveGUI();
     }
 
     private void actionMoveContent() {
@@ -76,10 +82,6 @@ public class GroupButton extends TextButton {
                     }
                 },
                 () -> {}).tryAddSelfToActiveGUI();
-    }
-
-    private static Grouplist getGroupList() {
-        return FactoryManagerGUI.get().getTopLevel().toolboxPanel.getGroupList();
     }
 
     public String getGroup() {
@@ -99,6 +101,10 @@ public class GroupButton extends TextButton {
     @Override
     public int getHoveredBorderColor() {
         return isSelected() ? 0xffffff00 : super.getNormalBorderColor();
+    }
+
+    private Grouplist getGroupList() {
+        return FactoryManagerGUI.get().getTopLevel().toolboxPanel.getGroupList();
     }
 
     private boolean isSelected() {

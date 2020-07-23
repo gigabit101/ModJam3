@@ -1,6 +1,7 @@
 package vswe.stevesfactory.library.gui;
 
 import com.google.common.base.MoreObjects;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -8,6 +9,8 @@ import org.lwjgl.opengl.GL11;
 import vswe.stevesfactory.StevesFactoryManager;
 
 import java.awt.*;
+
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 /**
  * Wraps around a ResourceLocation, used to simplify drawing 2D textures.
@@ -57,8 +60,10 @@ public class TextureWrapper {
     }
 
     public void draw(int x, int y, int width, int height) {
+        RenderSystem.enableAlphaTest();
+        RenderSystem.color3f(1F, 1F, 1F);
         RenderingHelper.bindTexture(texture);
-        RenderingHelper.getRenderer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        RenderingHelper.getRenderer().begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         vertices(x, y, width, height);
         Tessellator.getInstance().draw();
     }

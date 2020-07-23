@@ -4,13 +4,17 @@ import net.minecraft.client.resources.I18n;
 import vswe.stevesfactory.library.gui.RenderingHelper;
 import vswe.stevesfactory.library.gui.widget.Spacer;
 import vswe.stevesfactory.library.gui.widget.TextButton;
+import vswe.stevesfactory.library.gui.widget.TextField;
 import vswe.stevesfactory.library.gui.widget.box.LinearList;
 import vswe.stevesfactory.library.gui.window.Dialog;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
+import vswe.stevesfactory.ui.manager.editor.FlowComponent;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class Grouplist extends LinearList<GroupButton> {
@@ -92,13 +96,16 @@ public class Grouplist extends LinearList<GroupButton> {
 
     public static Dialog createNewGroupDialog() {
         return Dialog.createPrompt(
-                "gui.sfm.FactoryManager.Tool.Group.Dialog.CreateGroup",
+                "gui.sfm.FactoryManager.Tool.Group.CreateGroup",
+                () -> new TextField(0, 0, 0, 16),
+                "gui.sfm.ok", "gui.sfm.cancel",
                 (b, name) -> {
                     boolean success = FactoryManagerGUI.get().groupModel.addGroup(name);
                     if (!success) {
-                        Dialog.createDialog("gui.sfm.FactoryManager.Tool.Group.Dialog.CreateFailed").tryAddSelfToActiveGUI();
+                        Dialog.createDialog("gui.sfm.FactoryManager.Tool.Group.CreateFailed").tryAddSelfToActiveGUI();
                     }
-                });
+                },
+                (b, name) -> {});
     }
 
     public static final int SEL_DIALOG_LIST_WIDTH = 280;
@@ -107,7 +114,7 @@ public class Grouplist extends LinearList<GroupButton> {
     public static Dialog createSelectGroupDialog(Consumer<String> onConfirm, Runnable onCancel) {
         Dialog dialog = new Dialog();
 
-        dialog.getMessageBox().addLine(I18n.format("gui.sfm.FactoryManager.Tool.Group.Dialog.SelectGroup"));
+        dialog.getMessageBox().addLine(I18n.format("gui.sfm.FactoryManager.Tool.Group.SelectGroup"));
         TargetList list = new TargetList();
         dialog.insertBeforeButtons(list);
 
@@ -242,6 +249,5 @@ public class Grouplist extends LinearList<GroupButton> {
         private boolean isSelected() {
             return getParentWidget().selected == this.index;
         }
-
     }
 }

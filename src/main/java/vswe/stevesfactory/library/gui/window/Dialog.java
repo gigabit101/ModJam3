@@ -15,31 +15,23 @@ import vswe.stevesfactory.library.gui.widget.box.Box;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+import java.util.function.Supplier;
 
 public class Dialog extends AbstractPopupWindow {
 
-    public static Dialog createPrompt(String message, BiConsumer<Integer, String> onConfirm) {
-        return createPrompt(message, onConfirm, (b, t) -> {});
-    }
-
-    public static Dialog createPrompt(String message, BiConsumer<Integer, String> onConfirm, BiConsumer<Integer, String> onCancel) {
-        return createPrompt(message, "", onConfirm, onCancel);
-    }
-
-    public static Dialog createPrompt(String message, String defaultText, BiConsumer<Integer, String> onConfirm) {
-        return createPrompt(message, defaultText, onConfirm, (b, t) -> {});
-    }
-
-    public static Dialog createPrompt(String message, String defaultText, BiConsumer<Integer, String> onConfirm, BiConsumer<Integer, String> onCancel) {
-        return createPrompt(message, defaultText, "gui.sfm.ok", "gui.sfm.cancel", onConfirm, onCancel);
-    }
-
-    public static Dialog createPrompt(String message, String defaultText, String confirm, String cancel, BiConsumer<Integer, String> onConfirm, BiConsumer<Integer, String> onCancel) {
+    public static Dialog createPrompt(
+            String message,
+            Supplier<? extends TextField> fieldProvider,
+            String confirm, String cancel,
+            BiConsumer<Integer, String> onConfirm,
+            BiConsumer<Integer, String> onCancel
+    ) {
         Dialog dialog = dialog(message);
 
-        TextField inputBox = new TextField(0, 0, 0, 16);
-        inputBox.setText(defaultText);
+        TextField inputBox = fieldProvider.get();
         dialog.insertBeforeButtons(inputBox);
         dialog.onPostReflow = inputBox::expandHorizontally;
 
@@ -123,8 +115,10 @@ public class Dialog extends AbstractPopupWindow {
     private Box<TextButton> buttons;
     private List<AbstractWidget> children;
 
-    public Runnable onPreReflow = () -> {};
-    public Runnable onPostReflow = () -> {};
+    public Runnable onPreReflow = () -> {
+    };
+    public Runnable onPostReflow = () -> {
+    };
 
     public Dialog() {
         this.messageBox = new TextList(10, 10, new ArrayList<>());

@@ -14,10 +14,13 @@ import vswe.stevesfactory.library.gui.widget.AbstractIconButton;
 import vswe.stevesfactory.library.gui.widget.IWidget;
 import vswe.stevesfactory.ui.manager.DynamicWidthWidget;
 import vswe.stevesfactory.ui.manager.FactoryManagerGUI;
-import vswe.stevesfactory.ui.manager.tool.ToolPanel;
+import vswe.stevesfactory.ui.manager.tool.ToolHolderPanel;
 import vswe.stevesfactory.ui.manager.tool.group.Grouplist;
+import vswe.stevesfactory.ui.manager.tool.inspector.Inspector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
@@ -25,8 +28,10 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     public static final TextureWrapper GROUP_LIST_ICON = TextureWrapper.ofGUITexture("tool_icon/group.png", 16, 16, 0, 0, 16, 16);
+    public static final TextureWrapper INSPECTOR_ICON = TextureWrapper.ofGUITexture("tool_icon/inspector.png", 16, 16, 0, 0, 16, 16);
 
-    private final IconToolType<Grouplist> groupList;
+    private final ToolboxEntry<Grouplist> groupList;
+    private final ToolboxEntry<Inspector> inspector;
     private final AbstractIconButton close;
     private final List<IWidget> children = new ArrayList<>();
 
@@ -34,7 +39,8 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
         super(WidthOccupierType.MIN_WIDTH);
         this.setWidth(8 + RenderingHelper.LEFT_BORDER);
 
-        addChildOnly(groupList = new IconToolType<>(GROUP_LIST_ICON, Grouplist::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Group.Name")));
+        addChildOnly(groupList = new ToolboxEntry<>(GROUP_LIST_ICON, Grouplist::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Group.Name")));
+        addChildOnly(inspector = new ToolboxEntry<>(INSPECTOR_ICON, Inspector::new).setName(I18n.format("gui.sfm.FactoryManager.Tool.Inspector.Name")));
         addChildOnly(close = new AbstractIconButton(0, 0, 8, 8) {
             @Override
             public void render(int mouseX, int mouseY, float particleTicks) {
@@ -46,7 +52,7 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
             @Override
             public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                ToolPanel panel = FactoryManagerGUI.get().getPrimaryWindow().topLevel.toolPanel;
+                ToolHolderPanel panel = FactoryManagerGUI.get().getPrimaryWindow().topLevel.toolHolderPanel;
                 panel.setActivePanel(null);
                 return true;
             }
@@ -128,12 +134,16 @@ public final class ToolboxPanel extends DynamicWidthWidget<IWidget> {
 
     private void openActionMenu() {
         ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.CtxMenu.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
         ));
         WidgetScreen.getCurrent().addPopupWindow(contextMenu);
     }
 
     public Grouplist getGroupList() {
         return groupList.getToolWindow();
+    }
+
+    public Inspector getInspector() {
+        return inspector.getToolWindow();
     }
 }

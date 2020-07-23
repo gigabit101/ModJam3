@@ -253,22 +253,6 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
                 return true;
             }
         }
-
-        int offset = Screen.hasShiftDown() ? Config.CLIENT.acceleratedEditorMoveSpeed.get() : Config.CLIENT.defaultEditorMoveSpeed.get();
-        switch (keyCode) {
-            case GLFW_KEY_UP:
-                yOffset.add(offset);
-                break;
-            case GLFW_KEY_DOWN:
-                yOffset.subtract(offset);
-                break;
-            case GLFW_KEY_LEFT:
-                xOffset.add(offset);
-                break;
-            case GLFW_KEY_RIGHT:
-                xOffset.subtract(offset);
-                break;
-        }
         return false;
     }
 
@@ -301,9 +285,9 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
 
     private void openActionMenu() {
         ContextMenu contextMenu = ContextMenu.atCursor(ImmutableList.of(
-                new CallbackEntry(FactoryManagerGUI.PASTE_ICON, "gui.sfm.FactoryManager.Editor.CtxMenu.Paste", b -> actionPaste()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CtxMenu.CleanupProcedures", b -> actionCleanup()),
-                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.CtxMenu.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
+                new CallbackEntry(FactoryManagerGUI.PASTE_ICON, "gui.sfm.FactoryManager.Editor.Paste", b -> actionPaste()),
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Editor.CleanupProcedures", b -> actionCleanup()),
+                new CallbackEntry(null, "gui.sfm.FactoryManager.Generic.ToggleFullscreen", b -> FactoryManagerGUI.get().getPrimaryWindow().toggleFullscreen())
         ));
         WidgetScreen.getCurrent().addPopupWindow(contextMenu);
     }
@@ -314,7 +298,7 @@ public final class EditorPanel extends DynamicWidthWidget<FlowComponent<?>> {
         try {
             tag = JsonToNBT.getTagFromJson(json);
         } catch (CommandSyntaxException e) {
-            Dialog.createDialog("gui.sfm.FactoryManager.Editor.Dialog.PasteProcedure.Fail").tryAddSelfToActiveGUI();
+            Dialog.createDialog("gui.sfm.FactoryManager.Editor.Paste.Fail").tryAddSelfToActiveGUI();
             return;
         }
 

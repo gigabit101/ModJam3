@@ -25,8 +25,6 @@ public final class ScissorTest {
     public static ScissorTest scaled(int x, int y, int width, int height) {
         MainWindow mainWindow = Minecraft.getInstance().getMainWindow();
         double scale = mainWindow.getGuiScaleFactor();
-        x += RenderingHelper.getTranslationX();
-        y += RenderingHelper.getTranslationY();
         return new ScissorTest((int) (x * scale), (int) (mainWindow.getHeight() - ((y + height) * scale)),
                 (int) (width * scale), (int) (height * scale));
     }
